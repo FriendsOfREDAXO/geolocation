@@ -51,7 +51,7 @@ Enthält [LeafletJS](https://leafletjs.com/) von [Vladimir Agafonkin](https://ag
 In das Verzeichnis `redaxo/src/addons/geolocation` entpacken und in der Addon-Verwaltung die
 Installation durchführen.
 
-Dabei werden Demo-Daten (4 Links zu Tile-Servern und 2 Kartensätze installiert). Die Here-Kartenlinks
+Dabei werden Demo-Daten (6 Links zu Tile-Servern und 2 Kartensätze installiert). Die Here-Kartenlinks
 sind ohne die nötige "appId", die nach Registrierung bei [HERE](https://developer.here.com/) erzeugt werden kann.
 Die vorgesehene Stelle in der URL ist mit `..........` markiert.
 
@@ -60,7 +60,7 @@ Der Cronjob für die Cache-Bereinigung ist mit den Einstellungen
 - Backend/Frontend
 - Scriptanfang
 - aktiviert
-
+angelegt und muss auf die eigenen Gegebenheiten (z.B. Script-Start oder andere Intervalle) angepaßt weden.
 
 ## Beispielmasken:
 
