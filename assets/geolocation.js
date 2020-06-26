@@ -17,10 +17,10 @@ var Geolocation = {
 // remove       Objekte aus der Karte entfernen
 
 Geolocation.Tools.Template = class {
-    args = null;
-    rawdata = null;
-    map = null;
+
     constructor ( ...args){
+        this.rawdata = null;
+        this.map = null;
         this.args = args;
         return this;
     }
@@ -137,25 +137,24 @@ Geolocation.tools.bounds = function(data) { return new Geolocation.Tools.Bounds(
 // Webcomponente <rex-map>
 Geolocation.Classes.RexMap = class extends HTMLElement{
 
-    __rmParams = {
-        mapOptions:
-            {
-                minZoom:2,
-                maxZoom:18,
-                scrollWheelZoom:true,
-            },
-        bounds: [[45,6],[55,8]],
-    };
-    __rmMap = null;
-    __rmLayers = [];
-    __rmMarkers = [];
-    __rmLayerControl = L.control.layers( );
-    __rmTools = [];
-
     static get observedAttributes() { return ['dataset','mapset'] };
 
     constructor(...args) {
         const self = super(...args);
+        this.__rmParams = {
+            mapOptions:
+                {
+                    minZoom:2,
+                    maxZoom:18,
+                    scrollWheelZoom:true,
+                },
+            bounds: [[45,6],[55,8]],
+        };
+        this.__rmMap = null;
+        this.__rmLayers = [];
+        this.__rmMarkers = [];
+        this.__rmLayerControl = L.control.layers( );
+        this.__rmTools = [];
         return self;
     }
 
