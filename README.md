@@ -2,10 +2,10 @@
 
 ## Verwendung:
 
-- Ideen-Beitrag für das [Geo](https://github.com/FriendsOfREDAXO/friendsofredaxo.github.io/issues/124)-Projekt von @tbaddade
+- Ideen-Beitrag für das [Geo](https://github.com/FriendsOfREDAXO/friendsofredaxo.github.io/issues/124)-Projekt von [Thomas Blum](https://github.com/tbaddade)
     - Tile-Proxy mit Cache
     - Web-Componente
-- Ideen-Beitrag für das [Experimental-Proxy](https://github.com/FriendsOfREDAXO/experimental/tree/master/plugins/proxy)-Projekt von @staabm
+- Ideen-Beitrag für das [Experimental-Proxy](https://github.com/FriendsOfREDAXO/experimental/tree/master/plugins/proxy)-Projekt
     - Tile-Proxy mit Cache
 - Ansonsten zur gefälligen Benutzung
 
@@ -13,7 +13,7 @@
 
 ## Quellen
 
-Inspiriert von @skerbis Addon "[osmproxy](https://github.com/FriendsOfREDAXO/osmproxy)" und gefüttert mit Ideen und Snippets aus anderen Addons und aus den Diskussionen auf GitHub und im [Slack-Channel](https://friendsofredaxo.slack.com/).
+Inspiriert von[Thomas Skerbis](https://github.com/skerbis) Addon "[osmproxy](https://github.com/FriendsOfREDAXO/osmproxy)" und gefüttert mit Ideen und Snippets aus anderen Addons und aus den Diskussionen dazu auf GitHub und im [Slack-Channel](https://friendsofredaxo.slack.com/).
 
 Der rote Map-Marker stammt von [Thomas Pointhuber](https://github.com/pointhi/leaflet-color-markers).
 
@@ -32,11 +32,11 @@ Enthält [LeafletJS](https://leafletjs.com/) von [Vladimir Agafonkin](https://ag
 
 - Frontend
     - LeafletJS als Kartensoftware integriert
-    - Karten-HTML als Web-Komponente `<rex-map .... ></rex-map>` (->geolocation.js)
+    - Karten-HTML als Web-Komponente `<rex-map .... ></rex-map>` (->[geolocation.js](assets/geolocation.js))
 
 
 - Demo
-    - Stand-alone-Demo zur Demonstration der Web-Komponente und des Cache
+    - [Stand-alone-Demo](assets/demo.html) zur Demonstration der Web-Komponente und des Cache
     - `/assets/addons/gelocation/demo.html`, bitte ins Redaxo-Root kopieren wg. der Pfade
 
 
@@ -122,6 +122,10 @@ datensatz = {
 Alle Angaben sind optional. Position ist der "Hauptmarker" in der Karte in rot. Alle anderen
 zusätzlichen Marker sind blau. "Bounds" legt das Rechteck fest, dass auf jeden Fall in der
 Karte sichtbar sein soll.
+
+Grundidee: es gibt gleich strukturierte Klassen je "Tool", wobei alle Elemente im Datensatz (position,bounds,marker)
+jeweils eine eigene Klasse haben. Die Klasse steuert die Anzeige auf der Karte toolspezifisch. Das System
+ist einfach erweiterbar nur durch Bereitstellung einer neuen Toolklasse.
 
 
 #### Kartensatz
