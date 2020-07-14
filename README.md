@@ -4,7 +4,7 @@
 
 - Ideen-Beitrag für das [Geo](https://github.com/FriendsOfREDAXO/friendsofredaxo.github.io/issues/124)-Projekt von [Thomas Blum](https://github.com/tbaddade)
     - Tile-Proxy mit Cache
-    - Web-Componente
+    - Custom-HTML-Element
 - Ideen-Beitrag für das [Experimental-Proxy](https://github.com/FriendsOfREDAXO/experimental/tree/master/plugins/proxy)-Projekt
     - Tile-Proxy mit Cache
 - Ansonsten zur gefälligen Benutzung
@@ -32,11 +32,11 @@ Enthält [LeafletJS](https://leafletjs.com/) von [Vladimir Agafonkin](https://ag
 
 - Frontend
     - LeafletJS als Kartensoftware integriert
-    - Karten-HTML als Web-Komponente `<rex-map .... ></rex-map>` (->[geolocation.js](assets/geolocation.js))
+    - Karten-HTML als Custom-HTML-Element `<rex-map .... ></rex-map>` (->[geolocation.js](assets/geolocation.js))
 
 
 - Demo
-    - [Stand-alone-Demo](assets/demo.html) zur Demonstration der Web-Komponente und des Cache
+    - [Stand-alone-Demo](assets/demo.html) zur Demonstration des Custom-HTML-Elements und des Cache
     - `/assets/addons/gelocation/demo.html`, bitte ins Redaxo-Root kopieren wg. der Pfade
 
 
