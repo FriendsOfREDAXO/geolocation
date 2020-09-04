@@ -97,7 +97,7 @@ Geolocation.Tools.Position = class extends Geolocation.Tools.Template{
             popupAnchor:[1,-34],
             tooltipAnchor:[16,-28],
             shadowSize: [41,41],
-            shadowUrl: 'assets/addons/geolocation/plugins/leaflet/images/marker-shadow.png',
+            shadowUrl: 'assets/addons/geolocation/vendor/leaflet/images/marker-shadow.png',
         } ) );
         return this;
     }
