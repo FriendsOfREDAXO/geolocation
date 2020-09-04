@@ -8,7 +8,7 @@ $form = rex_config_form::factory( $this->name );
 
     $form->addFieldset( rex_i18n::msg('geolocation_config_map') );
 
-        $field = $form->addSelectField('default_map',$value = null,['class'=>'form-control selectpicker']); // die Klasse selectpicker aktiviert den Selectpicker von Bootstrap
+        $field = $form->addSelectField('default_map',$value = null,['class'=>'form-control']);
         $field->setLabel( rex_i18n::msg('geolocation_config_map_default') );
         $select = $field->getSelect();
         $select->addSqlOptions( 'SELECT concat(title," [id=",id,"]") as name,id FROM '.geolocation_mapset::table()->getTableName().' ORDER BY title' );
