@@ -66,12 +66,13 @@ Der Cronjob für die Cache-Bereinigung ist mit den Einstellungen
 
 ### Allgemeine Konfiguration
 
-![Konfiguration](https://raw.githubusercontent.com/christophboecker/gelocation/assets/config.jpg)
+![Konfiguration](https://raw.githubusercontent.com/christophboecker/gelocation/assets/config.jpg){.xy}
 
 ### Kartensatz
-
+<DIV>
 ![Kartensatz: Auflistung](https://raw.githubusercontent.com/christophboecker/gelocation/assets/maps_list.jpg)
 ![Kartensatz: Formular](https://raw.githubusercontent.com/christophboecker/gelocation/assets/maps_edit.jpg)
+</DIV>
 
 ### Layer-/Tile-Server
 
