@@ -1,19 +1,40 @@
 <?php
+/**
+ *  De-Installations-Script
+ *
+ *  Zusätzlich zu den von REDAXO selbst durchgeführten Aktivitäten:
+ *
+ *  Entfernt die Tabellen rex_geolocation_mapset und rex_geolocation_layer.
+ *  Löscht die YForm-Tablemanager-Einträge für die Tabellen
+ *  Löscht Cronjobs vom Typ Geolocation\cronjob
+ *
+ *  Das Verzeichnis redaxo/data/addons/geolocaton wird nicht gelöscht, da hier Instanz-spezifische
+ *  Konfigurationsbestandteile vom Admin update-sicher abgelegt werden können.
+ *
+ *  @var rex_addon $this
+ */
 
-$sql = rex_sql::factory();
+try {
 
-// Tabellen löschen
-foreach ( [ geolocation_layer::table()->getTableName(),geolocation_mapset::table()->getTableName() ] as $table ){
+    $tables = [
+        \rex::getTable('geolocation_layer'),
+        \rex::getTable('geolocation_mapset')
+    ];
 
-    $sql->setQuery('DELETE FROM `'.rex::getTable('yform_table').'` WHERE table_name = "'.$table.'"');
-    $sql->setQuery('DELETE FROM `'.rex::getTable('yform_field').'` WHERE table_name = "'.$table.'"');
-    $sql->setQuery('DELETE FROM `'.rex::getTable('yform_history').'` WHERE table_name = "'.$table.'"');
+    // Tabellen löschen
+    foreach ( $tables as $table ){
+        \rex_yform_manager_table_api::removeTable($table);
+        \rex_sql_table::get( $table )->drop();
+    }
 
-    rex_sql_table::get( $table )->drop();
+    // Cronjobs löschen
+    $sql = \rex_sql::factory();
+    $sql->setTable( \rex::getTable( 'cronjob') );
+    $sql->setWhere( 'type=:type', [':type'=>'Geolocation\cronjob'] );
+    $sql->delete();
+
+} catch (\RuntimeException $e) {
+
+    $this->setProperty('installmsg', $e->getMessage() );
 
 }
-
-// Cronjob löschen
-$sql->setTable( rex::getTable( 'cronjob') );
-$sql->setWhere( 'type=:type', [':type'=>'rex_cronjob_geolocation_cache'] );
-$sql->delete();

@@ -5,56 +5,94 @@ geolocation_clear_cache_confirm = Cache für «{0}» löschen?
 
 # für mehrere Formulare
 geolocation_form_proxycache_ttl = Aufbewahrungsdauer im Cache (TTL)
-geolocation_form_proxycache_ttl_notice = Nach der angegebenen Zeit in Minuten wird die Datei im Cache verworfen <br>1 Tag = 1440, 1 Woche = 10080, 1 Monat = 43200<br>Bereich: 1 ... 130000
-geolocation_form_proxycache_ttl_error = Ungültiger Wert; zulässig sind 1 ... 130000 (1 Minute bis 1 Quartal)
+geolocation_form_proxycache_ttl_notice = Nach der angegebenen Zeit in Minuten wird die Datei im Cache verworfen <br>1 Tag = 1440, 1 Woche = 10080, 1 Monat = 43200<br><span class="text-danger">0 = Cache deaktiviert</span><br>Bereich: 0 ... {0}
+geolocation_form_proxycache_ttl_error = Ungültiger Wert; zulässig sind 0 ... {0} (0=deaktiviert, 1 Minute bis 1 Quartal)
 geolocation_form_proxycache_maxfiles = Maximale Anzahl Dateien je Tile-Cache
 geolocation_form_proxycache_maxfiles_notice = Die ältesten Dateien werden gelöscht; Default-Wert je Tile-Cache.
-geolocation_form_proxycache_maxfiles_error = Mindestwert: 500
+geolocation_form_proxycache_maxfiles_error = Mindestwert: {0}
 geolocation_form_active = Freigabe
 geolocation_form_active_choice_1 = Aktiv
 geolocation_form_active_choice_0 = Gesperrt
+geolocation_form_mapoptions = Kartenoptionen
+geolocation_form_mapoptions_fullscreen = Umschaltung auf Fullscreen aktivieren
+geolocation_form_mapoptions_zoomlock = Zoom-Sperre (beim Scrollen) und Gesten
+geolocation_form_mapoptions_location = Aktuelle Position anzeigen
+geolocation_form_outfragment = Ausgabe-Fragment
 
 # Formular "Config"
 geolocation_config = Einstellungen
 geolocation_config_map = Karten
-geolocation_config_map_default = Standard-Karte
-geolocation_config_proxycache = Proxy / Cache
+geolocation_config_map_default = Standard-Kartensatz
+geolocation_form_map_bounds = Standard-Kartenausschnitt
+geolocation_form_map_bounds_notice = Das Format ist "[lat,lng][lat,lng]" (Bsp. [45.1,6],[55,8.0] )
+geolocation_form_map_bounds_error = Ungültige oder fehlende Eingabe des Kartenauschnitts.
+geolocation_form_map_zoom = Standard-Zoom
+geolocation_form_map_zoom_notice = Zulässige Werte: {0} - {1}
+geolocation_form_map_zoom_error = Ungültige oder fehlende Eingabe des Standard-Zoom.
+geolocation_form_map_outfragment_notice = REDAXO-Fragment für die Ausgabe (default: «{0}»)
+geolocation_form_map_outfragment_error = Fehlende Angabe bzw. keine PHP-Datei (Suffix fehlt)
 
-# Tabelle "rex_geo_maps"
-geolocation_maps = Kartentypen
-geolocation_maps_name = Kartenname
-geolocation_maps_name_notice = Zur Verwendung in Programmcode als Objektname
-geolocation_maps_name_error = Der Name muss angegeben, eindeutig und formal ein gültiger Objektname sein
-geolocation_maps_title = Kartentitel
-geolocation_maps_title_error = Der Kartentitel fehlt
-geolocation_maps_layer = Karten-Layer/Tiles
-geolocation_maps_layer_error = Mindestens ein Layer muss ausgewählt sein
-geolocation_maps_overlay = Overlay-Karten
+geolocation_config_proxycache = Cache
 
-# Tabelle "rex_geo_tiles"
-geolocation_tiles = Tile-Server/Kartenanbieter
-geolocation_tiles_fs_layer = Tile-Parameter
-geolocation_tiles_title = Bezeichnung
-geolocation_tiles_title_error = Die Bezeichnung muss angegeben und eindeutig sein
-geolocation_tiles_url = URL
-geolocation_tiles_url_notice = URL zum Abruf der Tiles/Kacheln
-geolocation_tiles_url_error = Bite eine gültige URL eingeben
-geolocation_tiles_subdomain = Sub-Domänen
-geolocation_tiles_subdomain_notice = Füllt {s} in der URL
-geolocation_tiles_subdomain_error = die URL erfordert eine Subdomain-Angabe
-geolocation_tiles_attribution = Copyright
-geolocation_tiles_attribution_notice = sprachneutral
-geolocation_tiles_i18nlabel = Label
-geolocation_tiles_i18nlabel_notice = Sprachversionen des Layer-Namen in Karten (de:Karte, en:Map, ...)
-geolocation_tiles_i18nlabel_error = Mindestens eine Sprache muss festgelegt werden, jede Sprache darf nur einmal vorkommen
-geolocation_tiles_in_use = Tile-Server/Kartenanbieter «{0}» kann nicht gelöscht werden, da einem oder mehreren Kartentypen zugeordnet
-geolocation_tiles_type = Layer-Kategorie
-geolocation_tiles_type_choice_b = Karte (Base-Layer)
-geolocation_tiles_type_choice_o = Overlay
-geolocation_tiles_fs_cache = Cache-Parameter
-geolocation_tiles_fs_rest = Weitere Parameter
+# Tabelle "rex_geolocation_mapset"
+geolocation_mapset = Kartensatz
+geolocation_mapset_name = Name
+geolocation_mapset_name_notice = Zur Verwendung in Programmcode als Objektname
+geolocation_mapset_name_error = Der Name muss angegeben, eindeutig und formal ein gültiger Objektname sein
+geolocation_mapset_title = Titel
+geolocation_mapset_title_error = Der Kartentitel fehlt bzw. ist nicht eindeutig
+geolocation_mapset_layer = Basiskarten
+geolocation_mapset_layer_error = Mindestens ein Basiskarten-Layer muss ausgewählt sein
+geolocation_mapset_overlay = Overlay-Karten
+geolocation_mapset_outfragment_notice = REDAXO-Fragment für die Ausgabe (leer: aus "Einstellungen" | Fallback auf «{0}»)
+geolocation_mapset_outfragment_error = Das Ausgabe-Fragment muss leer sein (Default aus "Einstellungen") oder ein PHP-Dateiname (Suffix fehlt)
+geolocation_mapset_mapoptions_default = Default; Werte aus "Einstellungen"
+geolocation_mapset_mapoptions_notice = (*) Auswahl ist aktuell gem. Default (siehe "Einstellungen") aktiviert.
+
+# Tabelle "rex_geolacation_layer"
+geolocation_layer = Karte
+geolocation_layer_fs_layer = Karten-Parameter
+geolocation_layer_title = Bezeichnung
+geolocation_layer_title_error = Die Bezeichnung muss angegeben und eindeutig sein
+geolocation_layer_url = URL
+geolocation_layer_url_notice = URL zum Abruf der Tiles/Kacheln
+geolocation_layer_url_error = Bite eine gültige URL eingeben
+geolocation_layer_subdomain = Sub-Domänen
+geolocation_layer_subdomain_notice = Füllt {s} in der URL
+geolocation_layer_subdomain_error = die URL erfordert eine Subdomain-Angabe
+geolocation_layer_attribution = Copyright
+geolocation_layer_attribution_notice = sprachneutral
+geolocation_layer_i18nlabel = Label
+geolocation_layer_i18nlabel_notice = Sprachversionen des Layer-Namen in Karten (de:Karte, en:Map, ...)
+geolocation_layer_i18nlabel_error = Mindestens eine Sprache muss festgelegt werden, jede Sprache darf nur einmal vorkommen
+geolocation_layer_in_use = Tile-Server/Kartenanbieter «{0}» kann nicht gelöscht werden, da einem oder mehreren Kartentypen zugeordnet
+geolocation_layer_type = Layer-Kategorie
+geolocation_layer_type_choice_b = Karte (Base-Layer)
+geolocation_layer_type_choice_o = Overlay
+geolocation_layer_fs_cache = Cache-Parameter
+geolocation_layer_fs_rest = Weitere Parameter
 
 # Cronjob
 geolocation_cron_title = Geolocation: Cache bereinigen
 geolocation_cron_error = Layer «{0}»: unbekannt
 geolocation_cron_success = Layer «{0}»: Cache bereinigt, {1} von {2} Dateien gelöscht
+
+# Handbuch
+geolocation_manpage = Handbuch
+geolocation_manpage_intro = Übersicht
+geolocation_manpage_install = Installation
+geolocation_manpage_proxy = Proxy und Cache
+geolocation_manpage_admin = Verwaltung
+geolocation_manpage_usage = Nutzung
+geolocation_manpage_developer = Für Entwickler
+geolocation_manpage_devphp = PHP
+geolocation_manpage_devjs = Javascript
+geolocation_manpage_devtools = Tools
+
+# Installation
+geolocation_install_missing = Die Installationsdatei «{0}» fehlt!
+geolocation_install_table_prepared = Die Tabelle «{0}» ist angelegt.
+geolocation_install_table_filled = Die Tabellen sind mit Beispieldaten vorbefüllt. In den URLs der HERE-Karten muss der eigene API-Key ergänzt werden.
+geolocation_install_tableset_prepared = Die YForm-Formulare sind angelegt.
+geolocation_install_cronjob_prepared = Der Cronjob zur Cache-Pflege ist angelegt.
+geolocation_install_assets_prepared = Die Asset-Dateien sind neu compiliert.

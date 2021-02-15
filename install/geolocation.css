@@ -1,0 +1,45 @@
+/* für Geolocation: <rex-map> usw. konfigurieren */
+rex-map {
+    display:block; /* wichtig weil custom-HTML-elemente per default inline statt block sind */
+    height:500px;
+    border: 1px solid $btn-default-border;
+}
+
+/* SVG-Icons in LeafletJS-Toolbara */
+.geolocation-control svg {
+    padding: 5px;
+    max-height:100%;
+}
+
+/* Icon und Marker für die aktuelle Position (Location, Locate-Control) des Devices */
+.leaflet-bar a.geolocation-location-active {
+    color: #2A93EE;
+}
+
+.geolocation-locate-location circle {
+    animation: geolocation-locate-throb 4s ease infinite;
+    stroke: #fff;
+    fill: #2A93EE;
+    fill-opacity: 1;
+    opacity: 1;
+}
+
+.geolocation-locate-accuracy {
+    stroke: #136AEC;
+    fill: #136AEC;
+    fill-opacity: 0.15;
+    stroke-width: 0;
+}
+
+@keyframes geolocation-locate-throb {
+  0% {
+    stroke-width: 1;
+  }
+  50% {
+    stroke-width: 3;
+    transform: scale(0.8, 0.8);
+  }
+  100% {
+    stroke-width: 1;
+  }
+}

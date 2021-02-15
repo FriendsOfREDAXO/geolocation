@@ -1,7 +1,7 @@
 package: geolocation
-version: '0.1.0'
-author: Friends Of REDAXO, Christoph Böcker
-supportpage: https://github.com/FriendsOfREDAXO/pdfout
+version: '0.9.0'
+author: Christoph Böcker
+supportpage: https://github.com/christophboecker/geolocation
 
 page:
     title: translate:geolocation_title
@@ -12,31 +12,41 @@ page:
         config:
             title: translate:geolocation_config
             icon: fa fa-wrench
-        maps:
-            title: translate:geolocation_maps
+            perm: admin[]
+        mapset:
+            title: translate:geolocation_mapset
+            perm: admin[]
             icon: fa fa-map
             subPath: pages/yform.php
-            itemattr: {table_name: rex_geolocation_maps}
-        tiles:
-            title: translate:geolocation_tiles
+        layer:
+            title: translate:geolocation_layer
+            perm: admin[]
             icon: fa fa-cloud-download
             subPath: pages/yform.php
-            itemattr: {table_name: rex_geolocation_tiles}
+        docs:
+            title: translate:geolocation_manpage
+            perm: admin[]
+            icon: fa fa-book
+            subPath: help.php
         clear_cache:
             title: 'translate:geolocation_clear_cache'
+            perm: admin[]
             itemclass: 'pull-right'
             linkclass: 'btn btn-delete'
             href:
                 page: geolocation/config
                 func: clear_cache
-default_config:
-    ttl: 10080
-    maxfiles: 1000
+
+yform:
+    geolocation/mapset:
+        table_name: rex_geolocation_mapset
+    geolocation/layer:
+        table_name: rex_geolocation_layer
 
 requires:
     php:
         version: '>=7.1'
-    redaxo: '^5.10.0'
+    redaxo: '^5.11.0'
     packages:
         cronjob: '^2.7'
         yform: '^3.4'
