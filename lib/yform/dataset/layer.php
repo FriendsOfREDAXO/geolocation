@@ -74,6 +74,7 @@ class layer extends \rex_yform_manager_dataset
             }
             if( 'ttl' == $fe[1] && empty($fe[3]) ){
                 $fe[3] = \rex_config::get( ADDON, 'cache_ttl', TTL_DEF );
+                $fe[6] = \rex_i18n::rawMsg( str_replace('translate:','',$fe[6]),TTL_MAX);
                 continue;
             }
             if( 'cfmax' == $fe[1] && empty($fe[3]) ){
