@@ -1,0 +1,64 @@
+# Basiskonfiguration, diverse Konstanten
+#
+# Wird bei der Installation benutzt und u.a. teilweise in die boot.php eingetragen als
+# define('Geolocation\ABC',wert); (ABC im Namespace Geolocation )
+#
+# Überschreiben durch korrespondierende Werte aus redaxo/data/addons/geolocation/config.yml
+# Handle with care!
+
+# Leistungsumfang (alles: full, nur Proxy/Cache: proxy)
+#   mapset          false = Formulare des Addon auf Proxy/Cache einschränken
+#   compile         0 = kein Leaflet und geolocation-JS in geolocation.min.js/css einfügen
+#                   1 = Leaflet-Core, sonst keine eigenen Elemente; danach aus data
+#                   2 = Leaflet und geolocation-JS; danach aus data
+#   load            false =geolocation.min.js, geolocation.man.css nicht laden
+scope:
+    mapset: true
+    compile: 2
+    load: true
+
+# Karten und Kartensätze aus  "dataset.sql" vorbelegen
+dataset:
+    load: true
+    overwrite : false
+
+# Time-To-Live im Karten-Cache
+Geolocation\TTL_DEF: 43200
+Geolocation\TTL_MAX: 130000
+
+# Maximale Anzahl Dateien pro Karten-Cache
+Geolocation\CFM_DEF: 1000
+Geolocation\CFM_MIN: 50
+Geolocation\CFM_MAX: 100000
+
+# URL-Name für API-Abrufe
+Geolocation\KEY_TILES: 'geolayer'
+Geolocation\KEY_MAPSET: 'geomapset'
+
+# Fragment zur Kartenausgabe
+Geolocation\OUT: 'geolocation_rex_map.php'
+
+# Darstellungsoptionen
+# true = mapset::mapoptions, sonst '|xxx|yyy|' mit den Keys aus mapset::mapoptions
+mapoptions: true
+
+# Anzuzeigender Default-Kartenausschnitt = Europa (für Tool "bounds")
+bounds: '[35,-9],[60,25]'
+
+# Standard-Zoom
+zoom: 15
+zoom_min: 2
+zoom_max: 18
+
+# Aufrufintervall für den Aufräum-Job des Cache
+# und weitere Parameter
+job_moment: 0
+job_environment: '|frontend|backend|'
+job_intervall:
+    minutes:
+        0: 30
+    hours:
+        0: 05
+    days: 'all'
+    weekdays: 'all'
+    months: 'all'

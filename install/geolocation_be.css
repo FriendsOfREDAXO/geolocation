@@ -1,0 +1,26 @@
+/* Geolocation: rex-form und YForm im Backend etwas platzsparender */
+.geolocation-form > fieldset > legend,
+.geolocation-yform > fieldset > legend {
+    background-color: $color-c-light;
+    padding-left: $padding-base-horizontal;
+}
+
+.geolocation-yform {
+    @media (min-width: $screen-lg-min) {
+
+        > div:not(.alert) > *:not(.control-label),
+        > fieldset > div:not(.alert) > *:not(.control-label) {
+            width: calc(100% - #{$component-offset-horizontal + $table-cell-padding});
+            margin-left: $component-offset-horizontal;
+        }
+
+        > div > .control-label,
+        > fieldset > div > .control-label {
+            width: $component-offset-horizontal;
+            padding-right: $table-cell-padding;
+            float: left;
+            clear:both;
+        }
+    }
+
+}

@@ -1,0 +1,39 @@
+/* Compatible with Leaflet 0.7 */
+.leaflet-control-locate {
+  a {
+    font-size: 1.4em;
+    color: #444;
+    cursor: pointer;
+  }
+  &.active {
+    a {
+      color: #2074b6;
+    }
+    &.following a {
+      color: #fc8428;
+    }
+  }
+}
+
+.leaflet-control-locate-location circle {
+  animation: leaflet-control-locate-throb 4s ease infinite;
+  stroke: '#fff',
+  fill: '#2A93EE',
+  fill-opacity: 1,
+  stroke-width: 3,
+  opacity: 1,
+  radius: 9
+}
+
+@keyframes leaflet-control-locate-throb {
+  0% {
+    stroke-width: 1;
+  }
+  50% {
+    stroke-width: 3;
+    transform: scale(0.8, 0.8);
+  }
+  100% {
+    stroke-width: 1;
+  }
+}

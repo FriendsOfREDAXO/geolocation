@@ -1,4 +1,6 @@
-# Contribution to a planned Geo Addon for [REDAXO](https://redaxo.org) 5.10+
+# Contribution to a planned<br>Geo-Addon for [REDAXO](https://redaxo.org) 5.11+
+
+**Version 0.9 | 15.02.2021** - Änderungen siehe [Change-Log](CHANGELOG.md)
 
 ## Verwendung:
 
@@ -15,36 +17,42 @@
 
 Inspiriert von[Thomas Skerbis](https://github.com/skerbis) Addon "[osmproxy](https://github.com/FriendsOfREDAXO/osmproxy)" und gefüttert mit Ideen und Snippets aus anderen Addons und aus den Diskussionen dazu auf GitHub und im [Slack-Channel](https://friendsofredaxo.slack.com/).
 
-Der rote Map-Marker stammt von [Thomas Pointhuber](https://github.com/pointhi/leaflet-color-markers).
+Basiert [LeafletJS](https://leafletjs.com/) von [Vladimir Agafonkin](https://agafonkin.com/) und weiteren
+Tools (siehe [CREDITS](CREDITS.md)).
 
-Enthält [LeafletJS](https://leafletjs.com/) von [Vladimir Agafonkin](https://agafonkin.com/).
+![Titelbild](docs/assets/titel.jpg)
 
 ## Features:
 
 - Backend
-    - Tile-URLs zu Tile-Anbietern mit weiteren Parametern inkl. Sprachunterstützung und Cache-Verhalten
-    - Kartensätze zusammenstellen verwalten, die auf einer oder mehreren Tile-Urls basieren
+    - [Karten-URLs](docs/admin.md#tile) zu Karten-Anbietern mit weiteren Parametern inkl. Sprachunterstützung und Cache-Verhalten
+    - [Kartensätze](docs/admin.md#mapset) zusammenstellen und verwalten, die auf einer oder mehreren Karten-Urls basieren
     - Datenverwaltung mit YForm
-    - Proxy-Server für Tile-Abrufe vom Browser
-    - Cache für Tile-Abrufe
-    - Verschleierung der tatsächlichen Tile-Url ggü. dem Client / Schutz der ggf. kostenpflichtigen appId´s z.B. von Google
-
+    - [Proxy-Server](docs/proxy_cache.md#proxy) für Karten-Abrufe vom Browser
+    - [Cache](docs/proxy_cache.md#cache) für Karten-Abrufe
+    - Verschleierung der tatsächlichen Karten-Url ggü. dem Client / Schutz der ggf. kostenpflichtigen appId´s z.B. von Google oder HERE
 
 - Frontend
     - LeafletJS als Kartensoftware integriert
-    - Karten-HTML als Custom-HTML-Element `<rex-map .... ></rex-map>` (->[geolocation.js](assets/geolocation.js))
-
+    - Karten-HTML als [Custom-HTML-Element](#rm) `<rex-map .... ></rex-map>`
+    - [Erweiterbare Tools](docs/devtools.md) zur Datendarstellung
+    - Anwendungsbeispiel für [Module](docs/devphp.md#module)
 
 - Demo
-    - [Stand-alone-Demo](assets/demo.html) zur Demonstration des Custom-HTML-Elements und des Cache
-    - `/assets/addons/gelocation/demo.html`, bitte ins Redaxo-Root kopieren wg. der Pfade
+    - [Stand-alone-Demo](docs/example/demo.html) zur Demonstration des Custom-HTML-Elements und des Cache
+    - *redaxo/src/addons/geolocation/docs/example/demo.html* bitte ins REDAXO-Root kopieren wg. der Pfade
 
-
-- Cache
+- [Cache](docs/proxy_cache.md#cache)
     - Je Tile-URL ein eigenes Verzeichnis, separat löschbar
-    - Cronjob zum Aufräumen
+    - [Cronjob](docs/proxy_cache.md#cron) zum Aufräumen
         - Dateien löschen, die älter sind als die Time-to-live der Tile-URL
         - weitere ältere Dateien löschen wenn das Verzeichnis zu viele Dateien enthält
+
+## Was fehlt?
+
+- Karten interaktiv gestalten
+- Zu einer Adresse oder die Koordinate ermitteln
+- .....
 
 ## Installation
 
@@ -61,43 +69,40 @@ Der Cronjob für die Cache-Bereinigung ist mit den Einstellungen
 - Scriptanfang
 - aktiviert
 
+Details - auch zu individualisierten Installationen - stehen in der [Installationsanleitung](docs/install.md)
+
 
 ## Beispielmasken:
 
 ### Allgemeine Konfiguration
 
-![Konfiguration](https://raw.githubusercontent.com/christophboecker/gelocation/assets/config.jpg){.xy}
+![Konfiguration](docs/assets/config.jpg)
 
 ### Kartensatz
-<DIV>
-![Kartensatz: Auflistung](https://raw.githubusercontent.com/christophboecker/gelocation/assets/maps_list.jpg)
-![Kartensatz: Formular](https://raw.githubusercontent.com/christophboecker/gelocation/assets/maps_edit.jpg)
-</DIV>
+
+![Kartensatz: Auflistung](docs/assets/maps_list.jpg)
+![Kartensatz: Formular](docs/assets/maps_edit.jpg)
 
 ### Layer-/Tile-Server
 
-![Tile-Layer: Auflistung](https://raw.githubusercontent.com/christophboecker/gelocation/assets/tiles_list.jpg)
-![Tile-Layer: Formular](https://raw.githubusercontent.com/christophboecker/gelocation/assets/tiles_edit.jpg)
+![Tile-Layer: Auflistung](docs/assets/tiles_list.jpg)
+![Tile-Layer: Formular](docs/assets/tiles_edit.jpg)
 
+<a name="rm"></a>
 ### `<rex-map .... ></rex-map>`
 
-Darstellung der Karte im Browser über eine Web-Componente:
+Darstellung der Karte im Browser über ein [Custom-HTML-Element](docs/devphp#maphtml):
 
 ```html
-<rex-map map="..." mapset="..." dataset="..."></rex-map>
+<rex-map mapset="..." dataset="..."></rex-map>
 ```
 Die Attribute sind zu Strings umgeformte Arrays/Objekte.
 
-```HTML
+```html
 <rex-map
     class="leaflet-map"
-    map="{&quot;minZoom&quot;:3}"
-    mapset="{
-        &quot;default&quot;:{&quot;tile&quot;:1,&quot;label&quot;:&quot;Karte&quot;,&quot;type&quot;:&quot;b&quot;,&quot;attribution&quot;:&quot;Map Tiles &amp;copy; 2020 &lt;a href=\&quot;http:\/\/developer.here.com\&quot;&gt;HERE&lt;\/a&gt;&quot;},
-        &quot;sat&quot;:{&quot;tile&quot;:2,&quot;label&quot;:&quot;Satelit&quot;,&quot;type&quot;:&quot;b&quot;,&quot;attribution&quot;:&quot;Map Tiles &amp;copy; 2020 &lt;a href=\&quot;http:\/\/developer.here.com\&quot;&gt;HERE&lt;\/a&gt;&quot;},
-        &quot;hybrid&quot;:{&quot;tile&quot;:3,&quot;label&quot;:&quot;Hybrid&quot;,&quot;type&quot;:&quot;b&quot;,&quot;attribution&quot;:&quot;Map Tiles &amp;copy; 2020 &lt;a href=\&quot;http:\/\/developer.here.com\&quot;&gt;HERE&lt;\/a&gt;&quot;}
-        }"
-    dataset="{&quot;position&quot;:[47.516669,9.433338],&quot;bounds&quot;:[[47.5,9.3],[47.7,9.7]],&quot;marker&quot;:[[47.611593,9.296344],[47.586204,9.560653],[47.54378,9.686559]]}"
+    mapset="[{&quot;tile&quot;:&quot;1&quot;,&quot;label&quot;:&quot;Karte&quot;,....}]"
+    dataset="{&quot;position&quot;:[47.516669,9.433338],....}"
 ></rex-map>
 ```
 
@@ -135,19 +140,19 @@ Im Backend werden aus Layern(Tiles/Kacheln) Kartensätze zusammengestellt, die i
 ```javascript
 kartensatz = [
     {
-        "tile":"1",
+        "layer":"geolayer=1",
         "label":"Karte",
         "type" :"b",
         "attribution":"Map Tiles &copy; 2020 <a href=\"http:\/\/developer.here.com\">HERE<\/a>"
     },
     {
-        "tile":"2",
+        "layer":"geolayer=2",
         "label":"Satelit",
         "type" :"b",
         "attribution":"Map Tiles &copy; 2020 <a href=\"http:\/\/developer.here.com\">HERE<\/a>"
     },
     {
-        "tile":"3",
+        "layer":"geolayer=3",
         "label":"Hybrid",
         "type" :"b",
         "attribution":"Map Tiles &copy; 2020 <a href=\"http:\/\/developer.here.com\">HERE<\/a>"

@@ -1,0 +1,28 @@
+default:
+    initial: docs/admin.md
+    1:
+        title: translate:geolocation_manpage_install
+        icon: fa fa-book
+        path: docs/install.md
+    2:
+        title: translate:geolocation_manpage_admin
+        icon: fa fa-book
+        path: docs/admin.md
+    3:
+        title: translate:geolocation_manpage_proxy
+        icon: fa fa-book
+        path: docs/proxy_cache.md
+    4:
+        title: translate:geolocation_manpage_developer
+        icon: fa fa-book
+        path: docs/devphp.md
+        subnav:
+            0:
+                title: 'PHP'
+                path: docs/devphp.md
+            1:
+                title: 'JS'
+                path: docs/devjs.md
+            2:
+                title: 'Tools'
+                path: docs/devtools.md
