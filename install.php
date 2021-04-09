@@ -28,6 +28,7 @@ class GeolocationInstallException extends \RuntimeException {}
 include( __DIR__ . '/lib/cronjob.php' );
 include( __DIR__ . '/lib/yform/dataset/mapset.php' );
 include( __DIR__ . '/lib/config_form.php' );
+include( __DIR__ . '/lib/asset_packer.php' );
 
 // das bin ich ...
 if( !defined('Geolocation\ADDON') ) define( 'Geolocation\ADDON', $this->getName() );
