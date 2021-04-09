@@ -1,10 +1,8 @@
-> - [Übersicht](#overview)
 > - [Installation](install.md)
 > - [Verwaltung und Konfiguration](admin.md)
-> - [Nutzung](usage.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
-> - [Für Entwickler](devphp.md)
->   - [PHP](devphp.md)
+> - Für Entwickler
+>   - PHP
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
 

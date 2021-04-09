@@ -1,9 +1,7 @@
-> - [Übersicht](#overview)
 > - [Installation](install.md)
 > - [Verwaltung und Konfiguration](admin.md)
-> - [Nutzung](usage.md)
-> - [Karten-Proxy und -Cache](proxy_cache.md)
-> - [Für Entwickler](devphp.md)
+> - Karten-Proxy und -Cache
+> - Für Entwickler
 >   - [PHP](devphp.md)
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
@@ -23,6 +21,7 @@ gibt es eine individualisierte Installation.
     - [Eigene Scripte und CSS-Formatierungen](#ownjscss)
     - [LeafletJS ohne **Geolocation**](#compile1)
     - [**Geolocation** ohne LeafletJS](#compile0)
+- [Berechtigungen](#perm)
 
 <a name="install"></a>
 ## Installation
@@ -440,3 +439,8 @@ scope:
     compile: 0
     load: true
 ```
+
+<a name="perm"></a>
+## Berechtigungen
+
+Für die Berechtigungsverwaltung im Backend mit

@@ -1,12 +1,10 @@
-> - [Übersicht](#overview)
 > - [Installation](install.md)
 > - [Verwaltung und Konfiguration](admin.md)
-> - [Nutzung](usage.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
-> - [Für Entwickler](devphp.md)
+> - Für Entwickler
 >   - [PHP](devphp.md)
 >   - [Javascript](devjs.md)
->   - [JS-Tools](devtools.md)
+>   - JS-Tools
 
 # JS-Kartentools
 
@@ -214,7 +212,7 @@ Geolocation.Tools.Template = class {
 
 Eigene Tools müssen die Methoden ggf. überschreiben.
 
-> ```return this``` ist wichtig! 
+> ```return this``` ist wichtig!
 
 <a name="tnrmarker"></a>
 ### "nrmarker"
