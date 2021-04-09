@@ -46,7 +46,7 @@ try {
     $sql = \rex_sql::factory();
 
     // Vorgabewerte aus der install/config.yml einlesen.
-    // Falls es eine instanzbezogenen config.yml in Data-Verzeichnis gibt, wird diese
+    // Falls es eine instanzbezogene config.yml in Data-Verzeichnis gibt, wird diese
     // benutzt und nur fehlende Werte aus der install/config.yml gezogen.
     $systemConfig = \rex_file::getConfig( $this->getDataPath('config.yml'), [] ) ?: [];
     $config = \rex_file::getConfig( __DIR__ . '/install/config.yml', [] );
@@ -108,10 +108,15 @@ try {
                     $dataset
                 );
             }
+            // etwas kompliziert, da importDump unbedingt eine .sql-Datei will.
             $filename = tempnam( sys_get_temp_dir(), '' );
-            file_put_contents( $filename, $dataset );
-            \rex_sql_util::importDump( $filename );
-            unlink( $filename );
+            while( !rename($filename, $sqlfile = $filename.'.sql') ) {
+                unlink( $filename );
+                $filename = tempnam( sys_get_temp_dir(), '' );
+            }
+            file_put_contents( $sqlfile, $dataset );
+            \rex_sql_util::importDump( $sqlfile );
+            unlink( $sqlfile );
             $msg[] = $this->i18n( 'install_table_filled');
         }
     }
