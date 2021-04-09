@@ -17,22 +17,25 @@ if( \Geolocation\PROXY_ONLY ){
     }
 }
 
+
+// Button "Delete Cache" konfigurieren (Referenziere auf die aktuelle Seite)
+$page = \rex_be_controller::getPageObject('geolocation');
+if( $page ){
+    $page = $page->getSubpage('clear_cache');
+    if( $page ){
+        $href = \rex_url::backendController([
+            'page' => \rex_be_controller::getCurrentPageObject()->getFullKey(),
+            'rex-api-call' => 'clear_cache'
+        ], false);
+        $page->setHref( $href );
+    }
+}
+
 // Title und Submenü
 echo \rex_view::title( $this->i18n('geolocation_title') );
 
-// Je nach Anforderung den Gesamt-Cache oder den Layer-Cache löschen
-//
-//      index.php?....func=clear_cache                  Gesamt-Cache
-//      index.php?....func=clear_cache&layer_id=«id»    Layer-Cache
-
-$func = \rex_request('func', 'string');
-if ('clear_cache' == $func) {
-    $layerId = \rex_request('layer_id', 'integer', 0);
-    $c = $layerId
-         ? \Geolocation\cache::clearLayerCache( $layerId )
-         : \Geolocation\cache::clearCache();
-    echo \rex_view::info($this->i18n('geolocation_cache_files_removed', $c));
-}
+// API Messages
+echo rex_api_function::getMessage();
 
 // Liste 'rex_geolocation_layer' um einen Button zum Löschen des Layer-Cache erweitern
 \rex_extension::register('YFORM_DATA_LIST',
