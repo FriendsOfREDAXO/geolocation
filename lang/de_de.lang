@@ -72,6 +72,11 @@ geolocation_layer_type_choice_o = Overlay
 geolocation_layer_fs_cache = Cache-Parameter
 geolocation_layer_fs_rest = Weitere Parameter
 
+# Permissions
+perm_general_geolocation[layer] = Kartenlayer verwalten
+perm_general_geolocation[mapset] = Kartensätze verwalten
+perm_general_geolocation[clearcache] = Cache löschen
+
 # Cronjob
 geolocation_cron_title = Geolocation: Cache bereinigen
 geolocation_cron_error = Layer «{0}»: unbekannt
