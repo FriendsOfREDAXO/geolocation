@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="assets/addons/be_style/css/styles.css">
+    <link rel="stylesheet" href="assets/addons/be_style/plugins/redaxo/css/styles.css">
+    <link rel="stylesheet" href="assets/addons/be_style/css/styles.css">
+
+    <!-- Leaflet -->
+	<link rel="stylesheet" href="assets/addons/geolocation/vendor/leaflet/leaflet.css" />
+	<script src="assets/addons/geolocation/vendor/leaflet/leaflet-src.js" type="text/javascript"></script>
+
+    <!-- Geolocation -->
+	<script src="assets/addons/geolocation/geolocation.js" type="text/javascript"></script>
+
+</head>
+<body>
+
+<style>
+
+    .map {
+        margin-top:1em;
+        margin-left:1em;
+        width: 100%;
+        height: 400px;
+        border: 1px solid red;
+    	max-width: 600px;
+    }
+
+</style>
+
+<section class="rex-page-main-inner" style="margin:20px;max-width: 1000px;">
+    <section class="rex-page-section">
+        <div class="panel panel-edit" >
+            <div class="panel-heading">
+                <div class="panel-title">Formular</div>
+            </div>
+            <div class="panel-body">
+                <form>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <label for="yform-data_edit-tablename-field-1">Straße</label>
+                                <input type="text" class="form-control" id="yform-data_edit-tablename-field-1">
+                            </div>
+                            <div class="form-group">
+                                <label for="yform-data_edit-tablename-field-2">Postleitzahl</label>
+                                <input type="text" class="form-control" id="yform-data_edit-tablename-field-2">
+                            </div>
+                            <div class="form-group">
+                                <label for="yform-data_edit-tablename-field-3">Ort</label>
+                                <input type="text" class="form-control" id="yform-data_edit-tablename-field-3">
+                            </div>
+                            <div class="form-group">
+                                <label for="yform-data_edit-tablename-field-4">Karte</label>
+                                <rex-map
+                                    class="map"
+                                    map="{&quot;minZoom&quot;:3}"
+                                    mapset="{
+                                        &quot;default&quot;:{&quot;tile&quot;:1,&quot;label&quot;:&quot;Karte&quot;,&quot;attribution&quot;:&quot;Map Tiles &amp;copy; 2020 &lt;a href=\&quot;http:\/\/developer.here.com\&quot;&gt;HERE&lt;\/a&gt;&quot;},
+                                        &quot;sat&quot;:{&quot;tile&quot;:2,&quot;label&quot;:&quot;Satelit&quot;,&quot;attribution&quot;:&quot;Map Tiles &amp;copy; 2020 &lt;a href=\&quot;http:\/\/developer.here.com\&quot;&gt;HERE&lt;\/a&gt;&quot;},
+                                        &quot;hybrid&quot;:{&quot;tile&quot;:3,&quot;label&quot;:&quot;Hybrid&quot;,&quot;attribution&quot;:&quot;Map Tiles &amp;copy; 2020 &lt;a href=\&quot;http:\/\/developer.here.com\&quot;&gt;HERE&lt;\/a&gt;&quot;}
+                                        }"
+                                    dataset="{&quot;position&quot;:[47.516669,9.433338],&quot;bounds&quot;:[[47.5,9.3],[47.7,9.7]],&quot;marker&quot;:[[47.611593,9.296344],[47.586204,9.560653],[47.54378,9.686559]]}"
+                                ></rex-map>
+                            </div>
+                            <button type="submit" class="btn btn-default">Submit</button>
+                            <button type="button" class="btn btn-default" onclick="here2osm(event)">HERE &lt;=&gt; OSM</button>
+                            <button type="button" class="btn btn-default" onclick="ds2ds(event)">Daten A &lt;=&gt; Daten B</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</section>
+
+<script type="text/javascript">
+
+    var hereMapset = null;
+    fetch ('index.php?geomapset=1')
+            .then (response => response.json ())
+            .then ( mapset => hereMapset = JSON.stringify(mapset) );
+
+    var osmMapset = null;
+    fetch ('index.php?geomapset=2')
+        .then (response => response.json ())
+        .then ( mapset => osmMapset = JSON.stringify(mapset) );
+
+    var dataset = [
+        JSON.stringify({
+            position:[47.801085,9.037348],
+            bounds:[[47.9,9.0],[47.6,9.3]],
+            marker:[[47.794324, 9.099352],[47.694095, 9.267151]],
+        }),
+        JSON.stringify({
+            position:[47.516669,9.433338],
+            bounds:[[47.5,9.3],[47.7,9.7]],
+            marker:[[47.611593,9.296344],[47.586204,9.560653],[47.54378,9.686559]],
+        }),
+    ];
+
+    function here2osm( e ){
+        e.stopPropagation();
+        e.preventDefault();
+        let map = document.querySelector('rex-map');
+        if( !map ) return;
+        if( '1' == map.getAttribute( 'here' ) ){
+            map.setAttribute( 'mapset', hereMapset );
+            map.setAttribute( 'here', '' );
+        } else {
+            map.setAttribute( 'mapset', osmMapset );
+            map.setAttribute( 'here', '1' );
+        }
+    }
+
+    function ds2ds( e ){
+        e.stopPropagation();
+        e.preventDefault();
+        let map = document.querySelector('rex-map');
+        if( !map ) return;
+        let i =  map.getAttribute( 'ds' ) || 0;
+        if( i >= dataset.length ) i = 0;
+        map.setAttribute( 'dataset', dataset[i] );
+        map.setAttribute( 'ds', i+1 );
+    }
+
+
+</script>
+
+</body>
+</html>

@@ -1,6 +1,6 @@
-# Contribution to a planned<br>Geo-Addon for [REDAXO](https://redaxo.org) 5.11+
+# Contribution to a planned<br>Geo-Addon for [REDAXO](https://redaxo.org) 5.12+
 
-**Version 0.9 | 15.02.2021** - Änderungen siehe [Change-Log](CHANGELOG.md)
+**Version 0.10 | 09.04.2021** - Änderungen siehe [Change-Log](CHANGELOG.md)
 
 ## Verwendung:
 
