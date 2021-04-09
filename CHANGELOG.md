@@ -1,5 +1,19 @@
 # Changelog
 
+## **09.04.2021 Version 0.10.0
+
+- Javascript
+    - i18n jetzt mit Parametern zur Textersetzung
+- php
+    - Permissions eingeführt
+    - Cache Löschen nun via API-CAll
+    - yTemplate value.choice.check.tpl.php: Aufruf des Originaltemplates verbessert
+- Doku
+    - Menü im Header korrigiert
+- Bugs
+    - CSS verbessert
+    - Installations-Fehler bei `importDump()` behoben (Dateiname ohne .sql)
+
 ## **15.02.2021 Version 0.9.0**
 
 - Umgestellt auf `namespace Geolocation;`
