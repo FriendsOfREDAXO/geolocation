@@ -1,11 +1,10 @@
 package: geolocation
-version: '0.9.0'
+version: '0.10.0'
 author: Christoph Böcker
 supportpage: https://github.com/christophboecker/geolocation
 
 page:
     title: translate:geolocation_title
-    perm: admin
     pjax: true
     icon: rex-icon fa-globe
     subpages:
@@ -15,27 +14,26 @@ page:
             perm: admin[]
         mapset:
             title: translate:geolocation_mapset
-            perm: admin[]
+            perm: geolocation[mapset]
             icon: fa fa-map
             subPath: pages/yform.php
         layer:
             title: translate:geolocation_layer
-            perm: admin[]
+            perm: geolocation[layer]
             icon: fa fa-cloud-download
             subPath: pages/yform.php
         docs:
             title: translate:geolocation_manpage
-            perm: admin[]
             icon: fa fa-book
             subPath: help.php
-        clear_cache:
+        dummy:
             title: 'translate:geolocation_clear_cache'
-            perm: admin[]
+            perm: geolocation[clearcache]
             itemclass: 'pull-right'
             linkclass: 'btn btn-delete'
             href:
                 page: geolocation/config
-                func: clear_cache
+                rex-api-call: geolocation_clearcache
 
 yform:
     geolocation/mapset:
@@ -45,8 +43,8 @@ yform:
 
 requires:
     php:
-        version: '>=7.1'
-    redaxo: '^5.11.0'
+        version: '>=7.3, <9'
+    redaxo: '^5.12.0'
     packages:
-        cronjob: '^2.7'
+        cronjob: '^2.8'
         yform: '^3.4'
