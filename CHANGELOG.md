@@ -1,6 +1,6 @@
 # Changelog
 
-## **09.04.2021 Version 0.10.0
+## **09.04.2021 Version 0.10.0**
 
 - Javascript
     - i18n jetzt mit Parametern zur Textersetzung
@@ -10,9 +10,13 @@
     - yTemplate value.choice.check.tpl.php: Aufruf des Originaltemplates verbessert
 - Doku
     - Menü im Header korrigiert
+    - Texte überarbeitet
 - Bugs
     - CSS verbessert
     - Installations-Fehler bei `importDump()` behoben (Dateiname ohne .sql)
+
+___
+
 
 ## **15.02.2021 Version 0.9.0**
 
