@@ -50,7 +50,7 @@ class cache
     # Löscht alle Dateien im Cache für den angegebenen Layer
     static public function clearLayerCache( $layer = null )
     {
-        if( !$layer ) return 0;
+        $count = 0;
         $targetDir = \rex_path::addonCache( ADDON, $layer );
         $count = count( glob($targetDir.'/*', GLOB_NOSORT) );
         $count = \rex_dir::delete( $targetDir, true ) ? $count : 0;
@@ -64,7 +64,7 @@ class cache
         $targetDir = \rex_path::addonCache( ADDON );
         foreach( glob($targetDir.'*', GLOB_NOSORT) as $dir ){
             $count += self::clearLayerCache( substr($dir,strrpos($dir,'/')+1) );
-        };
+        }
         return $count;
     }
 
