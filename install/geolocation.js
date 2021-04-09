@@ -41,8 +41,24 @@ var Geolocation = {
 
     cLang: (window.navigator.userLanguage || window.navigator.language).substr(0,2),
     lang: {%i18n%}, // Sprachen / Textübersetzung
+    i18n: function( t, data ) {
+        let db = this.lang[this.cLang];
+        if( db ) {
+            let lct = t.toLowerCase();
+            if( db[lct] ) t = db[lct];
+        }
+        if( data instanceof Object ) {
+            try {
+                t = t.replace(/\{ *([\w_-]+) *\}/g, function (t,key) {return data[key] || '{'+key+'}';});
+            } catch (e) {
+                // void
+            }
+        }
+        return t;
+    },
 
     sPath: document.currentScript.src.substr(0,document.currentScript.src.lastIndexOf('/')+1),
+
 };
 
 Geolocation.icon.fullscreenOn = '<svg viewBox="0 0 13 13" stroke="currentColor" fill="transparent" xmlns="http://www.w3.org/2000/svg"><path d="M5,1h-4v4m0,3v4h4m3,0h4v-4m0,-3v-4h-4" stroke-width="2"></svg>';
@@ -51,16 +67,6 @@ Geolocation.icon.focusR = '<svg viewBox="0 0 51 51" stroke="currentColor"fill="t
 Geolocation.icon.locate = '<svg viewBox="0 0 50 50" stroke="currentColor"fill="transparent" xmlns="http://www.w3.org/2000/svg"><circle cx="25"cy="25"r="5"fill="currentColor"/><path d="M7,25a18,18 0 1,0 36,0a-18,18 0 1,0 -36,0M0,25h15M35,25h15M25,0v15M25,35v15"stroke-width="3"/></svg>';
 
 //-- Hilfsfunktionen -------------------------------------------------------------------------------
-
-// Sprache: setzt auf Basis der Sprache (z.B. `de` ) das Label in den gewünschten String um.
-
-Geolocation.i18n = function( label ) {
-    let lang = Geolocation.lang[Geolocation.cLang];
-    if( !lang ) return label;
-    let lLabel = label.toLowerCase();
-    if( !lang[lLabel] ) return label;
-    return lang[lLabel];
-}
 
 // sichere Umwandeln eines (hoffentlich) JSON-String in ein Objekt
 // data         String mit JSON-Content

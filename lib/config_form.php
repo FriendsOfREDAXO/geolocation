@@ -11,10 +11,40 @@ class config_form extends \rex_config_form
 
     public $addon = '';
 
+    // Work-around für REDAXO ab 5.12 betreffend validator->notEmpty
+    // seitdem wird notEmpty automatisch zu einem "required"-Input mit Client-Validierung
+    // Das mag ich nicht; daher das Required-Attribut wieder per JS abschalten
+
+    public $R_5_12 = false;
+
+    public function init(){
+        parent::init();
+        if( !$this->R_5_12 ) return;
+        $id = 'rf' . md5(microtime());
+        $this->setFormId( $id );
+        $this->addRawField('
+        <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            let item, form = document.getElementById(\''.$id.'\');
+            if( !form ) return;
+            form.querySelectorAll( \'form input[remove_required="1"]\').forEach( (item) => item.removeAttribute("required") );
+        });
+        </script>
+        ');
+    }
+
+    public function classicNotEmpty( $field ){
+        if( $this->R_5_12 ) {
+            $field->setAttribute('remove_required',1);
+        }
+    }
+    //-----------
+
     protected function __construct($namespace, $fieldset = null, $debug = false)
     {
         parent::__construct($namespace, $fieldset, $debug);
         $this->addon = $namespace;
+        $this->R_5_12 = \rex_version::compare(\rex::getVersion(),'5.11.99','>');
 
         if( !PROXY_ONLY ){
             $this->addFieldset( \rex_i18n::msg('geolocation_config_map') );
@@ -31,17 +61,18 @@ class config_form extends \rex_config_form
                 $field->getValidator()
                       ->add( 'notEmpty', $errorMsg )
                       ->add( 'match', $errorMsg.'#', '/^\s*\[[+-]?\d+(\.\d+)?,\s*[+-]?\d+(\.\d+)?\],\s*[[+-]?\d+(\.\d+)?,\s*[+-]?\d+(\.\d+)?\]\s*$/');
+                $this->classicNotEmpty( $field );
 
-                # geolocation_form_map_zoom
-                # geolocation_form_map_zoom_error
                 $field = $this->addTextField( 'map_zoom' );
                 $field->setLabel( \rex_i18n::msg('geolocation_form_map_zoom') );
                 $field->setNotice( \rex_i18n::msg('geolocation_form_map_zoom_notice',ZOOM_MIN,ZOOM_MAX) );
+                $errorMsg = \rex_i18n::msg('geolocation_form_map_zoom_error');
                 $field->getValidator()
-                      ->add( 'notEmpty', \rex_i18n::msg('geolocation_form_map_zoom_error'))
-                      ->add( 'type', \rex_i18n::msg('geolocation_form_map_zoom_error'), 'integer')
-                      ->add( 'min', \rex_i18n::msg('geolocation_form_map_zoom_error'), ZOOM_MIN)
-                      ->add( 'max', \rex_i18n::msg('geolocation_form_map_zoom_error'),ZOOM_MAX);
+                      ->add( 'notEmpty', $errorMsg)
+                      ->add( 'type', $errorMsg, 'integer')
+                      ->add( 'min', $errorMsg, ZOOM_MIN)
+                      ->add( 'max', $errorMsg,ZOOM_MAX);
+                $this->classicNotEmpty( $field );
 
                 $field = $this->addCheckboxField('map_components');
                 $field->setLabel(\rex_i18n::msg('geolocation_form_mapoptions'));
@@ -52,9 +83,11 @@ class config_form extends \rex_config_form
                 $field = $this->addTextField( 'map_outfragment' );
                 $field->setLabel( \rex_i18n::msg('geolocation_form_outfragment') );
                 $field->setNotice( \rex_i18n::msg('geolocation_form_map_outfragment_notice',OUT) );
+                $errorMsg = \rex_i18n::msg('geolocation_form_map_outfragment_error');
                 $field->getValidator()
-                    ->add( 'notEmpty', \rex_i18n::msg('geolocation_form_map_outfragment_error'))
-                    ->add( 'match', \rex_i18n::msg('geolocation_form_map_outfragment_error'), '/^.*?\.php$/');
+                      ->add( 'notEmpty', $errorMsg)
+                      ->add( 'match', $errorMsg, '/^.*?\.php$/');
+                $this->classicNotEmpty( $field );
         }
 
         $this->addFieldset( \rex_i18n::msg('geolocation_config_proxycache') );
@@ -68,6 +101,7 @@ class config_form extends \rex_config_form
                   ->add( 'type', $errorMsg, 'integer' )
                   ->add( 'min', $errorMsg, TTL_MIN )
                   ->add( 'max', $errorMsg, TTL_MAX );
+            $this->classicNotEmpty( $field );
 
             $field = $this->addTextField( 'cache_maxfiles' );
             $field->setLabel( \rex_i18n::msg('geolocation_form_proxycache_maxfiles') );
@@ -77,6 +111,7 @@ class config_form extends \rex_config_form
                   ->add( 'notEmpty', $errorMsg )
                   ->add( 'type', $errorMsg, 'integer' )
                   ->add( 'min', $errorMsg, CFM_MIN );
+            $this->classicNotEmpty( $field );
     }
 
     protected function getValue($name)

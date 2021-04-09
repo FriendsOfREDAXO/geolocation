@@ -74,7 +74,6 @@ class layer extends \rex_yform_manager_dataset
             }
             if( 'ttl' == $fe[1] && empty($fe[3]) ){
                 $fe[3] = \rex_config::get( ADDON, 'cache_ttl', TTL_DEF );
-                $fe[6] = \rex_i18n::rawMsg( str_replace('translate:','',$fe[6]),TTL_MAX);
                 continue;
             }
             if( 'cfmax' == $fe[1] && empty($fe[3]) ){
@@ -179,11 +178,14 @@ class layer extends \rex_yform_manager_dataset
     # Listenbezogen
 
     # Baut den Link/Button für "cache löschen" in die Listenansicht ein.
+    # nur für Admins und User mit Permission "geolocation[clearcache]"
     static public function listAddCacheButton( \rex_list $list, string $table_name ){
-        if( self::class != self::getModelClass( $table_name ) ) return;
-        $list->addColumn('clearCache', '<i class="rex-icon rex-icon-delete"></i> ' . \rex_i18n::msg('geolocation_clear_cache'), -1, ['', '<td class="rex-table-action">###VALUE###</td>']);
-        $list->setColumnParams('clearCache', ['layer_id' => '###id###', 'func' => 'clear_cache']);
-        $list->addLinkAttribute('clearCache', 'data-confirm', \rex_i18n::msg('geolocation_clear_cache_confirm','###name###'));
+        if( ($user = \rex::getUser()) && $user->hasPerm('geolocation[clearcache]') ){
+            if( self::class != self::getModelClass( $table_name ) ) return;
+            $list->addColumn('clearCache', '<i class="rex-icon rex-icon-delete"></i> ' . \rex_i18n::msg('geolocation_clear_cache'), -1, ['', '<td class="rex-table-action">###VALUE###</td>']);
+            $list->setColumnParams('clearCache', ['data_id' => '###id###', 'rex-api-call' => 'geolocation_clearcache']);
+            $list->addLinkAttribute('clearCache', 'data-confirm', \rex_i18n::msg('geolocation_clear_cache_confirm','###name###'));
+        }
     }
 
     # sorgt initial für die Sortierung nach 'layertyp,name'
