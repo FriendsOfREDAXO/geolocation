@@ -45,5 +45,16 @@ if( 'mapoptions' === $this->name ) {
     }
 }
 
-// ab hier das Original
-include \rex_path::addon('yform','ytemplates/bootstrap/value.choice.check.tpl.php');
+// ab hier das Original abrufen
+$geo['original'] = $this->params['form_ytemplate'];
+$geo['yt'] = explode(',',$geo['original']);
+$geo['i'] = array_search('geolocation',$geo['yt']);
+if( null === $geo['i']) {
+    $geo['next'] = \rex_path::addon('yform','ytemplates/bootstrap/value.choice.check.tpl.php');
+} else {
+    unset( $geo['yt'][$geo['i']] );
+    $this->params['form_ytemplate'] = implode(',',$geo['yt']);
+    $geo['next'] = $this->params['this']->getTemplatePath($template);
+    $this->params['form_ytemplate'] = $geo['original'];
+}
+include $geo['next'];
