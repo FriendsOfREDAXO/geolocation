@@ -22,7 +22,7 @@
  *  ------------------------------------------------------------------------------------------------
  */
 
-namespace AssetPacker\AssetPacker;
+namespace AssetPacker;
 /**
  *  @package AssetPacker
  *  @method AssetPacker     target( string $targetPath )
