@@ -44,7 +44,7 @@ ___
 - Proxy auch ohne Cache möglich (nur Durchreichen), wenn die Aufbewahrungsdauer (TTL) null (0) ist
 - Javascript
     - In der Karte das Zoom-Control ersetzt durch ein Control mit Buttons für Zoom, Fullscreen, Home
-    - Kartenverwaltung aus dem Custom-HTML-Elenent <rex-map> verlagert in eine eigene Klasse.
+    - Kartenverwaltung aus dem Custom-HTML-Elenent `<rex-map>` verlagert in eine eigene Klasse.
     - Neue Funktion zum Initialisieren eines <div> statt Nutzung des Custom-HTML-Elenents
 - Installation
     - tableset.json um unnötige Einträge erleichtert.
