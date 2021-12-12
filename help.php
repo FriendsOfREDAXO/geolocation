@@ -3,7 +3,7 @@
  *  HELP.PHP für REDAXO-Addons
  *
  *  @author     Christoph Böcker <https://github.com/christophboecker>
- *  @version    2.1
+ *  @version    2.3
  *  @copyright  Christoph Böcker <https://github.com/christophboecker>
  *  @license    MIT
  *  @see        https://github.com/christophboecker/help.php  Repository on Github
@@ -14,8 +14,9 @@
  *  @var rex_addon $this
  */
 
+
 /*
-    2.1: wirf _pjax aus dem Request; klemmt sonst womöglich
+    2.1: wirft _pjax aus dem Request; klemmt sonst womöglich
     2.1: Zweistufige Menüs
     2.1: Menüstrukturen (help:) optional in eigener help.yml statt package.yml
 */
@@ -32,6 +33,7 @@ if( !class_exists('help_documentation') )
         public $filetype = '';
         public $targetfile = '';
         public $context = null;
+        public $prohibited = [];
 
         //  $filename       ist der Name der anzuzeigenden Datei im $dir. Sofern es keine anderen Angaben
         //                  gibt, wird die README.md des Addons angezeigt.
@@ -48,6 +50,7 @@ if( !class_exists('help_documentation') )
         function __construct( \rex_addon $addon )
         {
             $this->context = $addon;
+            $user = rex::getUser();
             //  Im weiteren Verlauf wird immer wieder das aktuelle Verzeichnis (Root des Addons) benötigt
             $this->dir = $addon->getPath();
             $this->dirLen = strlen( $this->dir );
@@ -60,7 +63,40 @@ if( !class_exists('help_documentation') )
             else:
                 $navigation = $addon->getProperty('help',[]);
             endif;
+
             $this->navigation = $navigation[\rex_be_controller::getCurrentPage()] ?? $navigation['default'] ?? [];
+
+            // Berechtigungen prüfen und rauswerfen, was nicht berechtigt ist
+            // Aus der Navigation das Array 'permissions' extrahieren
+            $permissions = $this->navigation['permissions'] ?? [];
+            if( $permissions ) {
+                // aus der Navigation entfernen
+                unset( $this->navigation['permissions'] );
+                foreach( $permissions as $k=>$v ) {
+                    foreach( (array) $v as $perm ) {
+                        if( $perm && !$user->hasPerm($perm) ) {
+                            $this->prohibited[] = $k;
+                        }
+                    }
+                }
+            }
+
+            foreach( $this->navigation as $k1=>$v1 ) {
+                $permission = $v1['perm'] ?? '';
+                if( $permission && !$user->hasPerm($permission) ) {
+                    $this->prohibited[] = $v1['path'];
+                    unset( $this->navigation[$k1] );
+                }
+                foreach( ($v1['subnav'] ?? []) as $k2=>$v2 ) {
+                    $subPermission = $v2['perm'] ?? $permission;
+                    if( $subPermission && !$user->hasPerm($subPermission) ) {
+                        $this->prohibited[] = $v2['path'];
+                        unset( $this->navigation[$k1][$k2] );
+                    }
+                }
+            }
+            $this->prohibited = array_unique( $this->prohibited );
+
             if( isset($this->navigation['initial']) && $this->navigation['initial'] ){
                 $this->initialPage = $this->navigation['initial'];
                 unset( $this->navigation['initial'] );
@@ -94,7 +130,7 @@ if( !class_exists('help_documentation') )
         //      «addon_root»/CREDITS.md
         //      «addon_root»/docs/*
         //
-        //  Als Nebeneffekt wird geprüft, ob die DAtei überhaupt exisitert bzw. ob sie in einer
+        //  Als Nebeneffekt wird geprüft, ob die Datei überhaupt exisitert bzw. ob sie in einer
         //  Sprachversion existiert (pfad/dateiname.lang.suffix), die statt des Originalnamens genutzt wird.
 
         function getDocumentName( )
@@ -124,11 +160,13 @@ if( !class_exists('help_documentation') )
                 if( 0 == strcasecmp($this->dir,$real_dir) )
                 {
                     $filename = substr($real_path,$this->dirLen);
-                    if( 0 == strcasecmp(substr($filename,0,5),'docs'.DIRECTORY_SEPARATOR)
+                    $xxx = in_array( $filename,$this->prohibited );
+                    if( ( 0 == strcasecmp(substr($filename,0,5),'docs'.DIRECTORY_SEPARATOR)
                      || 0 == strcasecmp($filename,'readme.md')
                      || 0 == strcasecmp($filename,'changelog.md')
                      || 0 == strcasecmp($filename,'credits.md')
                      || 0 == strcasecmp($filename,'license.md') )
+                     && !in_array( $filename,$this->prohibited ) )
                     {
                         return $filename;
                     }
@@ -207,7 +245,8 @@ if( !class_exists('help_documentation') )
                     if( !$link
                      || '#' == substr($link,0,1)
                      || '?' == substr($link,0,1)
-                     || preg_match( '/^.*?\:\/\/.*?$/',$link) )
+                     || preg_match( '/^.*?\:\/\/.*?$/',$link)
+                     || (false === ($href = help_documentation::getLink( $request, $link, $docfile ))) )
                     {
                         $term = $matches[0];
                         $href = $link;
@@ -215,8 +254,12 @@ if( !class_exists('help_documentation') )
                     //  alle anderen Varianten umbauen
                     else
                     {
-                        $href = help_documentation::getLink( $request, $link );
-                        $term = $matches[1] . $href . $matches[5];
+                        // gesperrte Seite => ohne Link
+                        if( in_array($docfile,$this->prohibited) ) {
+                            $term = $matches[3];
+                        } else {
+                            $term = $matches[1] . $href . $matches[5];
+                        }
                     }
                     return \rex_extension::registerPoint(new \rex_extension_point(
                         'HELP_HREF',
@@ -234,7 +277,7 @@ if( !class_exists('help_documentation') )
             return $text;
         }
 
-        static function getLink( $request, $link )
+        static function getLink( $request, $link, &$docfile=null )
         {
             $url = '';
             if( preg_match('/^(?<link>.*?)(#(?<hook>.*?))?$$/',$link,$linkinfo) ){
@@ -242,6 +285,7 @@ if( !class_exists('help_documentation') )
                 if( isset($request['_pjax']) ) unset($request['_pjax']);
                 $url = \rex_url::currentBackendPage( $request,false );
                 if( $linkinfo['hook'] ?? '' ) $url .= '#' . $linkinfo['hook'];
+                $docfile = $request['doc'];
             }
             return $url;
         }
@@ -321,7 +365,6 @@ if( !class_exists('help_documentation') )
                     $active = $active || $tab['active'];
                 }
             }
-            dump( $tabs );
             return $active ? $tabs : [];
         }
 
@@ -385,7 +428,6 @@ if( $publish->isAsset() ) {
     $publish->sendAsset();
 }
 
-$text = '';
 if( $path = $publish->getFilePath() ) {
 
     $text = \rex_file::get( $path );
@@ -393,9 +435,17 @@ if( $path = $publish->getFilePath() ) {
     $text = $publish->stripGithubNavigation( $text );
     $text = $publish->replaceLinks( $text );
 
-    $text = $publish->getDocument( $text );
+} else {
 
+    $key = $this->getName() . '_helpphp_not_found';
+    if( !\rex_i18n::hasMsg($key) ) {
+        \rex_i18n::addMsg($key, '#Sorry, die angeforderte Seite existiert nicht oder ist gesperrt!');
+    }
+    $text = \rex_i18n::msg($key);
 }
+
+$text = $publish->getDocument( $text );
+
 ?>
 <?=$publish->getJsCss()?>
 <div class="help-documentation">
