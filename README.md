@@ -1,6 +1,6 @@
-# Contribution to a planned<br>Geo-Addon for [REDAXO](https://redaxo.org) 5.12+
+# Contribution to a planned<br>Geo-Addon for [REDAXO](https://redaxo.org) 5.13+
 
-**Version 0.10 | 09.04.2021** - Änderungen siehe [Change-Log](CHANGELOG.md)
+**Version 0.12.0 | 12.12.2021** - Änderungen siehe [Change-Log](CHANGELOG.md)
 
 ## Verwendung:
 
@@ -10,6 +10,7 @@
 - Ideen-Beitrag für das [Experimental-Proxy](https://github.com/FriendsOfREDAXO/experimental/tree/master/plugins/proxy)-Projekt
     - Tile-Proxy mit Cache
 - Ansonsten zur gefälligen Benutzung
+- benötigt [YForm](https://github.com/yakamara/redaxo_yform) 4.0+
 
 >**nicht als [FOR](https://github.com/FriendsOfREDAXO-Addon)-Addon vorgesehen, es sollte m.E. nur __ein__ GEO-Addon bei FriendsOfREDAXO geben!**
 
