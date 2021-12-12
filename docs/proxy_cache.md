@@ -1,7 +1,9 @@
 > - [Übersicht](#overview)
-> - [Installation](install.md)
-> - [Verwaltung und Konfiguration](admin.md)
-> - [Nutzung](usage.md)
+> - Installation und Einstellungen
+>   - [Installation](install.md)
+>   - [Einstellungen](settings.md)
+> - [Kartensätze verwalten](mapset.md)
+> - [Karten/Layer verwalten](layer.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
 > - [Für Entwickler](devphp.md)
 >   - [PHP](devphp.md)
@@ -28,7 +30,7 @@ zwischenzuspeichern (Cache).
 
 Die Leaflet-Karten bestehen aus Kartenkacheln (Tiles), die von einem entsprechenden Server
 bereitgestellt werden. Anbieter sind z.B. OpenStreetMap, Google, Apple oder Here. Details zum
-Erfassen und Verwalten sind in der Anleitung zur [Verwaltung der Karten](admin.md#tile) zu finden.
+Erfassen und Verwalten sind in der Anleitung zur [Verwaltung der Karten](layer.md) zu finden.
 
 In der REDAXO-Instanz fungiert **Geolocation** als
 
@@ -40,17 +42,17 @@ In der REDAXO-Instanz fungiert **Geolocation** als
     - Cache-Verwaltung per Cron-Job
 
 Zur Nutzung der Proxy/Cache-Funktionalität ist es lediglich notwendig, in der
-[Kartenverwaltung](admin.md#tile) der Webseite die gewünschten URLs zu konfigurieren.
+[Kartenverwaltung](layer.md) der Webseite die gewünschten URLs zu konfigurieren.
 Das **Geolocation**-Javascript erzeugt die Karten per LeafletJS und nutzt immer den hier
 beschriebenen ProxyCache.
 
 Der Proxy kann auch mit Karten eingesetzt werden, die mit anderer Software
 (z.B. [OpenLayers](https://openlayers.org/)) erzeugt werden; allerdings muss die URL dann
 entsprechend im JS angegeben werden. **Geolocation** sollte dazu als "[nur Proxy](install.md#proxy)"
-installiert werden, was im Backend unterbindet, das für die Karten nötige  
+installiert werden.  
 
 > Es ist nicht notwendig, das zu **Geolocation** gehörende Javascript zu laden, um die
-> Proxy-Funktionalität zu nutzen. In der [Installationsbeschreibung](install.md) ist beschrieben,
+> Proxy-Funktionalität zu nutzen. In der [Installationsbeschreibung](install.md#proxy) ist beschrieben,
 > wie **Geolocation** Proxy-optimiert installiert werden kann.
 
 <a name="url"></a>
@@ -58,7 +60,7 @@ installiert werden, was im Backend unterbindet, das für die Karten nötige
 
 Die Kartenkacheln können mit einer standardisierten URL vom Server der REDAXO-Instanz abgerufen
 werden. Die URL unterscheiden sich nur über die Datensatznummer, unter der die Karten-URL in der
-[Karten-Verwaltung](admin.md#tile) erfasst wurde.
+[Karten-Verwaltung](layer.md) erfasst wurde.
 
 ```html
 index.php?geolayer=«id»&x={x}&y={y}&z={z}

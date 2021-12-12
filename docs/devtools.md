@@ -1,32 +1,15 @@
-> - [Installation](install.md)
-> - [Verwaltung und Konfiguration](admin.md)
+> - Installation und Einstellungen
+>   - [Installation](install.md)
+>   - [Einstellungen](settings.md)
+> - [Kartensätze verwalten](mapset.md)
+> - [Karten/Layer verwalten](layer.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
 > - Für Entwickler
 >   - [PHP](devphp.md)
 >   - [Javascript](devjs.md)
 >   - JS-Tools
 
-# JS-Kartentools
-
-## Inhalt
-
-Die Karte wird mit dem Custom-HTML-Tag `<rex-map>` erzeugt. Im Attribut `dataset` werden die
-Karteninhalte als JSON-Array angegeben. Der Name jedes Dataset-Elements ist der Name eines
-Darstellungs-Tools.
-
-Eigene Tools für weitere Anwendungsfälle sind einfach programmierbar.
-Zwei [Beispiele für eigene Tools](#tools2) sind in der Dokumentation enthalten.
-
-- [Das Konzept](#konzept)
-- [Vorinstallierte Tools](#tools1)
-  - ["bounds"](#tbounds)
-  - ["position"](#tposition)
-  - ["marker"](#tmarker)
-- [Custom-Tools (Beispiele)](#tools2)
-  - ["nrmarker"](#tnrmarker)
-  - ["center"](#tcenter)
-
-
+# Für Entwickler &dash; JS-Kartentools
 
 <a name="konzept"></a>
 ## Das Konzept
@@ -206,7 +189,7 @@ Geolocation.Tools.Template = class {
 |---|---|
 |constructor| Legt die Tool-Instanz an und belegt die Variablen |
 |setValue|Erhält die Tool-spezifischen Daten im korrekten Format. Sofern machbar werden die Daten zu Kartenelementen aufbereitet und falls möglich sofort auf die Karte gebracht.  |
-|show|Bringt die vorbereiteten Elemente auf die Karte und merkt sich die Karteninstant. Bei folgenden `setValue` können die Daten auf der Karte nun direkt aktualisiert werden. |
+|show|Bringt die vorbereiteten Elemente auf die Karte und merkt sich die Karteninstanz. Bei folgenden `setValue` können die Daten auf der Karte nun direkt aktualisiert werden. |
 |remove|Löscht die Elemente aus der Karte, hält sie aber für ein erneutes `show` weiter vor.|
 |getCurrentBounds|Liefert die Koordinate (Beispiel [`position`](#)) oder des Bereichs (Beispiel: [`marker`](#)) oder null (Beispiel: leere Markerliste)|
 
@@ -237,7 +220,8 @@ let datensatz = {
     nrmarker: [[[47.611593,9.296344],1],[[47.586204,9.560653],2],[[47.54378,9.686559],3]],
 }
 ```
-Die neue Tool-Klasse baut auf `Geolocation.Tools.Marker` auf. Das Icon wird per SVG erzeugt.
+Die neue Tool-Klasse baut auf `Geolocation.Tools.Marker` auf. Das Icon wird per SVG erzeugt; ein
+flexibles SVG kann per Funktion abgerufen werden.
 
 ```javascript
 Geolocation.Tools.Nrmarker = class extends Geolocation.Tools.Marker

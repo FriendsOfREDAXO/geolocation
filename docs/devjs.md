@@ -1,5 +1,8 @@
-> - [Installation](install.md)
-> - [Verwaltung und Konfiguration](admin.md)
+> - Installation und Einstellungen
+>   - [Installation](install.md)
+>   - [Einstellungen](settings.md)
+> - [Kartensätze verwalten](mapset.md)
+> - [Karten/Layer verwalten](layer.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
 > - Für Entwickler
 >   - [PHP](devphp.md)
@@ -7,21 +10,6 @@
 >   - [JS-Tools](devtools.md)
 
 # Für Entwickler &dash; Javascript
-
-## Inhalt
-
-- [Namespace **Geolocation**](#namespace)
-- [Defaut-Werte anpassen](#def)
-  - [Dauerhafte Änderungen](#def1)
-  - [Änderungen "on the fly"](#def2)
-  - [Location-Marker ändern](#lm)
-- [Sprachanpassung (i18n)](#lang)
-- [Events](#evt)
-  - [geolocation.create](#evtcreate)
-  - [geolocation.setData](#evtsetdata)
-- [&lt;div> statt &lt;rex-map>](#div)
-- [Wo ist was](#wiw)
-
 
 <a name="namespace"></a>
 ## Namespace **Geolocation**
@@ -33,7 +21,7 @@ und Funktionen des Geolocation-Kosmos sind hier an definierter Stelle eingehäng
 ```javascript
 var Geolocation = {
 
-    default: {},    // // Default-Werte
+    default: {},    // Default-Werte
 
     icon: {},       // Icons (SVG)
 
@@ -46,7 +34,7 @@ var Geolocation = {
 };
 ```
 
-Die spezifischen Klassen werden z.B. in `Geolocation.Classes.«Klasse»` definiert. Zusätzlich kann
+Die spezifischen Klassen werden z.B. als `Geolocation.Classes.«Klasse»` definiert. Zusätzlich kann
 als `Geolocation.classes.«klasse»` eine Factory-Funktion bereitgestellt werden. Dieses Schema ist
 aus Leaflet entlehnt: für die Factory-Funktionen ist das erste Zeichen ein Kleinbuchstabe.
 
@@ -66,15 +54,15 @@ neue Tools kann der Leistungsumfang einfach erweitert werden.
 
 Da es sich um eine eigene Gruppe von Klassen handelt, die für den Aufbau der Karteninhalte nötig
 sind, gibt es für sie eigene Container. Die wichtige Regel hier ist: für die Factory-Funktionen sind
-nur Kleinbuchstaben zulässig.
+insgesamt nur Kleinbuchstaben zulässig.
 
-Weitere Informationen und Beispiele sind in einem [eigenen Kapitel](#devtools.md) beschrieben.
+Weitere Informationen und Beispiele sind in einem [eigenen Kapitel](devtools.md) beschrieben.
 
 <a name="def"></a>
 ## Defaut-Werte anpassen
 
 Die Vorgabewerte werden an verschiedenen Stellen in den diversen **Geolocation**-Klassen genutzt.
-Bei jeder Änderung der [Einstellungen](admin.md#config) werden die Assets neu generiert und die
+Bei jeder Änderung der [Einstellungen](settings.md) werden die Assets neu generiert und die
 aktuellen Einstellungen in die jeweiligen Platzhalter `%«name»%` geschrieben.
 
 ```js
@@ -123,9 +111,9 @@ var Geolocation = {
 ### Dauerhafte Änderungen
 
 Grundlegende, also dauerhafte Änderungen der Default-Werte sollten nach fogenden Regeln erfolgen:
-- Über die [Einstellungen](admin.md#config) geänderte Werte (`%«name»%`) sollten nicht noch einmal
+- Über die [Einstellungen](settings.md) geänderte Werte (`%«name»%`) sollten nicht noch einmal
   geändert werden. Dafür sind die _Einstellungen_ da.
-- Alle anderen Änderungen sollten der Defaultwerte möglichst früh, also unmittelbar nach dem
+- Alle anderen Änderungen der Defaultwerte sollten möglichst früh, also unmittelbar nach dem
   JS-Basiscode geladen werden. Das Verfahren an sich ist im Kapitel zur
   [Installation](install.md#ownjscss) beschrieben.
 
@@ -144,7 +132,7 @@ if( 'object' === typeof(rex) && true === rex.backend ){
 <a name="def2"></a>
 ### Änderungen "on the fly"
 
-Darüber hinaus ist es auch möglich, Fallweise andere Einstellungen auszulösen, indem der JS-Code
+Darüber hinaus ist es auch möglich, fallweise andere Einstellungen auszulösen, indem der JS-Code
 zeitlich nach dem Geolocation-JS im HTML ausgegeben wird.
 
 <a name="lm"></a>
@@ -279,10 +267,11 @@ document.addEventListener( 'geolocation.setData', function(e){
 <a name="div"></a>
 ## &lt;div> statt &lt;rex-map>
 
-**Geolocation** baut die Karte mittels eines Custom-HTML-Elements `<rex-map>` auf. Da diese
-HTML-Elemente auch von modernen Browsern nicht vollumfänglich
-[unterstützt](https://caniuse.com/custom-elementsv1) werden, muss entweder auf ein Pollyfill
-zurückgegriffen werden oder gleich auf ein klassisches `<div>` als Map-Container.
+**Geolocation** baut die Karte mittels eines Custom-HTML-Elements `<rex-map>` auf. Diese
+HTML-Elemente werden von den relevanten Browsern im hier nötigen Umfang weitgehend
+[unterstützt](https://caniuse.com/custom-elementsv1). Andere Browser können möglicherweise mittels
+Pollyfill die Custo.HTML-Elemente anbieten oder das Standardfragment muss durch ein Fragment mittel
+klassischem `<div>` als Map-Container ersetzt werden.
 
 Unter weitgehender Nutzung der **Geolocation**-Struktur sind zwei Eingriffe notwendig:
 
@@ -294,7 +283,7 @@ CSS und JS können wie in der [Installationsbeschreibung](install.md#ownjscss) e
 **Geolocation**-JS bzw. -CSS kompiliert werden.
 
 Das Fragment muss in einem zugänglichen, update-sicheren Verzeichnis liegen (z.B.im Projekt-Addon).
-Das Fragment sollte als Default-Fragment in den [Einstellungen](install.md#config) eingetragen
+Das Fragment sollte als Default-Fragment in den [Einstellungen](settings.md) eingetragen
 werden bzw. in der [individualisierten Installation](install.md#parameter).
 
 ### REX-Fragment
