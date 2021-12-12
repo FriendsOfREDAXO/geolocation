@@ -1,0 +1,8 @@
+de: {
+    'home': 'Home',
+    'fullscreen on': 'Vollbild ein',
+    'fullscreen off': 'Vollbild aus',
+    'zoom in': 'Vergrößern',
+    'zoom out': 'Verkleinern',
+    'locate': 'Standort',
+}

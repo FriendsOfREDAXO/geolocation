@@ -273,7 +273,7 @@
 				"db_type": "",
 				"list_hidden": "1",
 				"search": "0",
-				"name": "subdomain",
+				"name": "url,subdomain",
 				"label": "",
 				"not_required": "",
 				"message": "translate:geolocation_layer_subdomain_error",

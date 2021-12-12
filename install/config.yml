@@ -11,7 +11,7 @@
 #   compile         0 = kein Leaflet und geolocation-JS in geolocation.min.js/css einfügen
 #                   1 = Leaflet-Core, sonst keine eigenen Elemente; danach aus data
 #                   2 = Leaflet und geolocation-JS; danach aus data
-#   load            false =geolocation.min.js, geolocation.man.css nicht laden
+#   load            false =geolocation.min.js, geolocation.min.css nicht laden
 scope:
     mapset: true
     compile: 2

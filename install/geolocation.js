@@ -1,4 +1,4 @@
-/* Geolocation-Addon V 1.0 for use with REDAXO 5.10 and above
+/* Geolocation-Addon V 1.0 for use with REDAXO 5.13 and above
 */
 
 // Namespace "Geolocation"

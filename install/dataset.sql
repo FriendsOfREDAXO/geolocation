@@ -1,8 +1,8 @@
 --
 -- Daten für Tabelle `rex_geolocation_layer`
 --
-TRUNCATE TABLE `rex_geolocation_layer`;
-INSERT INTO `rex_geolocation_layer` (`id`, `name`, `url`, `subdomain`, `attribution`, `lang`, `layertype`, `ttl`, `cfmax`, `online`) VALUES
+TRUNCATE TABLE `%TABLE_PREFIX%geolocation_layer`;
+INSERT INTO `%TABLE_PREFIX%geolocation_layer` (`id`, `name`, `url`, `subdomain`, `attribution`, `lang`, `layertype`, `ttl`, `cfmax`, `online`) VALUES
 (1, 'HERE: Standardkarte', 'https://{s}.base.maps.ls.hereapi.com/maptile/2.1/maptile/newest/normal.day/{z}/{x}/{y}/256/png8?apiKey=..........', '1234', 'Map Tiles &copy; 2020 <a href=\"http://developer.here.com\">HERE</a>', '[[\"de\",\"Karte\"],[\"en\",\"Map\"]]', 'b', 10000, 1000, '1'),
 (2, 'HERE: Satelit', 'https://{s}.aerial.maps.ls.hereapi.com/maptile/2.1/maptile/newest/satellite.day/{z}/{x}/{y}/256/png8?apiKey=..........', '1234', 'Map Tiles &copy; 2020 <a href=\"http://developer.here.com\">HERE</a>', '[[\"de\",\"Satelit\"],[\"en\",\"Satellite\"]]', 'b', 10000, 1000, '1'),
 (3, 'HERE: Hybrid (Karte+Satelit)', 'https://{s}.aerial.maps.ls.hereapi.com/maptile/2.1/maptile/newest/hybrid.day/{z}/{x}/{y}/256/png8?apiKey=..........', '234', 'Map Tiles &copy; 2020 <a href=\"http://developer.here.com\">HERE</a>', '[[\"de\",\"Hybrid\"],[\"en\",\"Hybrid\"]]', 'b', 1440, 1000, '1'),
@@ -14,7 +14,7 @@ INSERT INTO `rex_geolocation_layer` (`id`, `name`, `url`, `subdomain`, `attribut
 -- Daten für Tabelle `rex_geolocation_mapset`
 --
 
-TRUNCATE TABLE `rex_geolocation_mapset`;
-INSERT INTO `rex_geolocation_mapset` (`id`, `name`, `title`, `layer`, `overlay`, `mapoptions`, `outfragment`) VALUES
+TRUNCATE TABLE `%TABLE_PREFIX%geolocation_mapset`;
+INSERT INTO `%TABLE_PREFIX%geolocation_mapset` (`id`, `name`, `title`, `layer`, `overlay`, `mapoptions`, `outfragment`) VALUES
 (1, 'base', 'Basiskarte', '1,2,3', '', 'default', ''),
 (2, 'osm', 'Open Street Map', '4', '5,6', 'default', '');
