@@ -3,8 +3,6 @@ namespace Geolocation;
 
 /*
 
-0.11.----
-
 yform-dataset to enhance rex_geolocation_mapset:
 
     - dataset-spezifisch
@@ -59,11 +57,11 @@ class mapset extends \rex_yform_manager_dataset
      * Modifiziertes GET um sofort Initialisierungen durchzuführen
      *
      * @param int           ID des gesuchten Mapset
-     * @param string        Wird ignoriert. Siehe Anmerkung im Code
+     * @param string|null   Wird ignoriert. Siehe Anmerkung im Code
      *
-     * @return self         also Instanz von Geolocation\mapset oder NULL falls ID unbekannt
+     * @return self|null    also Instanz von Geolocation\mapset oder NULL falls ID unbekannt
      */
-    public static function get(int $id, ?string $table = null): ?self
+    public static function get(int $id, ?string $table = null): ?\rex_yform_manager_dataset # ?self erst ab PHP 7.4
     {
         // Es wird immer "diese" Tabelle benutzt, daher $table ignorieren und null nehmen
         $dataset = parent::get( $id, null );
@@ -182,9 +180,9 @@ class mapset extends \rex_yform_manager_dataset
      * schickt die Konfigurationsdaten für Kartenlayer als JSON-String.
      * Wenn die Kartensatz-ID nicht existiert, stirbt die Methode mit einem HTTP-Fehlercode + Exit()
      *
-     * @param int       Kartensatz-ID, zu der die Karten/Layer-Definition abgerufen wird
+     * @param int|null       Kartensatz-ID, zu der die Karten/Layer-Definition abgerufen wird
      */
-    static public function sendMapset( ?int $mapset )
+    static public function sendMapset( ?int $mapset = null )
     {
         // Same Origin
         tools::isAllowed();
@@ -304,7 +302,7 @@ class mapset extends \rex_yform_manager_dataset
      *
      * @return self        Die gefundene Kartensatz-Instanz
      */
-    public static function take( ?int $id ) : self
+    public static function take( ?int $id = null ) : self
     {
         try {
             $map = mapset::get($id);
@@ -323,11 +321,11 @@ class mapset extends \rex_yform_manager_dataset
      * Im zweiten Fall muss $data den Attributwert als String enthalten oder leer sein (entspricht '')
      *
      * @param string|array  Name des Attributes oder ein Array mit Wertepaaren name=>wert
-     * @param string        Inhalt/Wert des Attributes; ignoriert wenn $name ein Array ist.
+     * @param string|null   Inhalt/Wert des Attributes; ignoriert wenn $name ein Array ist.
      *
      * @return self         diese Kartensatz-Instanz
      */
-    public function attributes( $name = null, ?string $data ) : self
+    public function attributes( $name = null, ?string $data = null ) : self
     {
         if( is_array($name) ) {
             $this->mapAttributes = array_merge( $this->mapAttributes, $name );
@@ -382,7 +380,7 @@ class mapset extends \rex_yform_manager_dataset
      *
      * @return string       HTMl für die Kartenausgabe
      */
-    public function parse( ?string $file ) : string
+    public function parse( ?string $file = null ) : string
     {
         $fragment = new \rex_fragment();
         $fragment->setVar( 'mapset', $this->getLayerset(), false );
