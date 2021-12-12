@@ -1,5 +1,29 @@
 # Changelog
 
+## **12.12.2021 Version 0.12.0**
+
+- HELP.PHP
+    - Angehoben auf Version 2.3 mit Darkmode und Berechtigungen
+- Dokumentation aktualisiert und umstrukturiert
+    - Texte neu aufgeteilt
+    - Inhalte aktualisiert
+    - Anzeigeumfang berücksichtigt die Addon-Berechtigungen (help.yml)
+- Installation
+    - Die JS/CSS-Dateien `geolocation*.*` in der Basisversion liegen nun im install-Verzeichnis und
+      werden von dort herangezogen (vorher: .../assets), um Überschreiben zu vermeiden
+    - Explizites `include` diverser Scripte entfernt, überflüssig
+- Sonstiges
+    - Code überarbeitet
+        - zahlreiche kleinere Korrekturen
+        - Inline-Dokumentation in fast allen PHP-Dateien überarbeitet und erweitert
+        - Umstellung auf YForm 4.0 (BC), z.B. Dataset-Klassen)
+- tableset.json
+    - Feldzuweisung des Validators für Layer-Url/Layer-Subdomain korrigiert
+- package.yml
+    - Voraussetzungen angehoben auf REDAXO 5.13 und YForm 4
+    - PHP-Voraussetzungen um cURL erweitert
+___
+
 ## **09.04.2021 Version 0.10.0**
 
 - Javascript
@@ -14,7 +38,6 @@
 - Bugs
     - CSS verbessert
     - Installations-Fehler bei `importDump()` behoben (Dateiname ohne .sql)
-
 ___
 
 

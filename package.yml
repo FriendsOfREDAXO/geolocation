@@ -1,5 +1,5 @@
 package: geolocation
-version: '0.10.0'
+version: '0.12.0'
 author: Christoph Böcker
 supportpage: https://github.com/christophboecker/geolocation
 
@@ -26,14 +26,13 @@ page:
             title: translate:geolocation_manpage
             icon: fa fa-book
             subPath: help.php
-        dummy:
+        clear_cache:
             title: 'translate:geolocation_clear_cache'
             perm: geolocation[clearcache]
             itemclass: 'pull-right'
             linkclass: 'btn btn-delete'
             href:
-                page: geolocation/config
-                rex-api-call: geolocation_clearcache
+                # Zur Info: Die konkreten Parameter setzt kontext-bezogen pages/index.php
 
 yform:
     geolocation/mapset:
@@ -44,7 +43,8 @@ yform:
 requires:
     php:
         version: '>=7.3, <9'
-    redaxo: '^5.12.0'
+        extensions: [curl]
+    redaxo: '^5.13.1'
     packages:
-        cronjob: '^2.8'
-        yform: '^3.4'
+        cronjob: '^2.8.0'
+        yform: '>3.99'

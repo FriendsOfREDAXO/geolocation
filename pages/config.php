@@ -1,5 +1,11 @@
 <?php
-# Basiskonfiguration
+/**
+ * Basiskonfiguration
+ *
+ * @package geolocation
+ *
+ * @var \rex_addon $this
+ */
 
 $form = \Geolocation\config_form::factory( \Geolocation\ADDON );
 

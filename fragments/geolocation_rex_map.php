@@ -1,12 +1,15 @@
 <?php
-/*
-Fragment zum Aufbau des rex-map-HTML
+/**
+ * Fragment zum Aufbau des rex-map-HTML
+ *
+ * Es finden nur formale Prüfungen statt. Fehlende Werte werden nicht durch Defaults ersetzt.
+ * Hier wird aus Eingangsdaten HTML gebaut, mehr nicht.
+ *
+ * <rex-map dataset="..." mapset="..." map="..." ... ></rex-map>
+ *
+ * @package geolocation
+ */
 
-Es finden nur formale Prüfungen statt. Fehlende Werte werden nicht durch Defaults ersetzt.
-Hier wird aus Eingangsdaten HTML gebaut, mehr nicht.
-
-<rex-map dataset="..." mapset="..." map="..." ... ></rex-map>
-*/
 $classes = [];
 $attributes = [];
 

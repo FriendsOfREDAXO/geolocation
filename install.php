@@ -24,12 +24,6 @@
 // Interne Exception-Klasse
 class GeolocationInstallException extends \RuntimeException {}
 
-// benötigt Support aus ...
-include( __DIR__ . '/lib/cronjob.php' );
-include( __DIR__ . '/lib/yform/dataset/mapset.php' );
-include( __DIR__ . '/lib/config_form.php' );
-include( __DIR__ . '/lib/asset_packer.php' );
-
 // das bin ich ...
 if( !defined('Geolocation\ADDON') ) define( 'Geolocation\ADDON', $this->getName() );
 if( !defined('Geolocation\TTL_MIN') ) define( 'Geolocation\TTL_MIN', 0 );
@@ -38,8 +32,7 @@ if( !defined('Geolocation\TTL_MIN') ) define( 'Geolocation\TTL_MIN', 0 );
 $layer = \rex::getTable('geolocation_layer');
 $mapset = \rex::getTable('geolocation_mapset');
 
-// Meldungen sammeln
-// for future use (https://github.com/redaxo/redaxo/issues/3961)
+// Meldungen sammeln (wirkt ab REX 5.12)
 $msg = [];
 
 try {
@@ -136,10 +129,14 @@ try {
             $tableset
         );
     }
-    \rex_yform_manager_table_api::removeTable($layer);
-    \rex_yform_manager_table_api::removeTable($mapset);
-    \rex_yform_manager_table_api::importTablesets($tableset);
-    $msg[] = $this->i18n( 'install_tableset_prepared');
+
+    try {
+        \rex_yform_manager_table_api::importTablesets($tableset);
+        $msg[] = $this->i18n( 'install_tableset_prepared');
+    } catch (\Exception $e) {
+        throw new \GeolocationInstallException($this->i18n('install_tableset',$e->getMessage()), 1);
+    }
+
 
     // Cronjob anlegen falls es den Cronjob noch nicht gibt
     //  - Neuinstallation
@@ -205,7 +202,6 @@ try {
         \rex_dir::copy( $copyDir, \rex_path::addonAssets(\Geolocation\ADDON) );
     }
 
-
     //System_Cache löschen
     \rex_delete_cache();
     \rex_yform_manager_table::deleteCache();
@@ -224,6 +220,8 @@ try {
 
 } finally {
 
+    // Sicher ist sicher
     if( isset($filename) ) @unlink( $filename );
+    if( isset($sqlfile) ) @unlink( $sqlfile );
 
 }

@@ -1,5 +1,8 @@
-> - [Installation](install.md)
-> - [Verwaltung und Konfiguration](admin.md)
+> - Installation und Einstellungen
+>   - [Installation](install.md)
+>   - [Einstellungen](settings.md)
+> - [Kartensätze verwalten](mapset.md)
+> - [Karten/Layer verwalten](layer.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
 > - Für Entwickler
 >   - PHP
@@ -7,19 +10,6 @@
 >   - [JS-Tools](devtools.md)
 
 # Für Entwickler &dash; PHP
-
-## Inhalt
-
-- [Namespace **Geolocation**](#namespace)
-- [Snippets](#snippets)
-    - [Karten-HTML generieren](#maphtml)
-    - [ExtensionPoint GEOLOCATION_MAPSET_DELETE](#epgmd)
-- [Template: css|js einbinden](#template)
-- [Module](#module)
-    - [Übersicht](#module)
-    - [Modul-Eingabe](#input)
-    - [Modul-Ausgabe](#output)
-- [Fragment *geolocation_rex_map.php*](#fout)
 
 <a name="namespace"></a>
 ## Namespace **Geolocation**
@@ -32,7 +22,7 @@ die Klassen und globalen Konstanten.
 | \Geolocation\layer.php | YOrm-Dataset-Klasse für die einzelnen Karten-URLs |
 | \Geolocation\mapset.php | YOrm-Dataset-Klasse für die Kartensätze aus mehreren Karten-URLs |
 | \Geolocation\cache.php | Klasse mit Methoden zur Verwaltung des Karten-Cache |
-| \Geolocation\config_form.php | rex_form-Klasse für das Formular "[Einstellungen](admin.md#config)" |
+| \Geolocation\config_form.php | rex_form-Klasse für das Formular "[Einstellungen](settings.md#config)" |
 | \Geolocation\cronjob.php |rex_cronjob-Klasse für Cronjobs zum Cache-Hauskeeping |
 | \Geolocation\tools.php | Diverse statische Methoden, die immer mal wieder hilfreich sind.|
 | \Geolocation\Exception.php | Exception-Klasse für von **Geolocation** ausgelöste \RuntimeException  |
@@ -49,7 +39,7 @@ die Klassen und globalen Konstanten.
 | \Geolocation\LOAD | FALSE: Die Assets `geolocation.min.js|css` werden nicht geladen |
 
 
-Hier zwei Beispiele:
+Hier ein Beispiel:
 
 ```PHP
 $id = \rex_request( \Geolocation\KEY_MAPSET, 'integer', 1 );
@@ -70,7 +60,7 @@ eigenständig gebaut werden oder unter Einsatz eines Fragments. Empfehlenswert i
 Methoden der YOrm-Dataset-Klasse `mapset`. Der Kartensatz-Datensatz verfügt über alle relevanten
 Informationen für den grundsätzlichen Aufbau der Karte.
 
-Über einige Zusatzmethoden werden die auf der Karte darzustllenden Inhalte eingesteuert und das HTML
+Über einige Zusatzmethoden werden die auf der Karte darzustellenden Inhalte eingesteuert und das HTML
 per Fragment generiert:
 
 | Methode | Verwendung | Anmerkung |
@@ -78,7 +68,7 @@ per Fragment generiert:
 | ::take($id) | Ruft den per $id angegebenen Datensatz ab.<br>Falls $id fehlt wird der Default-Kartensatz herangezogen | fehlertolerantes `mapset::get()` |
 | ->attributes($name,$value)<br>->attributes([$name1=>$value1,..]) | Ein HTML-Attribut oder ein Array mit HTML-Attributen, dass dem Karten-Tag zugefügt wird (`name="value" ...`) | nicht zulässig: mapset, dataset, map |
 |->dataset($tool,$data)<br>->dataset([$tool1=>data1,..]) | Kartendaten je Tool. Alle Angaben werden konsolidiert in ein Array an das Ausgabe-Fragment übergeben | Toolnamen müssen klein geschrieben sei |
-| ->parse($fragment) | Die Methode erzeugt auf Basis der zuvor angegebenen Daten das HTML. Dazu wird entweder das angegebene Fragment genutzt oder das für den Kartensatz gültige. | |
+| ->parse($fragment) | Die Methode erzeugt auf Basis der zuvor angegebenen Daten das HTML. Dazu wird entweder das angegebene Fragment genutzt oder das für den Kartensatz voreingestellte. | |
 
 Die Methoden können verkettet werden:
 ```PHP
@@ -114,14 +104,14 @@ $fragment->setVar( 'class', 'mymapclass', false );
 $fragment->setVar( 'attributes', ['id' => 'my-map-id'], false );
 $fragment->setVar( 'map', $mapset->getMapOptions(false), false );
 
-$HTML = $fragment->parse( $mapset->getOutFragment() );
+echo $fragment->parse( $mapset->getOutFragment() );
 ```
 
 <a name="epgmd"></a>
 ### ExtensionPoint GEOLOCATION_MAPSET_DELETE
 
 Löschen eines Kartensatzes (mapset) ist nur zulässig, wenn der Kartensatz nicht in Benutzung ist.
-Die Verwendung als Default-Mapset wird intern abgefangen. die Verwendung in VALUE-Feldern der Slices
+Die Verwendung als Default-Mapset wird intern abgefangen. Die Verwendung in VALUE-Feldern der Slices
 hingegen muss individuell geprüft werden. Dazu steht der Extension-Point `GEOLOCATION_MAPSET_DELETE`
 zur Verfügung.
 
@@ -136,9 +126,7 @@ $delete = \rex_extension::registerPoint(new \rex_extension_point(
 ```
 
 Das Anwendungsbeispiel referenziert auf das weiter unten beschriebene Modul, bei dem in `value2`
-die Auswahl des Kartensatzes gespeichert ist. Da bereits in `\Geolocation\mapset->delete()`
-abgefangen wird, wenn der Kartensatz der Default-Kartensatz ist, wird der EP nur bei allen anderen
-Kartensätzen ausgelöst.
+die Auswahl des Kartensatzes gespeichert ist.
 
 ```PHP
 \rex_extension::register('GEOLOCATION_MAPSET_DELETE', function( \rex_extension_point $ep ){
@@ -175,7 +163,7 @@ eingebaut:
 
 <?php
 
-    // Leaflet-Assets einbinden
+    // Geolocation- und Leaflet-Assets einbinden
     \Geolocation\tools::echoAssetTags();
 
 ?>
@@ -278,7 +266,7 @@ $position = \Geolocation\tools::latLngArray( 'REX_VALUE[3]' );
 $radius = max( (float)'REX_VALUE[4]', 1);
 
 // Aus der Koordinatenangabe Karteninhalte bauen
-// 10 km auf dem Berliner Breitengrad entspricht
+// 10 km auf dem Berliner Breitengrad entspricht z.B.
 //    ... in WE-Richtung 0.148 Grad
 //    ... in NS-Richtung 0.090 Grad
 $distWE = $radius / pi() / cos(deg2rad($position[0])) / 35.43333333;
@@ -303,7 +291,7 @@ echo $rex_map;
 
 Das Default-Fragment `geolocation_rex_map.php` erzeugt einen Custom-HTML-Tag `<rex-map ...></rex-map>`
 mit den Attributen für den Kartenaufbau. Das Fragment kann problemlos in den
-[Kartensatz-Einstellungen](admin.md#mapset) bzw. den [Basiseinstellungen](admin.md#config) durch ein
+[Kartensatz-Einstellungen](mapset.md) bzw. den [Basiseinstellungen](settings.md) durch ein
 anderes Fragment ersetzt werden. Lediglich die Schnittstellen müssen eingehalten werden:
 
 | Variable| Erklärung | Beispiel |
@@ -314,6 +302,7 @@ anderes Fragment ersetzt werden. Lediglich die Schnittstellen müssen eingehalte
 | class | optionale CSS-Klasse | |
 | attributes | Hierüber können weitere beliebige Attribute (außer mapset, dataset, map und class) hinzugefügt weden.| ['id'=>'map4711'] |
 
+Die Variablen des Fragments können bei Bedarf einzeln aus dem mapset befüllt werden:
 
 ```php
 $fragment = new \rex_fragment();

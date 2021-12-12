@@ -1,20 +1,35 @@
 <?php
+/**
+ * Cache-Verwaltung
+ *
+ * @package geolocation
+ */
+
 namespace Geolocation;
-
-# Cache-Verwaltung
-
 
 class cache
 {
 
-    # instanziert den Proxy und bricht ab wenn Abruf von außerhalb der Webseite
+    /**
+     *   instanziert den Proxy und bricht ab wenn Abruf von außerhalb der Webseite
+     *   isAllowed stirbt ggf. mit einem \rex_response::HTTP_SERVICE_UNAVAILABLE
+     */
     function __construct ( )
     {
         tools::isAllowed();
     }
 
-    # schickt die Datei raus.
-    public function sendCacheFile( $filePath, $contentType, $ttl )
+    /**
+     *   schickt die angegebene Datei raus
+     *
+     *   Expires wird an den Browser übertragen als Zeitstempel der Datei
+     *   plus Time-To-Live für diesen Cache.
+     *
+     *   @param string       Pfadname der Datei
+     *   @param string       Content-type (MIME)
+     *   @param integer      Time-To-Live im Cache
+     */
+    public function sendCacheFile( string $filePath, string $contentType, $ttl )
     {
         // Restlaufzeit der Datei
         $timestamp = filemtime( $filePath );
@@ -27,14 +42,23 @@ class cache
         exit();
     }
 
-    # Sucht die angegebene Datei im Cache
-    # Kann Wildcard im Suffix enthalten (wenn der Dateityp offen ist: png, png8, jpeg,..)
-    # nimmt die erste gefundene Datei, prüft ob sie zu alt ist (dann löschen = nicht vorhanden)
-    # liefert den Dateinamen oder null zurück
-    public function findCachedFile( $filePath, $ttl ){
+    /**
+     *   Sucht die angegebene Datei im Cache
+     *
+     *   Kann Wildcard im Suffix enthalten (wenn der Dateityp offen ist: png, png8, jpeg,..)
+     *   nimmt die erste gefundene Datei, prüft ob sie zu alt ist (dann löschen = nicht vorhanden)
+     *   liefert den Dateinamen oder null zurück
+     *
+     *   @param string       Pfadname der Datei
+     *   @param integer      Time-To-Live im Cache
+     *
+     *   @return ?string     Dateiname inkl. Pfad oder null
+     */
+    public function findCachedFile( $filePath, $ttl ) : ?string
+    {
         foreach( glob( $filePath, GLOB_NOSORT) as $cacheFile ) {
             if( (time() - $ttl) > fileatime($cacheFile) ) {
-                // delete cache-file if time-to-live is expired; force update from tile-server
+                // delete cache-file if time-to-live is expired; forces update from tile-server
                 \rex_file::delete( $cacheFile );
                 return null;
             } else {
@@ -45,10 +69,16 @@ class cache
         return null;
     }
 
-    # Cache löschen
+    # ---  Cache löschen
 
-    # Löscht alle Dateien im Cache für den angegebenen Layer
-    static public function clearLayerCache( $layer = null )
+    /**
+     *   Löscht alle Dateien im Cache für den angegebenen Layer
+     *
+     *   @param integer     ID des Karten-Layers oder null (default)
+     *
+     *   @return integer     Anzahl gelöschter Dateien
+     */
+    static public function clearLayerCache( int $layer ) : int
     {
         $count = 0;
         $targetDir = \rex_path::addonCache( ADDON, $layer );
@@ -57,8 +87,12 @@ class cache
         return $count;
     }
 
-    # Löscht alle Dateien im Cache für alle Layer
-    static public function clearCache( )
+    /**
+     *   Löscht alle Dateien im Cache für alle Layer
+     *
+     *   @return integer     Anzahl gelöschter Dateien
+     */
+    static public function clearCache( ) : int
     {
         $count = 0;
         $targetDir = \rex_path::addonCache( ADDON );
@@ -68,12 +102,17 @@ class cache
         return $count;
     }
 
-    # Cache aufräumen (z.B. per Cronjob)
-
-    # Bereinigt den Cache für alle Layer, die Online sind (Offliner sind eh leer)
-    # Berücksichtigt die Layer-individuellen Werte für Aufbewahrungsdauer (TTL) und
-    # Verzeichnisgröße (maxFiles, threshold).
-    static public function cleanupCache(){
+    /**
+     *   Cache aufräumen (z.B. per Cronjob)
+     *
+     *   Bereinigt den Cache für alle Layer, die Online sind (Offliner sollten eh leer sein)
+     *   Berücksichtigt die Layer-individuellen Werte für Aufbewahrungsdauer (TTL) und
+     *   Verzeichnisgröße (maxFiles, threshold).
+     *
+     *   @return array     Array mit Löschmeldungen je Layer
+     */
+    static public function cleanupCache() : array
+    {
         $msg = [];
 
         // Die DefaultWerte für ttl und maxFiles abrufen
@@ -94,11 +133,20 @@ class cache
         return $msg;
     }
 
-    # Bereinigt den Cache für den angegebenen Layer $layer
-    # Öffnet den DirHandle und löscht aus der Zeit ($ttl) gelaufenen Dateien via self::cleanupDir
-    # Ist das Verzeichnis danach noch zu groß ($threshold), wird die TTL halbiert und ein neuer
-    # Durchlauf gestartet bis der $threshold unterschritten ist.
-    static public function cleanupLayerCache( int $layer = 0, int $threshold=CFM_DEF, int $ttl=TTL_DEF )
+    /**
+     *   Bereinigt den Cache für den angegebenen Layer $layer (z.B. per Cronjob)
+     *
+     *   Öffnet den DirHandle und löscht aus der Zeit ($ttl) gelaufenen Dateien via self::cleanupDir
+     *   Ist das Verzeichnis danach noch zu groß ($threshold), wird die TTL halbiert und ein neuer
+     *   Durchlauf gestartet bis der $threshold unterschritten ist.
+     *
+     *   @param integer    ID des Karten-Layers
+     *   @param integer    Threshold (max. Anzahl Dateien im Cache)
+     *   @param integer    Tile-To-Live ( max Alter der Dateien im Cache)
+     *
+     *   @return string    Löschmeldungen
+     */
+    static public function cleanupLayerCache( int $layer = 0, int $threshold=CFM_DEF, int $ttl=TTL_DEF ) : string
     {
         if( !$layer ) return \rex_i18n::msg( 'geolocation_cron_error', $layer );
 
@@ -126,11 +174,22 @@ class cache
         return \rex_i18n::msg( 'geolocation_cron_success', $layer, $deleted, $size );
     }
 
-    # durchläuft Verzeichnis $dh (ressource aus OpenDir), Name $targetDir
-    # alle Dateien älter als $timestamp werden gelöscht.
-    # &$deleted Anzahl gelöschter Dateien
-    # @RETURN   liefert die Anzahl Dateien zurück
-    static public function cleanupDir( $dh, $targetDir, $timestamp, &$deleted )
+    /**
+     *   Löscht alte Dateien im Cache-Verzeichnis
+     *
+     *   Eigentlich nur eine Serviceroutine für
+     *   durchläuft Verzeichnis $dh (ressource aus OpenDir), Name $targetDir
+     *   alle Dateien älter als $timestamp werden gelöscht.
+     *   Durchlauf gestartet bis der $threshold unterschritten ist.
+     *
+     *   @param integer    ID des Karten-Layers
+     *   @param integer    Threshold (max. Anzahl Dateien im Cache)
+     *   @param integer    Tile-To-Live ( max Alter der Dateien im Cache)
+     *   @param &integer   Parameter-Rückgabe der Anzahl gelöschter Dateien
+     *
+     *   @return int       liefert die Anzahl Dateien im Verzeichnis zurück
+     */
+    static public function cleanupDir( $dh, $targetDir, $timestamp, &$deleted ): int
     {
         $counter = 0;
         while( ($file = readdir($dh)) !== false ){

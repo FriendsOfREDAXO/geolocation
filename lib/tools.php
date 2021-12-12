@@ -1,7 +1,14 @@
 <?php
+/**
+ * Helferlein, einige Hlfsfunktionen, gekapselt als  statische Klassenmethoden
+ *
+ * @package geolocation
+ */
+
 namespace Geolocation;
 
-# Helferlein
+// Damit man weiß, dass die Exception aus Geolocation stammt
+// => Geolocation\Exception 
 
 class Exception extends \RuntimeException {}
 
@@ -33,7 +40,7 @@ class tools
     }
 
     /**
-     *  Prüft "same origin" und bricht ggf hart ab.
+     *  Prüft "same origin" und bricht ggf. HTTP-Status HTTP_SERVICE_UNAVAILABLE hart ab.
      *
      *  @return bool   true wenn Bedingung erfüllt
      */
@@ -52,7 +59,7 @@ class tools
     /**
      *  schickt HTTP_NOT_FOUND
      *
-     *  ... und bricht dann hart ab.
+     *  ... und bricht dann mit HTTP_NOT_FOUND hart ab.
      */
     static public function sendNotFound() : void
     {
@@ -65,7 +72,7 @@ class tools
     /**
      *  schickt HTTP_INTERNAL_ERROR
      *
-     *  ... und bricht dann hart ab.
+     *  ... und bricht dann mit HTTP_INTERNAL_ERROR hart ab.
      */
     static public function sendInternalError(): void
     {
@@ -76,12 +83,12 @@ class tools
     }
 
     /**
-     *  schickt einen Tile an den Client
+     *  schickt eine Kartenkachel Tile an den Client
      *
-     *  aus $timestamp und $ttl wird derden Header-Daten (Expires, Cache-Control)
+     *  aus $timestamp und $ttl wird deren Header-Daten (Expires, Cache-Control)
      *  errechnet
      *
-     *  ... und bricht dann hart ab.
+     *  ... und bricht dann nach Versand hart ab.
      *
      *  @param  string $tile        Das Bild der Karten-Kachel (Tile)
      *  @param  string $contentType Art des Bildes (Mime-Typ)
@@ -102,7 +109,8 @@ class tools
      *  Aus einem String "lat,lng" z.B. aus REX_VAR ein Array mit numerischen Koordinaten formen
      *
      *  @param  string|array $latlng    string "lat,lng" | [ "lat", "lng" ] array: [ "lat", "lng" ]
-     *  @return array|null              [ lat, lng ]
+     *
+     *  @return ?array                  [ lat, lng ] oder null
      */
     static public function latLngArray ( $latlng ) : ?array
     {

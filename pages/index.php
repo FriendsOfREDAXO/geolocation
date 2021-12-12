@@ -1,4 +1,11 @@
 <?php
+/**
+ * Allgemeine Add-Einstiegsseite (page-Rahmen)
+ *
+ *  @package geolocation
+ *
+ *  @var \rex_addon $this
+ */
 
 //nur hier im BE relevante Konfigurationen einlesen und daraus weitere Hilfswerte für Formulare setzen
 $config = array_merge(
@@ -17,7 +24,6 @@ if( \Geolocation\PROXY_ONLY ){
     }
 }
 
-
 // Button "Delete Cache" konfigurieren (Referenziere auf die aktuelle Seite)
 $page = \rex_be_controller::getPageObject('geolocation');
 if( $page ){
@@ -25,16 +31,16 @@ if( $page ){
     if( $page ){
         $href = \rex_url::backendController([
             'page' => \rex_be_controller::getCurrentPageObject()->getFullKey(),
-            'rex-api-call' => 'clear_cache'
+            'rex-api-call' => 'geolocation_clearcache'
         ], false);
         $page->setHref( $href );
     }
 }
 
-// Title und Submenü
+// Title und Submenü erzeugen/ausgeben
 echo \rex_view::title( $this->i18n('geolocation_title') );
 
-// API Messages
+// ggf. vorhandene API Messages ausgeben
 echo rex_api_function::getMessage();
 
 // Liste 'rex_geolocation_layer' um einen Button zum Löschen des Layer-Cache erweitern
@@ -46,10 +52,10 @@ echo rex_api_function::getMessage();
 );
 
 // Liste 'rex_geolocation_layer' mit geänderter Sortierung
-\rex_extension::register('YFORM_DATA_LIST_SQL',
+\rex_extension::register('YFORM_DATA_LIST_QUERY',
     function( \rex_extension_point $ep )
     {
-        return \Geolocation\layer::listSort( $ep->getSubject(), $ep->getParam('table')->getTableName() );
+        return \Geolocation\layer::listSort( $ep->getSubject() );
     }
 );
 

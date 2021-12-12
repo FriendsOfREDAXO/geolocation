@@ -37,7 +37,6 @@ if( null !== $tileLayer ) {
 //
 // if URL contains geomapset=«mapId» the request is supposed to be a mapset-request
 // worked on by Geolocation\mapset::sendMapset
-//
 
 $mapset = \rex_request( KEY_MAPSET, 'integer', null );
 if( null !== $mapset ) {
@@ -46,15 +45,31 @@ if( null !== $mapset ) {
 }
 
 // Start of Cronjob
-if( !\rex::isSafeMode()) {
-    \rex_cronjob_manager::registerType('Geolocation\cronjob');
-}
+\rex_cronjob_manager::registerType('Geolocation\cronjob');
 
 // if BE: activate JS and CSS
 if( \rex::isBackend() ){
+
+    // Im Fall "User != Admin" greifen Permissions. Falls der Zugriff auf den Kartensatz erlaubt ist
+    // (Perm: geolocation[mapset]), aber nicht auf die Karten selbst (Perm: geolocation[layer]),
+    // entsteht ein Konflikt: über das Kartensatz-Formular werden Layer-Liste und -Formulare als
+    // Popup aufgerufen. Liste ist gewünscht, sonst nichts. Daher hier die Berechtigung auf Listen
+    // prüfen und ggf. die Add/Edit-Spalte in der Layer-Liste entfernen.
+    if( ($user = \rex::getUser()) && !$user->hasPerm('geolocation[layer]') ) {
+        \rex_extension::register('YFORM_DATA_LIST',
+            function( \rex_extension_point $ep )
+            {
+                if( 'rex_geolocation_layer' === $ep->getParam('table')->getTableName() ) {
+                    $ep->getSubject()->removeColumn('_');
+                };
+            }
+        );
+    }
+
     if( LOAD ){
         \rex_view::addCssFile($this->getAssetsUrl('geolocation.min.css'));
         \rex_view::addJsFile($this->getAssetsUrl('geolocation.min.js'));
     }
     \rex_view::addCssFile($this->getAssetsUrl('geolocation_be.min.css'));
+
 }

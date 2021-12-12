@@ -1,6 +1,9 @@
-> - [Installation](install.md)
-> - [Verwaltung und Konfiguration](admin.md)
-> - Karten-Proxy und -Cache
+> - Installation und Einstellungen
+>   - Installation
+>   - [Einstellungen](settings.md)
+> - [Kartensätze verwalten](mapset.md)
+> - [Karten/Layer verwalten](layer.md)
+> - [Karten-Proxy und -Cache](proxy_cache.md)
 > - Für Entwickler
 >   - [PHP](devphp.md)
 >   - [Javascript](devjs.md)
@@ -33,19 +36,22 @@ und im Addon-Verzeichnis der RREDAXO-Instanz in den Ordner *src/addons/geolocati
 
 In der Addon-Verwaltung der REDAXO-Instanz kann das Addon nun installiert werden.
 
-Die Installation (und Re-Installation) umfasst folgende Schritte
+Die Installation (I) bzw. Re-Installation (R) umfasst folgende Schritte
 
 - Tabellen *rex_geolocation_mapset* und *rex_geolocation_layer* anlegen (I) bzw. bei angelegten
   Tabellen die notwendigen Felder sicherstellen (R).
-- Wenn beide Tabellen leer sind wird ein Demo-Datensatz installiert (I|R).
-- Die Tabellen werden über YForm verwaltet. Die dazu nötigen Tablesets werden, falls noch aus einer
-  vorhergehenden Installation vorhanden, gelöscht und neu installiert (I|R).
+- Wenn beide Tabellen leer sind, wird ein Demo-Datensatz installiert (I|R).
+- Die Tabellen werden über YForm verwaltet. Die dazu nötigen Tablesets werden installiert (I) bzw.
+  angepasst (R).
 - Sofern es keinen Cron-Job "Geolocation: Cleanup Cache" gibt, wird er angelegt. Ein vorhandener Job
   wird nicht verändert, ist also update-sicher (I|R).
 - Ein Teil der im Betrieb notwendigen Parameter werden in die Konfigurationstabelle *rex_config* im
   Namespace "geolocation" eingetragen bzw. fehlende werden ergänzt (I|R).
 - Ein Teil der im Betrieb notwendigen Parameter werden als Konstanten in die *boot.php* eingetragen.
-- Die JS- und CSS-Dateien werden neu kompiliert (I|R).
+- JS- und CSS-Dateien aus dem Asset-Verzeichnis des Addons werden in das öffentliche
+  Assets-Verzeichnis des addons kopiert
+- Die **Geolocation**-spezifischen JS- und CSS-Dateien werden neu in das öffentliche
+  Assets-Verzeichnis kompiliert (I|R).
 
 <a name="custom"></a>
 ## Individualisierte Installation
@@ -54,20 +60,14 @@ Die Installation basiert auf den Dateien im Verzeichnis *src/addons/geolocation/
 ein weiteres Verzeichnis *data/addons/geolocation/* kann die Installation und bis zu einem gewissen
 Grad auch die Re-Installaion individualisiert werden.
 
-YFORM_EMAIL_BEFORE_REPLACEVARS
-YFORM_EMAIL_BEFORE_SEND
-YFORM_EMAIL_SEND
-YFORM_EMAIL_SENT
-YFORM_EMAIL_SENT_FAILED
-
 | Datei | Verwendung | Anmerkung |
 |-|-|-|
 | config.yml | Die Grundeinstellungen des **Geolocation**-Addons wie Standard-Kartenausschnitt, Job-Parameter, Ausgabefragment | Überschreibt die angegebenen gleichnamigen Werte in der Originaldatei |
 | dataset.sql | SQL-Statements zur Erstbefüllung der Tabellen | *rex_geoocation_mapset*<br>*rex_geolocation_layer* |
-| lang | SQL-Statements zur Erstbefüllung der Tabellen | *rex_geoocation_mapset*<br>*rex_geolocation_layer* |
 | geolocation.css | Zusätzliche CSS-Einstellungen, gedacht für zusätzliche Leaflet-Plugins bzw. Leaflet-Erweiterungen, eigene Erweiterungen und Anpassungen an die REDAXO-Instanz | [Eigene Scripte und CSS-Formatierungen](#ownjscss) |
 |geolocation.js | Zusätzliche JS-Scripte, gedacht für zusätzliche Leaflet-Plugins bzw.Leaflet-Erweiterungen und individuelle JS-Geolocation-Erweiterungen  | [Eigene Scripte und CSS-Formatierungen](#ownjscss) |
 | load_assets.php | Multifile-Erweiterungen als Alternative zu den beiden vorgenannten Einzeldateien | [Eigene Scripte und CSS-Formatierungen](#ownjscss) |
+| lang_js | Equivalient zu den lang-Dateien mit Texten, die im JS benutzt werden |  |
 
 Das angegebene Verzeichnis ist update-sicher, da es bei einer De-Installation nicht gelöscht wird.
 Bereits vor der ersten Installation können hier die individuellen Einstellungen platziert werden.
@@ -81,7 +81,7 @@ Wie oben beschrieben wird die Grundkonfiguration über die Dateien
 
 vorgenommen. Die erstgenannte Datei überschreibt die Werte der zweiten; darüber können update-sicher
 eigene Grundeinstellungen konserviert werden. Teilweise sind die Parameter auch über die
-[Einstellungen](admin.md#config) änderbar. Diese Änderungen bleiben bei einer Re-Installation
+[Einstellungen](settings.md) änderbar. Diese Änderungen bleiben bei einer Re-Installation
 erhalten, werden aber bei einer De-Installation gelöscht.
 
 Änderungen der Parameter sind mit Vorsicht durchzuführen! Die Daten werden weder auf formale
@@ -202,8 +202,8 @@ durchgeführt.
 #### Tabellen überschreiben
 
 In der Basiseinstellung wird die Datei `dataset.sql` importiert, wenn _beide_ Tabellen leer sind.
-(`overwrite: false`)Das verhindert versehentliches Überschreiben bei einer Re-Installation. Wenn per
-`load: false` ohnehin kein Ladeprozess gestartet wird, hat `overwrite` keine Auswirkung.
+(`overwrite: false`). Das verhindert versehentliches Überschreiben bei einer Re-Installation. Wenn
+per `load: false` ohnehin kein Ladeprozess gestartet wird, hat `overwrite` keine Auswirkung.
 
 ```yml
 # Karten und Kartensätze aus  "dataset.sql" vorbelegen
@@ -229,8 +229,8 @@ dataset:
 
 Im Normalfall werden bei der Installation (beide Tabellen leer) Beispieldaten geladen. Werden eigene
 Einstellungen gewünscht, kann eine entsprechende `dataset.sql` z.B. als Datenbank-Export hinterlegt
-werden. Wurde der Tabellenname mit den Prefix `rex_` versehen, tauscht die Installationsroutine
-`rex_` gegen das aktuelle Prefix der REDAXO-Instanz aus.
+werden. Die Tabellennamen werden von der Installationsroutine an das eingestellte Prefix der Instanz
+angepasst (tausche `rex_` gegen das eingestellte Prefix).
 
 ```sql
 --
@@ -271,8 +271,12 @@ scope:
 ```
 
 Im reinen Proxy-Mode sind die Asset-Dateien zum Kartenaufbau nicht erforderlich bzw. werden
-außerhalb des Addons erwartet. Daher ist es weder notwendig, die Assset-Dateien aufzubauen
-`compile: 0`, noch die Asset-Dateien im Frontend bzw. Backend zu laden `load: false`.  
+außerhalb des Addons erwartet. Daher ist es weder notwendig, die Asset-Dateien aufzubauen
+(`compile: 0`), noch die Asset-Dateien im Frontend bzw. Backend zu laden (`load: false`).
+
+Für eine Variante mit dennoch geladenem Leaflet, ober ohne Geolocation-Tools, siehe [unten](#compile1).
+
+Die Tabellen können bzw. sollten leer bleiben.
 
 `data/addons/geolocation/dataset.sql`:
 ```sql
@@ -300,13 +304,13 @@ und BE eingebunden.
 
 **Geolocation** bietet alternativ die Möglichkeit, die zusätzlichen Komponenten minifiziert bzw.
 komprimiert direkt in die **Geolocation**-Assets einzubinden. Bei jeder (Re-)Installation
-bzw. beim Speichern der [Einstellungen](admin.md#config) werden die Asset-Dateien
+bzw. beim Speichern der [Einstellungen](settings.md) werden die Asset-Dateien
 
 - `/assets/addons/geolocation/geolocation.css`  
 - `/assets/addons/geolocation/geolocation.js`  
 - `/assets/addons/geolocation/geolocation_be.css`  
 
-neu erzeugt. Dabei werden in Verzeichnis `data/addons/geolocation/` liegende gleichnamige Dateien
+neu erzeugt. Dabei werden im Verzeichnis `data/addons/geolocation/` liegende gleichnamige Dateien
 nach den Standardkomponenten eingefügt. Solange es sich um relativ einfachen bzw. ohnehin
 individuell geschriebenen Code in jeweils einer Datei handelt, ist das Verfahren gut handhabbar.
 
@@ -337,7 +341,7 @@ array:6 [▼
 
 Systemseitig werden zuerst die Komponenten von LeafletJS und die im Addon benutzten Plugins
 eingebaut, dann der Code von **Geolocation** (Karten aufbauen). Hier eine vereinfacht Darstellung
-des Ablaufs in `compileAssets` nur für die CSS-Datei:
+des Ablaufs in `compileAssets`:
 
 ```php
 $css = \AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.css')
@@ -388,7 +392,7 @@ $css
 ```
 
 Außer beim Installieren bzw. Re-Installieren werden die Asset-Dateien bei Änderungen der
-[Einstellungen](admin.md#config) neu kompiliert. Daher ist für Änderungen der Asset-Dateien keine
+[Einstellungen](settings.md) neu kompiliert. Daher ist für Änderungen der Asset-Dateien keine
 (Re-)Installation erforderlich; speichern der Einstellungen reicht aus.
 
 <a name="compile1"></a>
@@ -410,24 +414,26 @@ Die Schritte:
    nicht geladen.
    ```yml
    scope:
-       mapset: true # oder false
+       mapset: false
        compile: 1
        load: true
    ```
 2. Mit den übrigen drei Dateien wird wie [zuvor](#ownjscss) beschrieben der Kern um eigene Elemente
-   erweitert (Leaflet-Plugins, eigener Code zur Karten-Generierung).
+   erweitert (weitere Leaflet-Plugins, eigener Code zur Karten-Generierung).
 3. Der Vollständigkeit halber sei darauf hingewiesen, dass wesentliche PHP-Teile von **Geolocation**
    für die Kartenausgabe auch durchaus in diesem Setup funktionieren können. Z.B. kann in dem Fall
-   ein alternatives Ausgabefragment eingesetzt werden.
+   ein alternatives Ausgabefragment eingesetzt werden, wenn die Karten auf dem HERE-JS aufsetzen
+   (oder Google oder Apple oder ...)
    ```yml
-   Geolocation\OUT: 'my_tiny_map_fragmentp.php'
+   Geolocation\OUT: 'my_nice_own_map_fragment.php'
    ```
 
 <a name="compile0"></a>
 ### **Geolocation** ohne LeafletJS
 
 **Geolocation** kann gänzlich ohne LeafletJS genutzt werden. [Zuvor](#compile1) wurde bereits die
-grundlegende Vorgehendweise beschrieben, über das das data-Verzeichnis eineges JS zu laden.
+grundlegende Vorgehensweise beschrieben, über das data-Verzeichnis eigenes JS zu laden.
+
 Zusätzlich zu eigenem Anwendungscode muss in diesem Setup auch die Kartensoftware selbst geladen
 werden, während LeafletJS außen vor bleibt.
 
@@ -443,4 +449,14 @@ scope:
 <a name="perm"></a>
 ## Berechtigungen
 
-Für die Berechtigungsverwaltung im Backend mit
+Die Berechtigungsverwaltung erfolgt über die Benutzer- und Rollenverwaltung in REDAXO.
+
+| Rolle | Beschreibung |
+|-|-|
+|admin| Darf alles, sieht alles|
+|geolocation[mapset]|Kartensätze zusammenstellen und verwalten|
+|geolocation[layer]|Kartendaten / Layer-Daten bearbeiten. Da hier die grundlegende Funktion schnell beeinträchtigt werden kann (z.B. falsche URLs), sollte diese Berechtigung ohnehin Entwicklern und Admins vorbehalten sein.|
+|geolocation[clearcache]|Cache löschen; Das Recht bezieht sich auf per `rex_api` ausgelöstes Löschen (z.B. Lösch-Button der Addon-Seiten im Backend). Cronjobs sind nicht betroffen|
+
+Passend dazu werden auch die Handbuchseiten eingeschränkt. Diese Installationsseite ist z.B. nur für
+Admins sichtbar.
