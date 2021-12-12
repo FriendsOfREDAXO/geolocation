@@ -1,50 +1,57 @@
 <?php
-namespace Geolocation;
-
 /**
  * Konfiguration - Basisdaten und Defaults
  *
  * @package geolocation
  */
+
+namespace Geolocation;
+
 class config_form extends \rex_config_form
 {
 
-    public $addon = '';
+    /**
+     *   Work-around für REDAXO ab 5.12 betreffend validator->notEmpty
+     *
+     *   seit 5.12 wird notEmpty automatisch zu einem "required"-Input mit Client-Validierung
+     *   Das mag ich nicht; daher das Required-Attribut wieder per JS abschalten (geht nicht anders)
+     *   Die Eingabe wieder per Validator klassisch prüfen.
+     *
+     *   @param rex_form_element     Das zu modifizierende Formular-Element
+     */
+    public function ensureOldNotEmptyBehavoir( \rex_form_element $field )
+    {
+        static $R_5_12 = null;
 
-    // Work-around für REDAXO ab 5.12 betreffend validator->notEmpty
-    // seitdem wird notEmpty automatisch zu einem "required"-Input mit Client-Validierung
-    // Das mag ich nicht; daher das Required-Attribut wieder per JS abschalten
-
-    public $R_5_12 = false;
-
-    public function init(){
-        parent::init();
-        if( !$this->R_5_12 ) return;
-        $id = 'rf' . md5(microtime());
-        $this->setFormId( $id );
-        $this->addRawField('
-        <script>
-        document.addEventListener("DOMContentLoaded", function(){
-            let item, form = document.getElementById(\''.$id.'\');
-            if( !form ) return;
-            form.querySelectorAll( \'form input[remove_required="1"]\').forEach( (item) => item.removeAttribute("required") );
-        });
-        </script>
-        ');
-    }
-
-    public function classicNotEmpty( $field ){
-        if( $this->R_5_12 ) {
+        // beim ersten Aufruf initialisieren
+        if( null === $R_5_12 ) {
+            $R_5_12 = \rex_version::compare(\rex::getVersion(),'5.11.99','>');
+            if( $R_5_12 ) {
+                $id = 'rf' . md5(microtime());
+                $this->setFormId( $id );
+                $this->addRawField('
+                <script>
+                document.addEventListener("DOMContentLoaded", function(){
+                    let item, form = document.getElementById(\''.$id.'\');
+                    if( !form ) return;
+                    form.querySelectorAll( \'form input[remove_required="1"]\').forEach( (item) => item.removeAttribute("required") );
+                });
+                </script>
+                ');
+            };
+        }
+        // Feld anpassen
+        if( $R_5_12 ) {
             $field->setAttribute('remove_required',1);
         }
     }
-    //-----------
 
-    protected function __construct($namespace, $fieldset = null, $debug = false)
-    {
-        parent::__construct($namespace, $fieldset, $debug);
-        $this->addon = $namespace;
-        $this->R_5_12 = \rex_version::compare(\rex::getVersion(),'5.11.99','>');
+    /**
+     *   Initialisiert das Formular selbst
+     *
+     */
+    public function init(){
+        parent::init();
 
         if( !PROXY_ONLY ){
             $this->addFieldset( \rex_i18n::msg('geolocation_config_map') );
@@ -61,7 +68,7 @@ class config_form extends \rex_config_form
                 $field->getValidator()
                       ->add( 'notEmpty', $errorMsg )
                       ->add( 'match', $errorMsg.'#', '/^\s*\[[+-]?\d+(\.\d+)?,\s*[+-]?\d+(\.\d+)?\],\s*[[+-]?\d+(\.\d+)?,\s*[+-]?\d+(\.\d+)?\]\s*$/');
-                $this->classicNotEmpty( $field );
+                $this->ensureOldNotEmptyBehavoir( $field );
 
                 $field = $this->addTextField( 'map_zoom' );
                 $field->setLabel( \rex_i18n::msg('geolocation_form_map_zoom') );
@@ -72,7 +79,7 @@ class config_form extends \rex_config_form
                       ->add( 'type', $errorMsg, 'integer')
                       ->add( 'min', $errorMsg, ZOOM_MIN)
                       ->add( 'max', $errorMsg,ZOOM_MAX);
-                $this->classicNotEmpty( $field );
+                $this->ensureOldNotEmptyBehavoir( $field );
 
                 $field = $this->addCheckboxField('map_components');
                 $field->setLabel(\rex_i18n::msg('geolocation_form_mapoptions'));
@@ -87,7 +94,7 @@ class config_form extends \rex_config_form
                 $field->getValidator()
                       ->add( 'notEmpty', $errorMsg)
                       ->add( 'match', $errorMsg, '/^.*?\.php$/');
-                $this->classicNotEmpty( $field );
+                $this->ensureOldNotEmptyBehavoir( $field );
         }
 
         $this->addFieldset( \rex_i18n::msg('geolocation_config_proxycache') );
@@ -101,7 +108,7 @@ class config_form extends \rex_config_form
                   ->add( 'type', $errorMsg, 'integer' )
                   ->add( 'min', $errorMsg, TTL_MIN )
                   ->add( 'max', $errorMsg, TTL_MAX );
-            $this->classicNotEmpty( $field );
+            $this->ensureOldNotEmptyBehavoir( $field );
 
             $field = $this->addTextField( 'cache_maxfiles' );
             $field->setLabel( \rex_i18n::msg('geolocation_form_proxycache_maxfiles') );
@@ -111,9 +118,18 @@ class config_form extends \rex_config_form
                   ->add( 'notEmpty', $errorMsg )
                   ->add( 'type', $errorMsg, 'integer' )
                   ->add( 'min', $errorMsg, CFM_MIN );
-            $this->classicNotEmpty( $field );
+            $this->ensureOldNotEmptyBehavoir( $field );
+
     }
 
+    /**
+     *   Feldwerte abrufen - Sonderfall 'outfragment'
+     *
+     *   Das Feld muss immer gefüllt wein, daher wird hier wenn es leer ist der Fallback-Wert
+     *   eingetragen.
+     *
+     *   @param bool     true für "erfolgreich gespeichert", sonst false
+     */
     protected function getValue($name)
     {
         $value = parent::getValue($name);
@@ -123,6 +139,14 @@ class config_form extends \rex_config_form
         return $value;
     }
 
+    /**
+     *   Speichert die Änderungen in der Datenbank
+     *
+     *   Das formal kritische Freitextfeld map_bounds wird normalisiert
+     *   Auf Basis der Setttings werden die Assets neu kompiliert.
+     *
+     *   @param bool     true für "erfolgreich gespeichert", sonst false
+     */
     protected function save() : bool
     {
         // Bounds-Koordinaten um Leerzeichen erleichtern (nur wenn Karten-Fieldset aktiviert)
@@ -143,8 +167,16 @@ class config_form extends \rex_config_form
         return $ok;
     }
 
-    static function compileAssets( $addonDir=null ) : void
+    /**
+     *   Compiliert die Assets (CSS/JS) basierend auf den Settings neu
+     *
+     *   Siehe Dokumentation
+     *
+     *   @param ?string      null= reguläres Addon-Verzeichnis oder eben das angegebene Verzeichnis
+     */
+    static function compileAssets( ?string $addonDir=null ) : void
     {
+
         $addonDir = $addonDir ?: \rex_path::addon(ADDON);
         $dataDir = \rex_path::addonData(ADDON);
         $assetDir = \rex_path::addonAssets(ADDON);
@@ -185,7 +217,7 @@ class config_form extends \rex_config_form
                 ->replace( '%defaultFullscreen%', (false === strpos(\rex_config::get(ADDON,'map_components'),'|fullscreen|') ? 'false' : 'true') )
                 ->replace( '%defaultGestureHandling%', (false === strpos(\rex_config::get(ADDON,'map_components'),'|gestureHandling|') ? 'false' : 'true') )
                 ->replace( '%defaultLocateControl%', (false === strpos(\rex_config::get(ADDON,'map_components'),'|locateControl|') ? 'false' : 'true') )
-                ->replace( '%i18n%', \rex_file::get($dataDir.'lang',\rex_file::get($addonDir.'install/lang','')) );
+                ->replace( '%i18n%', \rex_file::get($dataDir.'lang_js',\rex_file::get($addonDir.'install/lang_js','')) );
         }
 
         // Die optionalen individuellen Komponenten aus dem data-Verzeichnis holen
@@ -200,8 +232,8 @@ class config_form extends \rex_config_form
                 ->regReplace( '%//#\s+sourceMappingURL=.*?$%im','//' );
             $be_css
                 ->addOptionalFile( $dataDir.'geolocation_be.css');
-        }
 
+        }
         // Zieldateien final erstellen
         $js->create();
         $css->create();

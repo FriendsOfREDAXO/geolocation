@@ -2,11 +2,23 @@
 /**
  * @package Geolocation
  *
- * @internal
+ * Hier kein Namespace, da sonst die API-Plasse nicht gefunden wird.
  */
 
 class rex_api_geolocation_clearcache extends \rex_api_function
 {
+
+    /**
+     * ruft die Cachebereinigung auf. Wenn in der URL data_id=.. auf einen
+     * Kartenlayer verweist, wird dessen Cache gelöscht. Ohne data_id
+     * werden alle Caches gelöscht.
+     *
+     * Nur zulässig wenn angemeldet und mit Permission "geolocation[clearcache]" bzw. als Admin
+     *
+     * @return rex_api_result ausgeführt
+     *
+     * @throws  \rex_api_exception no permissions
+     */
     public function execute()
     {
         if (!($user = \rex::getUser()) || !$user->hasPerm('geolocation[clearcache]')) {
