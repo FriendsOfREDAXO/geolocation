@@ -1,5 +1,12 @@
 # Changelog
 
+## **12.12.2021 Version 0.12.1**
+
+- Returntype `?self` für `mapset::get` funktioniert erst ab PHP 7.4. Statt dessen
+  `?\rex_yform_manager_dataset`.
+___
+
+
 ## **12.12.2021 Version 0.12.0**
 
 - HELP.PHP
