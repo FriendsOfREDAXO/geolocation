@@ -65,7 +65,7 @@ geolocation_layer_attribution_notice = sprachneutral
 geolocation_layer_i18nlabel = Label
 geolocation_layer_i18nlabel_notice = Sprachversionen des Layer-Namen in Karten (de:Karte, en:Map, ...)
 geolocation_layer_i18nlabel_error = Mindestens eine Sprache muss festgelegt werden, jede Sprache darf nur einmal vorkommen
-geolocation_layer_in_use = Tile-Server/Kartenanbieter «{0}» kann nicht gelöscht werden, da einem oder mehreren Kartentypen zugeordnet
+geolocation_layer_in_use = Karte/Tile-Server «{0}» kann nicht gelöscht werden, da einem oder mehreren Kartensätzen zugeordnet
 geolocation_layer_type = Layer-Kategorie
 geolocation_layer_type_choice_b = Karte (Base-Layer)
 geolocation_layer_type_choice_o = Overlay
@@ -73,7 +73,7 @@ geolocation_layer_fs_cache = Cache-Parameter
 geolocation_layer_fs_rest = Weitere Parameter
 
 # Permissions
-perm_general_geolocation[layer] = Kartenlayer verwalten
+perm_general_geolocation[layer] = Karten/Layer verwalten
 perm_general_geolocation[mapset] = Kartensätze verwalten
 perm_general_geolocation[clearcache] = Cache löschen
 
@@ -87,8 +87,8 @@ geolocation_manpage = Handbuch
 geolocation_manpage_intro = Übersicht
 geolocation_manpage_install = Installation
 geolocation_manpage_proxy = Proxy und Cache
-geolocation_manpage_admin = Verwaltung
-geolocation_manpage_usage = Nutzung
+geolocation_manpage_layer = Karten/Layer
+geolocation_manpage_mapset = Kartensätze
 geolocation_manpage_developer = Für Entwickler
 geolocation_manpage_devphp = PHP
 geolocation_manpage_devjs = Javascript
@@ -101,3 +101,4 @@ geolocation_install_table_filled = Die Tabellen sind mit Beispieldaten vorbefül
 geolocation_install_tableset_prepared = Die YForm-Formulare sind angelegt.
 geolocation_install_cronjob_prepared = Der Cronjob zur Cache-Pflege ist angelegt.
 geolocation_install_assets_prepared = Die Asset-Dateien sind neu compiliert.
+geolocation_install_tableset = Fehler beim Import der YForm-Formulare: «{0}»
