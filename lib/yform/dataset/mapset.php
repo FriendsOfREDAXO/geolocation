@@ -19,12 +19,15 @@ yform-dataset to enhance rex_geolocation_mapset:
 
     - Listenbezogen
 
+        YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" für die Datentabelle
+
     - AJAX-Abrufe
 
         sendMapset      Kartensatz-Abruf vom Client beantworten
 
     - Support
 
+        getValue        Eigene virtuelle Datensatzfelder abrufen
         getLayerset     Array z.B. für <rex-map mapset=...> bereitstellen (Kartensatzparameter)
         getMapOptions   Array z.B. für <rex-map map=...> bereitstellen (Kartenoptionen)
         getOutFragment  das für Kartendarstellung vorgesehene Fragment (outfragment) mit Fallback
@@ -172,6 +175,37 @@ class mapset extends \rex_yform_manager_dataset
         return parent::executeForm($yform,$afterFieldsExecuted);
     }
 
+    # Listenbezogen
+
+    /**
+     * Button "Cache löschen" für die Datentabelle
+     *
+     * Baut den Link/Button für "cache löschen" in die Listenansicht ein.
+     * nur für Admins und User mit Permission "geolocation[clearcache]"
+     *
+     * @param \rex_extension_point      EP-Parameter
+     *
+     * @return array|null               Array der Actions oder null (=keine Änderung)
+     */
+    static public function YFORM_DATA_LIST_ACTION_BUTTONS( \rex_extension_point $ep )
+    {
+        // nur wenn diese Tabelle im Scope ist
+        $table_name = $ep->getParam('table')->getTableName();
+        if( self::class != self::getModelClass( $table_name ) ) return;
+
+        if( ($user = \rex::getUser()) && $user->hasPerm('geolocation[clearcache]') ){
+            $link_vars = $ep->getParam('link_vars') + [
+                'mapset_id' => '___id___',
+                'rex-api-call' => 'geolocation_clearcache',
+            ];
+            $href = \rex_url::backendController( $link_vars, false );
+            $confirm = \rex_i18n::msg('geolocation_clear_cache_confirm','___name___');
+            $label = '<i class="rex-icon rex-icon-delete"></i> ' . \rex_i18n::msg('geolocation_clear_cache');
+            $action = '<a onclick="return confirm(\''.$confirm.'\')" href="'.$href.'">'.$label.'</a>';
+            return $ep->getSubject() + ['geolocationClearCache' => $action];
+        }
+    }
+
     # AJAX-Abrufe
 
     /**
@@ -199,6 +233,24 @@ class mapset extends \rex_yform_manager_dataset
     # Support
 
     /**
+     * liefert in der virtuellen Variablen 'layerset' die Nummern aller Layer (basis und overlay)
+     * ansonsten normales getValue
+     *
+     * @param string    Name der Variablen
+     * @return mixed
+     */
+    public function getValue(string $key)
+    {
+        if( 'layerset' === $key ) {
+            $layer = explode(',',$this->layer.','.$this->overlay);
+            $layer = array_filter( $layer, 'strlen' );
+            return array_unique( $layer );
+        }
+        return parent::getValue($key);
+    }
+
+
+    /**
      * Array z.B. für <rex-map mapset=...> bereitstellen (Kartensatzparameter)
      *
      * Liefert aufbauend auf dem aktuellen Datensatz ein Array mit erweiterten Kartenkonfigurations-
@@ -210,11 +262,7 @@ class mapset extends \rex_yform_manager_dataset
     {
         // get layers ond overlays in scope
         $locale = \rex_clang::getCurrent()->getCode();
-        $result = array_merge(
-            layer::getLayerConfigSet( explode(',',$this->layer), $locale ),
-            layer::getLayerConfigSet( explode(',',$this->overlay), $locale )
-        );
-        return $result;
+        return layer::getLayerConfigSet( $mapset->layerset, $locale );
     }
 
     /**
