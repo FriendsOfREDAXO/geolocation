@@ -82,8 +82,10 @@ class cache
     {
         $count = 0;
         $targetDir = \rex_path::addonCache( ADDON, $layer );
-        $count = count( glob($targetDir.'/*', GLOB_NOSORT) );
-        $count = \rex_dir::delete( $targetDir, true ) ? $count : 0;
+        if( $layer && is_dir($targetDir) ) {
+            $count = count( glob($targetDir.'/*', GLOB_NOSORT) );
+            $count = \rex_dir::delete( $targetDir, true ) ? $count : 0;
+        }
         return $count;
     }
 
