@@ -1,5 +1,11 @@
 # Changelog
 
+## **13.12.2021 Version 0.13.0**
+
+- Umstellung der Aktions-Button in Listen auf Action-Dropdown (ab YForm 4.0-beta5)
+___
+
+
 ## **12.12.2021 Version 0.12.1**
 
 - Returntype `?self` für `mapset::get` funktioniert erst ab PHP 7.4. Statt dessen
