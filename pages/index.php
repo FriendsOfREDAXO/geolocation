@@ -43,21 +43,20 @@ echo \rex_view::title( $this->i18n('geolocation_title') );
 // ggf. vorhandene API Messages ausgeben
 echo rex_api_function::getMessage();
 
-// Liste 'rex_geolocation_layer' um einen Button zum Löschen des Layer-Cache erweitern
-\rex_extension::register('YFORM_DATA_LIST',
-    function( \rex_extension_point $ep )
-    {
-        \Geolocation\layer::listAddCacheButton( $ep->getSubject(), $ep->getParam('table')->getTableName() );
-    }
-);
+// Liste 'rex_geolocation_mapset' um eine Action zum Löschen des Layer-Cache erweitern
+\rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS','\Geolocation\mapset::YFORM_DATA_LIST_ACTION_BUTTONS');
+
+// Liste 'rex_geolocation_layer' um eine Action zum Löschen des Layer-Cache erweitern
+\rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS','\Geolocation\layer::YFORM_DATA_LIST_ACTION_BUTTONS');
 
 // Liste 'rex_geolocation_layer' mit geänderter Sortierung
-\rex_extension::register('YFORM_DATA_LIST_QUERY',
-    function( \rex_extension_point $ep )
-    {
-        return \Geolocation\layer::listSort( $ep->getSubject() );
-    }
-);
+\rex_extension::register('YFORM_DATA_LIST_QUERY','\Geolocation\layer::YFORM_DATA_LIST_QUERY');
+#\rex_extension::register('YFORM_DATA_LIST_QUERY',
+#    function( \rex_extension_point $ep )
+#    {
+#        return \Geolocation\layer::listSort( $ep->getSubject() );
+#    }
+#);
 
 // Und nun die aktuelle Seite anzeigen
 \rex_be_controller::includeCurrentPageSubPath();
