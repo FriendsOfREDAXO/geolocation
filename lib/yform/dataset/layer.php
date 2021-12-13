@@ -23,8 +23,8 @@ namespace Geolocation;
 
     - Listenbezogen
 
-        listAddCacheButton    Button "Cache löschen" für die Datentabelle
-        listSort              Initiale Sortiertung die Liste nach zwei Kriterien
+        YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" für die Datentabelle
+        YFORM_DATA_LIST_QUERY           Initiale Sortiertung die Liste nach zwei Kriterien
 
     - AJAX-Abrufe
 
@@ -256,16 +256,26 @@ class layer extends \rex_yform_manager_dataset
      * Baut den Link/Button für "cache löschen" in die Listenansicht ein.
      * nur für Admins und User mit Permission "geolocation[clearcache]"
      *
-     * @param \rex_yform_list   Das Listenobjekt
-     * @param string            Tabellenname
+     * @param \rex_extension_point      EP-Parameter
+     *
+     * @return array|null               Array der Actions oder null (=keine Änderung)
      */
-    static public function listAddCacheButton( \rex_yform_list $list, string $table_name ) : void
+    static public function YFORM_DATA_LIST_ACTION_BUTTONS( \rex_extension_point $ep )
     {
+        // nur wenn diese Tabelle im Scope ist
+        $table_name = $ep->getParam('table')->getTableName();
+        if( self::class != self::getModelClass( $table_name ) ) return;
+
         if( ($user = \rex::getUser()) && $user->hasPerm('geolocation[clearcache]') ){
-            if( self::class != self::getModelClass( $table_name ) ) return;
-            $list->addColumn('clearCache', '<i class="rex-icon rex-icon-delete"></i> ' . \rex_i18n::msg('geolocation_clear_cache'), -1, ['', '<td class="rex-table-action">###VALUE###</td>']);
-            $list->setColumnParams('clearCache', ['data_id' => '###id###', 'rex-api-call' => 'geolocation_clearcache']);
-            $list->addLinkAttribute('clearCache', 'data-confirm', \rex_i18n::msg('geolocation_clear_cache_confirm','###name###'));
+            $link_vars = $ep->getParam('link_vars') + [
+                'layer_id' => '___id___',
+                'rex-api-call' => 'geolocation_clearcache',
+            ];
+            $href = \rex_url::backendController( $link_vars, false );
+            $confirm = \rex_i18n::msg('geolocation_clear_cache_confirm','___name___');
+            $label = '<i class="rex-icon rex-icon-delete"></i> ' . \rex_i18n::msg('geolocation_clear_cache');
+            $action = '<a onclick="return confirm(\''.$confirm.'\')" href="'.$href.'">'.$label.'</a>';
+            return $ep->getSubject() + ['geolocationClearCache' => $action];
         }
     }
 
@@ -273,19 +283,27 @@ class layer extends \rex_yform_manager_dataset
      * Initiale Sortiertung die Datentabelle nach zwei Kriterien
      *
      * sorgt initial für die Sortierung nach 'layertyp,name'
-     * sofern es keine individuelle Sortierung gibt: das wird hier geprüft über \rex_request('sort')
-     * als Indikator.
+     * sofern es keine individuelle Sortierung gibt: das wird hier hilfsweise geprüft über
+     * \rex_request('sort') als Indikator.
      *
-     * @param \rex_yform_manager_query   Das Listenobjekt
+     * @param \rex_extension_point              EP-Parameter
+     *
+     * @return rex_yform_manager_query|null     geänderte Query oder null
      */
-    static public function listSort( \rex_yform_manager_query $query ) : void
-    {
-        if( self::class != self::getModelClass( $query->getTableName() ) ) return;
-        if( \rex_request('sort','string',null) ) return;
-        $query
-            ->orderBy( 'layertype')
-            ->orderBy( 'name');
-    }
+     #
+     static public function YFORM_DATA_LIST_QUERY( \rex_extension_point $ep )
+     {
+         // nichts tun wenn es schon einen Sort gibt
+         if( \rex_request('sort','string',null) ) return;
+
+         // nur wenn diese Tabelle im Scope ist
+         if( self::class != self::getModelClass( $ep->getSubject()->getTableName() ) ) return;
+
+         $ep->getSubject()
+             ->orderBy( 'layertype')
+             ->orderBy( 'name');
+     }
+
 
     # AJAX-Abrufe
 
