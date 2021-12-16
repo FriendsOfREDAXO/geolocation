@@ -333,9 +333,9 @@ array:6 [▼
     "addonDir" => "«path_to_redaxo»/redaxo/src/addons/geolocation/"
     "dataDir" => "«path_to_redaxo»/redaxo/data/addons/geolocation/"
     "assetDir" => "«path_to_redaxo»/assets/addons/geolocation/"
-    "css" => AssetPacker\AssetPacker_css {#270 ▶}
-    "js" => AssetPacker\AssetPacker_js {#271 ▶}
-    "be_css" => AssetPacker\AssetPacker_css {#272 ▶}
+    "css" => Geolocation\AssetPacker\AssetPacker_css {#270 ▶}
+    "js" => Geolocation\AssetPacker\AssetPacker_js {#271 ▶}
+    "be_css" => Geolocation\AssetPacker\AssetPacker_css {#272 ▶}
 ]
 ```
 
@@ -344,18 +344,18 @@ eingebaut, dann der Code von **Geolocation** (Karten aufbauen). Hier eine verein
 des Ablaufs in `compileAssets`:
 
 ```php
-$css = \AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.css')
+$css = AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.css')
     ->overwrite()
     ->addFile( $addonDir.'install/vendor/leaflet/leaflet.css') )
     ->addFile( $addonDir.'install/vendor/Leaflet.GestureHandling/leaflet-gesture-handling.min.css') )
     ->addFile( $addonDir.'install/geolocation.css') );
-$js = \AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.js')
+$js = AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.js')
     ->overwrite()
     ->addFile( $addonDir.'install/vendor/leaflet/leaflet.js') )
     ->addFile( $addonDir.'install/vendor/Leaflet.GestureHandling/leaflet-gesture-handling.min.js') )
     ->addFile( $addonDir.'install/geolocation.js') );
 
-$be_css = \AssetPacker\AssetPacker::target( $assetDir.'geolocation_be.min.css')
+$be_css = AssetPacker\AssetPacker::target( $assetDir.'geolocation_be.min.css')
     ->overwrite()
     ->addFile( $addonDir.'install/geolocation_be.css' );
 
