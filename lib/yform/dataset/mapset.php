@@ -19,7 +19,7 @@ yform-dataset to enhance rex_geolocation_mapset:
 
     - Listenbezogen
 
-        YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" für die Datentabelle
+        YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" in die Datentabelle
 
     - AJAX-Abrufe
 
@@ -199,7 +199,7 @@ class mapset extends \rex_yform_manager_dataset
                 'rex-api-call' => 'geolocation_clearcache',
             ];
             $href = \rex_url::backendController( $link_vars, false );
-            $confirm = \rex_i18n::msg('geolocation_clear_cache_confirm','___name___');
+            $confirm = \rex_i18n::msg('geolocation_clear_cache_confirm','___name___ [id=___id___]');
             $label = '<i class="rex-icon rex-icon-delete"></i> ' . \rex_i18n::msg('geolocation_clear_cache');
             $action = '<a onclick="return confirm(\''.$confirm.'\')" href="'.$href.'">'.$label.'</a>';
             return $ep->getSubject() + ['geolocationClearCache' => $action];
@@ -227,7 +227,7 @@ class mapset extends \rex_yform_manager_dataset
 
         // get layers ond overlays in scope and send as JSON
         \rex_response::cleanOutputBuffers();
-        \rex_response::sendJson( $mapset->getLayerset() );
+        \rex_response::sendJson( $this->getLayerset() );
     }
 
     # Support
@@ -262,7 +262,7 @@ class mapset extends \rex_yform_manager_dataset
     {
         // get layers ond overlays in scope
         $locale = \rex_clang::getCurrent()->getCode();
-        return layer::getLayerConfigSet( $mapset->layerset, $locale );
+        return layer::getLayerConfigSet( $this->layerset, $locale );
     }
 
     /**

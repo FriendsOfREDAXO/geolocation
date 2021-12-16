@@ -22,7 +22,7 @@
  *  ------------------------------------------------------------------------------------------------
  */
 
-namespace AssetPacker;
+namespace Geolocation\AssetPacker;
 /**
  *  @package AssetPacker
  *  @method AssetPacker     target( string $targetPath )

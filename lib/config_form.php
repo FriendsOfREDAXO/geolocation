@@ -183,12 +183,12 @@ class config_form extends \rex_config_form
 
         // AssetPacker-Instanzen für die Asset-Dateien öffnen
         // Kartensoftware
-        $css = \AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.css')
+        $css = AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.css')
             ->overwrite();
-        $js = \AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.js')
+        $js = AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.js')
             ->overwrite();
         // CCS für Backend-Formulare
-        $be_css = \AssetPacker\AssetPacker::target( $assetDir.'geolocation_be.min.css')
+        $be_css = AssetPacker\AssetPacker::target( $assetDir.'geolocation_be.min.css')
             ->overwrite()
             ->addFile( $addonDir.'install/geolocation_be.css' );
 
