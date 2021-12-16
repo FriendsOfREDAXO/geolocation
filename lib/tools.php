@@ -8,7 +8,7 @@
 namespace Geolocation;
 
 // Damit man weiß, dass die Exception aus Geolocation stammt
-// => Geolocation\Exception 
+// => Geolocation\Exception
 
 class Exception extends \RuntimeException {}
 
@@ -136,9 +136,9 @@ class tools
                 \rex_view::addCssFile(\rex_url::addonAssets(\Geolocation\ADDON,'geolocation.min.css'));
                 \rex_view::addJsFile(\rex_url::addonAssets(\Geolocation\ADDON,'geolocation.min.js'));
             } else {
-                echo \AssetPacker\AssetPacker::target( \rex_path::addonAssets(ADDON,'geolocation.min.css') )
+                echo AssetPacker\AssetPacker::target( \rex_path::addonAssets(ADDON,'geolocation.min.css') )
                     ->getTag();
-                echo \AssetPacker\AssetPacker::target( \rex_path::addonAssets(ADDON,'geolocation.min.js') )
+                echo AssetPacker\AssetPacker::target( \rex_path::addonAssets(ADDON,'geolocation.min.js') )
                     ->getTag();
             }
         }
