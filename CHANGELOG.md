@@ -1,5 +1,12 @@
 # Changelog
 
+## **16.12.2021 Version 0.13.1**
+
+- Bugfix in mapset.php, falsche Klassenbezeichnung
+- Namespace für AssetPacker unter Geolocation eingeordnet
+___
+
+
 ## **13.12.2021 Version 0.13.0**
 
 - Umstellung der Aktions-Button in Listen auf Action-Dropdown (ab YForm 4.0-beta5)
