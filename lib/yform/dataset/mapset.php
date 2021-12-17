@@ -152,6 +152,7 @@ class mapset extends \rex_yform_manager_dataset
     public function executeForm(\rex_yform $yform, callable $afterFieldsExecuted = null) : string
     {
 
+        dump( 'post',$_POST);
         // setzt bei leeren Formularen (add) ein paar Default-Werte
         \rex_extension::register('YFORM_DATA_ADD', function( \rex_extension_point $ep ){
             // nur abarbeiten wenn es um diese Instanz geht
@@ -227,7 +228,7 @@ class mapset extends \rex_yform_manager_dataset
 
         // get layers ond overlays in scope and send as JSON
         \rex_response::cleanOutputBuffers();
-        \rex_response::sendJson( $this->getLayerset() );
+        \rex_response::sendJson( $mapset->getLayerset() );
     }
 
     # Support
@@ -353,6 +354,7 @@ class mapset extends \rex_yform_manager_dataset
     public static function take( ?int $id = null ) : self
     {
         try {
+            if( !$id ) throw new Exception();
             $map = mapset::get($id);
             if( null === $map ) throw new \Exception();
         } catch (\Exception $e) {

@@ -1,5 +1,11 @@
 # Changelog
 
+## **17.12.2021 Version 0.13.2**
+
+- Bugfix in mapset.php: take() ohne Parameter führte zum Whoops
+___
+
+
 ## **16.12.2021 Version 0.13.1**
 
 - Bugfix in mapset.php, falsche Klassenbezeichnung
