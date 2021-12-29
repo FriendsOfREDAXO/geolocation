@@ -149,7 +149,7 @@ Der erzeugte HTML-Code ist
 
 ```html
 <link rel="stylesheet" type="text/css" media="all" href="./assets/addons/geolocation/geolocation.min.css?buster=1610977544" />
-<script type="text/javascript" src="./assets/addons/geolocation/geolocation.js?buster=1611562701" ></script>
+<script type="text/javascript" src="./assets/addons/geolocation/geolocation.min.js?buster=1611562701" ></script>
 ```
 
 Im Template wird an geeigneter Stelle der Aufruf der Methode `\Geolocation\tools::echoAssetTags();`
