@@ -426,7 +426,13 @@ class layer extends \rex_yform_manager_dataset
         if( !$locale ) $locale = \rex_clang::getCurrent()->getCode();
         $lang = \rex_var::toArray( $this->lang );
         $lang = array_column( $lang,1,0 );
-        return $lang[$locale] ?: $lang[array_key_first($lang)] ?: $this->name;
+        if (isset($lang[$locale]) && $lang[$locale]) {
+            return $lang[$locale];
+        }
+        if (isset($lang[array_key_first($lang)]) && $lang[array_key_first($lang)]) {
+            return $lang[array_key_first($lang)];
+        }
+        return $this->name;
     }
 
     /**
