@@ -443,6 +443,7 @@ class AssetPacker_css extends AssetPacker
         $scss_compiler->setNumberPrecision(10);
         $scss_compiler->setFormatter(\ScssPhp\ScssPhp\Formatter\Compressed::class);
         $styles = '@import \''.\rex_path::addon('be_style','plugins/redaxo/scss/_variables').'\';';
+    	$styles = str_replace('\\','/',$styles);
         return $scss_compiler->compile($styles.$content);
 	}
 
