@@ -648,6 +648,54 @@ Geolocation.Tools.Bounds = class extends Geolocation.Tools.Template{
 }
 Geolocation.tools.bounds = function(...args) { return new Geolocation.Tools.Bounds(args); };
 
+// Tool geojson
+// packt einfach einen geojson-Datensatz auf die Karte
+Geolocation.Tools.GeoJSON = class extends Geolocation.Tools.Template
+{
+    setValue( geojsonData ){
+        super.setValue( geojsonData );
+        if( this.map ) {
+            let map = this.map;
+            this.remove();
+            this.map = map;
+        }
+        this.geojsonLayer = L.geoJSON(
+            geojsonData,
+            this.setOptions( {style:this._style,onEachFeature:this._eachFeature} )
+        );
+        if( this.map ) this.show( this.map );
+        return this;
+    }
+    show( map ){
+        super.show( map );
+        this.geojsonLayer.addTo( map );
+        return this;
+    }
+    remove(){
+        this.geojsonLayer.removeFrom(this.map);
+        super.remove();
+        return this;
+    }
+    getCurrentBounds(){
+        return this.geojsonLayer.getBounds(); //rect;
+    }
+    //--- Sonderfunktionen
+    setOptions( options ) {
+        return options;
+    }
+    _style(feature) {
+        return feature.properties && feature.properties.style;
+    }
+	_eachFeature(feature, layer) {
+        let popupContent = feature.properties.popupContent || null;
+        if( popupContent ) {
+    		layer.bindPopup(popupContent);
+        }
+	}
+
+}
+Geolocation.tools.geojson = function(...args) { return new Geolocation.Tools.GeoJSON(args); };
+
 //-- Custom HTML-Element ---------------------------------------------------------------------------
 
 Geolocation.Classes.RexMap = class extends HTMLElement{
