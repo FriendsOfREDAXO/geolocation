@@ -429,8 +429,9 @@ class layer extends \rex_yform_manager_dataset
         if (isset($lang[$locale]) && $lang[$locale]) {
             return $lang[$locale];
         }
-        if (isset($lang[array_key_first($lang)]) && $lang[array_key_first($lang)]) {
-            return $lang[array_key_first($lang)];
+        $locale = array_key_first($lang);
+        if (isset($lang[$locale]) && $lang[$locale]) {
+            return $lang[$locale];
         }
         return $this->name;
     }
