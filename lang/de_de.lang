@@ -93,6 +93,8 @@ geolocation_manpage_developer = Für Entwickler
 geolocation_manpage_devphp = PHP
 geolocation_manpage_devjs = Javascript
 geolocation_manpage_devtools = Tools
+geolocation_manpage_devgeojson = geoJSON
+geolocation_manpage_devmath = Rechnen (PHP)
 
 # Installation
 geolocation_install_missing = Die Installationsdatei «{0}» fehlt!
