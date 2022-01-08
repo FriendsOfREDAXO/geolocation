@@ -50,7 +50,6 @@ if( isset($this->events) && is_array($this->events) && count($this->events) ) {
 }
 
 // sonstige Attribute hinzufügen (class,dataset,mapset,map ignorieren)
-
 if( isset($this->attributes) && is_array($this->attributes) && count($this->attributes) ) {
     $attributes = array_merge(
         $attributes,
@@ -68,7 +67,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         Geolocation.initMap( rex_map );
         return;
     }
-    console.error( 'Geolocation: map-container "<?= $id ?>" not found.');
 });
 </script>
 <?php
