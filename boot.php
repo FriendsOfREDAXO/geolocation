@@ -1,5 +1,9 @@
-<?php
-namespace Geolocation;
+<?php namespace Geolocation;
+/**
+ * API-Aprufe, Voreinstellungen
+ *
+ * @package geolocation
+ */
 
 define('Geolocation\ADDON', $this->name);
 define('Geolocation\TTL_MIN',0);

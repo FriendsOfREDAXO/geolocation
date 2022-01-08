@@ -1,6 +1,8 @@
 <?php
-/**
+ /**
  *  Installations-Script
+ *
+ *  @package geolocation
  *
  *  Install:    Installiert die Tabellen und YForm-Formulare
  *  Re-Install: Repariert die Einstellungen
