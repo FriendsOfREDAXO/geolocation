@@ -435,7 +435,7 @@ class Box
 
 		foreach( $data as $point ){
 			if( !($point instanceof Point) ) {
-				throw new \Exception("Parameterfehler", 1);
+				throw new InvalidBoxParameter( InvalidBoxParameter::BOXEXTEND );
 			}
 			if( $this->contains( $point ) ) {
 				continue;
