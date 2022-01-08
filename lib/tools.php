@@ -7,12 +7,6 @@
 
 namespace Geolocation;
 
-// Damit man weiß, dass die Exception aus Geolocation stammt
-// => Geolocation\Exception
-
-class Exception extends \RuntimeException {}
-
-
 class tools
 {
 
@@ -103,26 +97,6 @@ class tools
         \rex_response::sendCacheControl( 'public, max-age=' . $ttl * 60 );
         \rex_response::sendContent($tile, $contentType, $timestamp);
         exit();
-    }
-
-    /**
-     *  Aus einem String "lat,lng" z.B. aus REX_VAR ein Array mit numerischen Koordinaten formen
-     *
-     *  @param  string|array $latlng    string "lat,lng" | [ "lat", "lng" ] array: [ "lat", "lng" ]
-     *
-     *  @return ?array                  [ lat, lng ] oder null
-     */
-    static public function latLngArray ( $latlng ) : ?array
-    {
-        if( is_string($latlng) ){
-            $ok = preg_match('/^\s*(?<X>\[)*\s*(?<lat>[+-]?\d+(\.\d+)*)\s*,\s*(?<lon>[+-]?\d+(\.\d+)*)\s*(?(<X>)\]|)\s*$/', $latlng, $match );
-            if( !$match ) return null;
-            $latlng = [ $match['lat'], $match['lon'] ];
-        }
-        if( is_array($latlng) && 2 == count($latlng) ) {
-            $latlng = array_map( 'floatval', $latlng );
-        }
-        return $latlng;
     }
 
     /**
