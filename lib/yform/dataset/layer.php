@@ -1,10 +1,9 @@
-<?php
+<?php namespace Geolocation;
 /**
  * Geolocatin|layer ist eine erweiterte yform-dataset-Klasse für Kartenlayer
  *
  * @package geolocation
  */
-namespace Geolocation;
 
 /*
     - dataset-spezifisch
@@ -82,6 +81,10 @@ class layer extends \rex_yform_manager_dataset
             }
             if( 'ttl' == $fe[1] && empty($fe[3]) ){
                 $fe[3] = \rex_config::get( ADDON, 'cache_ttl', TTL_DEF );
+                if( str_starts_with($fe[6],'translate:') ) {
+                    $fe[6] = substr( $fe[6],10 );
+                }
+                $fe[6] = \rex_i18n::rawMsg( $fe[6],TTL_MAX );
                 continue;
             }
             if( 'cfmax' == $fe[1] && empty($fe[3]) ){
@@ -422,19 +425,19 @@ class layer extends \rex_yform_manager_dataset
      *
      * @return string      Kartentitel
      */
-    public function getLabel( ?string $locale ){
-        if( !$locale ) $locale = \rex_clang::getCurrent()->getCode();
-        $lang = \rex_var::toArray( $this->lang );
-        $lang = array_column( $lang,1,0 );
-        if (isset($lang[$locale]) && $lang[$locale]) {
-            return $lang[$locale];
-        }
-        $locale = array_key_first($lang);
-        if (isset($lang[$locale]) && $lang[$locale]) {
-            return $lang[$locale];
-        }
-        return $this->name;
-    }
+     public function getLabel( ?string $locale ){
+         if( !$locale ) $locale = \rex_clang::getCurrent()->getCode();
+         $lang = \rex_var::toArray( $this->lang );
+         $lang = array_column( $lang,1,0 );
+         if (isset($lang[$locale]) && $lang[$locale]) {
+             return $lang[$locale];
+         }
+         $locale = array_key_first($lang);
+         if (isset($lang[$locale]) && $lang[$locale]) {
+             return $lang[$locale];
+         }
+         return $this->name;
+     }
 
     /**
      * Stellt die Daten zur Konfiguration des Leaflet-Layers bereit
