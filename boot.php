@@ -54,13 +54,15 @@ if( \rex::isBackend() ){
     // (Perm: geolocation[mapset]), aber nicht auf die Karten selbst (Perm: geolocation[layer]),
     // entsteht ein Konflikt: über das Kartensatz-Formular werden Layer-Liste und -Formulare als
     // Popup aufgerufen. Liste ist gewünscht, sonst nichts. Daher hier die Berechtigung auf Listen
-    // prüfen und ggf. die Add/Edit-Spalte in der Layer-Liste entfernen.
+    // prüfen und ggf. die Add/Edit-Spalte in der Layer-Liste entfernen (Spalte 0).
     if( ($user = \rex::getUser()) && !$user->hasPerm('geolocation[layer]') ) {
         \rex_extension::register('YFORM_DATA_LIST',
             function( \rex_extension_point $ep )
             {
                 if( 'rex_geolocation_layer' === $ep->getParam('table')->getTableName() ) {
-                    $ep->getSubject()->removeColumn('_');
+                    $list = $ep->getSubject();
+                    $colNames = $list->getColumnNames();
+                    $list->removeColumn($colNames[0]);
                 };
             }
         );
