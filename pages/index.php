@@ -24,7 +24,7 @@ if( \Geolocation\PROXY_ONLY ){
     }
 }
 
-// Button "Delete Cache" konfigurieren (Referenziere auf die aktuelle Seite)
+// Button "Delete Cache" konfigurieren (Referenziere auf die aktuelle Seite statt Systemstandard)
 $page = \rex_be_controller::getPageObject('geolocation');
 if( $page ){
     $page = $page->getSubpage('clear_cache');
@@ -46,17 +46,11 @@ echo rex_api_function::getMessage();
 // Liste 'rex_geolocation_mapset' um eine Action zum Löschen des Layer-Cache erweitern
 \rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS','\Geolocation\mapset::YFORM_DATA_LIST_ACTION_BUTTONS');
 
-// Liste 'rex_geolocation_layer' um eine Action zum Löschen des Layer-Cache erweitern
+// Liste 'rex_geolocation_layer' um eine Action zum Löschen der Layer-Caches erweitern
 \rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS','\Geolocation\layer::YFORM_DATA_LIST_ACTION_BUTTONS');
 
 // Liste 'rex_geolocation_layer' mit geänderter Sortierung
 \rex_extension::register('YFORM_DATA_LIST_QUERY','\Geolocation\layer::YFORM_DATA_LIST_QUERY');
-#\rex_extension::register('YFORM_DATA_LIST_QUERY',
-#    function( \rex_extension_point $ep )
-#    {
-#        return \Geolocation\layer::listSort( $ep->getSubject() );
-#    }
-#);
 
 // Und nun die aktuelle Seite anzeigen
 \rex_be_controller::includeCurrentPageSubPath();
