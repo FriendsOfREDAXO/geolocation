@@ -4,10 +4,12 @@
 > - [Kartensätze verwalten](mapset.md)
 > - [Karten/Layer verwalten](layer.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
-> - Für Entwickler
+> - [Für Entwickler](devphp.md)
 >   - [PHP](devphp.md)
 >   - Javascript
 >   - [JS-Tools](devtools.md)
+>   - [geoJSON](devgeojson.md)
+>   - [Rechnen (PHP)](devmath.md)
 
 # Für Entwickler &dash; Javascript
 

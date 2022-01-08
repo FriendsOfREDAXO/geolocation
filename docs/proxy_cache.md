@@ -1,4 +1,3 @@
-> - [Übersicht](#overview)
 > - Installation und Einstellungen
 >   - [Installation](install.md)
 >   - [Einstellungen](settings.md)
@@ -9,6 +8,8 @@
 >   - [PHP](devphp.md)
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
+>   - [geoJSON](devgeojson.md)
+>   - [Rechnen (PHP) (PHP)](devmath.md)
 
 #Karten-Proxy und -Cache
 

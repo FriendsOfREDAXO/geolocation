@@ -8,6 +8,8 @@
 >   - PHP
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
+>   - [geoJSON](devgeojson.md)
+>   - [Rechnen (PHP)](devmath.md)
 
 # Für Entwickler &dash; PHP
 
@@ -15,7 +17,7 @@
 ## Namespace **Geolocation**
 
 Alle PHP-Komponenten der serverseitigen Verarbeitung liegen im Namespace `Geolocation`. Das betrifft
-die Klassen und globalen Konstanten.
+die Klassen und globalen Konstanten. Hier die wichtigsten:
 
 | Objekt | Anmerkung |
 | --- | --- |
@@ -26,6 +28,9 @@ die Klassen und globalen Konstanten.
 | \Geolocation\cronjob.php |rex_cronjob-Klasse für Cronjobs zum Cache-Hauskeeping |
 | \Geolocation\tools.php | Diverse statische Methoden, die immer mal wieder hilfreich sind.|
 | \Geolocation\Exception.php | Exception-Klasse für von **Geolocation** ausgelöste \RuntimeException  |
+| \Geolocation\Calc\point.php | Rechnen mit Koordinaten: repräsentiert einen Punkt  |
+| \Geolocation\Calc\box.php | Rechnen mit Koordinaten: repräsentiert einen rechteckigen Bereich  |
+| \Geolocation\Calc\math.php | Rechnen mit Koordinaten: Klasse mit diversen Rechenmethoden  |
 | \Geolocation\ADDON | "geolocation" |
 | \Geolocation\TTL_DEF | Time-to-live im Cache: Default-Wert  |
 | \Geolocation\TTL_MIN | Time-to-live im Cache: Untergrenze-Wert |
@@ -44,6 +49,8 @@ Hier ein Beispiel:
 ```PHP
 $id = \rex_request( \Geolocation\KEY_MAPSET, 'integer', 1 );
 $mapset = \Geolocation\mapset::take( $id );
+
+dump(get_defined_vars());
 ```
 
 <a name="snippets"></a>
@@ -148,8 +155,8 @@ Erklärungen zur [Installation](install.md) zu finden.
 Der erzeugte HTML-Code ist
 
 ```html
-<link rel="stylesheet" type="text/css" media="all" href="./assets/addons/geolocation/geolocation.min.css?buster=1610977544" />
-<script type="text/javascript" src="./assets/addons/geolocation/geolocation.min.js?buster=1611562701" ></script>
+<link rel="stylesheet" type="text/css" media="all" href="./assets/addons/geolocation/geolocation.min.css?buster=1234567890" />
+<script type="text/javascript" src="./assets/addons/geolocation/geolocation.min.js?buster=1234567890" ></script>
 ```
 
 Im Template wird an geeigneter Stelle der Aufruf der Methode `\Geolocation\tools::echoAssetTags();`
@@ -248,43 +255,89 @@ Zusätzlich zu den verfügbaren Kartensätzen wird die Auswahl "Standardkarte" e
 ### Modul-Ausgabe
 
 Im Beispiel werden die Daten wie folgt aufbereitet:
-- Die Koordinatenangabe wird in ein Array umgewandelt
-- Als Kartenauschnitt wird ein Rechteck errechnet
-    - In West-Ost-Richtung wird der Radius des Kugelabschnitts auf Basis der Breitenangabe (lat)
-      errechnet und in eine dem Radius entsprechenden Koordinatenwinkel umgerechnet
-    - In Nord-Süd-Reichtung wird einfach der Erdumfang über die Pole als Basis der Umrechnung
-      herangezogen
+- Die Koordinatenangabe in `REX_VALUE[3]` wird in ein Point-Objekt `$center` umgewandelt
+- Der Radius aus `REX_VALUE[4]` wird von km in m umgerechnet
+- Als Kartenauschnitt wird ein Rechteck `$bounds` über Mittelpunkt und Radius errechnet
+
+Als Beispiel für (1) die individualisierte Darstellung von geoJSON-Datensätzen und (2) für die
+Bereitstellungen eigener [Darstellungstools](devtools.md) direkt im Code wird ein.
+- geoJSON-Datensatz mit Mittelpunkt und Radius zur Kreisdarstellung angelegt
+- ein Tool als Erweiterung des [geoJSON-Basistools](devgeojson.md) zur passgenauen Darstellung
+  ausgegeben.
+- Sichergestellt, dass das Tool im Javascript nur einmal angelegt wird.
+
+Die Kartenausgabe beinhaltet
 - Mapset abrufen mit Fallback auf den Default-Kartensatz
 - eigene CSS-Klasse festlegen
-- Karteninhalte mit den Tools `bounds`und `position` hinzufügen.
-- HTML generieren über das für den Kartensatz hinterlegte Fragment.
+- Karteninhalte mit den Standard-Tools `bounds`und `position` sowie dem eigenen Tool `myprivatetool`
+  hinzufügen.
+- HTML generieren über das für den Kartensatz hinterlegte Fragment. Die Karte hat automatisch den
+  Zoom-Level, der am besten zu `$bounds` passt.
+
+Wie das Bounds-Rechteck sichtbar gemacht wird, ist [hier beschrieben](devtools.md#boundsvisible).
 
 ```PHP
+<?php
 // Kartendaten aus dem Slice abrufen
 $mapsetId = (int) 'REX_VALUE[2]';
-$position = \Geolocation\tools::latLngArray( 'REX_VALUE[3]' );
-$radius = max( (float)'REX_VALUE[4]', 1);
+$center =\Geolocation\Calc\Point::byText( 'REX_VALUE[3]' );
+$radius = max( (float)'REX_VALUE[4]', 1) * 1000; // Kilometer in Meter umrechnen
+$bounds = \Geolocation\Calc\Box::byInnerCircle( $center, $radius );
 
-// Aus der Koordinatenangabe Karteninhalte bauen
-// 10 km auf dem Berliner Breitengrad entspricht z.B.
-//    ... in WE-Richtung 0.148 Grad
-//    ... in NS-Richtung 0.090 Grad
-$distWE = $radius / pi() / cos(deg2rad($position[0])) / 35.43333333;
-$distNS = $radius * 0.008983381;
-$latLngNO = [ $position[0] + $distNS, $position[1] + $distWE ];
-$latLngSW = [ $position[0] - $distNS, $position[1] - $distWE ];
+// Beispieldatensatz für die geoJSON-Darstellung von Elementen, hier Kreis
+$geoJSON = [
+    'type' => 'FeatureCollection',
+    'features' => [
+        0 => [
+            'type' => 'Feature',
+            'geometry' => $center->geoJSON(),
+            'properties' => [
+                'radius' => $radius,
+                'style' => [
+                    'color' => 'green',
+                    'weight' => 1,
+                    'fill' => false,
+                ]
+            ],
+        ],
+   ]
+];
+
+// Beispiel für ein On-The-Fly-Tool zur individualisierten Darstellung des geoJSON-Datensatzes
+if( !\rex::getProperty('MyPrivateTool',false)) {
+    \rex::setProperty('MyPrivateTool',true);
+?>
+<script>
+Geolocation.Tools.MyPrivateTool = class extends Geolocation.Tools.GeoJSON
+{
+    setOptions( options ) {
+        // pointToLayer:callback belegen
+        options.pointToLayer = this._pointToLayer.bind(this);
+        return options;
+    }
+    _pointToLayer(feature, latlng) {
+        return L.circle( latlng,{radius:feature.properties.radius} );
+    }
+}
+Geolocation.tools.myprivatetool = function(...args) { return new Geolocation.Tools.MyPrivateTool(args); };
+</script>
+<?php
+}
 
 // Kartensatzdaten in den HTML-Tag überführen
 $rex_map = \Geolocation\mapset::take( $mapsetId )
     ->attributes( 'class', 'mymapclass' )
-    ->dataset( 'bounds', [ $latLngSW,$latLngNO ] )
-    ->dataset( 'position', $position )
+    ->dataset( 'bounds', $bounds->latLng() )
+    ->dataset( 'position', $center->latLng() )
+    ->dataset( 'myprivatetool', $geoJSON )
     ->parse();
 
 // Ausgabe
 echo '<h1>REX_VALUE[1]</h1>';
 echo $rex_map;
 ```
+
+![Modulausgabe im Backend](assets/modul_out.jpg)
 
 <a name="fout"></a>
 ## Fragment *geolocation_rex_map.php*
