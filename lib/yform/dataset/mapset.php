@@ -1,9 +1,11 @@
-<?php
-namespace Geolocation;
+<?php namespace Geolocation;
+/**
+ * Geolocatin|layer ist eine erweiterte yform-dataset-Klasse für Kartensätze
+ *
+ * @package geolocation
+ */
 
 /*
-
-yform-dataset to enhance rex_geolocation_mapset:
 
     - dataset-spezifisch
 
@@ -370,7 +372,7 @@ class mapset extends \rex_yform_manager_dataset
             $map = mapset::get(\rex_config::get(ADDON,'default_map'));
             if( null === $map ) {
                 throw new InvalidMapsetParameter( InvalidMapsetParameter::MAPSET_DEF, [\rex_config::get(ADDON,'default_map')] ) ;
-            }throw new Exception('default_map not found',1);
+            }
         }
         return $map;
     }
