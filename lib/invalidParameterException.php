@@ -16,6 +16,7 @@ class InvalidParameter extends \Geolocation\Exception
     const POLE = 11;
     const MAPSET_ID = 12;
     const MAPSET_DEF = 13;
+    const BOXEXTEND = 14;
 
 
     private $msg = [
@@ -32,6 +33,7 @@ class InvalidParameter extends \Geolocation\Exception
         self::POLE => 'Box-boundary crosses pole (±90°).',
         self::MAPSET_ID => 'Missing mapset-ID or mapset "%s" not found',
         self::MAPSET_DEF => 'Default mapset-ID "%s" not found',
+        self::BOXEXTEND => 'Parameter has to be "Point" or "Array of Point"',
     ];
 
     public function __construct( $errorCode, $values=[], ?\Throwable $previous = null ){
