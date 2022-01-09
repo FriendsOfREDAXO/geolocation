@@ -661,7 +661,11 @@ Geolocation.Tools.GeoJSON = class extends Geolocation.Tools.Template
         }
         this.geojsonLayer = L.geoJSON(
             geojsonData,
-            this.setOptions( {style:this._style,onEachFeature:this._eachFeature} )
+            this.setOptions( {
+                style: this._style,
+                onEachFeature: this._eachFeature.bind(this),
+                pointToLayer: this._pointToLayer.bind(this)
+            } )
         );
         if( this.map ) this.show( this.map );
         return this;
@@ -686,11 +690,15 @@ Geolocation.Tools.GeoJSON = class extends Geolocation.Tools.Template
     _style(feature) {
         return feature.properties && feature.properties.style;
     }
-	_eachFeature(feature, layer) {
+    _eachFeature(feature, layer) {
+        if( !feature.properties ) return;
         let popupContent = feature.properties.popupContent || null;
         if( popupContent ) {
     		layer.bindPopup(popupContent);
         }
+	}
+    _pointToLayer(feature, latlng) {
+        return L.marker(latlng);
 	}
 
 }
