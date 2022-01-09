@@ -1,5 +1,19 @@
 # Changelog
 
+## **09.01.2022 Version 0.14.0**
+
+- Erweitert um ein Anzeige-Tool für geoJSON-Datensätze
+- Online-Dokumentation in den Entwicklerseiten bzgl. geoJSON erweitert
+- PHP-seits um Klassen zum Rechnen mit Koordinaten erweitert, basierend auf
+  [**phpGeo**](https://github.com/mjaschen/phpgeo)
+  von [Markus Jaschen](https://github.com/mjaschen) => Point, Box, Math
+- Online-Dokumentation in den Entwicklerseiten bzgl. Rechnen mit Koordinaten erweitert
+
+- Bugfix in layer.php (getLabel), assetpacker.php (SSCS-Pfadname unter Windows) und devphp.md
+  (Text) (@dtpop)
+___
+
+
 ## **17.12.2021 Version 0.13.2**
 
 - Bugfix in mapset.php: take() ohne Parameter führte zum Whoops

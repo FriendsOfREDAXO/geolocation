@@ -1,43 +1,36 @@
-# Contribution to a planned<br>Geo-Addon for [REDAXO](https://redaxo.org) 5.13+
+# Geo- und Karten-Unterstützung für [REDAXO](https://redaxo.org) 5.13+
 
-**Version 0.13.1 | 17.12.2021** - Änderungen siehe [Change-Log](CHANGELOG.md)
+Das Addon bündelt Funktionen für den Umgang mit Geo-Koordinaten: Tile-Proxy, Tile-Cache, Rechnen mit
+Koordinaten auf PHP-Ebene, Karten mit Leaflet anzeigen.
 
-## Verwendung:
+Die Konfiguration ist flexibel und update- bzw. reinstallations-sicher individualisierbar. Die
+Kartenanzeige mit LeafletJS kann mit eigenen JS-Schnipseln rasch und on the fly erweitert werden.
 
-- Ideen-Beitrag für das [Geo](https://github.com/FriendsOfREDAXO/friendsofredaxo.github.io/issues/124)-Projekt von [Thomas Blum](https://github.com/tbaddade)
-    - Tile-Proxy mit Cache
-    - Custom-HTML-Element
-- Ideen-Beitrag für das [Experimental-Proxy](https://github.com/FriendsOfREDAXO/experimental/tree/master/plugins/proxy)-Projekt
-    - Tile-Proxy mit Cache
-- Ansonsten zur gefälligen Benutzung
-- benötigt [YForm](https://github.com/yakamara/redaxo_yform) 4.0+
-
->**nicht als [FOR](https://github.com/FriendsOfREDAXO-Addon)-Addon vorgesehen, es sollte m.E. nur __ein__ GEO-Addon bei FriendsOfREDAXO geben!**
-
-## Quellen
-
-Inspiriert von[Thomas Skerbis](https://github.com/skerbis) Addon "[osmproxy](https://github.com/FriendsOfREDAXO/osmproxy)" und gefüttert mit Ideen und Snippets aus anderen Addons und aus den Diskussionen dazu auf GitHub und im [Slack-Channel](https://friendsofredaxo.slack.com/).
-
-Basiert [LeafletJS](https://leafletjs.com/) von [Vladimir Agafonkin](https://agafonkin.com/) und weiteren
-Tools (siehe [CREDITS](CREDITS.md)).
+Kontakt: [Thomas Skerbis](https://github.com/skerbis)
 
 ![Titelbild](docs/assets/titel.jpg)
 
 ## Features:
 
 - Backend
-    - [Karten-URLs](docs/admin.md#tile) zu Karten-Anbietern mit weiteren Parametern inkl. Sprachunterstützung und Cache-Verhalten
-    - [Kartensätze](docs/admin.md#mapset) zusammenstellen und verwalten, die auf einer oder mehreren Karten-Urls basieren
+    - [Karten-URLs](docs/admin.md#tile) zu Karten-Anbietern mit weiteren Parametern inkl.
+      Sprachunterstützung und Cache-Verhalten
+    - [Kartensätze](docs/admin.md#mapset) zusammenstellen und verwalten, die auf einer oder mehreren
+      Karten-Urls basieren
     - Datenverwaltung mit YForm
     - [Proxy-Server](docs/proxy_cache.md#proxy) für Karten-Abrufe vom Browser
     - [Cache](docs/proxy_cache.md#cache) für Karten-Abrufe
-    - Verschleierung der tatsächlichen Karten-Url ggü. dem Client / Schutz der ggf. kostenpflichtigen appId´s z.B. von Google oder HERE
+    - Verschleierung der tatsächlichen Karten-Url ggü. dem Client / Schutz der ggf. kostenpflichtigen
+      appId´s z.B. von Google oder HERE
+    - Kartendarstellung im Moduloutput mit demselben Code wie im Frontend
+    - Ausführliche Dokumentation online im Backend bzw. auf GitHub
 
-- Frontend
+- Karten
     - LeafletJS als Kartensoftware integriert
     - Karten-HTML als [Custom-HTML-Element](#rm) `<rex-map .... ></rex-map>`
-    - [Erweiterbare Tools](docs/devtools.md) zur Datendarstellung
+    - [Erweiterbare Tools](docs/devtools.md) zur Datendarstellung inkl. geoJSON (Basis, erweiterbar)
     - Anwendungsbeispiel für [Module](docs/devphp.md#module)
+    - Einfache Einbindung des komprimierten JS / CSS im Frontend passend zur individuellen Konfiguration.
 
 - Demo
     - [Stand-alone-Demo](docs/example/demo.html) zur Demonstration des Custom-HTML-Elements und des Cache
@@ -49,22 +42,45 @@ Tools (siehe [CREDITS](CREDITS.md)).
         - Dateien löschen, die älter sind als die Time-to-live der Tile-URL
         - weitere ältere Dateien löschen wenn das Verzeichnis zu viele Dateien enthält
 
+- [Rechnen mit Koordinaten (PHP)](docs/devmath.md)
+    - [class \Geolocation\Calc\Point](docs/devmath.md#point): Koordinaten verwalten
+        - verschiedene Format als Input/Output; Konvertierung
+        - Distanzen und Richtung ermitteln
+        - Zielpunkt aus Richtung und Distanz
+    - [class \Geolocation\Calc\Box](docs/devmath.md#box): Rechteckigen Bereich verwalten
+        - Anlegen aus zwei gegenüberliegenden Ecken
+        - Dynamisch erweitern
+        - diverse Abfragen (north, south, ....)
+        - Berechnete Werte (center, innerRadius, outerRadius)
+    - [class \Geolocation\Calc\Math](docs/devmath.md#math): Rechteckigen Bereich verwalten
+        - diverse Methoden und Defaults basierend auf phpGeo
+        - Distanzen und Richtung ermitteln
+        - Zielpunkt aus Richtung und Distanz
+        - Konvertierung (DezimalDegree nach Degree/Minute und Degree/Minute/Second)
+
+
 ## Was fehlt?
 
-- Karten interaktiv gestalten
-- Zu einer Adresse oder die Koordinate ermitteln
+- Karten interaktiv gestalten (Bounding-Box auswählen, Marker setzen/verschieben, ...)
+- Interaktion Karte und Eingabefeld
+- Zu einer Adresse die Koordinate ermitteln
+- Abfragen (z.B. Koordinate zu Adresse, Umkreissuche) cachen oder zumindest durch den Proxy leiten
+- Umgang mit Links z.B. auf Marker/Icon-Bildchen in geoJSON-Datensätzen (cachen oder zumindest durch
+  den Proxy leiten)
 - .....
+
+Ideen gibt es, Hilfe ist willkommen.
 
 ## Installation
 
 In das Verzeichnis `redaxo/src/addons/geolocation` entpacken und in der Addon-Verwaltung die
 Installation durchführen.
 
-Dabei werden Demo-Daten (4 Links zu Tile-Servern und 2 Kartensätze installiert). Die Here-Kartenlinks
-sind ohne die nötige "appId", die nach Registrierung bei [HERE](https://developer.here.com/) erzeugt werden kann.
-Die vorgesehene Stelle in der URL ist mit `..........` markiert.
+Dabei werden Demo-Daten (Links zu Tile-Servern und zwei Kartensätze installiert). Die Here-Kartenlinks
+sind ohne die nötige "appId", die nach Registrierung bei [HERE](https://developer.here.com/) erzeugt
+werden kann. Die vorgesehene Stelle in der URL ist mit `..........` markiert.
 
-Der Cronjob für die Cache-Bereinigung ist mit den Einstellungen
+Der Cronjob für die Cache-Bereinigung hat die Einstellungen
 - Einmal am Tag (04:30)
 - Backend/Frontend
 - Scriptanfang
@@ -160,3 +176,17 @@ kartensatz = [
     }
 ]
 ```
+
+## Referenzen
+
+Basiversion by [Christoph Böcker](https://github.com/christophboecker).
+ 
+Inspiriert von [Thomas Skerbis](https://github.com/skerbis) Addon "[osmproxy](https://github.com/FriendsOfREDAXO/osmproxy)" und gefüttert mit Ideen und Snippets aus anderen Addons und aus den Diskussionen dazu auf GitHub und im [Slack-Channel](https://friendsofredaxo.slack.com/).
+
+Kartendarstellung mit [LeafletJS](https://leafletjs.com/) von [Vladimir Agafonkin](https://agafonkin.com/) und weiteren
+Tools (siehe [CREDITS](CREDITS.md)).
+
+Für Rechenoperationen mit Koordinaten und Formatumwandlungen ist die PHP-Bibliothek
+[phpGeo](https://github.com/mjaschen/phpgeo) von [Markus Jaschen](https://github.com/mjaschen) eingebaut.
+
+Ideen-Beitrag für das [Geo](https://github.com/FriendsOfREDAXO/friendsofredaxo.github.io/issues/124)-Projekt von [Thomas Blum](https://github.com/tbaddade)
