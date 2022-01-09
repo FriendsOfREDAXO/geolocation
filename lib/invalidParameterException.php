@@ -17,6 +17,9 @@ class InvalidParameter extends \Geolocation\Exception
     const MAPSET_ID = 12;
     const MAPSET_DEF = 13;
     const BOXEXTEND = 14;
+    const BOXRESIZE = 15;
+    const BOXRESIZELAT = 16;
+    const BOXRESIZELNG = 17;
 
 
     private $msg = [
@@ -34,6 +37,9 @@ class InvalidParameter extends \Geolocation\Exception
         self::MAPSET_ID => 'Missing mapset-ID or mapset "%s" not found',
         self::MAPSET_DEF => 'Default mapset-ID "%s" not found',
         self::BOXEXTEND => 'Parameter has to be "Point" or "Array of Point"',
+        self::BOXRESIZE => 'Invalid resize hook-point "%s"',
+        self::BOXRESIZELAT => 'Resize factor (latitude or lat/lng) expected larger than zero (given "%s")',
+        self::BOXRESIZELNG => 'Resize factor (llongitude) expected larger than zero (given "%s")',
     ];
 
     public function __construct( $errorCode, $values=[], ?\Throwable $previous = null ){
