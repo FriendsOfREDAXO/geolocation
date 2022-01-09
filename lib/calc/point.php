@@ -68,13 +68,13 @@ class Point
      */
 	 public static function factory( array $point, $keyLat, $keyLng ): self
  	{
-		if( $keyLat == $lng ) {
+		if( $keyLat == $keyLng ) {
 			throw new InvalidPointParameter( InvalidPointParameter::KEY_LAT_LNG, [$keyLat,$keyLng]) ;
      	}
- 		if( !isset($point[$lat]) ) {
+ 		if( !isset($point[$keyLat]) ) {
 			throw new InvalidPointParameter( InvalidPointParameter::LAT_MISSING, [$keyLat]) ;
      	}
- 		if( !isset($point[$lng]) ) {
+ 		if( !isset($point[$keyLng]) ) {
 			throw new InvalidPointParameter( InvalidPointParameter::LNG_MISSING, [$keyLng]) ;
         }
  		if( !is_numeric($point[$keyLat]) ) {
