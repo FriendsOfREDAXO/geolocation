@@ -457,8 +457,19 @@ Die Berechtigungsverwaltung erfolgt über die Benutzer- und Rollenverwaltung in 
 |-|-|
 |admin| Darf alles, sieht alles|
 |geolocation[mapset]|Kartensätze zusammenstellen und verwalten|
-|geolocation[layer]|Kartendaten / Layer-Daten bearbeiten. Da hier die grundlegende Funktion schnell beeinträchtigt werden kann (z.B. falsche URLs), sollte diese Berechtigung ohnehin Entwicklern und Admins vorbehalten sein.|
+|geolocation[layer]|Kartendaten / Layer-Daten bearbeiten. Da hier die grundlegende Funktion schnellbeeinträchtigt werden kann (z.B. falsche URLs), sollte diese Berechtigung ohnehin Entwicklern und Admins vorbehalten sein.|
 |geolocation[clearcache]|Cache löschen; Das Recht bezieht sich auf per `rex_api` ausgelöstes Löschen (z.B. Lösch-Button der Addon-Seiten im Backend). Cronjobs sind nicht betroffen|
 
 Passend dazu werden auch die Handbuchseiten eingeschränkt. Diese Installationsseite ist z.B. nur für
 Admins sichtbar.
+
+## Darkmode
+
+Das Addon berücksichtigt im Grunde die Darkmode-Einstellung der Redaxo-Instanz. Die Darstellung im
+Backend erfolgt mit dem Standard-CSS. Eine Einschränkung gilt für die Leaflet-Karten. LeafletJS
+unterstützt generisch keinen Darkmode.
+
+Es gibt Plugins für LeafletJS, die auch eine Darkmode-Darstellung ermöglichen sollen. Vor einer
+Integration in **Geolocation** wären mit Sicherheit ausführliche Kompatibilitätstests und ggf.
+weitere Anpassungen erforderlich. Ob sich der Aufwand lohnt, sei dahingestellt, denn auch die Karten
+müssen Darkmode-Karten sein. Liefert der Anbieter solche Tiles?  
