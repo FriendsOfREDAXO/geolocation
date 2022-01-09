@@ -887,7 +887,21 @@ dump(get_defined_vars());
 
 > function east(): float
 
-jdhfklajdhfkldshlkdshf
+Die vier Methoden liefern jeweils die Längen- bzw. Breitengrade, die die Box begrenzen.
+
+### width()
+
+> function width( ?int $precision=null ): float
+
+Die Funktion berechnet die Breite der Box in Längengraden. Sofern `$precision` angegeben ist, wird die
+Anzahl der Nachkommastellen bei der Ausgabe reduziert.
+
+### height()
+
+> function height( ?int $precision=null ): float
+
+Die Funktion berechnet die Höhe der Box in Breitengraden. Sofern `$precision` angegeben ist, wird die
+Anzahl der Nachkommastellen bei der Ausgabe reduziert.
 
 ```php
 use \Geolocation\Calc\Point;
@@ -902,6 +916,8 @@ $north = $rect->north();
 $south = $rect->south();
 $west = $rect->west();
 $east = $rect->east();
+$width = $rect->width();
+$height = $rect->height();
 
 dump(get_defined_vars());
 ```
@@ -920,6 +936,8 @@ dump(get_defined_vars());
 "south" => 39,741052354709
 "west" => -105,00341892242
 "east" => -104,98689651489
+"width" => 0,01652240752999
+"height" => 0,012786079897005
 ```
 
 ### northWest()
@@ -1060,26 +1078,26 @@ dump(get_defined_vars());
 
 > function geoJSONMultipoint( ?int $precision=null ): array
 
-Die Methode erzeugt einen Multipoint-Eintrag für einen geoJSON-Datensatz. Da geoJSON nicht weiß, wie
-der Punkt dargestellt wird, muss der Code zur Darstellung des Datensatzes (1) wissen, dass dieser
-Multipoint-Eintrag eine Box repräsentiert und (2) die Darstellung entsprechend durchführen. Beide
-Informationen müssten über die Properties übermittelt werden. Ohne individuelle Formatierung wird
-LeafletJS lediglich zwei Punkt-Marker setzen. Sofern `$precision` angegeben ist, wird die Anzahl der
-Nachkommastellen bei der Ausgabe reduziert.
+Die Methode erzeugt einen Multipoint-Eintrag für einen geoJSON-Datensatz. Da LeafletJSs geoJSON nicht
+weiß, wie der Punkt dargestellt wird, muss der Code zur Darstellung des Datensatzes (1) erfahren,
+dass dieser Multipoint-Eintrag eine Box repräsentiert und (2) die Darstellung entsprechend
+durchführen. Beide Informationen müssten über die Properties übermittelt werden. Ohne individuelle
+Formatierung wird LeafletJS lediglich zwei Punkt-Marker setzen. Sofern `$precision` angegeben ist,
+wird die Anzahl der Nachkommastellen bei der Ausgabe reduziert.
 
 ### geoJSONPolygon()
 
 > function geoJSONPolygon( ?int $precision=null ): array
 
 Die Funktion erzeugt einen Polygon-Eintrag für einen geoJSON-Datensatz. Über die Eckpunkte zeichnet
-LeafletJS ein Rechteck. Sofern `$precision` angegeben ist, wird die
-Anzahl der Nachkommastellen bei der Ausgabe reduziert.
+LeafletJS ein Rechteck. Sofern `$precision` angegeben ist, wird die Anzahl der Nachkommastellen bei
+der Ausgabe reduziert.
 
 ```php
 use \Geolocation\Calc\Point;
 use \Geolocation\Calc\Box;
 
-$rect = Box::factory(
+$rect = Box::byCorner(
     Point::byLatLng( [39.741052354709,-104.98689651489] ),
     Point::byLatLng( [39.753838434606,-105.00341892242] )
 );
@@ -1095,9 +1113,11 @@ $dataset = [
         1 => [
             'type' => 'Feature',
             'geometry' => $rect->geoJSONPolygon(),
-            'properties' => [],
+            'properties' => [
+                'style' => ['color' => 'orange','weight' => 1,'fill' => false]                
+            ],
         ],
-   ]
+    ]
 ];
 
 dump(get_defined_vars());
@@ -1166,6 +1186,7 @@ dump(get_defined_vars());
         ]
     ]
 ```
+![geoJSON-Beispiel](assets/geojson.jpg)
 
 ### center()
 
@@ -1216,41 +1237,97 @@ Der Radius ist in Meter angegeben.
 
 > function innerRadius(): float
 
-Der Innenradius beschreibt einen Kreis in der Box mit dem Mittelpunkt als Zentrum, der die Ränder
-berührt. Ermittelt wird der Radius als halbe Distanz zwischen der nordwestlichen und der
-südwestlichen Ecke.
+Der Innenradius beschreibt einen Kreis in der Box mit deren Mittelpunkt als Zentrum, der die Ränder
+berührt. Ermittelt wird der Radius als halbe Distanz zwischen gegenüberliegenden Seiten. Nur bei
+einer quadratischen Box berührt der Innenkreis alle vier Seiten. Ist die Box nicht quadratisch, wird
+die kürzere Distanz herangezogen (siehe [Bild](#inner_ouer_circle_pic)).
 
 Der Radius ist in Meter angegeben.
 
 ```php
+<script>
+// Zuerst ein kleine Tool definieren, dass den Demo-Datensatz darstellt
+// konkret: wenn Property.radius dann Kreis
+Geolocation.Tools.MyOnTheFlyTool = class extends Geolocation.Tools.GeoJSON
+{
+    _pointToLayer(feature, latlng) {
+        if( feature.properties && feature.properties.radius ) {
+            return L.circle( latlng,{radius:feature.properties.radius} );
+        }
+        return super._pointToLayer(feature, latlng);
+    }
+}
+Geolocation.tools.myontheflytool = function(...args) { return new Geolocation.Tools.MyOnTheFlyTool(args); };
+</script>
+<?php
 use \Geolocation\Calc\Point;
 use \Geolocation\Calc\Box;
 
-$rect = Box::factory(
-    Point::byLatLng( [39.741052354709,-104.98689651489] ),
-    Point::byLatLng( [39.753838434606,-105.00341892242] )
-);
-
+$rect = Box::byCorner([ [39.753838434606,-105.00341892242], [39.731310943247,-104.95290862481] ]);
+$center = $rect->center();
 $outerRadius = $rect->outerRadius();
 $innerRadius = $rect->innerRadius();
+
+$dataset = [
+    'type' => 'FeatureCollection',
+    'features' => [
+        [   // die Box als Polygon; Standarddarstellung
+            'type' => 'Feature',
+            'geometry' => $rect->geoJSONPolygon(),
+        ],
+        [   // Kreis um die Box; Darstellung über das obige MyOnTheFlyTool statt "Marker"
+            'type' => 'Feature',
+            'geometry' => $center->geoJSON(),
+            'properties' => [
+                'radius' => $outerRadius,
+                'style' => ['color' => 'green','weight' => 1,'fill' => false]
+            ],
+        ],
+        [   // Kreis in der Box; Darstellung über das obige MyOnTheFlyTool statt "Marker"
+            'type' => 'Feature',
+            'geometry' => $center->geoJSON(),
+            'properties' => [
+                'radius' => $innerRadius,
+                'style' => ['color' => 'red','weight' => 1,'fill' => false]
+            ],
+        ],
+        [   // Mittelpunkt der Box und der Kreise; Standarddarstellung
+            'type' => 'Feature',
+            'geometry' => $center->geoJSON(),
+        ],
+   ]
+];
+
+echo $rex_map = \Geolocation\mapset::take( )
+    ->attributes( 'class', 'mymapclass' )
+    ->dataset( 'bounds', [[39.765091145043,-105.00733065303],[39.72005823281,-104.9489968942]])
+    ->dataset( 'myontheflytool', $dataset )
+    ->parse();
 
 dump(get_defined_vars());
 ```
 ```
-"rect" => Geolocation\Calc\Box {#396 ▼
-    #nw: Geolocation\Calc\Point {#399 ▼
+"rect" => Geolocation\Calc\Box {#394 ▼
+    #nw: Geolocation\Calc\Point {#397 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#402 ▼
-        #lat: 39,741052354709
-        #lng: -104,98689651489
+    #se: Geolocation\Calc\Point {#400 ▼
+        #lat: 39,731310943247
+        #lng: -104,95290862481
     }
 }
-"outerRadius" => 1002,5835
-"innerRadius" => 709,818
+"center" => Geolocation\Calc\Point {#392 ▼
+    #coord: Location\Coordinate {#393 ▼
+        #lat: 39,742574688927
+        #lng: -104,97816377361
+    }
 }
+"outerRadius" => 2500,0
+"innerRadius" => 1250,61
 ```
+<a name="inner_ouer_circle_pic"></a>
+![Innerer und äußerer Kreis](assets/inner_outer_radius.jpg)
 
 ### contains()
 
@@ -1298,12 +1375,15 @@ dump(get_defined_vars());
 
 > function extendBy ( mixed $data ): self
 
-Der Parameter `$data` muss entweder ein einzelner `Point` sein oder ein `Array of Point`. Andere
-Parameter führen zu einer Exception. Die neue West-Ost-Distanz muss kleiner als 180° sein.
-Andernfalls bricht der Vorgang ebenfalls mit einer Exception ab. Bei einem Abbruch bleibt die Box
-unverändert.
+Die Box wird so vergrößert, dass alle angegebenen Punkte in den Boy-Grenzen liegen. Punkte, die
+bereits in der Box sind, werden ausgelassen. Eine Prüfung vorab ist nicht erforderlich. Die neue
+West-Ost-Distanz muss kleiner als 180° sein. Andernfalls bricht der Vorgang ebenfalls mit einer
+Exception ab.
 
-Punkte, die bereits in der Box sind, werden ausgelassen. Eine Prüfung vorab ist nicht erforderlich.
+Der Parameter `$data` muss entweder ein einzelner `Point` sein oder ein `Array of Point`. Andere
+Parameter führen zu einer Exception.  
+
+Bei einem Abbruch bleibt die Box unverändert.
 
 ```php
 use \Geolocation\Calc\Point;
@@ -1363,6 +1443,60 @@ dump(get_defined_vars());
 }
 
 ```
+
+### resizeBy()
+
+> function resizeBy ( float $factorLat, ?float $factorLng=null, int $reference=self::HOOK_CE ): self
+
+Die Methode erweitert die Box um einen angegebenen Faktor in der Länge oder Breite bezogen auf
+einen der Bezugspunkte:
+
+- Box::HOOK_NW: ab dem nord-westlichen Punkt verschieben sich die Ost- und Südgrenze.
+- Box::HOOK_NE: ab dem nord-östlichen Punkt verschieben sich die West- und Südgrenze.
+- Box::HOOK_SE: ab dem süd-östlichen Punkt verschieben sich die West- und Nordgrenze.
+- Box::HOOK_SW: ab dem süd-westlichen Punkt verschieben sich die Ost- und Nordgrenze.
+- Box::HOOK_CE: ab dem Mittelpunkt verschieben sich alle Außengrenzen.
+
+Wird nur `$faktorLat` angegeben, werden Höhe und Breite um den gleichen Faktor geändert
+(`resizeBy( 1.5, null, Box::HOOK_NW)`).
+
+```php
+// Die Box
+$rect = Box::byCorner(
+    Point::byLatLng( [39.753838434606,-105.00341892242] ),
+    Point::byLatLng( [39.731310943247,-104.95290862481] )
+);
+// Box klonen für den vorher/nachher-Vergleich
+$rect2 =clone $rect;
+// Resize der zweiten Box
+$rect->resizeBy( 1.2, null, Box::HOOK_NW );
+
+dump(get_defined_vars());
+```
+```
+"rect" => Geolocation\Calc\Box {#394 ▼
+    #nw: Geolocation\Calc\Point {#397 ▼
+        #lat: 39,753838434606
+        #lng: -105,00341892242
+    }
+    #se: Geolocation\Calc\Point {#400 ▼
+        #lat: 39,731310943247
+        #lng: -104,95290862481
+    }
+}
+"rect2" => Geolocation\Calc\Box {#405 ▼
+    #nw: Geolocation\Calc\Point {#419 ▼
+        #lat: 39,753838434606
+        #lng: -105,00341892242
+    }
+    #se: Geolocation\Calc\Point {#421 ▼
+        #lat: 39,726805444975
+        #lng: -104,94280656529
+    }
+}
+```
+![Box vor und nach Resize](assets/box_resize.jpg)
+
 
 <a name="math"></a>
 ## class **Math**
@@ -1605,7 +1739,7 @@ dump(get_defined_vars());
 
 ### normalizeLatitude()
 
-> function normalizeLatitude( float $$latitude ): float
+> function normalizeLatitude( float $latitude ): float
 
 Bei Pol-Überschreitung (Breite größer 90° oder kleiner -90°) wird lediglich der Wert auf 90° bzw.
 -90° reduziert.
@@ -1631,10 +1765,10 @@ dump([
 
 ### normalizeLongitude()
 
-> function normalizeLongitude( float $$latitude ): float
+> function normalizeLongitude( float $latitude ): float
 
-Bei Pol-Überschreitung (Breite größer 90° oder kleiner -90°) wird lediglich der Wert auf 90° bzw.
--90° reduziert.
+Bei Überschreiten des Datumsgrenzen-Meridians (±180°) wird der Wert umgerechnet auf die Gegenseite.
+"-200°" entspricht "+160°".
 
 ```php
 use \Geolocation\Calc\Math;
