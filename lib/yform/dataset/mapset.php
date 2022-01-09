@@ -1,9 +1,11 @@
-<?php
-namespace Geolocation;
+<?php namespace Geolocation;
+/**
+ * Geolocatin|layer ist eine erweiterte yform-dataset-Klasse für Kartensätze
+ *
+ * @package geolocation
+ */
 
 /*
-
-yform-dataset to enhance rex_geolocation_mapset:
 
     - dataset-spezifisch
 
@@ -40,6 +42,9 @@ yform-dataset to enhance rex_geolocation_mapset:
         parse           erzeugt Karten-HTML gem. vorgegebenem Fragment
 
 */
+
+class InvalidMapsetParameter extends InvalidParameter {}
+
 
 class mapset extends \rex_yform_manager_dataset
 {
@@ -99,7 +104,10 @@ class mapset extends \rex_yform_manager_dataset
                 continue;
             }
             if( 'outfragment' == $fe[1] ){
-                $fe[6] = \rex_i18n::msg( 'geolocation_mapset_outfragment_notice', OUT );
+                if( str_starts_with($fe[6],'translate:') ) {
+                    $fe[6] = substr( $fe[6],10 );
+                }
+                $fe[6] = \rex_i18n::rawMsg( $fe[6],OUT );
                 continue;
             }
         }
@@ -152,7 +160,6 @@ class mapset extends \rex_yform_manager_dataset
     public function executeForm(\rex_yform $yform, callable $afterFieldsExecuted = null) : string
     {
 
-        dump( 'post',$_POST);
         // setzt bei leeren Formularen (add) ein paar Default-Werte
         \rex_extension::register('YFORM_DATA_ADD', function( \rex_extension_point $ep ){
             // nur abarbeiten wenn es um diese Instanz geht
@@ -354,12 +361,18 @@ class mapset extends \rex_yform_manager_dataset
     public static function take( ?int $id = null ) : self
     {
         try {
-            if( !$id ) throw new Exception();
+            if( !$id ) {
+                throw new InvalidMapsetParameter( InvalidMapsetParameter::MAPSET_ID, [$id] ) ;
+            }
             $map = mapset::get($id);
-            if( null === $map ) throw new \Exception();
+            if( null === $map ) {
+                throw new InvalidMapsetParameter( InvalidMapsetParameter::MAPSET_ID, [$id] ) ;
+            }
         } catch (\Exception $e) {
             $map = mapset::get(\rex_config::get(ADDON,'default_map'));
-            if( null === $map ) throw new Exception('default_map not found',1);
+            if( null === $map ) {
+                throw new InvalidMapsetParameter( InvalidMapsetParameter::MAPSET_DEF, [\rex_config::get(ADDON,'default_map')] ) ;
+            }
         }
         return $map;
     }

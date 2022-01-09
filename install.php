@@ -1,6 +1,8 @@
 <?php
-/**
+ /**
  *  Installations-Script
+ *
+ *  @package geolocation
  *
  *  Install:    Installiert die Tabellen und YForm-Formulare
  *  Re-Install: Repariert die Einstellungen
@@ -196,7 +198,7 @@ try {
     \Geolocation\config_form::compileAssets( __DIR__.'/' );
     $msg[] = $this->i18n( 'install_assets_prepared' );
 
-    // Den Ordner 'data/addons/assets' falls vorhanden in den Ordner 'assets/addons/geolocation' kopieren
+    // Den Ordner 'data/addons/geolocation/assets' falls vorhanden in den Ordner 'assets/addons/geolocation' kopieren
     $copyDir =  \rex_path::addonData(\Geolocation\ADDON,'assets');
     if( is_dir( $copyDir ) ) {
         \rex_dir::copy( $copyDir, \rex_path::addonAssets(\Geolocation\ADDON) );

@@ -1,0 +1,6 @@
+# Basiskonfiguration, diverse Konstanten
+#
+# Wird bei der Installation benutzt und u.a. in die boot.php eingetragen
+
+# Anzuzeigender Default-Kartenausschnitt (Tool "bounds")
+bounds: '[46,5.5],[55,17]'

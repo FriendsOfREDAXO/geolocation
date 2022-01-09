@@ -14,6 +14,7 @@ Code-Blöcke. In der Prism-Toolbar kommt [ClipboardJS](https://clipboardjs.com/)
 [Zeno Rocha](https://zenorocha.com/) zum Einsatz.
 
 Beide Tools sind zusammen mit Addon-Spezifika zu `help.min.js` bzw. `help.min.css` zusammengefasst.
+Beide Dateien gehören zu [`help.php`](https://github.com/christophboecker/help.php).
 
 ## Kartendarstellung
 
@@ -22,3 +23,8 @@ Die Karten werden mit [LeafletJS](https://leafletjs.com/) von
 [Leaflet Gesture-Handling](https://github.com/elmarquis/Leaflet.GestureHandling/) von
 [elmarquis](https://github.com/elmarquis) schützt die Karten vor versehentlichem Zoom beim Scrollen
 und bietet Gesten-Unterstützung.
+
+## PHP-Rechnen mit Koordinaten
+
+Das PHP-seitige Rechnen mit Koordinaten basierend auf [**phpGeo**](https://github.com/mjaschen/phpgeo)
+von [Markus Jaschen](https://github.com/mjaschen)

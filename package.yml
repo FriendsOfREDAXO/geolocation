@@ -1,5 +1,5 @@
 package: geolocation
-version: '0.13.2'
+version: '0.14.0'
 author: Christoph Böcker
 supportpage: https://github.com/christophboecker/geolocation
 
@@ -47,4 +47,4 @@ requires:
     redaxo: '^5.13.1'
     packages:
         cronjob: '^2.8.0'
-        yform: '>3.99'
+        yform: '^4.0.0'

@@ -47,7 +47,7 @@ geolocation_mapset_overlay = Overlay-Karten
 geolocation_mapset_outfragment_notice = REDAXO-Fragment für die Ausgabe (leer: aus "Einstellungen" | Fallback auf «{0}»)
 geolocation_mapset_outfragment_error = Das Ausgabe-Fragment muss leer sein (Default aus "Einstellungen") oder ein PHP-Dateiname (Suffix fehlt)
 geolocation_mapset_mapoptions_default = Default; Werte aus "Einstellungen"
-geolocation_mapset_mapoptions_notice = (*) Auswahl ist aktuell gem. Default (siehe "Einstellungen") aktiviert.
+geolocation_mapset_mapoptions_notice = (*) Bei Nutzung der Default-Einstellungen ist dieser Wert aktiviert.
 
 # Tabelle "rex_geolacation_layer"
 geolocation_layer = Karte
@@ -93,6 +93,8 @@ geolocation_manpage_developer = Für Entwickler
 geolocation_manpage_devphp = PHP
 geolocation_manpage_devjs = Javascript
 geolocation_manpage_devtools = Tools
+geolocation_manpage_devgeojson = geoJSON
+geolocation_manpage_devmath = Rechnen (PHP)
 
 # Installation
 geolocation_install_missing = Die Installationsdatei «{0}» fehlt!

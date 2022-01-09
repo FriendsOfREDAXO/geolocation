@@ -4,10 +4,15 @@ default:
         # sperrt das verlinkte Bild in docs/layer.md für Berechtigung geolocation[mapset]
         docs/assets/tiles_list.jpg: geolocation[layer]
         docs/assets/tiles_edit.jpg: geolocation[layer]
-        # sperrt die übrigen Assets für alle Berechtigungen außer Admin[]
+        # sperrt weitere Assets für alle Berechtigungen außer Admin[]
         docs/assets/config.jpg: admin[]
         docs/assets/cronjob.jpg: admin[]
 
+    0:
+        title: ''
+        icon: fa fa-info
+        perm: admin[]
+        path: readme.md
     1:
         title: translate:geolocation_manpage_install
         icon: fa fa-book
@@ -52,3 +57,9 @@ default:
             2:
                 title: translate:geolocation_manpage_devtools
                 path: docs/devtools.md
+            3:
+                title: translate:geolocation_manpage_devgeojson
+                path: docs/devgeojson.md
+            4:
+                title: translate:geolocation_manpage_devmath
+                path: docs/devmath.md

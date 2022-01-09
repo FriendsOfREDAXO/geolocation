@@ -4,10 +4,12 @@
 > - [Kartensätze verwalten](mapset.md)
 > - [Karten/Layer verwalten](layer.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
-> - Für Entwickler
+> - [Für Entwickler](devphp.md)
 >   - [PHP](devphp.md)
 >   - [Javascript](devjs.md)
 >   - JS-Tools
+>   - [geoJSON](devgeojson.md)
+>   - [Rechnen (PHP)](devmath.md)
 
 # Für Entwickler &dash; JS-Kartentools
 
@@ -38,7 +40,9 @@ des Tools zeitlich nach **Geolocation** zu laden oder in das [Geolocation-JS](in
 einzubauen. Die gesamte Steuerungslogik im Javascript und im Backend basiert letztlich auf dem
 Tool-Namen und erfordert keine weiteren Eingriffe.
 
-Zwei [Beispiele für eigene Tools](#tools2) sind in der Dokumentation enthalten.
+> [Beispiele für eigene Tools](#tools2) sind in der Dokumentation enthalten. Die Datei
+> `redaxo/src/addons/geolocation/docs/example/geolocation.js` enthält die Beispiele und kann als
+> Basis für eigene Erweiterungen dienen.
 
 Diese Tools sind bereits in **Geolocation** enthalten:
 
@@ -47,9 +51,11 @@ Diese Tools sind bereits in **Geolocation** enthalten:
 | ![Beispiel](assets/demo_map_bounds.jpg) | ![Beispiel](assets/demo_map_position.jpg) | ![Beispiel](assets/demo_map_marker.jpg) |
 <small><sup>\*</sup> Der Bereich ist nur zur Veranschaulichung farbig markiert.</small>
 
+Ein weiteres Tool zur Darstellung von [geoJSON-Daten](devgeojson) hat ein eigenes Kapitel.
+
 Alle Tools im Datensatz sind optional. Allerdings sollte Bounds auf jeden Fall angegeben werden,
 denn sonst wird die Karte mit den Default-Werten für den Viewport angezeigt. Dann liegen die Marker
-möglicherweise außerhalb des sichtbaren Breichs der Karte bzw. die Karte wird mit einem zu niedrigen
+möglicherweise außerhalb des sichtbaren Bereichs der Karte bzw. die Karte wird mit einem zu niedrigen
 Zoom-Level angezeigt. Eine Alternative zu Bounds ist [hier](#tcenter) als Beipiel für eine eigene
 Tools-Klasse zu finden.
 
@@ -87,6 +93,7 @@ es nicht sichtbar und stört damit nicht. Das wird über die Default-Einstellung
 Geolocation.default.boundsRect: {fill:false,stroke:false};
 ```
 
+<a name="boundsvisible"></a>
 Es gibt auch Situationen, in denen das Rechteck sichtbar sein sollte, z.B. um im Backend sehen zu
 können wie der eingegebene Wert wirkt. Dazu muss vor der Ausgabe der Default-Wert z.B. via Modul
 geändert werden.
@@ -149,6 +156,21 @@ let marker = [ [lat1,lng1], [lat2,lng2], .... ]
 Die Karte wird **nicht** automatisch so positioniert, dass alle Marker sichtbar sind. Dazu ist die
 Kombination z.B. mit einem geeignet konfigurierten "Bounds" notwendig (oder ein anderes Tool, das
 die Karte [positioniert](#tcenter))
+
+<a name="tgeojson"></a>
+### "geojson"
+
+Das "geoJSON"-Tool setzt überträgt einen Datensatz im [geoJSON-Format](https://blog.codecentric.de/2018/03/geojson-tutorial/) auf die Karte. Die eigentliche Ausführung übernimmt LeafLet mit einer Universalmethode:
+
+```js
+let layer = L.geoJSON( geojsonData, options );
+```
+
+Da es vielfältige Möglichkeiten gibt, Daten zu visualisieren, deckt das Tool "geoJSON" über
+`L.geoJSON` nur die Basisdarstellung ab.
+
+Details zum Tool selbst und zur Entwicklung angepasster Darstellungen je nach Datensatz gibt es ein
+eigenes [Kapitel](devgeojson.md).
 
 
 <a name="tools2"></a>
@@ -253,15 +275,18 @@ Geolocation.tools.nrmarker = function(...args) { return new Geolocation.Tools.Nr
 <a name="tcenter"></a>
 ### "center"
 
-Diese **Beispiel**-Tool kann anstelle des Tools "Bounds" (Festlegung eines Mindest-Anzeigebereichs) verwendet werden.
-Es bietet die eher klassische Variante: Karte mit einem vorgegebenen Zoom-Level um einen Punkt zentrieren.
+Diese **Beispiel**-Tool kann anstelle des Tools "Bounds" (Festlegung eines Mindest-Anzeigebereichs)
+verwendet werden. Es bietet die eher klassische Variante: Karte mit einem vorgegebenen Zoom-Level
+um einen Punkt zentrieren.
 
-Der Datensatz besteht aus zwei Angaben:
+Der Datensatz besteht aus biszu vier Angaben:
 
 |Element|Aufbau|Beispiel|
 |-|-|-|
 |Koordinate der Kartenmitte|[Breitengrad, Längengrad]|[47.6,9.5]|
 |Zoom-Level|Zahl im zulässigen Bereich (meist 1-20)|15|
+|Radius|Diese Zahl größer Null bewirkt einen farbigen Kreis um die Kartenmitte. Die Angabe ist im Meter. |0=kein Kreis|
+|Farbe|HTML-konforme Farbangabe (Name,Farbcode) für den farbigen Kreis|Leaflet-Default|
 
 ```javascript
 let datensatz = {
@@ -273,6 +298,11 @@ let datensatz = {
 Die neue Tool-Klasse baut auf `Geolocation.Tools.Template` auf.
 
 ```javascript
+Geolocation.default.styleCenter = {
+    color:"#ff7800",
+    weight:1,
+    fillOpacity:0.1
+};
 Geolocation.Tools.Center = class extends Geolocation.Tools.Template{
     constructor ( ...args){
         super(args);
@@ -284,15 +314,32 @@ Geolocation.Tools.Center = class extends Geolocation.Tools.Template{
         super.setValue( data );
         this.center = L.latLng( data[0] ) || this.centerDefault;
         this.zoom = data[1] || this.zoomDefault;
+        this.radius = data[2];
+        this.circle = null;
+        if( data[2] ) {
+            let options = Geolocation.default.styleCenter;
+            options.color = data[3] || options.color;
+            options.radius = this.radius;
+            this.circle = L.circle( this.center, options );
+        }
         if( this.map ) this.show( this.map );
         return this;
     }
     show( map ){
         super.show( map );
         map.setView( this.center, this.zoom );
+        if( this.circle instanceof L.Circle ) this.circle.addTo( map );
+        return this;
+    }
+    remove(){
+        if( this.circle instanceof L.Circle ) this.circle.remove();
+        super.remove();
         return this;
     }
     getCurrentBounds(){
+        if( this.circle instanceof L.Circle ) {
+            return this.radius ? this.circle.getBounds() : this.circle.getLatLng();
+        }
         return this.center;
     }
 }

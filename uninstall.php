@@ -2,6 +2,8 @@
 /**
  *  De-Installations-Script
  *
+ *  @package geolocation
+ *
  *  Zusätzlich zu den von REDAXO selbst durchgeführten Aktivitäten:
  *
  *  Entfernt die Tabellen rex_geolocation_mapset und rex_geolocation_layer.
