@@ -9,7 +9,7 @@
   von [Markus Jaschen](https://github.com/mjaschen) => Point, Box, Math
 - Online-Dokumentation in den Entwicklerseiten bzgl. Rechnen mit Koordinaten erweitert
 
-- Bugfix in layer.php (getLabel), assetpacker.php (SSCS-Pfadname unter Windows) und devphp.md
+- Bugfix in layer.php (getLabel), assetpacker.php (SCSS-Pfadname unter Windows) und devphp.md
   (Text) (@dtpop)
 ___
 
