@@ -43,6 +43,10 @@ Die Installation (I) bzw. Re-Installation (R) umfasst folgende Schritte
 - Tabellen *rex_geolocation_mapset* und *rex_geolocation_layer* anlegen (I) bzw. bei angelegten
   Tabellen die notwendigen Felder sicherstellen (R).
 - Wenn beide Tabellen leer sind, wird ein Demo-Datensatz installiert (I|R).
+  > Im Demo-Datensatz sind drei Links zu Karten des Anbieters [here](https://www.here.com/).
+  > In den URLs muss ein persönlicher API-Key angegeben sein. In den Demo-Daten steht nur `?API=....`.
+  > Ohne gültigen API-Key, auf der here-Webseite zu beziehen, funktionieren die URLs nicht und
+  > folglich der Kartensatz "here" ebenfalls nicht.  
 - Die Tabellen werden über YForm verwaltet. Die dazu nötigen Tablesets werden installiert (I) bzw.
   angepasst (R).
 - Sofern es keinen Cron-Job "Geolocation: Cleanup Cache" gibt, wird er angelegt. Ein vorhandener Job
