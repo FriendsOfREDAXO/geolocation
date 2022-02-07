@@ -99,8 +99,10 @@ geolocation_manpage_devmath = Rechnen (PHP)
 # Installation
 geolocation_install_missing = Die Installationsdatei «{0}» fehlt!
 geolocation_install_table_prepared = Die Tabelle «{0}» ist angelegt.
-geolocation_install_table_filled = Die Tabellen sind mit Beispieldaten vorbefüllt. In den URLs der HERE-Karten muss der eigene API-Key ergänzt werden.
+geolocation_install_table_demo = Die Tabellen sind mit Beispieldaten vorbefüllt.
+geolocation_install_table_filled = Die Tabellen sind vorbefüllt (Quelle: data-Verzeichnis).
 geolocation_install_tableset_prepared = Die YForm-Formulare sind angelegt.
 geolocation_install_cronjob_prepared = Der Cronjob zur Cache-Pflege ist angelegt.
 geolocation_install_assets_prepared = Die Asset-Dateien sind neu compiliert.
 geolocation_install_tableset = Fehler beim Import der YForm-Formulare: «{0}»
+geolocation_install_table_demo_api = In den Beispieldaten muss unbedingt der eigene API-Key der HERE-Karten eingetragen werden!<br>Addon: Geolocation | Tab: Karte | Datensatz: HERE:... | Feld: URL.<br>Andernfalls blockt HERE die Kartenabrufe.

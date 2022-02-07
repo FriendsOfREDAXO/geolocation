@@ -1,5 +1,12 @@
 # Changelog
 
+## **07.02.2022 Version 0.14.2**
+
+- Deutlichere Hinweise in Handbuch und Installation, dass in den Beispieldaten bei der Karten-URL
+  der persönliche API-Key einzutragen ist. Andernfalls können keine HERE-Karten abgerufen werden.
+___
+
+
 ## **07.02.2022 Version 0.14.1**
 
 - Bugfix in install.php: temporäre SQL-Datei konnte auf einem Linux-System nicht angelegt werden (@iceman-fx)
