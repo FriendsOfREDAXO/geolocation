@@ -2,7 +2,7 @@
 
 ## **07.02.2022 Version 0.14.1**
 
-- Bugfix in install.php: temporäre SQL-Datei konnte auf einem Linux-System nicht angelegt werden.
+- Bugfix in install.php: temporäre SQL-Datei konnte auf einem Linux-System nicht angelegt werden (@iceman-fx)
 ___
 
 
