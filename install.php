@@ -88,9 +88,11 @@ try {
         }
 
         if( $config['dataset']['overwrite'] ){
+            $demoDataset = false;
             $datasetfile = $this->getDataPath('dataset.sql');
             if( !is_readable($datasetfile) ){
                 $datasetfile = __DIR__ . '/install/dataset.sql';
+                $demoDataset = true;
             }
             $dataset = \rex_file::get( $datasetfile );
             if( !$dataset ) {
@@ -109,7 +111,13 @@ try {
             file_put_contents( $sqlfile, $dataset );
             \rex_sql_util::importDump( $sqlfile );
             unlink( $sqlfile );
-            $msg[] = $this->i18n( 'install_table_filled');
+            // Hinweis auf ggf. auszutauschenden HERE-Key in Demo-Daten
+            if( $demoDataset ) {
+                $msg[] = $this->i18n( 'geolocation_install_table_demo').
+                        '<p class="alert alert-warning" style="margin:0">'.$this->i18n( 'geolocation_install_table_demo_api' ).'</p>';
+            } else {
+                $msg[] = $this->i18n( 'install_table_filled');
+            }
         }
     }
 
