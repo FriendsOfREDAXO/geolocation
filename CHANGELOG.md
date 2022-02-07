@@ -1,5 +1,11 @@
 # Changelog
 
+## **07.02.2022 Version 0.14.1**
+
+- Bugfix in install.php: temporäre SQL-Datei konnte auf einem Linux-System nicht angelegt werden (@iceman-fx)
+___
+
+
 ## **09.01.2022 Version 0.14.0**
 
 - Erweitert um ein Anzeige-Tool für geoJSON-Datensätze

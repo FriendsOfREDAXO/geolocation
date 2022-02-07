@@ -105,11 +105,7 @@ try {
                 );
             }
             // etwas kompliziert, da importDump unbedingt eine .sql-Datei will.
-            $filename = tempnam( sys_get_temp_dir(), '' );
-            while( !rename($filename, $sqlfile = $filename.'.sql') ) {
-                unlink( $filename );
-                $filename = tempnam( sys_get_temp_dir(), '' );
-            }
+            $sqlfile = __DIR__ . '/tmp' . mt_rand(10000000,99999999) . '.sql';
             file_put_contents( $sqlfile, $dataset );
             \rex_sql_util::importDump( $sqlfile );
             unlink( $sqlfile );
