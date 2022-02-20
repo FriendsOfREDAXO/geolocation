@@ -12,7 +12,7 @@ default:
         title: ''
         icon: fa fa-info
         perm: 'admin[]'
-        path: readme.md
+        path: README.md
     1:
         title: translate:geolocation_manpage_install
         icon: fa fa-book
