@@ -1,5 +1,19 @@
 # Changelog
 
+## **20.02.2022 Version 0.15.0**
+
+- Einbinden der Standard-Assets im Backend nun auch über `tools::echoAssetTags()`
+- Event-Namen:
+    - andere Struktur; Präfix nun mit Doppelpunkt als Trennzeichen (`geolocation:`) ähnlich `rex:`
+    - alt: `geolocation.create` -> neu: `geolocation:map.ready`
+    - alt: `geolocation.setData` -> neu: `geolocation:dataset.ready`
+    - Dokumentation aktualisiert
+- neue Methode `\Geolocation\mapset->getDefaultId()`
+- In der Mapset-Liste wird der Aktions-Button "Löschen" für den Default-Mapset ausgeblendet
+- package.yml,help.yml: Permissions in '' gesetzt
+___
+
+
 ## **07.02.2022 Version 0.14.2**
 
 - Deutlichere Hinweise in Handbuch und Installation, dass in den Beispieldaten bei der Karten-URL
