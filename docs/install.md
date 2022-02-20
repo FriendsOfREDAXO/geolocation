@@ -461,10 +461,10 @@ Die Berechtigungsverwaltung erfolgt über die Benutzer- und Rollenverwaltung in 
 |-|-|
 |admin| Darf alles, sieht alles|
 |geolocation[mapset]|Kartensätze zusammenstellen und verwalten|
-|geolocation[layer]|Kartendaten / Layer-Daten bearbeiten. Da hier die grundlegende Funktion schnellbeeinträchtigt werden kann (z.B. falsche URLs), sollte diese Berechtigung ohnehin Entwicklern und Admins vorbehalten sein.|
-|geolocation[clearcache]|Cache löschen; Das Recht bezieht sich auf per `rex_api` ausgelöstes Löschen (z.B. Lösch-Button der Addon-Seiten im Backend). Cronjobs sind nicht betroffen|
+|geolocation[layer]|Kartendaten / Layer-Daten bearbeiten. Da hier die grundlegende Funktion schnell beeinträchtigt werden kann (z.B. falsche URLs), sollte diese Berechtigung besser nicht vergeben werden. Die Berechtigung sollte Entwicklern und Admins vorbehalten sein und wäre ist in der Rollw "Admin" enthalten.|
+|geolocation[clearcache]|Cache löschen; Das Recht bezieht sich auf per `rex_api` ausgelöstes Löschen (z.B. Lösch-Button der Addon-Seiten im Backend). Cronjobs sind nicht betroffen. Die Rolle gilt summarisch für alle Caches und kann nicht auf einzelne eingegrenzt werden.|
 
-Passend dazu werden auch die Handbuchseiten eingeschränkt. Diese Installationsseite ist z.B. nur für
+Passend zur Rolle werden auch die Handbuchseiten eingeschränkt. Diese Installationsseite ist z.B. nur für
 Admins sichtbar.
 
 ## Darkmode
