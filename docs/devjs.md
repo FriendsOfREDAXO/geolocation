@@ -207,14 +207,14 @@ wird die Leaflet-Karteninstanz sowie der HTML-Container der Karte (i.d.R. also e
 `<rex-map>`-Instanz) zurückgegeben.
 
 ```JS
-document.addEventListener( 'geolocation.create', function(e){
+document.addEventListener( 'geolocation:map.ready', function(e){
     console.log(e.detail.map);
     console.log(e.detail.container);
 },false);
 ```
 
 <a name="evtcreate"></a>
-### geolocation.create
+### geolocation:map.ready
 
 Die Karte kann auf Wunsch auch direkt als Leaflet-Karte ohne Zwischenschaltung von
 **Geolocation**-Tools verwaltet werden. Dazu muss die Leaflet-Instanz identifiziert werden.
@@ -224,8 +224,8 @@ wurde. Tatsächlich ist es ein verlängerter Load-Event der Leaflet-Karte.
 ```js
 this.map.on( 'load', function(e){
     ...
-    document.dispatchEvent(
-        new CustomEvent('geolocation.create', { 'detail':{'container':container, 'map':this.map} })
+    map.getContainer().dispatchEvent(
+        new CustomEvent('geolocation:map.ready', { 'detail':{'container':container, 'map':this.map} })
     );
 }, this);
 ```
@@ -238,14 +238,14 @@ werden.
 Hier ein Anwendungsbeispiel:
 
 ```JS
-document.addEventListener( 'geolocation.create', function(e){
+document.addEventListener( 'geolocation:map.ready', function(e){
     if ( 'myid' === e.detail.container.id ){
         // Leaflet-Event "zoomend" belegen
         e.detail.map.on('zoomend', function(e){
             alert( Geolocation.i18n('Zoom finished') );
         });
         // setData abfangen
-        e.detail.container.addEventListener( 'geolocation.setData', function(e){
+        e.detail.container.addEventListener( 'geolocation:dataset.ready', function(e){
             alert( Geolocation.i18n('Map updated') );
         },false);
     }
@@ -253,13 +253,13 @@ document.addEventListener( 'geolocation.create', function(e){
 ```
 
 <a name="evtsetdata"></a>
-### geolocation.setData
+### geolocation:dataset.ready
 
 Der Event wird ausgelöst, wenn der Karte ein neuer Dataset hinzugefügt wurde. Der alte Dataset wurde
 entfernt, die Tools des neuen Dataset auf die Karte geschrieben.
 
 ```JS
-document.addEventListener( 'geolocation.setData', function(e){
+document.addEventListener( 'geolocation:dataset.ready', function(e){
     if ( 'myid' === e.detail.container.id ){
         alert( Geolocation.i18n('Map updated') );
     }
