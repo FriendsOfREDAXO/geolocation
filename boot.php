@@ -72,10 +72,7 @@ if( \rex::isBackend() ){
         );
     }
 
-    if( LOAD ){
-        \rex_view::addCssFile($this->getAssetsUrl('geolocation.min.css'));
-        \rex_view::addJsFile($this->getAssetsUrl('geolocation.min.js'));
-    }
+    tools::echoAssetTags();
     \rex_view::addCssFile($this->getAssetsUrl('geolocation_be.min.css'));
 
 }

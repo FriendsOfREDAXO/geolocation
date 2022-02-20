@@ -47,20 +47,5 @@ if( isset($this->attributes) && is_array($this->attributes) && count($this->attr
     );
 }
 
-// Schript-Code für Events einfügen
-if( isset($this->events) && is_array($this->events) && count($this->events) ) {
-    $code = '';
-    $id = 'rm'.md5( microtime() );
-    foreach( $this->events as $k=>$v ) {
-        $exit = 'if( !e.detail.container.hasAttribute(\''.$id.'\') ) return;';
-        $code .= 'document.addEventListener(\'geolocation.'.$k.'\', function(e){'.$exit.'console.log(e);'.$v.'});';
-    }
-    if( $code ) {
-        echo '<script type="text/javascript">',$code,'</script>';
-        $attributes[$id] = 1;
-    }
-}
-
-
 // HTML-Tag generieren
 echo '<rex-map',\rex_string::buildAttributes($attributes),'></rex-map>';

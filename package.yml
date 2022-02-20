@@ -1,5 +1,5 @@
 package: geolocation
-version: '0.14.2'
+version: '0.15.0'
 author: Christoph Böcker
 supportpage: https://github.com/christophboecker/geolocation
 
@@ -11,15 +11,15 @@ page:
         config:
             title: translate:geolocation_config
             icon: fa fa-wrench
-            perm: admin[]
+            perm: 'admin[]'
         mapset:
             title: translate:geolocation_mapset
-            perm: geolocation[mapset]
+            perm: 'geolocation[mapset]'
             icon: fa fa-map
             subPath: pages/yform.php
         layer:
             title: translate:geolocation_layer
-            perm: geolocation[layer]
+            perm: 'geolocation[layer]'
             icon: fa fa-cloud-download
             subPath: pages/yform.php
         docs:
@@ -28,8 +28,8 @@ page:
             subPath: help.php
         clear_cache:
             title: 'translate:geolocation_clear_cache'
-            perm: geolocation[clearcache]
-            itemclass: 'pull-right'
+            perm: 'geolocation[clearcache]'
+            itemclass: pull-right
             linkclass: 'btn btn-delete'
             href:
                 # Zur Info: Die konkreten Parameter setzt kontext-bezogen pages/index.php

@@ -191,7 +191,7 @@ Geolocation.Classes.Map = class {
             if( true === Geolocation.default.mapOptions.locateControl ) {
                 this.locationTool = Geolocation.tools._currentlocation();
             }
-            container.dispatchEvent(new CustomEvent('geolocation.create', { 'detail':{'container':container, 'map':this.map},bubbles:true }));
+            container.dispatchEvent(new CustomEvent('geolocation:map.ready', { 'detail':{'container':container, 'map':this.map},bubbles:true }));
         }, this);
 
         this.layerControl = L.control.layers( );
@@ -234,7 +234,7 @@ Geolocation.Classes.Map = class {
             this.tools.push( Geolocation.tools[tool]().setValue( dataset[tool] ) );
         })
         this.tools.forEach( (t) => t.show( this.map ) );
-        this.map._container.dispatchEvent(new CustomEvent('geolocation.setData', { 'detail':{'container':this.map._container, 'map':this.map},bubbles:true }));
+        this.map._container.dispatchEvent(new CustomEvent('geolocation:dataset.ready', { 'detail':{'container':this.map._container, 'map':this.map},bubbles:true }));
     }
 
 	setMapset( mapset={}, clearLayers=true ){

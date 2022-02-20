@@ -1,6 +1,6 @@
 <?php namespace Geolocation;
 /**
- * Geolocatin|layer ist eine erweiterte yform-dataset-Klasse für Kartensätze
+ * Geolocation|layer ist eine erweiterte yform-dataset-Klasse für Kartensätze
  *
  * @package geolocation
  */
@@ -22,6 +22,7 @@
     - Listenbezogen
 
         YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" in die Datentabelle
+                                        Action-Button "delete" entfernen beim Default-Mapset
 
     - AJAX-Abrufe
 
@@ -30,6 +31,7 @@
     - Support
 
         getValue        Eigene virtuelle Datensatzfelder abrufen
+        getDefaultId    Default-Mapset-ID abrufen
         getLayerset     Array z.B. für <rex-map mapset=...> bereitstellen (Kartensatzparameter)
         getMapOptions   Array z.B. für <rex-map map=...> bereitstellen (Kartenoptionen)
         getOutFragment  das für Kartendarstellung vorgesehene Fragment (outfragment) mit Fallback
@@ -57,7 +59,6 @@ class mapset extends \rex_yform_manager_dataset
 
     protected $mapDataset = [];
     protected $mapAttributes = [];
-    protected $mapJS = [];
 
     # dataset-spezifisch
 
@@ -76,7 +77,6 @@ class mapset extends \rex_yform_manager_dataset
         if( $dataset ){
             $dataset->mapDataset = [];
             $dataset->mapAttributes = [];
-            $dataset->mapJS = [];
         }
         return $dataset;
     }
@@ -121,6 +121,7 @@ class mapset extends \rex_yform_manager_dataset
     /**
      * Löschen nur wenn nicht in Benutzung z.B. in Slices/Modulen etc.
      *
+     * Slices/Module:
      * Dazu erfolgt eine Abfrage mittels EP GEOLOCATION_MAPSET_DELETE, der entsprechend belegt
      * werden muss. Das gibt die Möglichkeit um z.B. zu prüfen, ob der Mapset in REX_VALUEs vorkommt.
      * Cache ebenfalls löschen
@@ -131,7 +132,7 @@ class mapset extends \rex_yform_manager_dataset
      */
     public function delete() : bool
     {
-        if( $this->id === \rex_config::get(ADDON,'default_map',0) ) {
+        if( $this->id === self::getDefaultId() ) {
             return false;
         }
 
@@ -201,6 +202,33 @@ class mapset extends \rex_yform_manager_dataset
         $table_name = $ep->getParam('table')->getTableName();
         if( self::class != self::getModelClass( $table_name ) ) return;
 
+        // Button-Code abspeichern für YFORM_DATA_LIST
+        $action_delete = $ep->getSubject()['delete'] ?? null;
+        if( $action_delete ) {
+            \rex_extension::register(
+                'YFORM_DATA_LIST',
+                static function (\rex_extension_point $ep) {
+                    // nur für diese Tabelle
+                    if( $ep->getParam('table_name') !== $ep->getParam('table')->getTableName() ) return;
+                    // Daten zusammensuchen
+                    $list = $ep->getSubject();
+                    $default = self::getDefaultId();
+                    $toDelete = '<li>'.$ep->getParam('action_delete').'</li>';
+                    // Spalte "Functions": delete-Action entfernen wenn Default-Mapset
+                    $list->setColumnFormat(
+                        \rex_i18n::msg('yform_function').' ',
+                        'custom',
+                        function( $params ) use( $toDelete,$default){
+                            return $params['list']->getValue('id') === $default
+                                ? str_replace($toDelete,'',$params['value'])
+                                : $params['value'];
+                        }
+                    );
+                },
+                \rex_extension::NORMAL,
+                ['action_delete'=>$action_delete, 'table_name'=>$table_name]);
+        }
+
         if( ($user = \rex::getUser()) && $user->hasPerm('geolocation[clearcache]') ){
             $link_vars = $ep->getParam('link_vars') + [
                 'mapset_id' => '___id___',
@@ -255,6 +283,16 @@ class mapset extends \rex_yform_manager_dataset
             return array_unique( $layer );
         }
         return parent::getValue($key);
+    }
+
+    /**
+     * liefert die ID des Default-Mapset wie in den Einstellungen festgelegt
+     *
+     * @return int
+     */
+    public static function getDefaultId()
+    {
+        return (int)\rex_config::get(ADDON,'default_map');
     }
 
 
@@ -369,9 +407,9 @@ class mapset extends \rex_yform_manager_dataset
                 throw new InvalidMapsetParameter( InvalidMapsetParameter::MAPSET_ID, [$id] ) ;
             }
         } catch (\Exception $e) {
-            $map = mapset::get(\rex_config::get(ADDON,'default_map'));
+            $map = mapset::get(self::getDefaultId());
             if( null === $map ) {
-                throw new InvalidMapsetParameter( InvalidMapsetParameter::MAPSET_DEF, [\rex_config::get(ADDON,'default_map')] ) ;
+                throw new InvalidMapsetParameter( InvalidMapsetParameter::MAPSET_DEF, [self::getDefaultId()] ) ;
             }
         }
         return $map;
@@ -423,15 +461,6 @@ class mapset extends \rex_yform_manager_dataset
         return $this;
     }
 
-    public function onCreate( string $code ) : self
-    {
-        $code = trim($code);
-        if( $code ) {
-            $this->mapJS['create'] = $code;
-        }
-        return $this;
-    }
-
     /**
      * erzeugt Karten-HTML gem. vorgegebenem Fragment
      *
@@ -455,10 +484,8 @@ class mapset extends \rex_yform_manager_dataset
         if( $this->mapAttributes ) {
             $fragment->setVar( 'attributes', $this->mapAttributes ?: [], false );
         }
-        if( $this->mapJS ) {
-            $fragment->setVar( 'events', $this->mapJS ?: [], false );
-        }
         $fragment->setVar( 'map', $this->getMapOptions(false), false );
+
         return $fragment->parse( $file ?: $this->getOutFragment() );
     }
 
