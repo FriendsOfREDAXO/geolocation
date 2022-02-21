@@ -1,5 +1,10 @@
 # Changelog
 
+## 21.02.20022 Erste 1.0 beta
+
+- Readme-Link fixed
+
+
 ## **20.02.2022 Version 0.15.0**
 
 - Einbinden der Standard-Assets im Backend nun auch über `tools::echoAssetTags()`
