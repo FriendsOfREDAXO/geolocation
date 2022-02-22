@@ -450,7 +450,7 @@ class layer extends \rex_yform_manager_dataset
      */
     public function getLayerConfig( ?string $locale ){
         return [
-            'layer' => KEY_TILES.'='.$this->id,
+            'layer' => $this->id,
             'label' => $this->getLabel( $locale ),
             'type' => $this->layertype,
             'attribution' => $this->attribution,
