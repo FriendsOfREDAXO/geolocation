@@ -71,29 +71,31 @@ aktuellen Einstellungen in die jeweiligen Platzhalter `%«name»%` geschrieben.
 var Geolocation = {
 
     default: {  // Default-Werte
-                mapOptions:
-                    {
-                        minZoom:%zoomMin%,
-                        maxZoom:%zoomMax%,
-                        scrollWheelZoom:true,
-                        gestureHandling:%defaultGestureHandling%,
-                        locateControl: %defaultLocateControl%,
-                        fullscreen:%defaultFullscreen%
-                    },
-                bounds: [%defaultBounds%],
-                boundsRect: {fill:false,stroke:false},
-                zoom: %defaultZoom%,
-                locationMarker:
-                    {
-                        className:   'geolocation-locate-location',
-                        weight:      3,
-                        radius:      9
-                    },
-                locationMarkerCircle:
-                    {
-                        className:   'geolocation-locate-accuracy',
-                    },
+        mapOptions:
+            {
+                keyMapset: %keyMapset%,
+                keyLayer: %keyLayer%,
+                minZoom:%zoomMin%,
+                maxZoom:%zoomMax%,
+                scrollWheelZoom:true,
+                gestureHandling:%defaultGestureHandling%,
+                locateControl: %defaultLocateControl%,
+                fullscreen:%defaultFullscreen%
             },
+        bounds: [%defaultBounds%],
+        boundsRect: {fill:false,stroke:false},
+        zoom: %defaultZoom%,
+        locationMarker:
+            {
+                className:   'geolocation-locate-location',
+                weight:      3,
+                radius:      9
+            },
+        locationMarkerCircle:
+            {
+                className:   'geolocation-locate-accuracy',
+            },
+    },
 
     icon: {},       // Icons (SVG)
 

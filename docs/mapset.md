@@ -85,19 +85,19 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
     ```
     array:3 [▼
         0 => array:4 [▼
-            "layer" => "geolayer=1"
+            "layer" => "1"
             "label" => "Karte"
             "type" => "b"
             "attribution" => "Map Tiles &copy; 2020 <a href="http://developer.here.com">HERE</a>"
         ]
         1 => array:4 [▼
-            "layer" => "geolayer=2"
+            "layer" => "2"
             "label" => "Satelit"
             "type" => "b"
             "attribution" => "Map Tiles &copy; 2020 <a href="http://developer.here.com">HERE</a>"
         ]
         2 => array:4 [▼
-            "layer" => "geolayer=3"
+            "layer" => "3"
             "label" => "Hybrid"
             "type" => "b"
             "attribution" => "Map Tiles &copy; 2020 <a href="http://developer.here.com">HERE</a>"
