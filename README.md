@@ -157,19 +157,19 @@ Im Backend werden aus Layern(Tiles/Kacheln) Kartensätze zusammengestellt, die i
 ```javascript
 kartensatz = [
     {
-        "layer":"geolayer=1",
+        "layer":"1",
         "label":"Karte",
         "type" :"b",
         "attribution":"Map Tiles &copy; 2020 <a href=\"http:\/\/developer.here.com\">HERE<\/a>"
     },
     {
-        "layer":"geolayer=2",
+        "layer":"2",
         "label":"Satelit",
         "type" :"b",
         "attribution":"Map Tiles &copy; 2020 <a href=\"http:\/\/developer.here.com\">HERE<\/a>"
     },
     {
-        "layer":"geolayer=3",
+        "layer":"3",
         "label":"Hybrid",
         "type" :"b",
         "attribution":"Map Tiles &copy; 2020 <a href=\"http:\/\/developer.here.com\">HERE<\/a>"
@@ -180,7 +180,7 @@ kartensatz = [
 ## Referenzen
 
 Basiversion by [Christoph Böcker](https://github.com/christophboecker).
- 
+
 Inspiriert von [Thomas Skerbis](https://github.com/skerbis) Addon "[osmproxy](https://github.com/FriendsOfREDAXO/osmproxy)" und gefüttert mit Ideen und Snippets aus anderen Addons und aus den Diskussionen dazu auf GitHub und im [Slack-Channel](https://friendsofredaxo.slack.com/).
 
 Kartendarstellung mit [LeafletJS](https://leafletjs.com/) von [Vladimir Agafonkin](https://agafonkin.com/) und weiteren

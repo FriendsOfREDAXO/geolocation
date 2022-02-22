@@ -1,6 +1,12 @@
 # Changelog
 
-## 21.02.20022 Erste 1.0 beta
+## xx.xx.2022 Zweite 1.0 beta (in Vorbereitung)
+
+- Die Namen der Proxy-Aufrufe (geolayer, geomapset) sind im JS-Code abgelegt und dwerden in die
+  Abruf-URL eingebaut (vorher: in der Url-Definition mitgeliefert). Die URL-Definition im Mapset
+  enthält nur noch die Karten-ID.      
+
+## 21.02.2022 Erste 1.0 beta
 
 - Readme-Link fixed
 
