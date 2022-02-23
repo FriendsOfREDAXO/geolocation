@@ -104,7 +104,7 @@ $layerConfigSet = \Geolocation\layer::getLayerConfigSet( [1,2,3] );
 ```
 ```
 array:4 [▼
-    "layer" => "geolayer=1"
+    "layer" => "1"
     "label" => "Karte"
     "type" => "b"
     "attribution" => "Map Tiles &copy; 2020 <a href="http://developer.here.com">HERE</a>"

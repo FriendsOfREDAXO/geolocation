@@ -210,6 +210,8 @@ class config_form extends \rex_config_form
                 ->addFile( $addonDir.'install/vendor/Leaflet.GestureHandling/leaflet-gesture-handling.min.js' )
                 ->replace( '//# sourceMappingURL=leaflet-gesture-handling.min.js.map','' )
                 ->addFile( $addonDir.'install/geolocation.js' )
+                ->replace( '%keyMapset%', '\''.KEY_MAPSET.'\'' )
+                ->replace( '%keyLayer%', '\''.KEY_TILES.'\'' )
                 ->replace( '%defaultBounds%', \rex_config::get(ADDON,'map_bounds') )
                 ->replace( '%defaultZoom%', \rex_config::get(ADDON,'map_zoom') )
                 ->replace( '%zoomMin%', \rex_config::get(ADDON,'map_zoom_min') )

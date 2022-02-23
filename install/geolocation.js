@@ -5,31 +5,33 @@
 var Geolocation = {
 
     default: {  // Default-Werte
-                mapOptions:
-                    {
-                        minZoom:%zoomMin%,
-                        maxZoom:%zoomMax%,
-                        scrollWheelZoom:true,
-                        gestureHandling:%defaultGestureHandling%,
-                        locateControl: %defaultLocateControl%,
-                        fullscreen:%defaultFullscreen%
-                    },
-                bounds: [%defaultBounds%],
-                boundsRect: {fill:false,stroke:false},
-                markerColor: 'cornflowerblue',
-                positionColor: 'red',
-                zoom: %defaultZoom%,
-                locationMarker:
-                    {
-                        className:   'geolocation-locate-location',
-                        weight:      3,
-                        radius:      9
-                    },
-                locationMarkerCircle:
-                    {
-                        className:   'geolocation-locate-accuracy',
-                    },
+        keyMapset: %keyMapset%,
+        keyLayer: %keyLayer%,
+        mapOptions:
+            {
+                minZoom:%zoomMin%,
+                maxZoom:%zoomMax%,
+                scrollWheelZoom:true,
+                gestureHandling:%defaultGestureHandling%,
+                locateControl: %defaultLocateControl%,
+                fullscreen:%defaultFullscreen%
             },
+        bounds: [%defaultBounds%],
+        boundsRect: {fill:false,stroke:false},
+        markerColor: 'cornflowerblue',
+        positionColor: 'red',
+        zoom: %defaultZoom%,
+        locationMarker:
+            {
+                className:   'geolocation-locate-location',
+                weight:      3,
+                radius:      9
+            },
+        locationMarkerCircle:
+            {
+                className:   'geolocation-locate-accuracy',
+            },
+    },
 
     icon: {},       // Icons (SVG)
 
@@ -258,7 +260,7 @@ Geolocation.Classes.Map = class {
             delete mapset[tile].layer;
             layertype = mapset[tile].type || 'b';
             delete mapset[tile].type;
-            layer = L.tileLayer( 'index.php?'+geolayer+'&z={z}&x={x}&y={y}',mapset[tile] );
+            layer = L.tileLayer( 'index.php?'+Geolocation.default.keyLayer+'='+geolayer+'&z={z}&x={x}&y={y}',mapset[tile] );
             if( tile == defaultLayer ) layer.addTo( this.map );
             if( 'b' == layertype ){
                 this.layerControl.addBaseLayer( layer, label );

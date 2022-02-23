@@ -17,7 +17,7 @@
 
 Die Erde ist ein [Rotationselipsoid](https://de.wikipedia.org/wiki/Rotationsellipsoid), also eine an
 den Polen leicht abgeflachte Kugel. Das macht Rechenoperationen mit Koordinaten sowie die Abbildung
-der kugeligen Realität noch etwas kompliziert.
+der kugeligen Realität etwas komplizierter.
 
 In **Geolocation** ist die PHP-Bibliothek [**phpGeo**](https://github.com/mjaschen/phpgeo) von
 [Markus Jaschen](https://github.com/mjaschen) enthalten. Sie stellt eine Reihe von Klassen zur
@@ -30,7 +30,7 @@ die erweiterte Funktionen im Namespace `\Geolocation` bereitstellen.
     - Ausgabe in verschiedenen Zielformaten
     - Rechenoperatinen (Distanz/Richtung/Ziel)
 - `class Box`: Verwaltet einen rechteckigen Bereich
-    - Anlegen aus zwei gegeüberliegenden Eckpunkten (Point)
+    - Anlegen aus zwei gegenüberliegenden Eckpunkten (Point)
     - Abfrage diverser Daten (Eckpunkte, Nord/Süd/Ost/West)
     - Rechenoperationen (Außenkreis, Innenkreis, Zentrum, Contains, ExtendBy)
 - `class Math`: Auf phpGeo aufbauend eine Schnittstelle zu gängigen Rechenoperationen
@@ -40,7 +40,7 @@ die erweiterte Funktionen im Namespace `\Geolocation` bereitstellen.
 <a name="caveat"></a>
 ## Hinweise
 
-Leaflet selbst als Tool für die Darstellung hat Einschränkung in Bezug auf die
+Leaflet selbst als Tool für die Darstellung hat Einschränkungen in Bezug auf die
 [Datumslinie](https://de.wikipedia.org/wiki/Datumsgrenze) oder präziser, dem dortigen Meridian
 &#177;180°. Eine Box mit den Koordinaten `[[10,170],[15,-170];]` hat keine gezeichnete Breite von 20
 Längengraden über den Datumsgrenzen-Meridian, sondern von 340 Längengraden über den Null-Meridian.
@@ -151,7 +151,7 @@ kommt aber irgendwann an ihre Grenzen. Für weitere Informationen sei auf die
 verwiesen.
 
 Sofern die Einzelwerte nicht aus der Schreibweise als Länge bzw. Breite erkannt werden können, gilt
-die Reihenfolge "Länge,Breite".
+die Reihenfolge "Breite,Länge" (lat,lng).
 
 ```php
 use \Geolocation\Calc\Point;
@@ -210,7 +210,7 @@ dump(get_defined_vars());
     #lng: -105,00341892242
 }
 "latitude" => 39,753838
-"longitude" => -105,00341892242]
+"longitude" => -105,00341892242
 ```
 
 ### latLng()
@@ -718,7 +718,7 @@ dump(get_defined_vars());
 
 > static function byCorner( Point $cornerA, Point $cornerB ): self
 
-Die Box wird aus Punkten zwei diagonal gegenüberliegenden Punkten erzeugt.
+Die Box wird aus zwei diagonal gegenüberliegenden Punkten erzeugt.
 
 ```php
 use \Geolocation\Calc\Point;
@@ -767,8 +767,8 @@ dump(get_defined_vars());
 > static function byInnerCircle( Point $center, float $radius ): self
 
 Die Box wird aus dem Mittelpunkt und einem darum gezogenen Kreis gebildet. Die Box umschließt den
-Kreis. Der Radius (in Meter) ist die Distanz vom Mittelpunkt auf der SN- bzw. WE-Achse zum
-Mittelpunkt der Box-Seiten.
+Kreis. Der Radius (in Meter) ist die Distanz vom Mittelpunkt auf der Nord/Süd- bzw. West/Ost-Achse
+zum Mittelpunkt zu den Seiten der Box.
 
 ```php
 use \Geolocation\Calc\Point;
@@ -839,7 +839,7 @@ dump(get_defined_vars());
 
 Die Box wird um den Mittelpunkt gezeichnet. Breite und Höhe in Meter bestimmen die Größe.
 
-Anmerkung: Wenn Höhe und Breite identisch sind entspricht das `Box::byInnerCircle($center,$breite)`.
+Anmerkung: Wenn Höhe und Breite identisch sind entspricht das `Box::byInnerCircle($center,$breite/2)`.
 
 ```php
 use \Geolocation\Calc\Point;
@@ -962,7 +962,7 @@ die Punkte im Bedarfsfall jeweils neu abgefragt oder die Einzelwerte abgerufen w
 > function southWest(): Point
 
 Innerhalb der Box-Instanz sind `northEast()` und `southWest()` nicht existent da überflüssig.
-Die hier übergebenen Point-Instanzen sind für den Abruf neu angelegte Punkte. Wurde die Box z.B.
+Die hier übergebenen Point-Instanzen sind für den Abruf neu angelegter Punkte. Wurde die Box z.B.
 durch Hinzufügen eines Punktes erweitert, sind auch diese Point-Instanzen nicht mehr verwertbar.
 Die Punkte sollten im Bedarfsfall jeweils neu abgefragt oder ggf. die Einzelwerte abgerufen werden.
 
@@ -1078,7 +1078,7 @@ dump(get_defined_vars());
 
 > function geoJSONMultipoint( ?int $precision=null ): array
 
-Die Methode erzeugt einen Multipoint-Eintrag für einen geoJSON-Datensatz. Da LeafletJSs geoJSON nicht
+Die Methode erzeugt einen Multipoint-Eintrag für einen geoJSON-Datensatz. Da LeafletJS´  geoJSON nicht
 weiß, wie der Punkt dargestellt wird, muss der Code zur Darstellung des Datensatzes (1) erfahren,
 dass dieser Multipoint-Eintrag eine Box repräsentiert und (2) die Darstellung entsprechend
 durchführen. Beide Informationen müssten über die Properties übermittelt werden. Ohne individuelle
@@ -1246,8 +1246,8 @@ Der Radius ist in Meter angegeben.
 
 ```php
 <script>
-// Zuerst ein kleine Tool definieren, dass den Demo-Datensatz darstellt
-// konkret: wenn Property.radius dann Kreis
+// Zuerst ein kleines Tool definieren, das den Demo-Datensatz darstellt
+// konkret: wenn Property.radius, dann Kreis
 Geolocation.Tools.MyOnTheFlyTool = class extends Geolocation.Tools.GeoJSON
 {
     _pointToLayer(feature, latlng) {
@@ -1375,7 +1375,7 @@ dump(get_defined_vars());
 
 > function extendBy ( mixed $data ): self
 
-Die Box wird so vergrößert, dass alle angegebenen Punkte in den Boy-Grenzen liegen. Punkte, die
+Die Box wird so vergrößert, dass alle angegebenen Punkte in den Box-Grenzen liegen. Punkte, die
 bereits in der Box sind, werden ausgelassen. Eine Prüfung vorab ist nicht erforderlich. Die neue
 West-Ost-Distanz muss kleiner als 180° sein. Andernfalls bricht der Vorgang ebenfalls mit einer
 Exception ab.
