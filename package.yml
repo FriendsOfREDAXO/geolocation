@@ -22,6 +22,11 @@ page:
             perm: 'geolocation[layer]'
             icon: fa fa-cloud-download
             subPath: pages/yform.php
+        service:
+            title: translate:geolocation_service
+            perm: geolocation[service]
+            icon: fa fa-gears
+            subPath: pages/yform.php
         docs:
             title: translate:geolocation_manpage
             icon: fa fa-book
@@ -39,6 +44,12 @@ yform:
         table_name: rex_geolocation_mapset
     geolocation/layer:
         table_name: rex_geolocation_layer
+    geolocation/service:
+        table_name: rex_geolocation_service
+
+conflicts:
+    packages:
+        yform_geo_osm: '>0'
 
 requires:
     php:
