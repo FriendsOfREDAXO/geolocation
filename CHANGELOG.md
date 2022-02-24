@@ -6,8 +6,7 @@
   Abruf-URL eingebaut (vorher: in der Url-Definition mitgeliefert). Die URL-Definition im Mapset
   enthält nur noch die Karten-ID.
 - Die Addons Geolocation und yform_geo_osm vertragen sich nicht. `package.yml` um conflicts-Eintrag
-  ergänzt; ebenso in `README.md` und `docs/install.md`. Workaround: in yform_geo_osm´s `boot.php`
-  die Leaflet-Assets auskommentieren
+  ergänzt; ebenso in `README.md` und `docs/install.md`. Lösung: yform_geo_osm > 1.2.5 installieren. 
 
 ## 21.02.2022 Erste 1.0 beta
 
