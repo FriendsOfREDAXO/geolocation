@@ -31,12 +31,10 @@ gibt es eine individualisierte Installation.
 <a name="install"></a>
 ## Installation
 
-**Geolocation** ist nicht über den REDAXO-Installer verfügbar. Das
-[Repository](https://github.com/christophboecker/geolocation/) muss bei GitHub
-[als ZIP-Archiv heruntergeladen](https://github.com/christophboecker/geolocation/archive/master.zip)
-und im Addon-Verzeichnis der RREDAXO-Instanz in den Ordner *src/addons/geolocation* entpackt werden.
+**Geolocation** ist über den REDAXO-Installer verfügbar und sollte aus dem Installer installiert
+werden.
 
-In der Addon-Verwaltung der REDAXO-Instanz kann das Addon nun installiert werden.
+> **Geolocation** verträgt sich nicht mit dem Addon **yform_geo_osm** < 1.2.6  
 
 Die Installation (I) bzw. Re-Installation (R) umfasst folgende Schritte
 
