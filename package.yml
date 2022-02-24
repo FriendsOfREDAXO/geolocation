@@ -49,7 +49,7 @@ yform:
 
 conflicts:
     packages:
-        yform_geo_osm: '>0'
+        yform_geo_osm: '<1.2.6'
 
 requires:
     php:
