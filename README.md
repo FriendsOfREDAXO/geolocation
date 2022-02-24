@@ -58,11 +58,6 @@ Kontakt: [Thomas Skerbis](https://github.com/skerbis)
         - Zielpunkt aus Richtung und Distanz
         - Konvertierung (DezimalDegree nach Degree/Minute und Degree/Minute/Second)
 
-## Konflikte
-
-**Geolocation** kann nicht mit dem Addon **yform_geo_osm** installiert werden. Die beiden
-mitgelieferten Leaflet-Versionen kollidieren.
-
 ## Was fehlt?
 
 - Karten interaktiv gestalten (Bounding-Box auswählen, Marker setzen/verschieben, ...)
