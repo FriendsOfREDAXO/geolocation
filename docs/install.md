@@ -34,8 +34,7 @@ gibt es eine individualisierte Installation.
 **Geolocation** ist über den REDAXO-Installer verfügbar und sollte aus dem Installer installiert
 werden.
 
-> **Geolocation** verträgt sich nicht mit dem Addon **yform_geo_osm**. Als Workaround kann in der
-> 'boot.php' von yform_geo_osm der Aufruf der Leaflet-Assets auskommentiert werden.
+> **Geolocation** verträgt sich nicht mit dem Addon **yform_geo_osm** < 1.2.6  
 
 Die Installation (I) bzw. Re-Installation (R) umfasst folgende Schritte
 
