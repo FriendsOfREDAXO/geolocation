@@ -1,0 +1,10 @@
+.DS_Store
+/.idea/
+/composer.lock
+/vendor/
+/docs/phpgeo.html
+/docs/coverage/
+/docs/phpdox/
+/tools/
+/build/
+.phpunit.result.cache
