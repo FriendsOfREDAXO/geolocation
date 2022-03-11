@@ -221,16 +221,12 @@ document.addEventListener( 'geolocation:map.ready', function(e){
 Die Karte kann auf Wunsch auch direkt als Leaflet-Karte ohne Zwischenschaltung von
 **Geolocation**-Tools verwaltet werden. Dazu muss die Leaflet-Instanz identifiziert werden.
 **Geolocation** triggert einen Custom-Event auf auf dem Karten-Container, nachdem die Karte geladen
-wurde. Tatsächlich ist es ein verlängerter Load-Event der Leaflet-Karte.
+wurde. Tatsächlich ist es ein verlängerter Load-Event der Leaflet-Karte. Die Elemente des Events sind
 
-```js
-this.map.on( 'load', function(e){
-    ...
-    map.getContainer().dispatchEvent(
-        new CustomEvent('geolocation:map.ready', { 'detail':{'container':container, 'map':this.map} })
-    );
-}, this);
-```
+| Name | Beschreibung |
+| --- | --- |
+| e.detail.map | Die Leaflet-Karteninstanz |
+| e.detail.container | `<rex-map>`-Instanz (Karten-Container); entspricht `map.getContainer()` |
 
 Der Event wird von der `<rex-map>`-Instanz (Karten-Container) abgefeuert, während die Instanz
 angelegt wird. Da der Event aufsteigt, kann er aber auf Ebene `document` abgefangen werden. Im
@@ -242,14 +238,14 @@ Hier ein Anwendungsbeispiel:
 ```JS
 document.addEventListener( 'geolocation:map.ready', function(e){
     if ( 'myid' === e.detail.container.id ){
-        // Leaflet-Event "zoomend" belegen
-        e.detail.map.on('zoomend', function(e){
-            alert( Geolocation.i18n('Zoom finished') );
-        });
         // setData abfangen
         e.detail.container.addEventListener( 'geolocation:dataset.ready', function(e){
             alert( Geolocation.i18n('Map updated') );
         },false);
+        // Leaflet-Event "zoomend" belegen
+        e.detail.map.on('zoomend', function(e){
+            alert( Geolocation.i18n('Zoom finished') );
+        });
     }
 },false);
 ```
@@ -258,12 +254,25 @@ document.addEventListener( 'geolocation:map.ready', function(e){
 ### geolocation:dataset.ready
 
 Der Event wird ausgelöst, wenn der Karte ein neuer Dataset hinzugefügt wurde. Der alte Dataset wurde
-entfernt, die Tools des neuen Dataset auf die Karte geschrieben.
+entfernt, die Tools des neuen Dataset auf die Karte geschrieben. Der Event liefert Informationen zur
+Karte und zu den Tools:
+
+| Name | Beschreibung |
+| --- | --- |
+| e.detail.map | Die Leaflet-Karteninstanz |
+| e.detail.container | `<rex-map>`-Instanz (Karten-Container); entspricht `map.getContainer()` |
+| e.detail.tools | Der Link zu einer JS-MAP-Instanz, die die Tools verwaltet |
 
 ```JS
 document.addEventListener( 'geolocation:dataset.ready', function(e){
     if ( 'myid' === e.detail.container.id ){
-        alert( Geolocation.i18n('Map updated') );
+        let positionTool = e.detail.tools.get('position');
+        if( positionTool && positionTool.getValue() ) {
+            let position = positionTool.getValue();
+        } else {
+            let position = e.detail.map.getCenter();
+        }
+        alert( Geolocation.i18n('Map updated - '+position.toString()) );
     }
 },false);
 ```
@@ -323,7 +332,7 @@ echo '<div rex-map ',\rex_string::buildAttributes($attributes),'></div>';
 ### CSS zur Grundformatierung des Karten-Containers
 
 Leaflet-Karten erfordern, dass dem Container-Tag eine Mindesthöhe mitgegeben ist. Die Default-Höhe
-eine DIV-Tags ist "0". Der Tag wird im CSS wie zuvor beschrieben über das Attribut `rex-map`
+eines DIV-Tags ist "0". Der Tag wird im CSS wie zuvor beschrieben über das Attribut `rex-map`
 identifiziert.
 
 ```css
@@ -405,4 +414,4 @@ let scriptPath = Geolocation.sPath;
 ```
 
 Falls eigene Scripte, die in die Datei _geolocation.min.js_ kompiliert wurden, Ressourcen im
-Asset-Verzeichnis zuverlässig finden sollen.
+Asset-Verzeichnis zuverlässig finden sollen, kann über den sPath der konkrete NAme gebildet werden.

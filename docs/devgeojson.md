@@ -21,7 +21,7 @@ als Datensatz darzustellen. Auf PHP-Seite ist es ein Array, auf der JS-Seite ein
 
 Einen Anwendungsüberblick liefert das [Tutorial](https://blog.codecentric.de/2018/03/geojson-tutorial/)
 von [codecentric](https://www.codecentric.de/). Kenntnisse über geoJSON und die kleinen Unterschiede
-zu LeafLetJS (z.B. `[lon,lat]` statt `[lat,lon]`) wird vorausgesetzt.
+zu LeafLetJS (z.B. `[lng,lat]` statt `[lat,lng]`) wird vorausgesetzt.
 
 Diese Dokumentation setzt auf dem [Anwendungsbeispiel](https://leafletjs.com/examples/geojson/) in
 der Leaflet-Dokumentation auf. Die Beispieldaten liegen als PHP-Array in der Datei
@@ -62,7 +62,7 @@ Universalmethode `L.geoJSON( geojsonData, options )`. Der Code in einem Demo-Aus
 
 ```php
 include \rex_path::addon(\Geolocation\ADDON,'docs/example/geojson_data.php');
-$position = [39.747,-104.995];  // lat,lon
+$position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';
@@ -186,7 +186,7 @@ Das neue Tool wird als `dataset` mit den Daten zur Buslinie verknüpft der Karte
 
 ```php
 include \rex_path::addon(\Geolocation\ADDON,'docs/example/geojson_data.php');
-$position = [39.747,-104.995];  // lat,lon
+$position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';
@@ -244,7 +244,7 @@ Das neue Tool wird als `dataset` mit den Daten der Verleihstationen verknüpft d
 
 ```php
 include \rex_path::addon(\Geolocation\ADDON,'docs/example/geojson_data.php');
-$position = [39.747,-104.995];  // lat,lon
+$position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';
@@ -295,7 +295,7 @@ Das neue Tool wird als `dataset` mit den Daten des Coors Field verknüpft der Ka
 
 ```php
 include \rex_path::addon(\Geolocation\ADDON,'docs/example/geojson_data.php');
-$position = [39.747,-104.995];  // lat,lon
+$position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';

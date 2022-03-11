@@ -54,7 +54,7 @@ Die Einstellungen sind Vorbelegungen bzw. Parameter für die Darstellung von Kar
     positioniert werden kann.
 
     Die Angabe ist immer ein Satz aus zwei Koordinaten, die die gegenüberliegenden Ecken eines
-    Rechtecks beschreiben. Die Schreibweise ist `[latA,lonA],[latB,lonB]`, also jeweils "Längengrad,
+    Rechtecks beschreiben. Die Schreibweise ist `[latA,lngA],[latB,lngB]`, also jeweils "Längengrad,
     Breitengrad".
 
     Beispiel-Code:
