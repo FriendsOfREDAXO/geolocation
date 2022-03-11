@@ -166,7 +166,7 @@ Geolocation.Classes.Map = class {
         this.zoomControl = null;
         this.locationControl = null;
         this.currentLocation = null;
-        this.tools = [];
+        this.tools = new Map();
 		this.map = null;
         return this;
     }
@@ -193,7 +193,7 @@ Geolocation.Classes.Map = class {
             if( true === Geolocation.default.mapOptions.locateControl ) {
                 this.locationTool = Geolocation.tools._currentlocation();
             }
-            container.dispatchEvent(new CustomEvent('geolocation:map.ready', { 'detail':{'container':container, 'map':this.map},bubbles:true }));
+            container.dispatchEvent(new CustomEvent('geolocation:map.ready', { detail:{'container':container, 'map':this.map},bubbles:true }));
         }, this);
 
         this.layerControl = L.control.layers( );
@@ -226,17 +226,17 @@ Geolocation.Classes.Map = class {
         if( true === clearDataset ) this.clearData();
 
         // wenn es keine Tools gibt: Ende
-        let tools;
+        let tools, name;
         tools = Object.keys(dataset);
-//        if( 0 == tools.length ) return;
 
         tools.forEach( (tool) => {
             if( '_' == tool.charAt(0) ) return;  // _tool ist nur für interne Zwecke
-            if( !(typeof Geolocation.tools[tool] == 'function') ) return;
-            this.tools.push( Geolocation.tools[tool]().setValue( dataset[tool] ) );
+            name = tool.split('|')[0];
+            if( !(typeof Geolocation.tools[name] == 'function') ) return;
+            this.tools.set(tool, Geolocation.tools[name]().setValue( dataset[tool] ) );
         })
         this.tools.forEach( (t) => t.show( this.map ) );
-        this.map._container.dispatchEvent(new CustomEvent('geolocation:dataset.ready', { 'detail':{'container':this.map._container, 'map':this.map},bubbles:true }));
+        this.map._container.dispatchEvent(new CustomEvent('geolocation:dataset.ready', { detail:{'container':this.map._container, 'map':this.map, 'tools':this.tools},bubbles:true }));
     }
 
 	setMapset( mapset={}, clearLayers=true ){
@@ -283,8 +283,8 @@ Geolocation.Classes.Map = class {
 
 	clearData() {
 		if( !this.map ) return;
-        this.tools.forEach( (tool) => tool.remove() );
-		this.tools = [];
+        this.tools.forEach( (t) => t.remove() );
+        this.tools.clear();
 	}
 
     fitBounds( bounds ){
@@ -295,8 +295,8 @@ Geolocation.Classes.Map = class {
         if( this.locationTool && this.locationTool.isActive() ) {
             bounds.extend( this.locationTool.getCurrentBounds() );
         }
-        this.tools.forEach( (tool) => {
-            let position = tool.getCurrentBounds();
+        this.tools.forEach( (t) => {
+            let position = t.getCurrentBounds();
             if( position ) bounds.extend( position );
         });
         this.map.fitBounds( bounds );
@@ -470,6 +470,7 @@ L.LocationMarker = L.Marker.extend({
 // rawdata      erstes Argument mit den Daten für das Tool
 // mapdata      aufbereitete rawdata, i.d.R. Leaflet-Kartenobjekte
 // setValue     setze die Werte, Umsetzung der Rohdaten in Kartenobjekte
+// getValue     Rückgabe aktueller Werte im selben Format wie die Eingabewerte
 // show         Objekte in die Karte bringen
 // remove       Objekte aus der Karte entfernen
 
@@ -484,6 +485,9 @@ Geolocation.Tools.Template = class {
     setValue( data ){
         this.rawdata = data;
         return this;
+    }
+    getValue( ){
+        return this.rawdata;
     }
     show( map ){
         this.map = map;
