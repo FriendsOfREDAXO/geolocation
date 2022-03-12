@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'ceeb09605f06219c85fa730593596e01a1b4c19c',
+        'reference' => '73beb9b56a7076f7a0bb45db11c89a00ccf969a2',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'ceeb09605f06219c85fa730593596e01a1b4c19c',
+            'reference' => '73beb9b56a7076f7a0bb45db11c89a00ccf969a2',
             'dev_requirement' => false,
         ),
         'mjaschen/phpgeo' => array(
