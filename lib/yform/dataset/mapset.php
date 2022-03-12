@@ -40,7 +40,6 @@
         take            Alternative zu get, aber mit Fallback auf die Default-Karte
         attributes      sammelt die sonstigen HTML-Attribute ein
         dataset         sammelt die Karteninhalte ein (siehe Geolocation.js -> Tools)
-        event
         parse           erzeugt Karten-HTML gem. vorgegebenem Fragment
 
 */
@@ -440,7 +439,7 @@ class mapset extends \rex_yform_manager_dataset
      * sammelt die Karteninhalte ein (siehe Geolocation.js -> Tools)
      *
      * Darüber werden dem Kartensatz die Inhalte (Marker etc.) hinzugefügt. Sie landen als
-     * DATSSET-Attribut im Karten-HTML.
+     * DATASET-Attribut im Karten-HTML.
      * Siehe Doku zum Thema "Tools"
      *
      * Entweder wird als $name ein Array ['tool_a'=>'inhalt',..] angegeben oder der Tool-Name.

@@ -19,8 +19,8 @@
 Die Karte wird mit dem Custom-HTML-Tag `<rex-map>` erzeugt. Im Attribut `dataset` werden die
 Karteninhalte als JSON-Array angegeben. Der Name jedes Dataset-Elements ist der Name eines
 Darstellungs-Tools. Alle Tools haben eine einheitliche Struktur. Sie setzen auf der Template-Klasse
-`Geolocation.Tools.Template` auf. Drei Tools sind bereits in **Geolocation** enthalten
-([bounds, position, marker](#tools1)). Jedes Tool stellt seinen Datensatz auf der Karte dar.
+`Geolocation.Tools.Template` auf. Vier Tools sind bereits in **Geolocation** enthalten
+([bounds, position, marker, geojson](#tools1)). Jedes Tool stellt seinen Datensatz auf der Karte dar.
 
 ```javascript
 datensatz = {
@@ -31,9 +31,24 @@ datensatz = {
 ```
 
 Die Grundidee: es gibt gleich strukturierte Klassen je "Tool", wobei alle Elemente im Datensatz
-(position,bounds,marker) jeweils eine eigene Klasse haben. Die Klasse steuert die Anzeige auf der
-Karte toolspezifisch. Das System kann flexibel durch Bereitstellung einer
+(position,bounds,marker,geojson) jeweils eine eigene Klasse haben. Die Klasse steuert die Anzeige
+auf der Karte toolspezifisch. Das System kann flexibel durch Bereitstellung einer
 [neuen Tool-Klasse erweitert](#new_tool) werden.
+
+Der Sinn dieser Vereinfachung zeigt sich auf der PHP-Ebene. Man übergibt die Kombination
+"Toolname/Parameter" an die Karte, den Rest machen die Tools ohne dass weitere Programmierung auf
+JS-Ebene erforderlich ist. Die Einarbeitung in Leaflet kann bei einfachen Karten entfallen. Ein
+Beispiele, auch für den Einsatz in einem Modul, findet sich im [PHP-Kapitel](devphp.md).
+
+```php
+echo \Geolocation\mapset::take( $mapsetId )
+    ->attributes( 'id', 'my-map-id' )
+    ->attributes( 'class', 'mymapclass' )
+    ->dataset( 'position', [47.51666,9.43333] )
+    ->dataset( 'bounds', [[47.5,9.3],[47.7,9.7]] )
+    ->dataset( 'marker', [[47.61159,9.29634],[47.58620,9.56065],[47.54378,9.68655]] )
+    ->parse();
+```
 
 Eigene Tools für weitere Anwendungsfälle sind einfach programmierbar. Es reicht aus, den JS-Code
 des Tools zeitlich nach **Geolocation** zu laden oder in das [Geolocation-JS](install.md#ownjscss)
@@ -43,6 +58,8 @@ Tool-Namen und erfordert keine weiteren Eingriffe.
 > [Beispiele für eigene Tools](#tools2) sind in der Dokumentation enthalten. Die Datei
 > `redaxo/src/addons/geolocation/docs/example/geolocation.js` enthält die Beispiele und kann als
 > Basis für eigene Erweiterungen dienen.
+> Sollen die Beispielstools produktiv eingesetzt werden, sollten sie in das
+> [Geolocation-JS](install.md#ownjscss) einkompiliert werden.
 
 Diese Tools sind bereits in **Geolocation** enthalten:
 
@@ -54,14 +71,27 @@ Diese Tools sind bereits in **Geolocation** enthalten:
 Ein weiteres Tool zur Darstellung von [geoJSON-Daten](devgeojson) hat ein eigenes Kapitel.
 
 Alle Tools im Datensatz sind optional. Allerdings sollte Bounds auf jeden Fall angegeben werden,
-denn sonst wird die Karte mit den Default-Werten für den Viewport angezeigt. Dann liegen die Marker
-möglicherweise außerhalb des sichtbaren Bereichs der Karte bzw. die Karte wird mit einem zu niedrigen
-Zoom-Level angezeigt. Eine Alternative zu Bounds ist [hier](#tcenter) als Beipiel für eine eigene
-Tools-Klasse zu finden.
+denn sonst wird die Karte mit den Default-Werten für die initiale Karte angezeigt. Dann liegen die
+Marker möglicherweise außerhalb des sichtbaren Bereichs der Karte bzw. die Karte wird mit einem zu
+niedrigen Zoom-Level angezeigt. Eine Alternative zu Bounds ist [hier](#tcenter) als Beipiel für eine
+eigene Tools-Klasse zu finden.
 
 Die Klasse `Geolocation.Classes.Map` steuert den Aufbau der Karte. Sie versucht zu jedem Eintrag
 über die Factory-Klasse `Geolocation.tools.«toolname»` das Tool zu instanzieren. Existiert die
 Factory-Klasse nicht, wird der Eintrag im Datensatz ignoriert.
+
+Tools sollten je Karte nur einmal vorkommen. Wenn trotzdem mehrere Instanzen einer Tool-Klasse
+erforderlich sind, kann der Name durch ein Suffix eindeutig gemacht werden. Das Suffix wird mit
+`|` angehängt (`position|eins`). Alternativ kann eine Tool-Klasse unter neuem Namen geklont werden.
+
+```javascript
+Geolocation.Tools.Xyz = class extends Geolocation.Tools.Abc {}
+Geolocation.tools.xyz = function(...args) { return new Geolocation.Tools.Xyz(args); };
+```
+
+<a name="access"></a>
+## Zugriff auf die Tools
+
 
 <a name="tools1"></a>
 ## Vorinstallierte Tools
@@ -86,7 +116,7 @@ Darüber wird die Karte so positioniert, dass der Kartenmittelpunkt der Mittelpu
 ist. Der **initiale** Zoomfaktor wird von Leaflet so gewählt, dass der gewünschte Ausschnitt
 komplett in der Karte sichtbar ist.
 
-Das Rechteck wird tatsächlich als Rechteck gezeichnet (Leaflet-Klasse `L.rectangle`), Trotzdem ist
+Das Rechteck wird tatsächlich als Rechteck gezeichnet (Leaflet-Klasse `L.Rectangle`), Trotzdem ist
 es nicht sichtbar und stört damit nicht. Das wird über die Default-Einstellung erreicht:
 
 ```JS
@@ -102,14 +132,16 @@ Der Beispiel-Code ergänzt das im PHP-Kapitel beschriebene [Modul](devphp.md#out
 
 ```PHP
 if( rex::isBackend() ){
-    echo '<script type="text/javascript">Geolocation.default.boundsRect={color:"#ff7800",weight:1,fillOpacity: 0.1};</script>';
+    echo '<script type="text/javascript">
+    Geolocation.default.boundsRect={color:"#ff7800",weight:1,fillOpacity: 0.1};
+    </script>';
 }
 // Ausgabe
 echo '<h1>REX_VALUE[1]</h1>';
 echo $rex_map;
 ```
 <a name="tbcolor"></a>
-Alternativ kann das Feature allgemein in das JS eingebaut werden.Das Verfahren an sich ist im
+Alternativ kann das Feature allgemein in das JS eingebaut werden. Das Verfahren an sich ist im
 Kapitel zur [Installation](install.md#ownjscss) beschrieben. Im einfachen Fall wird eine Datei
 _redaxo/data/addons/geolocation/geolocation.js_ mit dem eigenen Custom-Code bereitgestellt. Sie wird
 bei jeder Neugenerierung der Assets automatisch geladen.
@@ -117,7 +149,7 @@ bei jeder Neugenerierung der Assets automatisch geladen.
 ```js
 /* Custom-JS */
 /* im BE bounds zu Kontrollzwecken sichtbar machen */
-if( 'bool'===typeof(rex) && true===rex.backend){
+if( 'object'===typeof(rex) && true===rex.backend){
     Geolocation.default.boundsRect = {
         color:"#ff7800",
         weight:1,

@@ -1,17 +1,17 @@
 # Changelog
 
-## 11-03-2022 <<next release>>
+## xx.xx.2022 <<next release>>
 
 - Bisher durfte ein Tool nur einmal auf der Karte erscheinen. Die Namenskonvention ist nun geändert.
-  ein Tool-Name (z.B.`'position'`) kann durch ein per '|' engehängtes Suffix (z.B.`'position|xyz'`)
-  eindeutig gemacht werden.
-- Der Event `Geolocation:dataset.ready` liefert die Referenz zu den Tools mit (`e.detail.tools`).
+  Ein Tool-Name (z.B.`'position'`) kann durch ein per '|' angehängtes Suffix eindeutig gemacht
+  werden (z.B.`'position|xyz'`).
+- Der Event `Geolocation:dataset.ready` liefert jetzt auch die Referenz zu den Tools (`e.detail.tools`).
 - Tools werden in einer Instanz der JS-Klasse `Map` verwaltet und sind nun über den Namen
-  identifizierbar.
-- Tool-Daten im JS abrufbar («tool».getValue()).
+  auffindbar.
+- Die Daten in einem Tool können per abgerufen werden (`«tool».getValue()`).
 - Dokumentation aktualisiert.
 
-## 05.03.2022 Zweite 1.0 beta-2
+## 05.03.2022 Zweite 1.0 beta-2 
 
 - Die Namen der Proxy-Aufrufe (geolayer, geomapset) sind im JS-Code abgelegt und werden JS-seitig in
   Abruf-URL eingebaut (vorher: in der Url-Definition mitgeliefert). Die URL-Definition im Mapset

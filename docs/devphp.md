@@ -74,8 +74,12 @@ per Fragment generiert:
 | --- | --- | --- |
 | ::take($id) | Ruft den per $id angegebenen Datensatz ab.<br>Falls $id fehlt wird der Default-Kartensatz herangezogen | fehlertolerantes `mapset::get()` |
 | ->attributes($name,$value)<br>->attributes([$name1=>$value1,..]) | Ein HTML-Attribut oder ein Array mit HTML-Attributen, dass dem Karten-Tag zugefügt wird (`name="value" ...`) | nicht zulässig: mapset, dataset, map |
-|->dataset($tool,$data)<br>->dataset([$tool1=>data1,..]) | Kartendaten je Tool. Alle Angaben werden konsolidiert in ein Array an das Ausgabe-Fragment übergeben | Toolnamen müssen klein geschrieben sei |
+|->dataset($tool,$data)<br>->dataset([$tool1=>data1,..]) | Kartendaten je Tool. Alle Angaben werden konsolidiert in ein Array an das Ausgabe-Fragment übergeben. | Toolnamen müssen klein geschrieben sei |
 | ->parse($fragment) | Die Methode erzeugt auf Basis der zuvor angegebenen Daten das HTML. Dazu wird entweder das angegebene Fragment genutzt oder das für den Kartensatz voreingestellte. | |
+
+Tools sollten je Karte nur einmal vorkommen. Wenn trotzdem mehrere Instanzen einer Tool-Klasse
+erforderlich sind, kann der Name durch ein Suffix eindeutig gemacht werden. Das Suffix wird mit
+`|` angehängt (`position|eins`).  
 
 Die Methoden können verkettet werden:
 ```PHP
@@ -146,7 +150,7 @@ die Auswahl des Kartensatzes gespeichert ist.
 
 
 <a name="template"></a>
-## Template: css|js einbinden
+## Template: CSS und JS einbinden
 
 Die Html-Tags zum Einbinden der Assets können über eine Hilfsfunktion generiert werden. Dabei wird
 berücksichtigt, dass möglicherweise gar keine Assets geladen werden sollen. Näheres ist in den
@@ -196,7 +200,7 @@ Werten:
 
 - in `REX_VALUE[1]` steht eine Kartenüberschrift
 - in `REX_VALUE[2]` steht die ID des für die Ausgabe heranzuziehenden Kartensatzes
-- in `REX_VALUE[3]` steht die eine Koordinate (Position) der Form `lat,lon` (Zahlen mit Dezimalpunkt)
+- in `REX_VALUE[3]` steht die eine Koordinate (Position) der Form `lat,lng` (Zahlen mit Dezimalpunkt)
 - in `REX_VALUE[4]` steht die Größe des darzustellenden Umkreises um den Punkt in km.
 
 <a name="input"></a>
@@ -260,11 +264,11 @@ Im Beispiel werden die Daten wie folgt aufbereitet:
 - Als Kartenauschnitt wird ein Rechteck `$bounds` über Mittelpunkt und Radius errechnet
 
 Als Beispiel für (1) die individualisierte Darstellung von geoJSON-Datensätzen und (2) für die
-Bereitstellungen eigener [Darstellungstools](devtools.md) direkt im Code wird ein.
-- geoJSON-Datensatz mit Mittelpunkt und Radius zur Kreisdarstellung angelegt
+Bereitstellungen eigener [Darstellungstools](devtools.md) direkt im Code wird ein
+- geoJSON-Datensatz mit Mittelpunkt und Radius zur Kreisdarstellung angelegt,
 - ein Tool als Erweiterung des [geoJSON-Basistools](devgeojson.md) zur passgenauen Darstellung
-  ausgegeben.
-- Sichergestellt, dass das Tool im Javascript nur einmal angelegt wird.
+  ausgegeben,
+- sichergestellt, dass das Tool im Javascript nur einmal angelegt wird.
 
 Die Kartenausgabe beinhaltet
 - Mapset abrufen mit Fallback auf den Default-Kartensatz
