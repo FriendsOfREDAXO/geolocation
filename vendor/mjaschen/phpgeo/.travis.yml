@@ -1,0 +1,50 @@
+os: linux
+dist: xenial
+language: php
+
+php:
+  - "7.4"
+  - "7.3"
+  - "7.2"
+
+cache:
+  directories:
+  - vendor
+  - $HOME/.composer/cache
+
+env:
+  jobs:
+  - DEPENDENCIES=latest
+  - DEPENDENCIES=oldest
+
+install:
+- >
+  if [ "$DEPENDENCIES" = "latest" ]; then
+    echo "Installing the latest dependencies";
+    composer update --with-dependencies --prefer-stable --prefer-dist
+  else
+    echo "Installing the lowest dependencies";
+    composer update --with-dependencies --prefer-stable --prefer-dist --prefer-lowest
+  fi;
+  composer show;
+
+script:
+- >
+  echo;
+  echo "Validating the composer.json";
+  composer ci:composer-validate;
+
+- >
+  echo;
+  echo "Linting all PHP files";
+  composer ci:lint;
+
+- >
+  echo;
+  echo "Running the Psalm static analyzer";
+  composer ci:psalm;
+
+- >
+  echo;
+  echo "Running the PHPUnit tests";
+  composer ci:tests;

@@ -42,6 +42,7 @@ class CoordinateFactory implements GeometryFactoryInterface
         }
 
         $result = self::parseDecimalDegreesWithoutCardinalLetters($string, $ellipsoid);
+
         if ($result instanceof Coordinate) {
             return $result;
         }

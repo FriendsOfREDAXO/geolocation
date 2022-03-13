@@ -155,7 +155,7 @@ class DMS implements FormatterInterface
             $this->units[$this->unitType]['deg'],
             $latMinutes,
             $this->units[$this->unitType]['min'],
-            round($latSeconds, 3),
+            round($latSeconds, 0),
             $this->units[$this->unitType]['sec'],
             $this->getLatSuffix($lat),
             $this->separator,
@@ -164,7 +164,7 @@ class DMS implements FormatterInterface
             $this->units[$this->unitType]['deg'],
             $lngMinutes,
             $this->units[$this->unitType]['min'],
-            round($lngSeconds, 3),
+            round($lngSeconds, 0),
             $this->units[$this->unitType]['sec'],
             $this->getLngSuffix($lng)
         );
