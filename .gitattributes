@@ -1,0 +1,10 @@
+# aus vendor/mjaschen/phpgeo nur den notwendigen Teil in das Release übernehmen.
+vendor/mjaschen/phpgeo/docs/ export-ignore
+vendor/mjaschen/phpgeo/tests/ export-ignore
+vendor/mjaschen/phpgeo/Makefile export-ignore
+vendor/mjaschen/phpgeo/composer.json export-ignore
+vendor/mjaschen/phpgeo/phive.xml export-ignore
+vendor/mjaschen/phpgeo/phpcs.xml.dist export-ignore
+vendor/mjaschen/phpgeo/phpdox.xml export-ignore
+vendor/mjaschen/phpgeo/phpunit.xml export-ignore
+vendor/mjaschen/phpgeo/psalm.xml  export-ignore
