@@ -1,3 +1,11 @@
+# copied from REDAXO-core:
+# These files are always considered text and should use LF.
+# See core.whitespace @ https://git-scm.com/docs/git-config for whitespace flags.
+*.php   text eol=lf whitespace=blank-at-eol,blank-at-eof,space-before-tab,tab-in-indent,tabwidth=4 diff=php
+*.json  text eol=lf whitespace=blank-at-eol,blank-at-eof,space-before-tab,tab-in-indent,tabwidth=4
+*.yml   text eol=lf whitespace=blank-at-eol,blank-at-eof,space-before-tab,tab-in-indent,tabwidth=4
+
+
 # aus vendor/mjaschen/phpgeo nur den notwendigen Teil in das Release übernehmen.
 vendor/mjaschen/phpgeo/docs/ export-ignore
 vendor/mjaschen/phpgeo/tests/ export-ignore
