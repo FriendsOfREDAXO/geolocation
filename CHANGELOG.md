@@ -1,6 +1,6 @@
 # Changelog
 
-## xx.xx.2022 <<next release>>
+## 29.03.2022 1.0.0
 
 - Bisher durfte ein Tool nur einmal auf der Karte erscheinen. Die Namenskonvention ist nun geändert.
   Ein Tool-Name (z.B.`'position'`) kann durch ein per '|' angehängtes Suffix eindeutig gemacht
