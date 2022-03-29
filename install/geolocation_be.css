@@ -1,10 +1,3 @@
-/* Geolocation: rex-form und YForm im Backend etwas platzsparender */
-.geolocation-form > fieldset > legend,
-.geolocation-yform > fieldset > legend {
-    background-color: $color-c-light;
-    padding-left: $padding-base-horizontal;
-}
-
 .geolocation-yform {
     @media (min-width: $screen-lg-min) {
 
