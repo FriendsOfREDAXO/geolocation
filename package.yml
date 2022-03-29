@@ -1,5 +1,5 @@
 package: geolocation
-version: '1.0.0-beta2'
+version: '1.0.0'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/geolocation
 
@@ -21,11 +21,6 @@ page:
             title: translate:geolocation_layer
             perm: 'geolocation[layer]'
             icon: fa fa-cloud-download
-            subPath: pages/yform.php
-        service:
-            title: translate:geolocation_service
-            perm: geolocation[service]
-            icon: fa fa-gears
             subPath: pages/yform.php
         docs:
             title: translate:geolocation_manpage
