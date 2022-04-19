@@ -31,7 +31,7 @@ define('Geolocation\LOAD',true);
 // if URL contains geolayer=«tileId» the request is supposed to be a tile-request
 // worked on by Geolocation\layer::sendTile
 //
-$tileLayer = \rex_request( 'KEY_TILES', 'integer', null );
+$tileLayer = \rex_request( KEY_TILES, 'integer', null );
 if( null !== $tileLayer ) {
     layer::sendTile( $tileLayer );
     exit();
@@ -42,7 +42,7 @@ if( null !== $tileLayer ) {
 // if URL contains geomapset=«mapId» the request is supposed to be a mapset-request
 // worked on by Geolocation\mapset::sendMapset
 
-$mapset = \rex_request( 'KEY_MAPSET', 'integer', null );
+$mapset = \rex_request( KEY_MAPSET, 'integer', null );
 if( null !== $mapset ) {
     mapset::sendMapset( $mapset );
     exit();
