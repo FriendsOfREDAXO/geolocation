@@ -173,6 +173,8 @@ class config_form extends \rex_config_form
      *   Siehe Dokumentation
      *
      *   @param ?string      null= reguläres Addon-Verzeichnis oder eben das angegebene Verzeichnis
+     *   @param array        Optional: Array mit Konstanten falls aus der install.php aufgerufen
+     *                       Überschreiben gleichnamiger Konstanten aus der boot.php (Geolocation\xyz)
      */
     static function compileAssets( ?string $addonDir=null ) : void
     {
@@ -180,6 +182,20 @@ class config_form extends \rex_config_form
         $addonDir = $addonDir ?: \rex_path::addon(ADDON);
         $dataDir = \rex_path::addonData(ADDON);
         $assetDir = \rex_path::addonAssets(ADDON);
+
+        // Die folgenden Konstanten müssen angegeben sein. In der (Re-)Installation aus $constant,
+        // sonst in der boot.php definiert.
+        // Entweder (install) sind sie noch nicht gesetzt (kein define) oder beim reinstall sind sie
+        // via boot.php gesetzt, werden aber durch neuere Werte aus der Reinstallation überschrieben
+        // leer geht gar nicht: das muss ein Fehler ein.
+        $keyMapset = $constant['Geolocation\\KEY_MAPSET'] ?? (defined('Geolocation\\KEY_MAPSET') ? KEY_MAPSET : null);
+        if( !$keyMapset ) {
+            throw new Exception('Constant "Geolocation\\KEY_MAPSET" missing. Check your boot.php or config.yml (install)', 1);
+        }
+        $keyTiles = $constant['Geolocation\\KEY_TILES'] ?? (defined('Geolocation\\KEY_TILES') ? KEY_TILES : null);
+        if( !$keyTiles ) {
+            throw new Exception('Constant "Geolocation\\KEY_TILES" missing. Check your boot.php or config.yml (install)', 1);
+        }
 
         // AssetPacker-Instanzen für die Asset-Dateien öffnen
         // Kartensoftware
@@ -210,8 +226,8 @@ class config_form extends \rex_config_form
                 ->addFile( $addonDir.'install/vendor/Leaflet.GestureHandling/leaflet-gesture-handling.min.js' )
                 ->replace( '//# sourceMappingURL=leaflet-gesture-handling.min.js.map','' )
                 ->addFile( $addonDir.'install/geolocation.js' )
-                ->replace( '%keyMapset%', '\''.KEY_MAPSET.'\'' )
-                ->replace( '%keyLayer%', '\''.KEY_TILES.'\'' )
+                ->replace( '%keyMapset%', '\''.$keyMapset.'\'' )
+                ->replace( '%keyLayer%', '\''.$keyTiles.'\'' )
                 ->replace( '%defaultBounds%', \rex_config::get(ADDON,'map_bounds') )
                 ->replace( '%defaultZoom%', \rex_config::get(ADDON,'map_zoom') )
                 ->replace( '%zoomMin%', \rex_config::get(ADDON,'map_zoom_min') )
