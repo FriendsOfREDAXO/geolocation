@@ -184,6 +184,8 @@ try {
     $config['Geolocation\\LOAD'] = $config['scope']['load'];
     foreach( $config as $k=>$v ) {
         if( 'Geolocation\\' !== substr($k,0,12) ) continue;
+        // DEFINE sofort ausführen, falls \Geolocation\config_form::compileAssets die Konstanten benötigt
+        define($k,$v);
         if( is_string($v) ) {
             $v = "'$v'";
         } elseif( is_bool($v) ) {
