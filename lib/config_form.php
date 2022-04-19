@@ -176,7 +176,7 @@ class config_form extends \rex_config_form
      *   @param array        Optional: Array mit Konstanten falls aus der install.php aufgerufen
      *                       Überschreiben gleichnamiger Konstanten aus der boot.php (Geolocation\xyz)
      */
-    static function compileAssets( ?string $addonDir=null ) : void
+    static function compileAssets( ?string $addonDir=null, array $constant=[] ) : void
     {
 
         $addonDir = $addonDir ?: \rex_path::addon(ADDON);
