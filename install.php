@@ -182,10 +182,10 @@ try {
     // Ausgewählte Vorgabewerte als "define(...)" in die boot.php schreiben
     $defines = PHP_EOL;
     $config['Geolocation\\LOAD'] = $config['scope']['load'];
+    $definedValues = [];
     foreach( $config as $k=>$v ) {
         if( 'Geolocation\\' !== substr($k,0,12) ) continue;
-        // DEFINE sofort ausführen, falls \Geolocation\config_form::compileAssets die Konstanten benötigt
-        define($k,$v);
+        $definedValues[$k] = $v;
         if( is_string($v) ) {
             $v = "'$v'";
         } elseif( is_bool($v) ) {
@@ -201,7 +201,7 @@ try {
 
     // Die JS/CSS-Dateien neu kompilieren, um Instanz-eigene Erweiterungen und Parameter
     // aus data/addons/geolocation einzubinden
-    \Geolocation\config_form::compileAssets( __DIR__.'/' );
+    \Geolocation\config_form::compileAssets( __DIR__.'/',$definedValues );
     $msg[] = $this->i18n( 'install_assets_prepared' );
 
     // Den Ordner 'data/addons/geolocation/assets' falls vorhanden in den Ordner 'assets/addons/geolocation' kopieren
