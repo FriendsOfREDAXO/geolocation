@@ -1,5 +1,19 @@
 # Changelog
 
+## 06.05.2022 1.0.2
+
+- Das Bugfix-Relase 1.0.1 ist zwar auf Github korrekt, nicht aber im Installer. Warum auch immer. 
+  Mit 1.0.2 sollte auch die Installer-Version bzw.das Release selbst die korrekten Änderungen
+  aufweisen. (Daniel Steffen via Slack)
+
+## 19.04.2022 1.0.1
+
+- Behebt einen Bug in der Zuweisung und Initialisierung der Konstanten KEY_MAPSET und KEY_TILES während
+  der Installation. Bugs können dazu führen, dass Tiles nicht richtig abgerufen werden können, da in der
+  URL das falsche Schlüsselwort verwendet wird. In dem Fall hilft das Update und ggf. eine manuelle
+  Re-Installation. Zur Überprüfung: in assets/addons/geolocation/geolocation.min.js sollte die Zeichenfolge
+  `var Geolocation={default:{keyMapset:'geomapset',keyLayer:'geolayer'` zu finden sein. 
+
 ## 29.03.2022 1.0.0
 
 - Bisher durfte ein Tool nur einmal auf der Karte erscheinen. Die Namenskonvention ist nun geändert.
