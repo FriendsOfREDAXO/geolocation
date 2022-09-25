@@ -1,5 +1,15 @@
 # Changelog
 
+## xx.xx.2022 2.0.0
+
+Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu einem BC.
+(Das ist noch nicht der finale Text, erst mal nur die diversen PR auflisten)
+
+- diverse Fehlerklassen in eigene Dateien ausgelagert (#48)
+- Fehlerklasse `GeolocationInstallException` umbenannt in `Geolocation\InstallException` (#48)
+- Dateinamen an die Schreibweise der Klassen angepasst (`Box.php`, `Math.php`, `Point.php`) (#50)
+- Klasse `Geolocation\cronjob` umbenannt in `Geolocation\Cronjob`; Aufrufe und Doku angepasst. (#51)
+
 ## 06.05.2022 1.0.2
 
 - Das Bugfix-Relase 1.0.1 ist zwar auf Github korrekt, nicht aber im Installer. Warum auch immer. 
