@@ -14,9 +14,6 @@ use \Location\Factory\CoordinateFactory;
 use \Location\Formatter\Coordinate\Coordinate\DecimalMinutes;
 use \Geolocation\Calc\DMS2;
 
-#class InvalidPointParameter extends InvalidParameter {}
-
-
 class Point
 {
 
