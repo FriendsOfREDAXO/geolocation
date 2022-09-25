@@ -1,39 +1,40 @@
 <?php
 /**
- * Cronjob-Klasse; ruft die Bereinigungs-Methode in Geolocation\cache auf
+ * Cronjob-Klasse; ruft die Bereinigungs-Methode in Geolocation\Cache auf.
  *
  * @package geolocation
  */
 
 namespace Geolocation;
 
-class cronjob extends \rex_cronjob
-{
+use rex_cronjob;
+use rex_i18n;
 
-    const LABEL = 'Geolocation: Cleanup Cache';
+class cronjob extends rex_cronjob
+{
+    public const LABEL = 'Geolocation: Cleanup Cache';
 
     /**
-     *   Ausführende Aktion des Cron-Jobs
+     *   Ausführende Aktion des Cron-Jobs.
      *
      *   Die eigentliche Rückmeldung erfolgt mit setMessage()
      *
      *   @return bool      true
      */
-    public function execute() : bool
+    public function execute(): bool
     {
-        $msg = cache::cleanupCache();
-        $this->setMessage( implode( PHP_EOL,$msg ) );
+        $msg = Cache::cleanupCache();
+        $this->setMessage(implode(PHP_EOL, $msg));
         return true;
     }
 
     /**
-     *   Typename
+     *   Typename.
      *
      *   @return string      Typename
      */
-    public function getTypeName() : string
+    public function getTypeName(): string
     {
-        return \rex_i18n::msg( 'geolocation_cron_title' );
+        return rex_i18n::msg('geolocation_cron_title');
     }
-
 }
