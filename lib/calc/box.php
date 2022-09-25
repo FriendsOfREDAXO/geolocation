@@ -1,4 +1,7 @@
-<?php namespace Geolocation\Calc;
+<?php 
+
+namespace Geolocation\Calc;
+
 /**
  *	baut auf phpGeo auf
  *  @see https://github.com/mjaschen/phpgeo
@@ -19,11 +22,7 @@
  * @package geolocation
  */
 
-use \Geolocation\InvalidParameter;
-
-use \Location\Bounds;
-
-class InvalidBoxParameter extends InvalidParameter {}
+use Location\Bounds;
 
 class Box
 {
