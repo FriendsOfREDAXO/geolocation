@@ -65,7 +65,7 @@ try {
     // Vorgabewerte aus der install/config.yml einlesen.
     // Falls es eine instanzbezogene config.yml in Data-Verzeichnis gibt, wird diese
     // benutzt und nur fehlende Werte aus der install/config.yml gezogen.
-    $systemConfig = rex_file::getConfig($this->getDataPath('config.yml'), []) ?: [];
+    $systemConfig = rex_file::getConfig($this->getDataPath('config.yml'), []);
     $config = rex_file::getConfig(__DIR__ . '/install/config.yml', null);
     if (null === $config) {
         throw new InstallException($this->i18n('install_missing', 'install/config.yml'), 1);
@@ -115,7 +115,7 @@ try {
                 $demoDataset = true;
             }
             $dataset = rex_file::get($datasetfile);
-            if (!$dataset) {
+            if (null === $dataset) {
                 throw new InstallException($this->i18n('install_missing', 'dataset.sql'), 1);
             }
 
@@ -151,7 +151,7 @@ try {
     // YForm-Formulare im Tablemanager anlegen
     // GGf. noch vorhandene Reste aus fehlerhaften Installationen vorher löschen
     $tableset = rex_file::get(__DIR__ . '/install/tableset.json');
-    if (!$tableset) {
+    if (null === $tableset) {
         throw new InstallException($this->i18n('install_missing', 'install/tableset.json'), 1);
     }
     /**
@@ -179,7 +179,7 @@ try {
     // Cronjob anlegen falls es den Cronjob noch nicht gibt
     //  - Neuinstallation
     //  - Re-Installation wenn gelöscht oder umbenannt
-    if (!$sql->getArray('SELECT id, `type` FROM '.rex::getTable('cronjob').' WHERE name = ?', [Cronjob::LABEL])) {
+    if (0 < $sql->setQuery('SELECT id, `type` FROM '.rex::getTable('cronjob').' WHERE name = ?', [Cronjob::LABEL])->getRows()) {
         $timestamp = rex_cronjob_manager_sql::calculateNextTime($config['job_intervall']);
         $sql->setTable(rex::getTable('cronjob'));
         $sql->setValue('name', Cronjob::LABEL);
