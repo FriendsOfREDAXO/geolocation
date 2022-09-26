@@ -281,12 +281,12 @@ class mapset extends rex_yform_manager_dataset
     public static function sendMapset(?int $mapset = null)
     {
         // Same Origin
-        tools::isAllowed();
+        Tools::isAllowed();
 
         // Abbruch bei unbekanntem Mapset
         $mapset = self::get($mapset);
         if (!$mapset) {
-            tools::sendNotFound();
+            Tools::sendNotFound();
         }
 
         // get layers ond overlays in scope and send as JSON
