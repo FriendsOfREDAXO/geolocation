@@ -26,7 +26,7 @@ die Klassen und globalen Konstanten. Hier die wichtigsten:
 | \Geolocation\Cache.php | Klasse mit Methoden zur Verwaltung des Karten-Cache |
 | \Geolocation\config_form.php | rex_form-Klasse für das Formular "[Einstellungen](settings.md#config)" |
 | \Geolocation\Cronjob.php |rex_cronjob-Klasse für Cronjobs zum Cache-Hauskeeping |
-| \Geolocation\tools.php | Diverse statische Methoden, die immer mal wieder hilfreich sind.|
+| \Geolocation\Tools.php | Diverse statische Methoden, die immer mal wieder hilfreich sind.|
 | \Geolocation\Exception.php | Exception-Klasse für von **Geolocation** ausgelöste \RuntimeException  |
 | \Geolocation\Calc\point.php | Rechnen mit Koordinaten: repräsentiert einen Punkt  |
 | \Geolocation\Calc\box.php | Rechnen mit Koordinaten: repräsentiert einen rechteckigen Bereich  |
@@ -163,7 +163,7 @@ Der erzeugte HTML-Code ist
 <script type="text/javascript" src="./assets/addons/geolocation/geolocation.min.js?buster=1234567890" ></script>
 ```
 
-Im Template wird an geeigneter Stelle der Aufruf der Methode `\Geolocation\tools::echoAssetTags();`
+Im Template wird an geeigneter Stelle der Aufruf der Methode `\Geolocation\Tools::echoAssetTags();`
 eingebaut:
 
 ```HTML
@@ -175,7 +175,7 @@ eingebaut:
 <?php
 
     // Geolocation- und Leaflet-Assets einbinden
-    \Geolocation\tools::echoAssetTags();
+    \Geolocation\Tools::echoAssetTags();
 
 ?>
 
