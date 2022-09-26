@@ -1,8 +1,12 @@
 <?php
+/**
+ * API-Aprufe, Voreinstellungen.
+ */
 
 namespace Geolocation;
 
 use rex;
+use rex_addon;
 use rex_cronjob_manager;
 use rex_extension;
 use rex_extension_point;
@@ -12,12 +16,10 @@ use rex_yform_manager_dataset;
 use function define;
 
 /**
- * API-Aprufe, Voreinstellungen.
- *
- * @package geolocation
+ * @var rex_addon $this
  */
 
-define('Geolocation\ADDON', $this->name);
+define('Geolocation\ADDON', $this->getName());
 define('Geolocation\TTL_MIN', 0);
 
 // start...end nicht löschen!! Wird bei der (Re-)Installation benötigt
@@ -70,7 +72,7 @@ if (rex::isBackend()) {
     // entsteht ein Konflikt: über das Kartensatz-Formular werden Layer-Liste und -Formulare als
     // Popup aufgerufen. Liste ist gewünscht, sonst nichts. Daher hier die Berechtigung auf Listen
     // prüfen und ggf. die Add/Edit-Spalte in der Layer-Liste entfernen (Spalte 0).
-    if (($user = rex::getUser()) && !$user->hasPerm('geolocation[layer]')) {
+    if (null !== ($user = rex::getUser()) && !$user->hasPerm('geolocation[layer]')) {
         rex_extension::register('YFORM_DATA_LIST',
             static function (rex_extension_point $ep) {
                 if ('rex_geolocation_layer' === $ep->getParam('table')->getTableName()) {
