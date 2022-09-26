@@ -49,7 +49,7 @@ if( null !== $mapset ) {
 }
 
 // Start of Cronjob
-\rex_cronjob_manager::registerType('Geolocation\cronjob');
+\rex_cronjob_manager::registerType('Geolocation\Cronjob');
 
 // if BE: activate JS and CSS
 if( \rex::isBackend() ){
