@@ -103,7 +103,7 @@ Das Resultat ist ein HTML-Tag mit fünf Attributen:
 
 Alternatives Vorgehen:
 ```PHP
-$mapset = \Geolocation\mapset::take( $mapsetId ):
+$mapset = \Geolocation\mapset::take( $mapsetId );
 
 $fragment = new \rex_fragment();
 $fragment->setVar( 'mapset', $mapset->getLayerset(), false );
