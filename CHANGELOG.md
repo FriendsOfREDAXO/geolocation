@@ -10,6 +10,7 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
 - Dateinamen an die Schreibweise der Klassen angepasst (`Box.php`, `Math.php`, `Point.php`) (#50)
 - Klasse `Geolocation\cache` umbenannt in `Geolocation\Cache`; Aufrufe und Doku angepasst. (#51)
 - Klasse `Geolocation\cronjob` umbenannt in `Geolocation\Cronjob`; Aufrufe und Doku angepasst. (#52)
+- Klasse `Geolocation\tools` umbenannt in `Geolocation\Tools`; Aufrufe und Doku angepasst. (#53)
 
 ## 06.05.2022 1.0.2
 
