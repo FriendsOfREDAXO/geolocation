@@ -10,7 +10,7 @@ namespace Geolocation;
 use rex_cronjob;
 use rex_i18n;
 
-class cronjob extends rex_cronjob
+class Cronjob extends rex_cronjob
 {
     public const LABEL = 'Geolocation: Cleanup Cache';
 

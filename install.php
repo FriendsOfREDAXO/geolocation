@@ -149,12 +149,12 @@
      // Cronjob anlegen falls es den Cronjob noch nicht gibt
      //  - Neuinstallation
      //  - Re-Installation wenn gelöscht oder umbenannt
-     if (!$sql->getArray('SELECT id FROM '.\rex::getTable('cronjob').' WHERE name = ?', [\Geolocation\cronjob::LABEL])) {
+    if (!$sql->getArray('SELECT id, `type` FROM '.\rex::getTable('cronjob').' WHERE name = ?', [\Geolocation\Cronjob::LABEL])) {
          $timestamp = \rex_cronjob_manager_sql::calculateNextTime($config['job_intervall']);
          $sql->setTable(\rex::getTable('cronjob'));
-         $sql->setValue('name', \Geolocation\cronjob::LABEL);
+         $sql->setValue('name', \Geolocation\Cronjob::LABEL);
          $sql->setValue('description', '');
-         $sql->setValue('type', 'Geolocation\\cronjob');
+         $sql->setValue('type', 'Geolocation\\Cronjob');
          $sql->setValue('parameters', '[]');
          $sql->setValue('interval', json_encode($config['job_intervall']));
          $sql->setValue('nexttime', \rex_sql::datetime($timestamp));
@@ -166,7 +166,7 @@
          $sql->addGlobalCreateFields(\rex::getUser()->getLogin());
          $sql->insert();
          $msg[] = $this->i18n('install_cronjob_prepared');
-     }
+    }
 
      // rex_config: Default-Werte eintragen bzw. sicherstellen
      $ct = $sql->getArray('SELECT id FROM '.$mapset.' ORDER BY id ASC LIMIT 1');
