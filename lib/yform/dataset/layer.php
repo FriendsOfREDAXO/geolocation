@@ -101,7 +101,7 @@ class layer extends rex_yform_manager_dataset
 
             if ('lang' == $fe[1]) {
                 // Auswahlfähige Sprachcodes ermitteln
-                $fe[3] = 'choice|lang|Sprache|{'.implode(',', tools::getLocales()).'}|,text|label|Bezeichnung|';
+                $fe[3] = 'choice|lang|Sprache|{'.implode(',', Tools::getLocales()).'}|,text|label|Bezeichnung|';
                 continue;
             }
             if ('ttl' == $fe[1] && empty($fe[3])) {
@@ -323,7 +323,6 @@ class layer extends rex_yform_manager_dataset
       *
       * @return rex_yform_manager_query|null     geänderte Query oder null
       */
-
      public static function YFORM_DATA_LIST_QUERY(rex_extension_point $ep)
      {
          // nichts tun wenn es schon einen Sort gibt
@@ -358,11 +357,11 @@ class layer extends rex_yform_manager_dataset
     public static function sendTile(?int $layerId)
     {
         // Same Origin
-        tools::isAllowed();
+        Tools::isAllowed();
 
         $layer = self::get($layerId);
         if (!$layer || !$layer->isOnline()) {
-            tools::sendNotFound();
+            Tools::sendNotFound();
         }
 
         $cache = new Cache();
@@ -422,7 +421,7 @@ class layer extends rex_yform_manager_dataset
 
         // no reply at all, abort completely
         if (null === $returnCode) {
-            tools::sendInternalError();
+            Tools::sendInternalError();
         }
 
         // forward the error, simulation of a direct connection between client and tile-server
@@ -445,7 +444,7 @@ class layer extends rex_yform_manager_dataset
         }
 
         // send the received tile to the client and exit
-        tools::sendTile($content, $contentType, time(), $ttl);
+        Tools::sendTile($content, $contentType, time(), $ttl);
     }
 
     // Support

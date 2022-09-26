@@ -7,7 +7,7 @@
 
 namespace Geolocation;
 
-class tools
+class Tools
 {
 
     /**
