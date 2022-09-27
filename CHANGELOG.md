@@ -1,6 +1,6 @@
 # Changelog
 
-## xx.xx.2022 2.0.0
+## xx.xx.2022 2.0.0 (under construction)
 
 Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu einem BC.
 (Das ist noch nicht der finale Text, erst mal nur die diversen PR auflisten)
@@ -11,6 +11,7 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
 - Klasse `Geolocation\cache` umbenannt in `Geolocation\Cache`; Aufrufe und Doku angepasst. (#51)
 - Klasse `Geolocation\cronjob` umbenannt in `Geolocation\Cronjob`; Aufrufe und Doku angepasst. (#52)
 - Klasse `Geolocation\tools` umbenannt in `Geolocation\Tools`; Aufrufe und Doku angepasst. (#53)
+- RexStan-gesteuerte Überarbeitung aller PHP-Dateien (Level 8, PHP 8.0-8.2, Extensions REDAXO Superglobals, Bleeding-Edge, Strict-Mode, Deprecation Warnings, phpstan-dba, dead code) (#54 ... #62) 
 
 ## 06.05.2022 1.0.2
 
