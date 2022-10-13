@@ -7,7 +7,7 @@
 
 namespace Geolocation;
 
-class config_form extends \rex_config_form
+class ConfigForm extends \rex_config_form
 {
 
     /**
