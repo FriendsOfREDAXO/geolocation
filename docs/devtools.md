@@ -374,6 +374,6 @@ Geolocation.Tools.Center = class extends Geolocation.Tools.Template{
         }
         return this.center;
     }
-}
+};
 Geolocation.tools.center = function(...args) { return new Geolocation.Tools.Center(args); };
 ```
