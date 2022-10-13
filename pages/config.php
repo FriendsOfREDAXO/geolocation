@@ -8,7 +8,7 @@ namespace Geolocation;
 use rex_fragment;
 use rex_i18n;
 
-$form = config_form::factory(ADDON);
+$form = ConfigForm::factory(ADDON);
 
 $fragment = new rex_fragment();
 $fragment->setVar('class', 'edit', false);
