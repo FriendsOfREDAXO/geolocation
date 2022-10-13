@@ -238,7 +238,7 @@ try {
 
     // Die JS/CSS-Dateien neu kompilieren, um Instanz-eigene Erweiterungen und Parameter
     // aus data/addons/geolocation einzubinden
-    config_form::compileAssets(__DIR__.'/', $definedValues);
+    ConfigForm::compileAssets(__DIR__.'/', $definedValues);
     $msg[] = $this->i18n('install_assets_prepared');
 
     // Den Ordner 'data/addons/geolocation/assets' falls vorhanden in den Ordner 'assets/addons/geolocation' kopieren

@@ -24,7 +24,7 @@ die Klassen und globalen Konstanten. Hier die wichtigsten:
 | \Geolocation\layer.php | YOrm-Dataset-Klasse für die einzelnen Karten-URLs |
 | \Geolocation\mapset.php | YOrm-Dataset-Klasse für die Kartensätze aus mehreren Karten-URLs |
 | \Geolocation\Cache.php | Klasse mit Methoden zur Verwaltung des Karten-Cache |
-| \Geolocation\config_form.php | rex_form-Klasse für das Formular "[Einstellungen](settings.md#config)" |
+| \Geolocation\ConfigForm.php | rex_form-Klasse für das Formular "[Einstellungen](settings.md#config)" |
 | \Geolocation\Cronjob.php |rex_cronjob-Klasse für Cronjobs zum Cache-Hauskeeping |
 | \Geolocation\Tools.php | Diverse statische Methoden, die immer mal wieder hilfreich sind.|
 | \Geolocation\Exception.php | Exception-Klasse für von **Geolocation** ausgelöste \RuntimeException  |

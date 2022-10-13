@@ -320,11 +320,11 @@ individuell geschriebenen Code in jeweils einer Datei handelt, ist das Verfahren
 
 Mittels der Utility [AssetPacker](https://github.com/christophboecker/AssetPacker) (siehe
 lib-Verzeichnis) werden die Komponenten zusammengeführt und komprimiert. Der Code findet sich
-in der Datei `lib/config_form.php`.
+in der Datei `lib/ConfigForm.php`.
 
 ```php
 // Assets neu kompilieren
-\Geolocation\config_form::compileAssets();
+\Geolocation\ConfigForm::compileAssets();
 ```
 
 Komplexere Erweiterungen z.B. aus mehreren Leaflet-Plugins setzen voraus, dass die infrage kommenden
