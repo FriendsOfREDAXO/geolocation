@@ -1,28 +1,54 @@
-<?php namespace Geolocation;
+<?php
+/**
+ * Sammelt alle Exceptions wegen ungültiger Funktions-Parameter
+ * an einer Stelle. 
+ */
+
+namespace Geolocation;
+
+use Throwable;
 
 class InvalidParameter extends \Geolocation\Exception
 {
+    /** @api */
+    public const KEY_LAT_LNG = 1;
+    /** @api */
+    public const LAT_MISSING = 2;
+    /** @api */
+    public const LNG_MISSING = 3;
+    /** @api */
+    public const LAT_RANGE = 4;
+    /** @api */
+    public const LNG_RANGE = 5;
+    /** @api */
+    public const STRING2DD = 6;
+    /** @api */
+    public const PRECISION = 7;
+    /** @api */
+    public const DELIMITER = 8;
+    /** @api */
+    public const BOX2WIDE = 9;
+    /** @api */
+    public const DATELINE = 10;
+    /** @api */
+    public const POLE = 11;
+    /** @api */
+    public const MAPSET_ID = 12;
+    /** @api */
+    public const MAPSET_DEF = 13;
+    /** @api */
+    public const BOXEXTEND = 14;
+    /** @api */
+    public const BOXRESIZE = 15;
+    /** @api */
+    public const BOXRESIZELAT = 16;
+    /** @api */
+    public const BOXRESIZELNG = 17;
 
-    const KEY_LAT_LNG = 1;
-    const LAT_MISSING = 2;
-    const LNG_MISSING = 3;
-    const LAT_RANGE = 4;
-    const LNG_RANGE = 5;
-    const STRING2DD = 6;
-    const PRECISION = 7;
-    const DELIMITER = 8;
-    const BOX2WIDE = 9;
-    const DATELINE = 10;
-    const POLE = 11;
-    const MAPSET_ID = 12;
-    const MAPSET_DEF = 13;
-    const BOXEXTEND = 14;
-    const BOXRESIZE = 15;
-    const BOXRESIZELAT = 16;
-    const BOXRESIZELNG = 17;
-
-
-    private $msg = [
+    /**
+     * @var list<string>
+     */
+    private array $msg = [
         self::KEY_LAT_LNG => 'Key-Error! Latitude/longitude-Key missing or equal. Given $lat="%s" and $lng="%s"',
         self::LAT_MISSING => 'Latitude value ($point[%s]) missing',
         self::LNG_MISSING => 'Longitude value ($point[%s]) missing',
@@ -42,9 +68,12 @@ class InvalidParameter extends \Geolocation\Exception
         self::BOXRESIZELNG => 'Resize factor (llongitude) expected larger than zero (given "%s")',
     ];
 
-    public function __construct( $errorCode, $values=[], ?\Throwable $previous = null ){
-        $msg = vsprintf( ($this->msg[$errorCode] ?? 'Error'), $values );
-        parent::__construct( $msg, $errorCode, $previous );
+    /**
+     * @param list<string|int|bool> $values
+     */
+    public function __construct(int $errorCode, array $values = [], ?Throwable $previous = null)
+    {
+        $msg = vsprintf($this->msg[$errorCode] ?? 'Error', $values);
+        parent::__construct($msg, $errorCode, $previous);
     }
-
 }
