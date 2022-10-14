@@ -1,121 +1,142 @@
 <?php
 /**
- * Helferlein, einige Hlfsfunktionen, gekapselt als  statische Klassenmethoden
- *
- * @package geolocation
+ * Helferlein, einige Hlfsfunktionen, gekapselt als  statische Klassenmethoden.
  */
 
 namespace Geolocation;
 
+use rex;
+use rex_clang;
+use rex_i18n;
+use rex_path;
+use rex_request;
+use rex_response;
+use rex_url;
+use rex_view;
+
 class Tools
 {
-
     /**
-     *  Array mit allen implementierten Sprachversionen (BE und FE)
-     *  Zusammenfassung aus BE (rex_i18n::getLocales) und FE (rex_clang::getAll())
-     *  Je Eintrag der Sprachcode (2-Zeichen) und die Information ob BE, FE oder beide
+     * Array mit allen implementierten Sprachversionen (BE und FE)
+     * Zusammenfassung aus BE (rex_i18n::getLocales) und FE (rex_clang::getAll())
+     * Je Eintrag der Sprachcode (2-Zeichen) und die Information ob BE, FE oder beide.
      *
-     *  @return array   [ 'de' => 'de [FE/BE]', 'en' => 'en [BE]', ... ]
+     * @api
+     * @return array<string,string>   [ 'de' => 'de [FE/BE]', 'en' => 'en [BE]', ... ]
      */
-    static public function getLocales() : array
+    public static function getLocales(): array
     {
         $locales = [];
-        foreach( \rex_i18n::getLocales() as $v ){
-            $locales[ substr( $v,0,2 ) ][] = 'BE';
+        foreach (rex_i18n::getLocales() as $v) {
+            $locales[substr($v, 0, 2)][] = 'BE';
         }
-        foreach( \rex_clang::getAll() as $v ){
-            $locales[ $v->getCode() ][] = 'FE';
+        foreach (rex_clang::getAll() as $v) {
+            $locales[$v->getCode()][] = 'FE';
         }
-        foreach( $locales as $k=>&$v ){
-            $v = '"' .$k . ' [ '.implode('/',$v).' ]":"' .$k. '"';
+        foreach ($locales as $k => &$v) {
+            $v = '"' .$k . ' [ '.implode('/', $v).' ]":"' .$k. '"';
         }
-        ksort( $locales );
+        ksort($locales);
+        /**
+         * STAN: Method Geolocation\Tools::getLocales() should return array<string, string> but returns array<string, array<int, string>>.
+         * da irrt PhpStan.
+         * @phpstan-ignore-next-line
+         */
         return $locales;
     }
 
     /**
-     *  Prüft "same origin" und bricht ggf. HTTP-Status HTTP_SERVICE_UNAVAILABLE hart ab.
+     * Prüft "same origin" und bricht ggf. HTTP-Status HTTP_SERVICE_UNAVAILABLE hart ab.
      *
-     *  @return bool   true wenn Bedingung erfüllt
+     * @api
      */
-    static public function isAllowed() : bool
+    public static function isAllowed(): void
     {
-        if (!empty($_SERVER['HTTP_REFERER']) && parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST) != $_SERVER['HTTP_HOST'])
-        {
-            \rex_response::cleanOutputBuffers();
-            \rex_response::setStatus( \rex_response::HTTP_SERVICE_UNAVAILABLE );
-            \rex_response::sendContent( \rex_response::HTTP_SERVICE_UNAVAILABLE );
-            exit();
+        $HTTP_REFERER = rex_request::server('HTTP_REFERER', 'string', '');
+        $HTTP_HOST = rex_request::server('HTTP_HOST', 'string', '');
+        if (parse_url($HTTP_REFERER, PHP_URL_HOST) !== $HTTP_HOST) {
+            rex_response::cleanOutputBuffers();
+            rex_response::setStatus(rex_response::HTTP_SERVICE_UNAVAILABLE);
+            rex_response::sendContent(rex_response::HTTP_SERVICE_UNAVAILABLE);
+            exit;
         }
-        return true;
     }
 
     /**
-     *  schickt HTTP_NOT_FOUND
+     * schickt HTTP_NOT_FOUND.
      *
-     *  ... und bricht dann mit HTTP_NOT_FOUND hart ab.
+     * ... und bricht dann mit HTTP_NOT_FOUND hart ab.
+     *
+     * @api
+     * @return never
      */
-    static public function sendNotFound() : void
+    public static function sendNotFound(): void
     {
-        \rex_response::cleanOutputBuffers();
-        \rex_response::setStatus( \rex_response::HTTP_NOT_FOUND );
-        \rex_response::sendContent( \rex_response::HTTP_NOT_FOUND );
-        exit();
+        rex_response::cleanOutputBuffers();
+        rex_response::setStatus(rex_response::HTTP_NOT_FOUND);
+        rex_response::sendContent(rex_response::HTTP_NOT_FOUND);
+        exit;
     }
 
     /**
-     *  schickt HTTP_INTERNAL_ERROR
+     * schickt HTTP_INTERNAL_ERROR.
      *
-     *  ... und bricht dann mit HTTP_INTERNAL_ERROR hart ab.
+     * ... und bricht dann mit HTTP_INTERNAL_ERROR hart ab.
+     *
+     * @api
+     * @return never
      */
-    static public function sendInternalError(): void
+    public static function sendInternalError(): void
     {
-        \rex_response::cleanOutputBuffers();
-        \rex_response::setStatus( \rex_response::HTTP_INTERNAL_ERROR );
-        \rex_response::sendContent( \rex_response::HTTP_INTERNAL_ERROR );
-        exit();
+        rex_response::cleanOutputBuffers();
+        rex_response::setStatus(rex_response::HTTP_INTERNAL_ERROR);
+        rex_response::sendContent(rex_response::HTTP_INTERNAL_ERROR);
+        exit;
     }
 
     /**
-     *  schickt eine Kartenkachel Tile an den Client
+     * schickt eine Kartenkachel Tile an den Client.
      *
-     *  aus $timestamp und $ttl wird deren Header-Daten (Expires, Cache-Control)
-     *  errechnet
+     * aus $timestamp und $ttl wird deren Header-Daten (Expires, Cache-Control)
+     * errechnet
+     * ... und bricht dann nach Versand hart ab.
      *
-     *  ... und bricht dann nach Versand hart ab.
-     *
-     *  @param  string $tile        Das Bild der Karten-Kachel (Tile)
-     *  @param  string $contentType Art des Bildes (Mime-Typ)
-     *  @param  string $timestamp   Unix-Zeitstempel der Kachel
-     *  @param  string $ttl         Time-To-Live in Minuten
+     * @api
+     * @return never
      */
-    static public function sendTile( $tile, $contentType, $timestamp, $ttl ) : void
+    public static function sendTile(string $tileFileName, string $contentType, int $timestamp, int $ttl): void
     {
         $time2elapse = $timestamp + ($ttl * 60);
-        \rex_response::cleanOutputBuffers();
-        \rex_response::setHeader('Expires', gmdate("D, d M Y H:i:s", $time2elapse) ." GMT" );
-        \rex_response::sendCacheControl( 'public, max-age=' . $ttl * 60 );
-        \rex_response::sendContent($tile, $contentType, $timestamp);
-        exit();
+        rex_response::cleanOutputBuffers();
+        rex_response::setHeader('Expires', gmdate('D, d M Y H:i:s', $time2elapse) .' GMT');
+        rex_response::sendCacheControl('public, max-age=' . $ttl * 60);
+        rex_response::sendContent($tileFileName, $contentType, $timestamp);
+        exit;
     }
 
     /**
-     *  Liefert (für das FE) die Asset-Tags gem. Konfiguration;
-     *  Direkte Ausgabe mit ECHO
+     * Liefert (für das FE) die Asset-Tags gem. Konfiguration;
+     * Direkte Ausgabe mit ECHO.
+     *
+     * @api
      */
-    static public function echoAssetTags() : void
+    public static function echoAssetTags(): void
     {
-        if( LOAD ){
-            if( \rex::isBackend() ) {
-                \rex_view::addCssFile(\rex_url::addonAssets(\Geolocation\ADDON,'geolocation.min.css'));
-                \rex_view::addJsFile(\rex_url::addonAssets(\Geolocation\ADDON,'geolocation.min.js'));
+        /**
+         * STAN: If condition is always true.
+         * Ist ein false positive. Hängt nämlich von der Konfiguration ab.
+         * @phpstan-ignore-next-line
+         */
+        if (LOAD) {
+            if (rex::isBackend()) {
+                rex_view::addCssFile(rex_url::addonAssets(\Geolocation\ADDON, 'geolocation.min.css'));
+                rex_view::addJsFile(rex_url::addonAssets(\Geolocation\ADDON, 'geolocation.min.js'));
             } else {
-                echo AssetPacker\AssetPacker::target( \rex_path::addonAssets(ADDON,'geolocation.min.css') )
+                echo AssetPacker\AssetPacker::target(rex_path::addonAssets(ADDON, 'geolocation.min.css'))
                     ->getTag();
-                echo AssetPacker\AssetPacker::target( \rex_path::addonAssets(ADDON,'geolocation.min.js') )
+                echo AssetPacker\AssetPacker::target(rex_path::addonAssets(ADDON, 'geolocation.min.js'))
                     ->getTag();
             }
         }
     }
-
 }
