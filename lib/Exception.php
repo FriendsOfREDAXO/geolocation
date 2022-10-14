@@ -1,13 +1,13 @@
-<?php namespace Geolocation;
-
+<?php
 /**
  * Damit man weiß, dass die Exception aus Geolocation stammt
- * => Geolocation\Exception
- *
- * @package geolocation
+ * => Geolocation\Exception.
  */
 
-class Exception extends \RuntimeException
-{
+namespace Geolocation;
 
+use RuntimeException;
+
+class Exception extends RuntimeException
+{
 }
