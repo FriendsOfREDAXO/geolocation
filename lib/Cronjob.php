@@ -1,8 +1,6 @@
 <?php
 /**
  * Cronjob-Klasse; ruft die Bereinigungs-Methode in Geolocation\Cache auf.
- *
- * @package geolocation
  */
 
 namespace Geolocation;
@@ -15,11 +13,9 @@ class Cronjob extends rex_cronjob
     public const LABEL = 'Geolocation: Cleanup Cache';
 
     /**
-     *   Ausführende Aktion des Cron-Jobs.
+     * Ausführende Aktion des Cron-Jobs.
      *
-     *   Die eigentliche Rückmeldung erfolgt mit setMessage()
-     *
-     *   @return bool      true
+     * Die eigentliche Rückmeldung erfolgt mit setMessage()
      */
     public function execute(): bool
     {
@@ -29,9 +25,7 @@ class Cronjob extends rex_cronjob
     }
 
     /**
-     *   Typename.
-     *
-     *   @return string      Typename
+     * Typename.
      */
     public function getTypeName(): string
     {
