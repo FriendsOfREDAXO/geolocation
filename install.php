@@ -4,7 +4,7 @@
  *
  * Install:    Installiert die Tabellen und YForm-Formulare
  * Re-Install: Repariert die Einstellungen
- * Update:     Aktualisiert unf Repariert die Einstellungen
+ * Update:     Aktualisiert und Repariert die Einstellungen
  *
  * Zusätzlich zu den von REDAXO selbst durchgeführten Aktivitäten:
  *
