@@ -1,12 +1,5 @@
 <?php
 /**
- * // TODO: Für den PR:
- * 2) Zusätzlich boot.php
- * 3) zusäzlich layer.md
- * 4) land.de-de.
- */
-
-/**
  * Geolocatin|layer ist eine erweiterte yform-dataset-Klasse für Kartenlayer.
  *
  * - dataset-spezifisch
