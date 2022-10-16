@@ -164,7 +164,7 @@ class Cache
             ->where('online', 1)
             ->find();
         /**
-         * Damit phpstan endlich akzeptiert, dass $layer nicht null sein kann.
+         * Damit phpstan akzeptiert, dass $layer nicht null sein kann.
          * @var layer $layer
          */
         foreach ($layers as $layer) {
@@ -234,9 +234,7 @@ class Cache
      * Über den Parameter $delete wird die Anzahl gelöschter Dateien
      * mitgeteilt (hochzählen des übergebenen Wertes)
      *
-     * @api
      * @param resource $dh          Directory-Handle
-     * @return int                  liefert die Anzahl Dateien im Verzeichnis zurück
      */
     private static function cleanupDir($dh, string $targetDir, float $timestamp, int &$deleted): int
     {
