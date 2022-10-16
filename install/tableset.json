@@ -202,7 +202,7 @@
 				"prio": "12",
 				"type_id": "value",
 				"type_name": "choice",
-				"db_type": "text",
+				"db_type": "int",
 				"list_hidden": "0",
 				"search": "1",
 				"name": "online",
