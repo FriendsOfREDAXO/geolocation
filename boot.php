@@ -48,7 +48,6 @@ rex_yform_manager_dataset::setModelClass('rex_geolocation_layer', layer::class);
 $tileLayer = rex_request(KEY_TILES, 'integer', null);
 if (null !== $tileLayer) {
     layer::sendTile($tileLayer);
-    exit;
 }
 
 // proxy-request "geomapset" ???
@@ -59,6 +58,7 @@ if (null !== $tileLayer) {
 $mapset = rex_request(KEY_MAPSET, 'integer', null);
 if (null !== $mapset) {
     mapset::sendMapset($mapset);
+    // TODO: Kommt raus wenn mapset aktualisiert wird
     exit;
 }
 

@@ -77,7 +77,10 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
     In der Layer-Auswahl der Karte werden die Namen der Karte angezeigt. Für die verschiedenen
     Sprachen können hier die Texte eingegeben werden. Alle für Backenend (BE) bzw. Frontend (FE)
     verfügbaren Sprachen sind auswählbar. Jede Sprache darf nur einmal belegt werden.
-    Die erste Sprache in der Liste gilt als Default bzw. Fallback.
+    Wurde kein Sprachcode angegeben (z.B. null oder ''), wird zunächst versucht, nach der aktuellen
+    Systemsprache (`rex_clang::getCurrent()->getCode()`) gesucht. Gibt es die Sprache nicht in der Liste,
+    wird als erstes Fallback die erste Sprache in der Liste herangezogen und im Falle einer leeren Liste
+    der aktuelle Name des Karten-Layers.
 
     ```php
     // Layer-Datensatz aufrufen

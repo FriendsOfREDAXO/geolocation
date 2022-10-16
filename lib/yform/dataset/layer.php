@@ -1,9 +1,36 @@
 <?php
-
 /**
  * Geolocatin|layer ist eine erweiterte yform-dataset-Klasse für Kartenlayer.
  *
- * @package geolocation
+ * - dataset-spezifisch
+ *
+ *     getForm:    baut einige Felder im Formular um (aktuelle Systemeinstellungen vorbelegen)
+ *     delete:     Löschen nur wenn nicht in Benutzung bei Geolocation\mapset
+ *                 Cache ebenfalls löschen
+ *     save:       Cache löschen wenn Einstellungen geändert wurden.
+ *
+ * - Formularbezogen
+ *
+ *     executeForm           stellt Cache-Löschen bei Änderungen sicher
+ *     verifyUrl             Callback für customvalidator
+ *     verifySubdomain       Callback für customvalidator
+ *     verifyLang            Callback für customvalidator
+ *
+ * - Listenbezogen
+ *
+ *     YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" für die Datentabelle
+ *     YFORM_DATA_LIST_QUERY           Initiale Sortiertung die Liste nach zwei Kriterien
+ *
+ * - AJAX-Abrufe
+ *
+ *     sendTile              Kachel-Abruf vom Client aus dem Cache oder vom Tile-Server beantworten
+ *
+ * - Support
+ *
+ *     getLabel              Extrahiert aus dem lang-Feld die passende Sprachvariante der Kartentitels
+ *     getLayerConfig        Stellt die Daten zur Konfiguration des Leaflet-Layers bereit
+ *     getLayerConfigSet     Stellt für mehrere Id die "getLayerConfig" zusammen
+ *     isOnline              liefert true wenn der Layer online ist ($layer->online == 1 )
  */
 
 namespace Geolocation;
@@ -18,6 +45,7 @@ use rex_extension_point;
 use rex_file;
 use rex_i18n;
 use rex_path;
+use rex_request;
 use rex_response;
 use rex_sql;
 use rex_url;
@@ -25,47 +53,40 @@ use rex_var;
 use rex_view;
 use rex_yform;
 use rex_yform_manager_dataset;
+use rex_yform_manager_query;
 use rex_yform_validate_customfunction;
+use rex_yform_value_abstract;
 
 use function count;
+use function is_bool;
 use function strlen;
 
-/*
-    - dataset-spezifisch
-
-        getForm:    baut einige Felder im Formular um (aktuelle Systemeinstellungen vorbelegen)
-        delete:     Löschen nur wenn nicht in Benutzung bei Geolocation\mapset
-                    Cache ebenfalls löschen
-        save:       Cache löschen wenn Einstellungen geändert wurden.
-
-    - Formularbezogen
-
-        executeForm           stellt Cache-Löschen bei Änderungen sicher
-        verifyUrl             Callback für customvalidator
-        verifySubdomain       Callback für customvalidator
-        verifyLang            Callback für customvalidator
-
-    - Listenbezogen
-
-        YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" für die Datentabelle
-        YFORM_DATA_LIST_QUERY           Initiale Sortiertung die Liste nach zwei Kriterien
-
-    - AJAX-Abrufe
-
-        sendTile              Kachel-Abruf vom Client aus dem Cache oder vom Tile-Server beantworten
-
-    - Support
-
-        getLabel              Extrahiert aus dem lang-Feld die passende Sprachvariante der Kartentitels
-        getLayerConfig        Stellt die Daten zur Konfiguration des Leaflet-Layers bereit
-        getLayerConfigSet     Stellt für mehrere Id die "getLayerConfig" zusammen
-        isOnline              liefert true wenn der Layer online ist ($layer->online == 1 )
-
-*/
+/**
+ * Mittels parent::__get bereitgestellte Daten.
+ *
+ * aus der Datentabelle rex_geolocation_layer
+ * @property string $name
+ * @property string $url
+ * @property string $subdomain
+ * @property string $attribution
+ * @property string $layertype
+ * @property string $lang
+ * @property int $ttl
+ * @property int $cfmax
+ * // FIXME: In der DB ist $online ein Text-Feld; sollte es nicht besser int,bool oder mindestens varchar sein?
+ * Hier anpassen, in der install/dataset.sql, install/tableset.json, install.php
+ * Ausdrücklicher Hinweis im Changelog auf den geänderten Datentyp!
+ * @property string $online
+ */
 
 class layer extends rex_yform_manager_dataset
 {
-    public const FILE_PATTERN = '{x}-{y}-{z}.{suffix}';    // file-name-pattern
+    /**
+     * Pattern für den Aufbau von Dateinamen für Kartenkacheln (Tiles) im Cache.
+     *
+     * @api
+     */
+    public const FILE_PATTERN = '{x}-{y}-{z}.{suffix}';
 
     // dataset-spezifisch
 
@@ -80,17 +101,17 @@ class layer extends rex_yform_manager_dataset
         $yform->objparams['form_class'] .= ' geolocation-yform';
 
         foreach ($yform->objparams['form_elements'] as $k => &$fe) {
-            if ('action' == $fe[0]) {
+            if ('action' === $fe[0]) {
                 continue;
             }
-            if ('validate' == $fe[0]) {
-                if ('intfromto' == $fe[1]) {
-                    if ('ttl' == $fe[2]) {
+            if ('validate' === $fe[0]) {
+                if ('intfromto' === $fe[1]) {
+                    if ('ttl' === $fe[2]) {
                         $fe[3] = TTL_MIN;
                         $fe[4] = TTL_MAX;
                         continue;
                     }
-                    if ('cfmax' == $fe[2]) {
+                    if ('cfmax' === $fe[2]) {
                         $fe[3] = CFM_MIN;
                         $fe[4] = CFM_MAX;
                         continue;
@@ -99,12 +120,12 @@ class layer extends rex_yform_manager_dataset
                 continue;
             }
 
-            if ('lang' == $fe[1]) {
+            if ('lang' === $fe[1]) {
                 // Auswahlfähige Sprachcodes ermitteln
                 $fe[3] = 'choice|lang|Sprache|{'.implode(',', Tools::getLocales()).'}|,text|label|Bezeichnung|';
                 continue;
             }
-            if ('ttl' == $fe[1] && empty($fe[3])) {
+            if ('ttl' === $fe[1] && '' === trim($fe[3])) {
                 $fe[3] = rex_config::get(ADDON, 'cache_ttl', TTL_DEF);
                 if (str_starts_with($fe[6], 'translate:')) {
                     $fe[6] = substr($fe[6], 10);
@@ -112,7 +133,7 @@ class layer extends rex_yform_manager_dataset
                 $fe[6] = rex_i18n::rawMsg($fe[6], TTL_MAX);
                 continue;
             }
-            if ('cfmax' == $fe[1] && empty($fe[3])) {
+            if ('cfmax' === $fe[1] && '' === trim($fe[3])) {
                 $fe[3] = rex_config::get(ADDON, 'cache_maxfiles', CFM_DEF);
             }
         }
@@ -127,7 +148,8 @@ class layer extends rex_yform_manager_dataset
      * Löschen nur wenn nicht in Benutzung bei Geolocation\mapset
      * Cache ebenfalls löschen.
      *
-     * Wenn es noch bezüge auf den LAyer gibt, werden Links auf die Edit-Seite angeboten
+     * Wenn es noch Bezüge auf den Layer gibt, werden Links auf die Edit-Seite
+     * via EP YFORM_DATA_LIST ausgegeben.
      *
      * @return bool   TRUE für "Löschen erfolgreich"
      */
@@ -136,8 +158,14 @@ class layer extends rex_yform_manager_dataset
         $sql = rex_sql::factory();
         $table = mapset::table();
         $qry = 'SELECT `id`, `title` FROM `'.$table->getTableName().'` WHERE FIND_IN_SET(:id,`layer`)';
-        $data = $sql->getArray($qry, [':id' => $this->id], PDO::FETCH_KEY_PAIR);
-        if ($data) {
+        /**
+         * STAN: Possible SQL-injection in expression $table->getTableName().
+         * False positive: der TableName kommt aus rex_yform_manager_dataset und ist m.E. safe.
+         * @phpstan-ignore-next-line
+         */
+        $data = $sql->getArray($qry, [':id' => $this->getId()], PDO::FETCH_KEY_PAIR);
+        /** @var array<int,string> $data */
+        if (0 < count($data)) {
             $params = [
                 'page' => 'geolocation/mapset',
                 'rex_yform_manager_popup' => '1',
@@ -145,6 +173,7 @@ class layer extends rex_yform_manager_dataset
             ];
             $params += rex_csrf_token::factory($table->getCSRFKey())->getUrlParams();
 
+            /** @var string $v */
             foreach ($data as $k => &$v) {
                 $params['data_id'] = $k;
                 $v = '<li><a href="'.rex_url::backendController($params).'" target="_blank">'.$v.'</li>';
@@ -164,14 +193,14 @@ class layer extends rex_yform_manager_dataset
 
         $result = parent::delete();
         if ($result) {
-            Cache::clearLayerCache($this->id);
+            Cache::clearLayerCache($this->getId());
         }
         return $result;
     }
 
     /**
      * Layer-Cache löschen wenn Einstellungen geändert wurden.
-     * zieht nicht bei den Formularen, leider. daher auch EP in executeForm.
+     * zieht nicht bei den Formularen, leider.
      *
      * @return bool     TRUE für "Speichern erfolgreich"
      */
@@ -179,7 +208,7 @@ class layer extends rex_yform_manager_dataset
     {
         $result = parent::save();
         if ($result) {
-            Cache::clearLayerCache($this->id);
+            Cache::clearLayerCache($this->getId());
         }
         return $result;
     }
@@ -189,13 +218,8 @@ class layer extends rex_yform_manager_dataset
     /**
      * Erweiterte Funktionalität bei der Ausführung des Formulars.
      *
-     * Das Formular sichert per db_action, nicht via dataset::save()!
+     * Da das Formular sichert per db_action, nicht via dataset::save()!
      * Daher hier den Cache per EP löschen
-     *
-     * @param rex_yform        Das aktuelle YForm-Formular-Objekt
-     * @param callable          Callback (Details müssten in der YForm-Doku zu finden sein)
-     *
-     * @return string           Formular-HTML
      */
     public function executeForm(rex_yform $yform, callable $afterFieldsExecuted = null): string
     {
@@ -215,66 +239,74 @@ class layer extends rex_yform_manager_dataset
      * Callback für customvalidator: 'url', 'subdomain'.
      *
      * Wenn die URL einen Platzhalter für Subdomänen aufweist ({s}) muss auch das Feld subdomain
-     * ausgefüllt werden.
+     * ausgefüllt werden. Der fehler wird an beiden Feldern gemeldet.
      *
-     * @param array             Array mit den Feldnamen ('url', 'subdomain')
-     * @param array             Array mit den aktuellen Werten für 'url' und 'subdomain'
-     * @param string            Rückgabewert als Vorbelegung (sollte leer sein)
-     * @param rex_yform_validate_customfunction  Instanz der aktiven Validator-Klasse
-     * @param array             Array mit den Instanzen der Felder ('url', 'subdomain')
+     * Angabe von Subdomains ohne {s} in der Url ist egal
      *
-     * @return mixed           TRUE für "Fehler gefunden", sonst $return
+     * Die Parameter sind so belegt:
+     *  - Array mit den Feldnamen ('url', 'subdomain')
+     *  - Array mit den aktuellen Werten für 'url' und 'subdomain'
+     *  - Rückgabewert als Vorbelegung (sollte leer sein), ignorieren
+     *  - Instanz der aktiven Validator-Klasse
+     *  - Array mit den Instanzen der Felder ('url', 'subdomain')
+     *
+     * @param list<string> $fields
+     * @param array<string,string> $values
+     * @param string $return
+     * @param rex_yform_validate_customfunction $self
+     * @param array<string,rex_yform_value_abstract> $elements
      */
-    public static function verifySubdomain($fields, $values, $return, $self, $elements)
+    public static function verifySubdomain($fields, $values, $return, $self, $elements): bool
     {
-        foreach ($self->obj as $element) {
-            if ('url' === $element->name) {
-                if (false !== strpos($element->value, '{s}')) {
-                    $return = empty(trim($element->value));
-                }
-            }
-        }
-        return $return;
+        return false !== strpos($values['url'], '{s}') && '' === trim($values['subdomain']);
     }
 
     /**
      * Callback für customvalidator: 'url'.
      *
-     * die URL-Validierung scheitert an den Platzhaltern {x}. Die also erst entfernen
+     * die URL-Validierung per Regex stolpert an den Platzhaltern {x}. Die also erst entfernen
+     * Die Parameter sind so belegt:
+     *  - Feldname ('url')
+     *  - der aktuelle Werte für 'url' (JSON-String)
+     *  - Rückgabewert als Vorbelegung (sollte leer sein), ignorieren
+     *  - Instanz der aktiven Validator-Klasse
+     *  - Array mit einem Element: Instanz des Feldes 'url'
      *
-     * @param string            Feldname ('url')
-     * @param string            der aktuelle Werte für 'url'
-     * @param string            Rückgabewert als Vorbelegung (sollte leer sein)
-     * @param rex_yform_validate_customfunction  Instanz der aktiven Validator-Klasse
-     * @param array             Array mit einem Element: Instanz des Feldes 'url'
-     *
-     * @return bool             TRUE für "Fehler gefunden", sonst FALSE
+     * @param string $field
+     * @param string $value
+     * @param string $return
+     * @param rex_yform_validate_customfunction $self
+     * @param array<string,rex_yform_value_abstract> $elements
      */
     public static function verifyUrl($field, $value, $return, $self, $elements): bool
     {
         $url = str_replace(['{', '}'], '', $value);
         $xsRegEx_url = '/^(?:http[s]?:\/\/)[a-zA-Z0-9][a-zA-Z0-9._-]*\.(?:[a-zA-Z0-9][a-zA-Z0-9._-]*\.)*[a-zA-Z]{2,20}(?:\/[^\\/\:\*\?\"<>\|]*)*(?:\/[a-zA-Z0-9_%,\.\=\?\-#&]*)*$' . '/';
-        return 0 == preg_match($xsRegEx_url, $url);
+        return 0 === preg_match($xsRegEx_url, $url);
     }
 
     /**
      * Callback für customvalidator: 'lang'.
      *
      * Theoretisch können Sprachen mehrfach belegt werden. Hier kontrollieren, dass es nicht passiert
+     * Die Parameter sind so belegt:
+     *  - Feldname ('lang')
+     *  - der aktuelle Werte für 'lang' (JSON-String)
+     *  - Rückgabewert als Vorbelegung (sollte leer sein), ignorieren
+     *  - Instanz der aktiven Validator-Klasse
+     *  - Array mit einem Element: Instanz des Feldes 'lang'
      *
-     * @param string            Feldname ('lang')
-     * @param string            der aktuelle Werte für 'lang' (JSON-String)
-     * @param string            Rückgabewert als Vorbelegung (sollte leer sein)
-     * @param rex_yform_validate_customfunction  Instanz der aktiven Validator-Klasse
-     * @param array             Array mit einem Element: Instanz des Feldes 'lang'
-     *
-     * @return bool             TRUE für "Fehler gefunden", sonst FALSE
+     * @param string $field
+     * @param string $value
+     * @param string $return
+     * @param rex_yform_validate_customfunction $self
+     * @param array<string,rex_yform_value_abstract> $elements
      */
     public static function verifyLang($field, $value, $return, $self, $elements): bool
     {
-        if (!empty($value)) {
+        if ('' !== trim($value)) {
             $value = json_decode($value, true);
-            return 0 == count($value) || count(array_unique(array_column($value, '0'))) != count($value);
+            return 0 === count($value) || count(array_unique(array_column($value, '0'))) !== count($value);
         }
         return true;
     }
@@ -286,20 +318,21 @@ class layer extends rex_yform_manager_dataset
      *
      * Baut den Link/Button für "cache löschen" in die Listenansicht ein.
      * nur für Admins und User mit Permission "geolocation[clearcache]"
+     * Rückgabe ist das erweiterte Array aus getSubject
      *
-     * @param rex_extension_point      EP-Parameter
-     *
-     * @return array|null               Array der Actions oder null (=keine Änderung)
+     * @param rex_extension_point<array<string,string>> $ep
+     * @return array<string,string>|void
      */
     public static function YFORM_DATA_LIST_ACTION_BUTTONS(rex_extension_point $ep)
     {
         // nur wenn diese Tabelle im Scope ist
         $table_name = $ep->getParam('table')->getTableName();
-        if (self::class != self::getModelClass($table_name)) {
+        if (self::class !== self::getModelClass($table_name)) {
             return;
         }
 
-        if (($user = rex::getUser()) && $user->hasPerm('geolocation[clearcache]')) {
+        $user = rex::getUser();
+        if (null !== $user && $user->hasPerm('geolocation[clearcache]')) {
             $link_vars = $ep->getParam('link_vars') + [
                 'layer_id' => '___id___',
                 'rex-api-call' => 'geolocation_clearcache',
@@ -312,33 +345,33 @@ class layer extends rex_yform_manager_dataset
         }
     }
 
-     /**
-      * Initiale Sortiertung die Datentabelle nach zwei Kriterien.
-      *
-      * sorgt initial für die Sortierung nach 'layertyp,name'
-      * sofern es keine individuelle Sortierung gibt: das wird hier hilfsweise geprüft über
-      * \rex_request('sort') als Indikator.
-      *
-      * @param rex_extension_point              EP-Parameter
-      *
-      * @return rex_yform_manager_query|null     geänderte Query oder null
-      */
-     public static function YFORM_DATA_LIST_QUERY(rex_extension_point $ep)
-     {
-         // nichts tun wenn es schon einen Sort gibt
-         if (rex_request('sort', 'string', null)) {
-             return;
-         }
+    /**
+     * Initiale Sortiertung die Datentabelle nach zwei Kriterien.
+     *
+     * sorgt initial für die Sortierung nach 'layertyp,name', sofern es keine
+     * individuelle Sortierung gibt: das wird hier hilfsweise geprüft über
+     * \rex_request('sort') als Indikator.
+     *
+     * @param rex_extension_point<rex_yform_manager_query<rex_yform_manager_dataset>> $ep
+     * @return void
+     */
+    public static function YFORM_DATA_LIST_QUERY(rex_extension_point $ep)
+    {
+        // nichts tun wenn es schon einen Sort gibt
+        if ('' === rex_request::request('sort', 'string', '')) {
+            return;
+        }
 
-         // nur wenn diese Tabelle im Scope ist
-         if (self::class != self::getModelClass($ep->getSubject()->getTableName())) {
-             return;
-         }
+        // nur wenn diese Tabelle im Scope ist
+        if (self::class !== self::getModelClass($ep->getSubject()->getTableName())) {
+            return;
+        }
 
-         $ep->getSubject()
-             ->orderBy('layertype')
-             ->orderBy('name');
-     }
+        $ep->getSubject()
+            ->resetOrderBy()
+            ->orderBy('layertype')
+            ->orderBy('name');
+    }
 
     // AJAX-Abrufe
 
@@ -349,18 +382,19 @@ class layer extends rex_yform_manager_dataset
      * nimmt alle Daten (außer LayerID, die hat schon boot.php geholt) aus dem Request.
      * Wenn die Datei existiert, wird sie aus dem Cache geschickt, sonst wird sie
      * erst vom Tile-Server geholt, im Cache gespeichert und dann an den Client gesendet
-     * Es gibt kinen Rückgabewert. Die Methode löst den Versand der Grafik aus oder
-     * stirbt mit einem HTTP-Fehlercode + Exit()
+     * Es gibt keinen Rückgabewert. Die Methode löst den Versand der Grafik aus oder
+     * stirbt mit einem HTTP-Returncode + Exit()
      *
-     * @param int       Layer-ID, zu dem die Kachel abgerufen wird
+     * @api
+     * @return never
      */
-    public static function sendTile(?int $layerId)
+    public static function sendTile(int $layerId): void
     {
         // Same Origin
         Tools::isAllowed();
 
         $layer = self::get($layerId);
-        if (!$layer || !$layer->isOnline()) {
+        if (null === $layer || !$layer->isOnline()) {
             Tools::sendNotFound();
         }
 
@@ -369,7 +403,7 @@ class layer extends rex_yform_manager_dataset
         // collect tile-URL-paramters and prepare replace
         $fileNameElements = [];
         $subdomain = $layer->subdomain;
-        if ($subdomain) {
+        if ('' !== $subdomain) {
             $subdomain = substr($subdomain, random_int(0, strlen($subdomain) - 1), 1);
             $fileNameElements['{s}'] = $subdomain;
         }
@@ -387,7 +421,7 @@ class layer extends rex_yform_manager_dataset
         }
 
         // prepare targetCacheDir-Name
-        $cacheDir = rex_path::addonCache(ADDON, $layer->id.'/');
+        $cacheDir = rex_path::addonCache(ADDON, $layer->getId().'/');
         $cacheFileName = null;
         $contentType = null;
         $ttl = $layer->ttl * 60;
@@ -410,22 +444,24 @@ class layer extends rex_yform_manager_dataset
         $url = str_replace(array_keys($fileNameElements), $fileNameElements, $layer->url);
 
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        if (is_bool($ch)) {
+            Tools::sendInternalError();
+        }
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $content = curl_exec($ch);
-        $header_data = curl_getinfo($ch);
-        $contentType = $header_data['content_type'];
-        $returnCode = $header_data['http_code'];
+        $content = (string) curl_exec($ch);
+        $returnCode = (string) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
         curl_close($ch);
 
         // no reply at all, abort completely
-        if (null === $returnCode) {
+        if ('0' === $returnCode) {
             Tools::sendInternalError();
         }
 
         // forward the error, simulation of a direct connection between client and tile-server
-        if (200 != $returnCode) {
+        if ('200' !== $returnCode) {
             rex_response::setStatus($returnCode);
             rex_response::sendContent($content, $contentType);
             exit;
@@ -435,12 +471,11 @@ class layer extends rex_yform_manager_dataset
         // prepare cache-filename according to the content_type
         // and write the content into the cache-file
         if (0 < $ttl) {
-            $fileNameElements['{suffix}'] = substr($contentType, strrpos($contentType, '/') + 1);
+            $fileNameElements['{suffix}'] = substr($contentType, ((int) strrpos($contentType, '/')) + 1);
             $cacheFile = str_replace(array_keys($fileNameElements), $fileNameElements, self::FILE_PATTERN);
             $cacheFileName = $cacheDir . $cacheFile;
             rex_file::put($cacheFileName, $content);
             $cache->sendCacheFile($cacheFileName, $contentType, $ttl);
-            exit;
         }
 
         // send the received tile to the client and exit
@@ -449,69 +484,72 @@ class layer extends rex_yform_manager_dataset
 
     // Support
 
-     /**
-      * Extrahiert aus dem lang-Feld die passende Sprachvariante der Kartentitels.
-      *
-      * Fallback auf $this->name
-      *
-      * @param string       Gewünschte Sprache (de, ...) oder null
-      *
-      * @return string      Kartentitel
-      */
-     public function getLabel(?string $locale)
-     {
-         if (!$locale) {
-             $locale = rex_clang::getCurrent()->getCode();
-         }
-         $lang = rex_var::toArray($this->lang);
-         $lang = array_column($lang, 1, 0);
-         if (isset($lang[$locale]) && $lang[$locale]) {
-             return $lang[$locale];
-         }
-         $locale = array_key_first($lang);
-         if (isset($lang[$locale]) && $lang[$locale]) {
-             return $lang[$locale];
-         }
-         return $this->name;
-     }
+    /**
+     * Extrahiert aus dem lang-Feld der Datenbank (be_table, JSON),
+     * die passende Sprachvariante der Kartentitels.
+     *
+     * Zur via Parameter geünschten Variante (de, ... oder null = default) wird
+     * aus dem DB-Feld "lang" der passende Kartentitel geholt bzw. $this->name als Fallback
+     *
+     * @api
+     */
+    public function getLabel(?string $clang): string
+    {
+        if (null === $clang || '' === trim($clang)) {
+            $clang = rex_clang::getCurrent()->getCode();
+        }
+        $lang = rex_var::toArray($this->lang) ?? [];
+        $lang = array_column($lang, 1, 0);
+        if (isset($lang[$clang]) && $lang[$clang]) {
+            return $lang[$clang];
+        }
+        $clang = array_key_first($lang);
+        if (isset($lang[$clang]) && $lang[$clang]) {
+            return $lang[$clang];
+        }
+        return $this->name;
+    }
 
     /**
      * Stellt die Daten zur Konfiguration des Leaflet-Layers bereit.
+     * Hauptsächlich zur Weitergabe an JS.
      *
-     * Berücksichtigt für den Titel die Sprachauswahl
+     * Berücksichtigt für den Titel die Sprachauswahl via Parameter
+     * (de, ... oder null = deault)
      *
-     * @param string      Gewünschte Sprache (de, ...) oder null
-     *
-     * @return array      Array mit den Kartendaten
+     * @api
+     * @return array{layer:int,label:string,type:string,attribution:string}
      */
-    public function getLayerConfig(?string $locale)
+    public function getLayerConfig(?string $clang): array
     {
         return [
-            'layer' => $this->id,
-            'label' => $this->getLabel($locale),
+            'layer' => $this->getId(),
+            'label' => $this->getLabel($clang),
             'type' => $this->layertype,
             'attribution' => $this->attribution,
         ];
     }
 
     /**
-     * Baut für mehrere Layer-Id die "getLayerConfig" zusammen.
+     * Baut für mehrere Layer-Id die "getLayerConfig" zu einem array zusammen.
+     * In $layerIds werden die IDs der Layer übergeben. Im Ergebnis sind nur Daten
+     * existierender Layer enthalten, die auch online sind.
      *
-     * stellt die Reihenfolge sicher; das wäre bei query->getRelatedCollection nicht der Fall
+     * Stellt Rückgabe in der Reihenfolge der Is sicher; das wäre mit
+     * query->getRelatedCollection nicht der Fall
      *
-     * @param array       Array mit den Layer-IDs
-     * @param string      Gewünschte Sprache (de, ...) oder null
-     *
-     * @return array      Array mit den Kartendaten (Sub-Array)
+     * @api
+     * @param list<int>   $layerIds
+     * STAN: das muss doch einfacher gehen als immer diesen Text (siehe getLayerConfig) abzuschreiben
+     * @return list<array{layer:int,label:string,type:string,attribution:string}>
      */
-    public static function getLayerConfigSet(array $layerIds, ?string $locale)
+    public static function getLayerConfigSet(array $layerIds, ?string $clang)
     {
         $set = [];
-        foreach ($layerIds as $layer) {
-            if ($layer && $layer = self::get($layer)) {
-                if ($layer->isOnline()) {
-                    $set[] = $layer->getLayerConfig($locale);
-                }
+        foreach ($layerIds as $layerId) {
+            $layer = self::get($layerId);
+            if (null !== $layer && $layer->isOnline()) {
+                $set[] = $layer->getLayerConfig($clang);
             }
         }
         return $set;
@@ -520,9 +558,9 @@ class layer extends rex_yform_manager_dataset
     /**
      * liefert true wenn der Layer online ist ($layer->online == 1 ).
      *
-     * @return bool       true: online
+     * @api
      */
-    public function isOnline()
+    public function isOnline(): bool
     {
         return 1 === (int) $this->online;
     }
