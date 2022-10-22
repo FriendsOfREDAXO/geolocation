@@ -559,6 +559,31 @@ class layer extends rex_yform_manager_dataset
      */
     public function isOnline(): bool
     {
+        // FIXME:: Warum ist online nicht int? YForm und DB haben hier ein int-Feld!
         return 1 === $this->online;
     }
+
+    /**
+     * Aus welchem Grunde auch immer werden teilweise Werte, die in der DB integer sind,
+     * tatsächlich im internen Array $data als String vorgehalten und demnach auch von
+     * parent::getValue als String ausgeliefert.
+     * 
+     * Ist leider keine Kleinigkeit bei striker Typ-Prüfung (z.B. 1 === getValue('online')
+     * 
+     * Hier werden die Werte vor der Nutzung in int umgewandelt
+     * 
+     * TODO: Testcase bauen und Issue aufmachen 
+     *
+     * @return mixed
+     */
+    public function getValue(string $key)
+    {
+        $value = parent::getValue($key);
+        if( is_string($value) && ('ttl' === $key || 'cfmax' === $key || 'online' === $key) ) {
+            $value = (int) $value;
+        }
+        return $value;
+    }
+
+
 }
