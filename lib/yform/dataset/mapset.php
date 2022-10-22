@@ -1,4 +1,42 @@
 <?php
+/**
+ * Geolocation|mapset ist eine erweiterte yform-dataset-Klasse für Kartensätze
+ * aus einem oder mehreren Kartenlayern.
+ *
+ * - dataset-spezifisch
+ *
+ *     get         Modifiziert um anschließend Initialisierungen durchzuführen
+ *     getForm:    baut einige Felder im Formular auf aktuelle Daten um
+ *     delete:     Löschen nur wenn nicht in Benutzung z.B. in Slices/Modulen etc.
+ *                 Abfrage durch EP GEOLOCATION_MAPSET_DELETE, der entsprechend belegt werden muss
+ *
+ * - Formularbezogen
+ *
+ *     executeForm           stellt Cache-Löschen bei Änderungen sicher
+ *
+ * - Listenbezogen
+ *
+ *     YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" für die Datentabelle
+ *                                     Action-Button "delete" entfernen beim Default-Mapset
+ *
+ * - AJAX-Abrufe
+ *
+ *     sendMapset            Kartensatz-Abruf vom Client beantworten
+ *
+ * - Support
+ *
+ *     getValue              Eigene virtuelle Datensatzfelder abrufen
+ *     getDefaultId          Default-Mapset-ID abrufen
+ *     getLayerset           Array z.B. für <rex-map mapset=...> bereitstellen (Kartensatzparameter)
+ *     getMapOptions         Array z.B. für <rex-map map=...> bereitstellen (Kartenoptionen)
+ *     getOutFragment        das für Kartendarstellung vorgesehene Fragment (outfragment) mit Fallback
+ *                           falls outfragment leer ist
+ *     getDefaultOutFragment   Default-Ausgabefragment aus Config und Fallback
+ *     take                  Alternative zu get, aber mit Fallback auf die Default-Karte
+ *     attributes            sammelt die sonstigen HTML-Attribute ein
+ *     dataset               sammelt die Karteninhalte ein (siehe Geolocation.js -> Tools)
+ *     parse                 erzeugt Karten-HTML gem. vorgegebenem Fragment
+*/
 
 namespace Geolocation;
 
@@ -11,100 +49,58 @@ use rex_extension_point;
 use rex_fragment;
 use rex_i18n;
 use rex_path;
+use rex_request;
 use rex_response;
 use rex_url;
 use rex_yform;
 use rex_yform_manager_dataset;
 
+use function count;
 use function is_array;
 use function is_string;
 
 /**
- * Geolocation|layer ist eine erweiterte yform-dataset-Klasse für Kartensätze.
+ * Mittels parent::__get bereitgestellte Daten.
  *
- * @package geolocation
+ * aus der Datentabelle rex_geolocation_mapset
+ * @property string $layer
+ * @property string $overlay
+ * @property string $outfragment
+ *
+ * virtuelle Felder in mapset
+ * @property array $layerset
  */
-
-/*
-
-    - dataset-spezifisch
-
-        get             Modifiziert um anschließend Initialisierungen durchzuführen
-        getForm         baut einige Felder im Formular aus aktuelle Daten um
-        delete          Löschen nur wenn nicht in Benutzung z.B. in Slices/Modulen etc.
-                        Abfrage durch EP GEOLOCATION_MAPSET_DELETE, der entsprechend belegt werden
-                        muss
-
-    - Formularbezogen
-
-        executeForm     stellt aktuelle Konfig-Daten als Vorbelegung in ein Add-Formular
-
-    - Listenbezogen
-
-        YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" in die Datentabelle
-                                        Action-Button "delete" entfernen beim Default-Mapset
-
-    - AJAX-Abrufe
-
-        sendMapset      Kartensatz-Abruf vom Client beantworten
-
-    - Support
-
-        getValue        Eigene virtuelle Datensatzfelder abrufen
-        getDefaultId    Default-Mapset-ID abrufen
-        getLayerset     Array z.B. für <rex-map mapset=...> bereitstellen (Kartensatzparameter)
-        getMapOptions   Array z.B. für <rex-map map=...> bereitstellen (Kartenoptionen)
-        getOutFragment  das für Kartendarstellung vorgesehene Fragment (outfragment) mit Fallback
-                        falls outfragment leer ist
-        getDefaultOutFragment   Default-Ausgabefragment aus Config und Fallback
-        take            Alternative zu get, aber mit Fallback auf die Default-Karte
-        attributes      sammelt die sonstigen HTML-Attribute ein
-        dataset         sammelt die Karteninhalte ein (siehe Geolocation.js -> Tools)
-        parse           erzeugt Karten-HTML gem. vorgegebenem Fragment
-
-*/
 
 class mapset extends rex_yform_manager_dataset
 {
-    public static $mapoptions = [
+    /**
+     * @var array<string,string>
+     */
+    public static array $mapoptions = [
         'fullscreen' => 'translate:geolocation_form_mapoptions_fullscreen',
         'gestureHandling' => 'translate:geolocation_form_mapoptions_zoomlock',
         'locateControl' => 'translate:geolocation_form_mapoptions_location',
     ];
 
-    protected $mapDataset = [];
-    protected $mapAttributes = [];
+    /**
+     * @var array<string,mixed>
+     */
+    protected array $mapDataset = [];
+
+    /**
+     * @var array<string,mixed>
+     */
+    protected array $mapAttributes = [];
 
     // dataset-spezifisch
 
     /**
-     * Modifiziertes GET um sofort Initialisierungen durchzuführen.
-     *
-     * @param int           ID des gesuchten Mapset
-     * @param string|null   Wird ignoriert. Siehe Anmerkung im Code
-     *
-     * @return self|null    also Instanz von Geolocation\mapset oder NULL falls ID unbekannt
-     */
-    public static function get(int $id, ?string $table = null): ?rex_yform_manager_dataset // ?self erst ab PHP 7.4
-    {
-        // Es wird immer "diese" Tabelle benutzt, daher $table ignorieren und null nehmen
-        $dataset = parent::get($id, null);
-        if ($dataset) {
-            $dataset->mapDataset = [];
-            $dataset->mapAttributes = [];
-        }
-        return $dataset;
-    }
-
-    /**
-     * baut einige Felder im Formular aus aktuelle Daten um.
+     * baut einige Felder im Formular auf aktuelle Daten um.
      *
      * liefert das Formular und stellt bei ...
      *    - mapoptions die aktuell zulässigen Optionen bereit
      *    - outfragment einen angepassten Hinweistext
      *    - passt die Ausgabe der Fehlermeldungen an (beim Feld statt über dem Formular)
-     *
-     * @return rex_yform   Das Formular-Gerüst
      */
     public function getForm(): rex_yform
     {
@@ -112,17 +108,17 @@ class mapset extends rex_yform_manager_dataset
         $yform->objparams['form_class'] .= ' geolocation-yform';
 
         foreach ($yform->objparams['form_elements'] as $k => &$fe) {
-            if ('validate' == $fe[0]) {
+            if ('validate' === $fe[0]) {
                 continue;
             }
-            if ('action' == $fe[0]) {
+            if ('action' === $fe[0]) {
                 continue;
             }
-            if ('mapoptions' == $fe[1]) {
+            if ('mapoptions' === $fe[1]) {
                 $fe[3] = array_merge(['default' => rex_i18n::rawMsg('geolocation_mapset_mapoptions_default')], self::$mapoptions);
                 continue;
             }
-            if ('outfragment' == $fe[1]) {
+            if ('outfragment' === $fe[1]) {
                 if (str_starts_with($fe[6], 'translate:')) {
                     $fe[6] = substr($fe[6], 10);
                 }
@@ -145,20 +141,18 @@ class mapset extends rex_yform_manager_dataset
      * werden muss. Das gibt die Möglichkeit um z.B. zu prüfen, ob der Mapset in REX_VALUEs vorkommt.
      * Cache ebenfalls löschen
      *
-     * Der Mapset darf auch nicht gelöscht werden, wenn er der Default-Mapset ist
-     *
-     * @return bool   TRUE für "Löschen erfolgreich"
+     * Der Mapset darf auch dann nicht gelöscht werden, wenn er der Default-Mapset ist
      */
     public function delete(): bool
     {
-        if ($this->id === self::getDefaultId()) {
+        if ($this->getId() === self::getDefaultId()) {
             return false;
         }
 
         $delete = rex_extension::registerPoint(new rex_extension_point(
             'GEOLOCATION_MAPSET_DELETE',
             true,
-            ['id' => $this->id, 'mapset' => $this]
+            ['id' => $this->getId(), 'mapset' => $this]
         ));
 
         return $delete && parent::delete();
@@ -169,13 +163,8 @@ class mapset extends rex_yform_manager_dataset
     /**
      * Erweiterte Funktionalität bei der Ausführung des Formulars.
      *
-     *    - stellt aktuelle Konfig-Daten als Vorbelegung in ein Add-Formular
-     *    - Für choice.check wird ein modifiziertes Fragment (nur hier) aktiviert.
-     *
-     * @param rex_yform        Das aktuelle YForm-Formular-Objekt
-     * @param callable          Callback (Details müssten in der YForm-Doku zu finden sein)
-     *
-     * @return string           Formular-HTML
+     * - stellt aktuelle Konfig-Daten als Vorbelegung in ein Add-Formular
+     * - Für choice.check wird ein modifiziertes Fragment (nur hier) aktiviert.
      */
     public function executeForm(rex_yform $yform, callable $afterFieldsExecuted = null): string
     {
@@ -191,7 +180,8 @@ class mapset extends rex_yform_manager_dataset
             // noch mal vor dem Speichern ausgeführt und dadurch werden die Eingaben wieder mit
             // den Vorgaben überschrieben. Autsch!
             // Lösung: Wenn im REQUEST Daten zum Formular liegen => Abbruch, nix tun.
-            if (isset($_REQUEST['FORM'][$objparams['form_name']])) {
+            $form = rex_request::request('FORM', 'array', []);
+            if (isset($form[$objparams['form_name']])) {
                 return;
             }
 
@@ -213,22 +203,22 @@ class mapset extends rex_yform_manager_dataset
      *
      * Baut den Link/Button für "cache löschen" in die Listenansicht ein.
      * nur für Admins und User mit Permission "geolocation[clearcache]"
+     * Rückgabe ist das erweiterte Array aus getSubject
      *
-     * @param rex_extension_point      EP-Parameter
-     *
-     * @return array|null               Array der Actions oder null (=keine Änderung)
+     * @param rex_extension_point<array<string,string>> $ep
+     * @return array<string,string>|void
      */
     public static function YFORM_DATA_LIST_ACTION_BUTTONS(rex_extension_point $ep)
     {
         // nur wenn diese Tabelle im Scope ist
         $table_name = $ep->getParam('table')->getTableName();
-        if (self::class != self::getModelClass($table_name)) {
+        if (self::class !== self::getModelClass($table_name)) {
             return;
         }
 
         // Button-Code abspeichern für YFORM_DATA_LIST
         $action_delete = $ep->getSubject()['delete'] ?? null;
-        if ($action_delete) {
+        if (null !== $action_delete) {
             rex_extension::register(
                 'YFORM_DATA_LIST',
                 static function (rex_extension_point $ep) {
@@ -255,7 +245,8 @@ class mapset extends rex_yform_manager_dataset
                 ['action_delete' => $action_delete, 'table_name' => $table_name]);
         }
 
-        if (($user = rex::getUser()) && $user->hasPerm('geolocation[clearcache]')) {
+        $user = rex::getUser();
+        if (null !== $user && $user->hasPerm('geolocation[clearcache]')) {
             $link_vars = $ep->getParam('link_vars') + [
                 'mapset_id' => '___id___',
                 'rex-api-call' => 'geolocation_clearcache',
@@ -274,24 +265,27 @@ class mapset extends rex_yform_manager_dataset
      * Layerset-Abruf vom Client.
      *
      * schickt die Konfigurationsdaten für Kartenlayer als JSON-String.
-     * Wenn die Kartensatz-ID nicht existiert, stirbt die Methode mit einem HTTP-Fehlercode + Exit()
+     * Wenn die Kartensatz-ID $mapset nicht existiert, stirbt die Methode mit einem HTTP-Fehlercode + Exit()
      *
-     * @param int|null       Kartensatz-ID, zu der die Karten/Layer-Definition abgerufen wird
+     * @api
+     * @return never
      */
-    public static function sendMapset(?int $mapset = null)
+    public static function sendMapset(int $mapset): void
     {
         // Same Origin
         Tools::isAllowed();
 
         // Abbruch bei unbekanntem Mapset
         $mapset = self::get($mapset);
-        if (!$mapset) {
+        if (null === $mapset) {
             Tools::sendNotFound();
         }
 
         // get layers ond overlays in scope and send as JSON
         rex_response::cleanOutputBuffers();
         rex_response::sendJson($mapset->getLayerset());
+
+        exit;
     }
 
     // Support
@@ -300,14 +294,14 @@ class mapset extends rex_yform_manager_dataset
      * liefert in der virtuellen Variablen 'layerset' die Nummern aller Layer (basis und overlay)
      * ansonsten normales getValue.
      *
-     * @param string    Name der Variablen
+     * @api
      * @return mixed
      */
     public function getValue(string $key)
     {
         if ('layerset' === $key) {
             $layer = explode(',', $this->layer.','.$this->overlay);
-            $layer = array_filter($layer, 'strlen');
+            $layer = array_filter($layer, 'trim');
             return array_unique($layer);
         }
         return parent::getValue($key);
@@ -316,9 +310,9 @@ class mapset extends rex_yform_manager_dataset
     /**
      * liefert die ID des Default-Mapset wie in den Einstellungen festgelegt.
      *
-     * @return int
+     * @api
      */
-    public static function getDefaultId()
+    public static function getDefaultId(): int
     {
         return (int) rex_config::get(ADDON, 'default_map');
     }
@@ -329,13 +323,17 @@ class mapset extends rex_yform_manager_dataset
      * Liefert aufbauend auf dem aktuellen Datensatz ein Array mit erweiterten Kartenkonfigurations-
      * daten z.B. für <rex-map mapset=...>
      *
-     * @return array      Array mit Karteninformationen zu den Karten in diesem Mapset
+     * @api
+     * NOTE: das muss doch einfache gehen als immer diese Definition (siehe layer::getLayerConfigSet) abzuschreiben
+     * @return list<array{layer:int, label:string, type:string, attribution:string}>
      */
+    // TODO: Warum hab ich hier keine Sprachauswahl optional vorgesehen?
+    // Später angehen, keine Eile.
     public function getLayerset(): array
     {
         // get layers ond overlays in scope
-        $locale = rex_clang::getCurrent()->getCode();
-        return layer::getLayerConfigSet($this->layerset, $locale);
+        $clang = rex_clang::getCurrent()->getCode();
+        return layer::getLayerConfigSet($this->layerset, $clang);
     }
 
     /**
@@ -347,17 +345,18 @@ class mapset extends rex_yform_manager_dataset
      * Sonderfall "default": dann wird nur die Option "default=true" zurückgemeldet. I.V.m. $full
      * umfasst die Rückgabe alle im "default" aktivierten enthaltenen Einzeloptionen
      *
-     * @param bool        wenn TRUE die komlette liste, sonst nur die aktivierten Kartenoptionen
-     *
-     * @return array      Array mit Kartensatzoptionen
+     * @api
+     * @return list<string>|array<string,bool>      Array mit Kartensatzoptionen
      */
+    // TODO: ist das sinnvoll, zwei Varianten der Ergebnisliste zuerzeugen, was wird wo benötigt?
+    // Erstmal so lassen; zu einem späteren Zeitpunkt prüfen und ggf. überarbeiten
     public function getMapOptions(bool $full = true): array
     {
         $value = [];
 
         // MapOptions im Datensatz;
         $options = explode(',', $this->getValue('mapoptions'));
-        $defaultRequired = false !== array_search('default', $options);
+        $defaultRequired = false !== array_search('default', $options, true);
 
         // für:
         // - Sonderfall Abgleich mit allgemeiner Config; nur wenn Unterschiede
@@ -370,13 +369,13 @@ class mapset extends rex_yform_manager_dataset
             }
             sort($options);
             sort($config);
-            $full = $config != $options;
+            $full = $config !== $options;
         }
 
         // Unterschiede? Wenn nein Ende
         if ($full) {
             foreach (self::$mapoptions as $k => $v) {
-                $value[$k] = false !== array_search($k, $options);
+                $value[$k] = false !== array_search($k, $options, true);
             }
         }
 
@@ -390,11 +389,12 @@ class mapset extends rex_yform_manager_dataset
      *
      * Achtung: REX-Fragment (addon/fragments/xyz) nicht yfragment!
      *
+     * @api
      * @return string      Name der Fragment-Datei (xyz.php)
      */
     public function getOutFragment(): string
     {
-        return $this->getValue('outfragment') ?: self::getDefaultOutFragment();
+        return ('' === $this->outfragment) ? self::getDefaultOutFragment() : $this->outfragment;
     }
 
     /**
@@ -415,19 +415,19 @@ class mapset extends rex_yform_manager_dataset
     /**
      * Alternative zu get(), aber mit Fallback auf die Default-Karte.
      *
-     * Man kann auch Geolocation\mapset::get($id) nehmen ... hier wird im Fehlerfall oder wenn
+     * Man kann auch Geolocation\mapset::get($id) nehmen ... aber hier wird im Fehlerfall oder wenn
      * $id aus irgend einem Grunde nicht gefunden wird, ein Fallback auf den Default-Kartensatz
      * erfolgen.
      *
-     * @param int|null     Nummer des Kartensatzes
+     * Rückgabe ist also immer ein gültiger Kartensatz sofern überhaupt ein Kartensatz existert.
      *
-     * @return self        Die gefundene Kartensatz-Instanz
+     * @api
      */
     public static function take(?int $id = null): self
     {
         try {
-            if (!$id) {
-                throw new InvalidMapsetParameter(InvalidMapsetParameter::MAPSET_ID, [$id]);
+            if (null === $id) {
+                throw new InvalidMapsetParameter(InvalidMapsetParameter::MAPSET_ID, ['«leer»']);
             }
             $map = self::get($id);
             if (null === $map) {
@@ -448,17 +448,15 @@ class mapset extends rex_yform_manager_dataset
      * Entweder wird als $name ein Array ['attribut_a'=>'inhalt',..] angegeben oder der Attribut-Name.
      * Im zweiten Fall muss $data den Attributwert als String enthalten oder leer sein (entspricht '')
      *
-     * @param string|array  Name des Attributes oder ein Array mit Wertepaaren name=>wert
-     * @param string|null   inhalt/Wert des Attributes; ignoriert wenn $name ein Array ist
-     *
-     * @return self         diese Kartensatz-Instanz
+     * @api
+     * @param string|array<string,string|int|float|bool> $name
      */
-    public function attributes($name = null, ?string $data = null): self
+    public function attributes(string|array $name, string|int|float|bool $data = ''): self
     {
         if (is_array($name)) {
             $this->mapAttributes = array_merge($this->mapAttributes, $name);
-        } elseif (is_string($name) && $name) {
-            $this->mapAttributes[$name] = $data ?: '';
+        } else {
+            $this->mapAttributes[$name] = $data;
         }
         return $this;
     }
@@ -471,19 +469,18 @@ class mapset extends rex_yform_manager_dataset
      * Siehe Doku zum Thema "Tools"
      *
      * Entweder wird als $name ein Array ['tool_a'=>'inhalt',..] angegeben oder der Tool-Name.
-     * Im zweiten Fall muss $data die Tool-Daten leer sein (entspricht '')
+     * Im zweiten Fall muss $data (die Tool-Daten) leer sein (entspricht '')
      *
-     * @param string|array  Name des Tools oder ein Array mit Wertepaaren name=>daten
-     * @param mixed         Daten für das Tool. Ignoriert wenn $name ein Array ist
-     *
-     * @return self         diese Kartensatz-Instanz
+     * @api
+     * @param string|array<string,mixed> $name
+     * @param mixed $data
      */
-    public function dataset($name = null, $data = null): self
+    public function dataset(string|array $name, mixed $data = null): self
     {
         if (is_array($name)) {
             $this->mapDataset = array_merge($this->mapDataset, $name);
-        } elseif (is_string($name) && $name) {
-            $this->mapDataset[$name] = $data ?: null;
+        } else {
+            $this->mapDataset[$name] = $data;
         }
         return $this;
     }
@@ -495,11 +492,11 @@ class mapset extends rex_yform_manager_dataset
      * Kartenoptionen (map) und die Karteninhalte(dataset) durch das Fragment geschickt werden.
      * Siehe Doku zum Thema "Für Entwickler"
      *
-     * @param string|null   Name des Fragmentes oder leer(null) für Kartensatz-Fragment
+     * Wurde kein Fragment angegeben, wird das Default-Fragment des Kartensatzes herangezogen
      *
-     * @return string       HTMl für die Kartenausgabe
+     * @api
      */
-    public function parse(?string $file = null): string
+    public function parse(?string $fragmentFile = null): string
     {
         $fragment = new rex_fragment();
         $fragment->setVar('mapset', $this->getLayerset(), false);
@@ -508,11 +505,14 @@ class mapset extends rex_yform_manager_dataset
             $fragment->setVar('class', $this->mapAttributes['class'], false);
             unset($this->mapAttributes['class']);
         }
-        if ($this->mapAttributes) {
-            $fragment->setVar('attributes', $this->mapAttributes ?: [], false);
+        if (0 < count($this->mapAttributes)) {
+            $fragment->setVar('attributes', $this->mapAttributes, false);
         }
         $fragment->setVar('map', $this->getMapOptions(false), false);
 
-        return $fragment->parse($file ?: $this->getOutFragment());
+        if (null === $fragmentFile || '' === $fragmentFile) {
+            $fragmentFile = $this->getOutFragment();
+        }
+        return $fragment->parse($fragmentFile);
     }
 }
