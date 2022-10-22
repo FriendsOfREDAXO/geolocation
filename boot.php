@@ -58,8 +58,6 @@ if (null !== $tileLayer) {
 $mapset = rex_request(KEY_MAPSET, 'integer', null);
 if (null !== $mapset) {
     mapset::sendMapset($mapset);
-    // TODO: Kommt raus wenn mapset aktualisiert wird
-    exit;
 }
 
 // Start of Cronjob
