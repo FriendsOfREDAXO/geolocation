@@ -4,6 +4,7 @@
  *
  * Install:    Installiert die Tabellen und YForm-Formulare
  * Re-Install: Repariert die Einstellungen
+ * Update:     Aktualisiert und Repariert die Einstellungen
  *
  * Zusätzlich zu den von REDAXO selbst durchgeführten Aktivitäten:
  *
@@ -83,7 +84,7 @@ try {
         ->ensureColumn(new rex_sql_column('layertype', 'text'))
         ->ensureColumn(new rex_sql_column('ttl', 'int(11)', true))
         ->ensureColumn(new rex_sql_column('cfmax', 'int(11)', true))
-        ->ensureColumn(new rex_sql_column('online', 'text'))
+        ->ensureColumn(new rex_sql_column('online', 'int'))
         ->ensure();
     $msg[] = $this->i18n('install_table_prepared', $layer);
 
@@ -121,12 +122,8 @@ try {
 
             /**
              * Falls in der REX-Instanz ein anderes TablePrefix als "rex_" eingestellt ist: anpassen.
-             *
-             * STAN: If condition is always true.
-             * In der Praxis wird das wohl so sein, aber formal ist der Fehler falsch.
-             * @phpstan-ignore-next-line
              */
-            if ('rex_' != rex::getTablePrefix()) {
+            if ('rex_' !== rex::getTablePrefix()) {
                 $dataset = str_replace(
                     ['`rex_geolocation_layer`', '`rex_geolocation_mapset`'],
                     ['`'.$layer.'`', '`'.$mapset.'`'],
@@ -156,12 +153,8 @@ try {
     }
     /**
      * Falls in der REX-Instanz ein anderes TablePrefix als "rex_" eingestellt ist: anpassen.
-     *
-     * STAN: If condition is always true.
-     * In der Praxis wird das wohl so sein, aber formal ist der Fehler falsch.
-     * @phpstan-ignore-next-line
      */
-    if ('rex_' != rex::getTablePrefix()) {
+    if ('rex_' !== rex::getTablePrefix()) {
         $tableset = str_replace(
             ['"rex_geolocation_layer"', '"rex_geolocation_mapset"'],
             ['"'.$layer.'"', '"'.$mapset.'"'],

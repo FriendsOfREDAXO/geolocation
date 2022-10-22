@@ -73,10 +73,7 @@ use function strlen;
  * @property string $lang
  * @property int $ttl
  * @property int $cfmax
- * // FIXME: In der DB ist $online ein Text-Feld; sollte es nicht besser int,bool oder mindestens varchar sein?
- * Hier anpassen, in der install/dataset.sql, install/tableset.json, install.php
- * Ausdrücklicher Hinweis im Changelog auf den geänderten Datentyp!
- * @property string $online
+ * @property int $online
  */
 
 class layer extends rex_yform_manager_dataset
@@ -562,6 +559,6 @@ class layer extends rex_yform_manager_dataset
      */
     public function isOnline(): bool
     {
-        return 1 === (int) $this->online;
+        return 1 === $this->online;
     }
 }
