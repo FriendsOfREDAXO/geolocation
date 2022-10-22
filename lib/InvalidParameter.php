@@ -44,6 +44,10 @@ class InvalidParameter extends \Geolocation\Exception
     public const BOXRESIZELAT = 16;
     /** @api */
     public const BOXRESIZELNG = 17;
+    /** @api */
+    public const DMS_DIGITS = 18;
+    /** @api */
+    public const DMS_DECIMALPOINT = 19;
 
     /**
      * @var list<string>
@@ -66,6 +70,8 @@ class InvalidParameter extends \Geolocation\Exception
         self::BOXRESIZE => 'Invalid resize hook-point "%s"',
         self::BOXRESIZELAT => 'Resize factor (latitude or lat/lng) expected larger than zero (given "%s")',
         self::BOXRESIZELNG => 'Resize factor (llongitude) expected larger than zero (given "%s")',
+        self::DMS_DIGITS => 'Invalid number of decimal places (negative value "%s" given")',
+        self::DMS_DECIMALPOINT => 'Replacement for decimal-point expected to be at least 1 charcter long; empty string or spaces.',
     ];
 
     /**
