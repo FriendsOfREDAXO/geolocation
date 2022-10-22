@@ -1,94 +1,81 @@
-<?php namespace \Geolocation\Calc;
+<?php
 /**
- *	baut auf phpGeo auf
- *  @see https://github.com/mjaschen/phpgeo
- *  @see https://github.com/mjaschen/phpgeo/tree/master/docs
+ * Die Klasse implementiert einen modifizierten DMS-Formatter.
+ * - Dezimalpunkt änderbar
+ * - Die Sekunden-Nachkommastellen in beliebiger Genauingkeit ausgeben.
  *
- *	Die Klasse implementiert einen modifizierten DMS-Formatter. Die Sekunden-Nachkommastellen
- *	werden nun auch ausgegeben.
- *
- * @package geolocation
+ * baut auf phpGeo auf.
+ * @see https://github.com/mjaschen/phpgeo
+ * @see https://github.com/mjaschen/phpgeo/tree/master/docs
  */
 
-#declare(strict_types=1); // weil es auch im Original so ist
+namespace Geolocation\Calc;
 
+use Geolocation\InvalidParameter;
 use Location\Coordinate;
-use \Geolocation\Calc\Math\Math;
+use Location\Formatter\Coordinate\DMS;
 
 /**
- * Coordinate Formatter "DMS"
+ * Coordinate Formatter "DMS".
  *
  * @author Marcus Jaschen <mjaschen@gmail.com>
  */
 class DMS2 extends DMS
 {
-    /**
-     * @var int
-     */
-    protected $digits = 3;
+    protected int $defDigits = 3;
+    protected int $digits = 3;
+
+    protected string $defDecimalPoint = '.';
+    protected string $decimalPoint = '.';
 
     /**
-     * @var string
-     */
-    protected $decimalPoint = '.';
-
-    /**
-     * @throws InvalidArgumentException     stammt aus dem Originalcode. Ist das wirklich so?
-     */
-    public function __construct(
-        string $separator = ' ',
-        bool $useCardinalLetters = true,
-        string $unitType = self::UNITS_UTF8
-    ) {
-        $this->separator = $separator;
-        $this->useCardinalLetters = $useCardinalLetters;
-        $this->unitType = $unitType;
-    }
-
-    /**
-     *   Setzt die Anzahl Dezimalstellen der Sekunden auf den angegebenen Wert
+     * Setzt die Anzahl Dezimalstellen der Sekunden auf den angegebenen Wert.
+     * "null" setzt zurück auf den Default-Wert 3.
      *
-     *   @throws InvalidArgumentException     wenn negative Anzahl Nachkommastellen angegeben wurden
-     *
-     *   @param int
-     *   @return Location\Formatter\Coordinate\DMS2
+     * @api
+     * @throws InvalidParameter     wenn negative Anzahl Nachkommastellen angegeben wurden
      */
-    public function setDigits( ?int $digits = null ): self
+    public function setDigits(?int $digits = null): self
     {
-        if( null !== $digits && 0 > $digits ) {
-            throw new InvalidArgumentException('Invalid number of decimal places (negative value "'.$digits.' given")', 1);
+        $digits = $digits ?? $this->defDigits;
+        if (0 > $digits) {
+            throw new InvalidParameter(InvalidParameter::DMS_DIGITS, [$digits]);
         }
-        $this->digits = null === $digits ? $digits : max(0,$digits);
+        $this->digits = $digits;
         return $this;
     }
 
     /**
-     *   Setzt den Dezimalpunkt. Im Normalfall solte es beim Punkt bleiben.
+     * Setzt den Dezimalpunkt. Im Normalfall sollte es beim Punkt bleiben.
+     * "null" setzt zurück auf den Default-Wert ".".
      *
-     *   @throws InvalidArgumentException     wenn ein leerer String angegeben wurde
-     *
-     *   @param string $decimalPoint
-     *   @return Location\Formatter\Coordinate\DMS2
+     * @api
+     * @throws InvalidParameter     wenn ein leerer String angegeben wurde
      */
-    public function setDecimalPoint(string $decimalPoint): self
+    public function setDecimalPoint(?string $decimalPoint = null): self
     {
-        if( 0 === strlen($decimalPoint) ) {
-            throw new InvalidArgumentException('Replacement for decimal-point expected to be at least 1 charcter long; empty string given.', 1);
+        $decimalPoint = $decimalPoint ?? $this->defDecimalPoint;
+        $decimalPoint = trim($decimalPoint);
+
+        if ('' === $decimalPoint) {
+            throw new InvalidParameter(InvalidParameter::DMS_DECIMALPOINT);
         }
+        $this->decimalPoint = $decimalPoint;
         return $this;
     }
 
     /**
-     * @param Coordinate $coordinate
+     * Formatiert die Koordinate.
      *
-     * @return string
+     * @api
+     * @throws InvalidParameter     wenn ein leerer String angegeben wurde
      */
     public function format(Coordinate $coordinate): string
     {
-        $dmsLat = Math::dd2dms( $coordinate->getLat(), $this->digits );
-        $dmsLng = Math::dd2dms( $coordinate->getLng(), $this->digits );
+        $dmsLat = Math::dd2dms($coordinate->getLat(), $this->digits);
+        $dmsLng = Math::dd2dms($coordinate->getLng(), $this->digits);
 
-        if( $this->digits ) {
+        if (0 < $this->digits) {
             $pattern = '%s%02d%s %02d%s %02.'.$this->digits.'f%s%s%s%s%03d%s %02d%s %02.'.$this->digits.'f%s%s';
         } else {
             $pattern = '%s%02d%s %02d%s %02d%s%s%s%s%03d%s %02d%s %02d%s%s';
@@ -115,5 +102,4 @@ class DMS2 extends DMS
             $this->getLngSuffix($dmsLng['degree'])
         );
     }
-
 }
