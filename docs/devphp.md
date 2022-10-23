@@ -21,7 +21,7 @@ die Klassen und globalen Konstanten. Hier die wichtigsten:
 
 | Objekt | Anmerkung |
 | --- | --- |
-| \Geolocation\layer.php | YOrm-Dataset-Klasse für die einzelnen Karten-URLs |
+| \Geolocation\Layer.php | YOrm-Dataset-Klasse für die einzelnen Karten-URLs |
 | \Geolocation\mapset.php | YOrm-Dataset-Klasse für die Kartensätze aus mehreren Karten-URLs |
 | \Geolocation\Cache.php | Klasse mit Methoden zur Verwaltung des Karten-Cache |
 | \Geolocation\ConfigForm.php | rex_form-Klasse für das Formular "[Einstellungen](settings.md#config)" |
