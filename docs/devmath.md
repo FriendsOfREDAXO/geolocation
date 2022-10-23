@@ -1298,7 +1298,7 @@ $dataset = [
    ]
 ];
 
-echo $rex_map = \Geolocation\mapset::take( )
+echo $rex_map = \Geolocation\Mapset::take( )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'bounds', [[39.765091145043,-105.00733065303],[39.72005823281,-104.9489968942]])
     ->dataset( 'myontheflytool', $dataset )

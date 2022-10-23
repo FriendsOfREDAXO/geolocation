@@ -39,7 +39,7 @@ Geolocation\KEY_MAPSET: 'geomapset'
 Geolocation\OUT: 'geolocation_rex_map.php'
 
 # Darstellungsoptionen
-# true = mapset::mapoptions, sonst '|xxx|yyy|' mit den Keys aus mapset::mapoptions
+# true = Mapset::mapoptions, sonst '|xxx|yyy|' mit den Keys aus Mapset::mapoptions
 mapoptions: true
 
 # Anzuzeigender Default-Kartenausschnitt = Europa (für Tool "bounds")

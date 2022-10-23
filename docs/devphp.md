@@ -22,7 +22,7 @@ die Klassen und globalen Konstanten. Hier die wichtigsten:
 | Objekt | Anmerkung |
 | --- | --- |
 | \Geolocation\Layer.php | YOrm-Dataset-Klasse für die einzelnen Karten-URLs |
-| \Geolocation\mapset.php | YOrm-Dataset-Klasse für die Kartensätze aus mehreren Karten-URLs |
+| \Geolocation\Mapset.php | YOrm-Dataset-Klasse für die Kartensätze aus mehreren Karten-URLs |
 | \Geolocation\Cache.php | Klasse mit Methoden zur Verwaltung des Karten-Cache |
 | \Geolocation\ConfigForm.php | rex_form-Klasse für das Formular "[Einstellungen](settings.md#config)" |
 | \Geolocation\Cronjob.php |rex_cronjob-Klasse für Cronjobs zum Cache-Hauskeeping |
@@ -48,7 +48,7 @@ Hier ein Beispiel:
 
 ```PHP
 $id = \rex_request( \Geolocation\KEY_MAPSET, 'integer', 1 );
-$mapset = \Geolocation\mapset::take( $id );
+$mapset = \Geolocation\Mapset::take( $id );
 
 dump(get_defined_vars());
 ```
@@ -72,7 +72,7 @@ per Fragment generiert:
 
 | Methode | Verwendung | Anmerkung |
 | --- | --- | --- |
-| ::take($id) | Ruft den per $id angegebenen Datensatz ab.<br>Falls $id fehlt wird der Default-Kartensatz herangezogen | fehlertolerantes `mapset::get()` |
+| ::take($id) | Ruft den per $id angegebenen Datensatz ab.<br>Falls $id fehlt wird der Default-Kartensatz herangezogen | fehlertolerantes `Mapset::get()` |
 | ->attributes($name,$value)<br>->attributes([$name1=>$value1,..]) | Ein HTML-Attribut oder ein Array mit HTML-Attributen, dass dem Karten-Tag zugefügt wird (`name="value" ...`) | nicht zulässig: mapset, dataset, map |
 |->dataset($tool,$data)<br>->dataset([$tool1=>data1,..]) | Kartendaten je Tool. Alle Angaben werden konsolidiert in ein Array an das Ausgabe-Fragment übergeben. | Toolnamen müssen klein geschrieben sei |
 | ->parse($fragment) | Die Methode erzeugt auf Basis der zuvor angegebenen Daten das HTML. Dazu wird entweder das angegebene Fragment genutzt oder das für den Kartensatz voreingestellte. | |
@@ -83,7 +83,7 @@ erforderlich sind, kann der Name durch ein Suffix eindeutig gemacht werden. Das 
 
 Die Methoden können verkettet werden:
 ```PHP
-echo \Geolocation\mapset::take( $mapsetId )
+echo \Geolocation\Mapset::take( $mapsetId )
     ->attributes( 'id', 'my-map-id' )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'bounds', [ $latLngSW,$latLngNO ] )
@@ -103,7 +103,7 @@ Das Resultat ist ein HTML-Tag mit fünf Attributen:
 
 Alternatives Vorgehen:
 ```PHP
-$mapset = \Geolocation\mapset::take( $mapsetId );
+$mapset = \Geolocation\Mapset::take( $mapsetId );
 
 $fragment = new \rex_fragment();
 $fragment->setVar( 'mapset', $mapset->getLayerset(), false );
@@ -208,7 +208,7 @@ Werten:
 
 Eingabetechnische Feinheiten wie Feldvalidierung sind im Beispiel nicht enthalten.
 
-Die verfügbaren Kartensätze werden über die YOrm-Dataset-Klasse abgerufen `mapset::query()`.
+Die verfügbaren Kartensätze werden über die YOrm-Dataset-Klasse abgerufen `Mapset::query()`.
 Zusätzlich zu den verfügbaren Kartensätzen wird die Auswahl "Standardkarte" eingefügt.
 
 ```html
@@ -228,7 +228,7 @@ Zusätzlich zu den verfügbaren Kartensätzen wird die Auswahl "Standardkarte" e
             <select name="REX_INPUT_VALUE[2]" id="mapset-select" class="form-control">
             <option value="">(Standardkarte)</option>
             <?php
-            $mapsets = \Geolocation\mapset::query()
+            $mapsets = \Geolocation\Mapset::query()
                 ->orderBy('title')
                 ->findValues( 'title', 'id' );
             foreach( $mapsets as $k=>$v ){
@@ -329,7 +329,7 @@ Geolocation.tools.myprivatetool = function(...args) { return new Geolocation.Too
 }
 
 // Kartensatzdaten in den HTML-Tag überführen
-$rex_map = \Geolocation\mapset::take( $mapsetId )
+$rex_map = \Geolocation\Mapset::take( $mapsetId )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'bounds', $bounds->latLng() )
     ->dataset( 'position', $center->latLng() )

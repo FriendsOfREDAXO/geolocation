@@ -66,7 +66,7 @@ $position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';
-echo $rex_map = \Geolocation\mapset::take( )
+echo $rex_map = \Geolocation\Mapset::take( )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'center', [$position,$zoom,$radius,$color])
     ->dataset( 'geojson', [$geosonLightRailStop,$geojsonFreeBus,$geojsonBicycleRental,$geojsonCoorsField,$geojsonCampus] )
@@ -190,7 +190,7 @@ $position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';
-echo $rex_map = \Geolocation\mapset::take( )
+echo $rex_map = \Geolocation\Mapset::take( )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'center', [$position,$zoom,$radius,$color])
     ->dataset( 'geojson', [$geosonLightRailStop,$geojsonBicycleRental,$geojsonCoorsField,$geojsonCampus] )
@@ -248,7 +248,7 @@ $position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';
-echo $rex_map = \Geolocation\mapset::take( )
+echo $rex_map = \Geolocation\Mapset::take( )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'center', [$position,$zoom,$radius,$color])
     ->dataset( 'geojson', [$geosonLightRailStop,$geojsonCoorsField,$geojsonCampus] )
@@ -299,7 +299,7 @@ $position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';
-echo $rex_map = \Geolocation\mapset::take( )
+echo $rex_map = \Geolocation\Mapset::take( )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'center', [$position,$zoom,$radius,$color])
     ->dataset( 'geojson', [$geosonLightRailStop,$geojsonCampus] )

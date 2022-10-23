@@ -197,7 +197,7 @@ try {
     // rex_config: Default-Werte eintragen bzw. sicherstellen
     $ct = $sql->getArray('SELECT id FROM '.$mapset.' ORDER BY id ASC LIMIT 1');
     $this->setConfig('default_map', $this->getConfig('default_map', $ct[0]['id'] ?? 0));
-    $this->setConfig('map_components', $this->getConfig('map_components', '|'.implode('|', array_keys(mapset::$mapoptions)).'|'));
+    $this->setConfig('map_components', $this->getConfig('map_components', '|'.implode('|', array_keys(Mapset::$mapoptions)).'|'));
     $this->setConfig('map_bounds', $this->getConfig('map_bounds', $config['bounds']));
     $this->setConfig('map_zoom', $this->getConfig('map_zoom', $config['zoom']));
     $this->setConfig('map_zoom_min', $this->getConfig('map_zoom_min', $config['zoom_min']));

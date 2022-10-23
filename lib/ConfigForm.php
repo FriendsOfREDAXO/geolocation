@@ -65,7 +65,7 @@ class ConfigForm extends rex_config_form
             $field = $this->addSelectField('default_map', $value = null, ['class' => 'form-control']);
             $field->setLabel(rex_i18n::msg('geolocation_config_map_default'));
             $select = $field->getSelect();
-            $select->addSqlOptions('SELECT concat(title," [id=",id,"]") as name,id FROM '.mapset::table()->getTableName().' ORDER BY title');
+            $select->addSqlOptions('SELECT concat(title," [id=",id,"]") as name,id FROM '.Mapset::table()->getTableName().' ORDER BY title');
 
             $field = $this->addTextField('map_bounds');
             $field->setLabel(rex_i18n::msg('geolocation_form_map_bounds'));
@@ -89,7 +89,7 @@ class ConfigForm extends rex_config_form
 
             $field = $this->addCheckboxField('map_components');
             $field->setLabel(rex_i18n::msg('geolocation_form_mapoptions'));
-            foreach (mapset::$mapoptions as $k => $v) {
+            foreach (Mapset::$mapoptions as $k => $v) {
                 $field->addOption(rex_i18n::translate($v), $k);
             }
 

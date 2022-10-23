@@ -5,7 +5,7 @@
  * - dataset-spezifisch
  *
  *     getForm:    baut einige Felder im Formular um (aktuelle Systemeinstellungen vorbelegen)
- *     delete:     Löschen nur wenn nicht in Benutzung bei Geolocation\mapset
+ *     delete:     Löschen nur wenn nicht in Benutzung bei Geolocation\Mapset
  *                 Cache ebenfalls löschen
  *     save:       Cache löschen wenn Einstellungen geändert wurden.
  *
@@ -142,7 +142,7 @@ class Layer extends rex_yform_manager_dataset
     }
 
     /**
-     * Löschen nur wenn nicht in Benutzung bei Geolocation\mapset
+     * Löschen nur wenn nicht in Benutzung bei Geolocation\Mapset
      * Cache ebenfalls löschen.
      *
      * Wenn es noch Bezüge auf den Layer gibt, werden Links auf die Edit-Seite
@@ -153,7 +153,7 @@ class Layer extends rex_yform_manager_dataset
     public function delete(): bool
     {
         $sql = rex_sql::factory();
-        $table = mapset::table();
+        $table = Mapset::table();
         $qry = 'SELECT `id`, `title` FROM `'.$table->getTableName().'` WHERE FIND_IN_SET(:id,`layer`)';
         /**
          * STAN: Possible SQL-injection in expression $table->getTableName().

@@ -27,7 +27,7 @@ class rex_api_geolocation_clearcache extends \rex_api_function
             $c = \Geolocation\Cache::clearLayerCache($layerId);
         } elseif (0 < ($mapsetId = rex_request('mapset_id', 'integer', 0))) {
             $c = 0;
-            $mapset = \Geolocation\mapset::get($mapsetId);
+            $mapset = \Geolocation\Mapset::get($mapsetId);
             if (null !== $mapset) {
                 /**
                  * STAN: Foreach overwrites $layerId with its value variable.

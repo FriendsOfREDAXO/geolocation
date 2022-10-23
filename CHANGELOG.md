@@ -13,6 +13,7 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
 - Klasse `Geolocation\tools` umbenannt in `Geolocation\Tools`; Aufrufe und Doku angepasst. (#53)
 - Klasse `Geolocation\config_form` umbenannt in `Geolocation\ConfigForm`; Aufrufe und Doku angepasst. (#66)
 - Klasse `Geolocation\layer` umbenannt in `Geolocation\Layer`; Aufrufe, Dateinamen und Doku angepasst. (#86)
+- Klasse `Geolocation\mapset` umbenannt in `Geolocation\Mapset`; Aufrufe, Dateinamen und Doku angepasst. (#87)
 - Dateinamen `lib/exception.php` an den Klassennamen angeglichen (`lib/exception.php`) (#73)
 - Datentyp der Tabellenspalte `rex_geolocation_layer.online` von `text` in `int` geändert. Ggf. müssen eigene Datasets angepasst werden. (#77)
 - Workaround in `layer.php` für ein Typecast-Problem aus 'class dataset' (#79)
