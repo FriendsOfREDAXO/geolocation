@@ -38,7 +38,7 @@ define('Geolocation\LOAD', true);
 // add additional functionality for YForm-tables
 
 rex_yform_manager_dataset::setModelClass('rex_geolocation_mapset', mapset::class);
-rex_yform_manager_dataset::setModelClass('rex_geolocation_layer', layer::class);
+rex_yform_manager_dataset::setModelClass('rex_geolocation_layer', Layer::class);
 
 // proxy-request "geolayer" ???
 //
@@ -47,7 +47,7 @@ rex_yform_manager_dataset::setModelClass('rex_geolocation_layer', layer::class);
 //
 $tileLayer = rex_request(KEY_TILES, 'integer', null);
 if (null !== $tileLayer) {
-    layer::sendTile($tileLayer);
+    Layer::sendTile($tileLayer);
 }
 
 // proxy-request "geomapset" ???

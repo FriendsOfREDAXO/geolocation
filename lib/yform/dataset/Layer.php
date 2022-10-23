@@ -1,6 +1,6 @@
 <?php
 /**
- * Geolocatin|layer ist eine erweiterte yform-dataset-Klasse für Kartenlayer.
+ * Geolocatin|Layer ist eine erweiterte yform-dataset-Klasse für Kartenlayer.
  *
  * - dataset-spezifisch
  *
@@ -76,7 +76,7 @@ use function strlen;
  * @property int $online
  */
 
-class layer extends rex_yform_manager_dataset
+class Layer extends rex_yform_manager_dataset
 {
     /**
      * Pattern für den Aufbau von Dateinamen für Kartenkacheln (Tiles) im Cache.

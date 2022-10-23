@@ -57,7 +57,6 @@ use rex_yform_manager_dataset;
 
 use function count;
 use function is_array;
-use function is_string;
 
 /**
  * Mittels parent::__get bereitgestellte Daten.
@@ -324,7 +323,7 @@ class mapset extends rex_yform_manager_dataset
      * daten z.B. für <rex-map mapset=...>
      *
      * @api
-     * NOTE: das muss doch einfache gehen als immer diese Definition (siehe layer::getLayerConfigSet) abzuschreiben
+     * NOTE: das muss doch einfache gehen als immer diese Definition (siehe Layer::getLayerConfigSet) abzuschreiben
      * @return list<array{layer:int, label:string, type:string, attribution:string}>
      */
     // TODO: Warum hab ich hier keine Sprachauswahl optional vorgesehen?
@@ -333,7 +332,7 @@ class mapset extends rex_yform_manager_dataset
     {
         // get layers ond overlays in scope
         $clang = rex_clang::getCurrent()->getCode();
-        return layer::getLayerConfigSet($this->layerset, $clang);
+        return Layer::getLayerConfigSet($this->layerset, $clang);
     }
 
     /**
