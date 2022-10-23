@@ -41,7 +41,7 @@ JS-Ebene erforderlich ist. Die Einarbeitung in Leaflet kann bei einfachen Karten
 Beispiele, auch für den Einsatz in einem Modul, findet sich im [PHP-Kapitel](devphp.md).
 
 ```php
-echo \Geolocation\mapset::take( $mapsetId )
+echo \Geolocation\Mapset::take( $mapsetId )
     ->attributes( 'id', 'my-map-id' )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'position', [47.51666,9.43333] )

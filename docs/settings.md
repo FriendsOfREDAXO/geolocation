@@ -41,10 +41,10 @@ Die Einstellungen sind Vorbelegungen bzw. Parameter für die Darstellung von Kar
     ```php
     // ID abrufen und Mapset öffnen
     $mapsetId = \rex_config::get(\Geolocation\ADDON,'default_map');
-    $mapset = \Geolocation\mapset::get($mapsetId);
+    $mapset = \Geolocation\Mapset::get($mapsetId);
 
     // Mapset öffnen mit der Default-ID bzw. Fallback auf die Default-ID
-    $mapset = \Geolocation\mapset::take();
+    $mapset = \Geolocation\Mapset::take();
     $mapsetId = $mapset->getId();
     ```
 
