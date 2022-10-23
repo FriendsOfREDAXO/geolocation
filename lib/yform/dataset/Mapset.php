@@ -66,11 +66,11 @@ use function is_array;
  * @property string $overlay
  * @property string $outfragment
  *
- * virtuelle Felder in mapset
+ * virtuelle Felder in Mapset
  * @property array $layerset
  */
 
-class mapset extends rex_yform_manager_dataset
+class Mapset extends rex_yform_manager_dataset
 {
     /**
      * @var array<string,string>
@@ -414,7 +414,7 @@ class mapset extends rex_yform_manager_dataset
     /**
      * Alternative zu get(), aber mit Fallback auf die Default-Karte.
      *
-     * Man kann auch Geolocation\mapset::get($id) nehmen ... aber hier wird im Fehlerfall oder wenn
+     * Man kann auch Geolocation\Mapset::get($id) nehmen ... aber hier wird im Fehlerfall oder wenn
      * $id aus irgend einem Grunde nicht gefunden wird, ein Fallback auf den Default-Kartensatz
      * erfolgen.
      *
