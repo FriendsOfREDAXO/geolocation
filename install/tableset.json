@@ -261,7 +261,7 @@
 				"label": "",
 				"not_required": "",
 				"message": "translate:geolocation_layer_url_error",
-				"function": "Geolocation\\layer::verifyUrl",
+				"function": "Geolocation\\Layer::verifyUrl",
 				"params": "",
 				"validate_type": "0"
 			},
@@ -277,7 +277,7 @@
 				"label": "",
 				"not_required": "",
 				"message": "translate:geolocation_layer_subdomain_error",
-				"function": "Geolocation\\layer::verifySubdomain",
+				"function": "Geolocation\\Layer::verifySubdomain",
 				"params": "",
 				"validate_type": "0"
 			},
@@ -323,7 +323,7 @@
 				"label": "",
 				"not_required": "",
 				"message": "translate:geolocation_layer_i18nlabel_error",
-				"function": "Geolocation\\layer::verifyLang",
+				"function": "Geolocation\\Layer::verifyLang",
 				"params": "",
 				"validate_type": "0"
 			}
