@@ -1,7 +1,7 @@
 <?php
 /**
  * Sammelt alle Exceptions wegen ungültiger Funktions-Parameter
- * an einer Stelle. 
+ * an einer Stelle.
  */
 
 namespace Geolocation;
@@ -48,6 +48,8 @@ class InvalidParameter extends \Geolocation\Exception
     public const DMS_DIGITS = 18;
     /** @api */
     public const DMS_DECIMALPOINT = 19;
+    /** @api */
+    public const NOT_A_POINT = 20;
 
     /**
      * @var list<string>
@@ -72,10 +74,11 @@ class InvalidParameter extends \Geolocation\Exception
         self::BOXRESIZELNG => 'Resize factor (llongitude) expected larger than zero (given "%s")',
         self::DMS_DIGITS => 'Invalid number of decimal places (negative value "%s" given")',
         self::DMS_DECIMALPOINT => 'Replacement for decimal-point expected to be at least 1 charcter long; empty string or spaces.',
+        self::NOT_A_POINT => 'Invalid Box-Parameter; Array of Point expected. Given at leat one item of other type ("%s"),',
     ];
 
     /**
-     * @param list<string|int|bool> $values
+     * @param list<string|int|bool|float> $values
      */
     public function __construct(int $errorCode, array $values = [], ?Throwable $previous = null)
     {
