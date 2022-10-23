@@ -160,12 +160,12 @@ class Cache
         $defMaxFiles = rex_config::get(ADDON, 'cache_maxfiles', CFM_DEF);
 
         // Schleife über die Layer
-        $layers = layer::query()
+        $layers = Layer::query()
             ->where('online', 1)
             ->find();
         /**
          * Damit phpstan akzeptiert, dass $layer nicht null sein kann.
-         * @var layer $layer
+         * @var Layer $layer
          */
         foreach ($layers as $layer) {
             $ttl = 0 < $layer->ttl ? $defTTL : $layer->ttl;
