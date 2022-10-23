@@ -37,13 +37,13 @@ define('Geolocation\LOAD', true);
 
 // add additional functionality for YForm-tables
 
-rex_yform_manager_dataset::setModelClass('rex_geolocation_mapset', mapset::class);
+rex_yform_manager_dataset::setModelClass('rex_geolocation_mapset', Mapset::class);
 rex_yform_manager_dataset::setModelClass('rex_geolocation_layer', Layer::class);
 
 // proxy-request "geolayer" ???
 //
 // if URL contains geolayer=«tileId» the request is supposed to be a tile-request
-// worked on by Geolocation\layer::sendTile
+// worked on by Geolocation\Layer::sendTile
 //
 $tileLayer = rex_request(KEY_TILES, 'integer', null);
 if (null !== $tileLayer) {
@@ -53,11 +53,11 @@ if (null !== $tileLayer) {
 // proxy-request "geomapset" ???
 //
 // if URL contains geomapset=«mapId» the request is supposed to be a mapset-request
-// worked on by Geolocation\mapset::sendMapset
+// worked on by Geolocation\Mapset::sendMapset
 
 $mapset = rex_request(KEY_MAPSET, 'integer', null);
 if (null !== $mapset) {
-    mapset::sendMapset($mapset);
+    Mapset::sendMapset($mapset);
 }
 
 // Start of Cronjob
