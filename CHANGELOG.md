@@ -12,13 +12,13 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
 - Klasse `Geolocation\cronjob` umbenannt in `Geolocation\Cronjob`; Aufrufe und Doku angepasst. (#52)
 - Klasse `Geolocation\tools` umbenannt in `Geolocation\Tools`; Aufrufe und Doku angepasst. (#53)
 - Klasse `Geolocation\config_form` umbenannt in `Geolocation\ConfigForm`; Aufrufe und Doku angepasst. (#66)
-- Klasse `Geolocation\layer` umbenannt in `Geolocation\Layer`; Aufrufe, Dateinamen und Doku angepasst. (#86)
+- Klasse `Geolocation\layer` umbenannt in `Geolocation\Layer`; Aufrufe, Dateinamen und Doku angepasst. (#86, #88)
 - Klasse `Geolocation\mapset` umbenannt in `Geolocation\Mapset`; Aufrufe, Dateinamen und Doku angepasst. (#87)
 - Dateinamen `lib/exception.php` an den Klassennamen angeglichen (`lib/exception.php`) (#73)
 - Datentyp der Tabellenspalte `rex_geolocation_layer.online` von `text` in `int` geändert. Ggf. müssen eigene Datasets angepasst werden. (#77)
 - Workaround in `layer.php` für ein Typecast-Problem aus 'class dataset' (#79)
 - Fehlermeldungen in `class InvalidParameters` gebündelt (#80,#81)
-- RexStan-gesteuerte Überarbeitung aller PHP-Dateien (Level: 8, PHP: 8.0-8.2, Extensions: REDAXO Superglobals, Bleeding-Edge, Strict-Mode, Deprecation Warnings, phpstan-dba, dead code) und Code-Formatierung im REDAXO-Standard (#54…#62, #66, #68, #70…#72, #74…#76, #80…#82, #84…#85)
+- RexStan-gesteuerte Überarbeitung aller PHP-Dateien (Level: 8, PHP: 8.0-8.2, Extensions: REDAXO Superglobals, Bleeding-Edge, Strict-Mode, Deprecation Warnings, phpstan-dba, dead code) und Code-Formatierung im REDAXO-Standard (#54…#62, #66, #68, #70…#72, #74…#76, #80…#82, #84, #85)
 - Vendor-Update: phpGeo (#83)
 
 ## 06.05.2022 1.0.2
