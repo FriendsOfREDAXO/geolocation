@@ -16,16 +16,7 @@ Of course it's possible to run PHPUnit directly:
 ```
 
 To test against another PHP version you can use Docker. The following command runs
-the tests using PHP 7.2:
-
-``` shell
-docker run -it --rm --name phpgeo-phpunit \
-    -v "$PWD":/usr/src/phpgeo \
-    -w /usr/src/phpgeo php:7.2-cli \
-    php vendor/bin/phpunit
-```
-
-Or using PHP 7.3:
+the tests using PHP 7.3:
 
 ``` shell
 docker run -it --rm --name phpgeo-phpunit \
@@ -52,7 +43,16 @@ docker run -it --rm --name phpgeo-phpunit \
     php vendor/bin/phpunit
 ```
 
-Besides the unit tests, static test runners are also provided. Run the lint
+PHP 8.1:
+
+``` shell
+docker run -it --rm --name phpgeo-phpunit \
+    -v "$PWD":/usr/src/phpgeo \
+    -w /usr/src/phpgeo php:8.1-cli \
+    php vendor/bin/phpunit
+```
+
+Alongside with the unit tests, static test runners are also provided. Run the lint
 command to ensure the sources don't contain any syntax error:
 
 ``` shell
@@ -71,6 +71,15 @@ It's possible to run all tests at once:
 composer ci
 ```
 
+… or run all CI tasks with different PHP versions one after another:
+
+```shell
+for PHP_VERSION in 7.3 7.4 8.0 8.1 ; do \
+  docker run -it --rm -v "$PWD":/phpgeo -w /phpgeo \
+  ghcr.io/mjaschen/php:${PHP_VERSION}-cli-mj composer ci || break ; \
+done
+```
+
 ## Creating the documentation
 
 *phpgeo's* documentation is generated with [Daux](https://daux.io/) from Markdown files.
@@ -84,12 +93,4 @@ make docs
 
 ``` shell
 docker run --rm -it -v "$(pwd)":/phpgeo -w /phpgeo daux/daux.io daux generate -d build/daux
-```
-
-### API Documentation
-
-*phpgeo's* API documentation is generated with *[phpdox](http://phpdox.de/):*
-
-```shell
-make apidocs
 ```

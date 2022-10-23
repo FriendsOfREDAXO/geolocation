@@ -9,6 +9,7 @@ use Location\CardinalDirection\CardinalDirectionDistances;
 use Location\CardinalDirection\CardinalDirectionDistancesCalculator;
 use Location\Distance\DistanceInterface;
 use Location\Distance\Haversine;
+use Location\Exception\InvalidGeometryException;
 use Location\Formatter\Coordinate\FormatterInterface;
 
 /**
@@ -121,6 +122,24 @@ class Coordinate implements GeometryInterface
         return $this->getDistance($coordinate, new Haversine()) <= $allowedDistance;
     }
 
+    /**
+     * Checks if this point intersects a given geometry.
+     *
+     * @throws InvalidGeometryException
+     */
+    public function intersects(GeometryInterface $geometry): bool
+    {
+        if ($geometry instanceof self) {
+            return $this->hasSameLocation($geometry);
+        }
+
+        if ($geometry instanceof Polygon) {
+            return $geometry->contains($this);
+        }
+
+        throw new InvalidGeometryException('Only polygons can contain other geometries', 1655191821);
+    }
+
     public function format(FormatterInterface $formatter): string
     {
         return $formatter->format($this);
@@ -143,5 +162,15 @@ class Coordinate implements GeometryInterface
     protected function isNumericInBounds(float $value, float $lower, float $upper): bool
     {
         return !($value < $lower || $value > $upper);
+    }
+
+    public function getBounds(): Bounds
+    {
+        return new Bounds($this, $this);
+    }
+
+    public function getSegments(): array
+    {
+        throw new \RuntimeException('A single point instance does not contain valid segments', 6029644914);
     }
 }
