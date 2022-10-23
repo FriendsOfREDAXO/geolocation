@@ -323,7 +323,7 @@ class mapset extends rex_yform_manager_dataset
      * daten z.B. für <rex-map mapset=...>
      *
      * @api
-     * NOTE: das muss doch einfache gehen als immer diese Definition (siehe layer::getLayerConfigSet) abzuschreiben
+     * NOTE: das muss doch einfache gehen als immer diese Definition (siehe Layer::getLayerConfigSet) abzuschreiben
      * @return list<array{layer:int, label:string, type:string, attribution:string}>
      */
     // TODO: Warum hab ich hier keine Sprachauswahl optional vorgesehen?
