@@ -142,7 +142,7 @@ Karten sind in den [Einstellungen](settings.md#cache) vorbelegt.
     Über den Parameter wird festgelegt, ob die Karte freigegeben ist zur Nutzung oder nicht.
     Der Status kann mit `\Geolocation\Layer::get($id)->isOnline()` abgefragt werden. Abrufe des
     Layerset mit `\Geolocation\Layer::get($id)->getLayerConfigSet(...)` bzw. mit indirekt über
-    `\Geolocation\mapset::take( $mapsetId )->getLayerset()` berücksichtigt den Status.
+    `\Geolocation\Mapset::take( $mapsetId )->getLayerset()` berücksichtigt den Status.
 
     Auch deaktivierte Karten können dem Kartensatz zugeordnet sein!
 
