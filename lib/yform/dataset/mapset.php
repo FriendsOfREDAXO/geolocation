@@ -57,7 +57,6 @@ use rex_yform_manager_dataset;
 
 use function count;
 use function is_array;
-use function is_string;
 
 /**
  * Mittels parent::__get bereitgestellte Daten.
@@ -333,7 +332,7 @@ class mapset extends rex_yform_manager_dataset
     {
         // get layers ond overlays in scope
         $clang = rex_clang::getCurrent()->getCode();
-        return layer::getLayerConfigSet($this->layerset, $clang);
+        return Layer::getLayerConfigSet($this->layerset, $clang);
     }
 
     /**
