@@ -1,4 +1,4 @@
-/* Geolocation-Addon V 1.0 for use with REDAXO 5.13 and above
+/* Geolocation-Addon V 2.0 for use with REDAXO 5.13 and above
 */
 
 // Namespace "Geolocation"
@@ -84,13 +84,12 @@ Geolocation.fromJSON = function( data, def={} ){
 }
 
 // Hier wird ein SVG-Pin zusammengebaut
-// data         String mit JSON-Content
 
 Geolocation.svgIconPin = function( color, nr, nrcolor ){
-    color = color || 'cornflowerblue';
-    nr = nr || '';
-    nrcolor = nrcolor || 'red';
-
+    color = encodeURI(color || 'cornflowerblue');
+    nr = encodeURI(nr || '');
+    nrcolor = encodeURI(nrcolor || 'red');
+    
     // Basic-SVG
     let svg =
     'data:image/svg+xml,%3Csvg%20viewBox=%220%200%2062%20101%22%20fill=%22transparent%22%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id=%22gradient%22%20x1=%2255%25%22%20y1=%22126%25%22%20x2=%220%25%22%20y2=%220%25%22%3E%3Cstop%20offset=%220%25%22%20style=%22stop-color:DarkSlateGray;stop-opacity:1;%22/%3E%3Cstop%20offset=%2250%25%22%20style=%22stop-color:'
