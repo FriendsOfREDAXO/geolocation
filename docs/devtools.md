@@ -50,17 +50,6 @@ echo \Geolocation\Mapset::take( $mapsetId )
     ->parse();
 ```
 
-Eigene Tools für weitere Anwendungsfälle sind einfach programmierbar. Es reicht aus, den JS-Code
-des Tools zeitlich nach **Geolocation** zu laden oder in das [Geolocation-JS](install.md#ownjscss)
-einzubauen. Die gesamte Steuerungslogik im Javascript und im Backend basiert letztlich auf dem
-Tool-Namen und erfordert keine weiteren Eingriffe.
-
-> [Beispiele für eigene Tools](#tools2) sind in der Dokumentation enthalten. Die Datei
-> `redaxo/src/addons/geolocation/docs/example/geolocation.js` enthält die Beispiele und kann als
-> Basis für eigene Erweiterungen dienen.
-> Sollen die Beispielstools produktiv eingesetzt werden, sollten sie in das
-> [Geolocation-JS](install.md#ownjscss) einkompiliert werden.
-
 Diese Tools sind bereits in **Geolocation** enthalten:
 
 | Bounds<sup>*</sup> | Position | Marker |
@@ -88,6 +77,23 @@ erforderlich sind, kann der Name durch ein Suffix eindeutig gemacht werden. Das 
 Geolocation.Tools.Xyz = class extends Geolocation.Tools.Abc {}
 Geolocation.tools.xyz = function(...args) { return new Geolocation.Tools.Xyz(args); };
 ```
+
+## Custom-Tools
+
+Eigene Tools für weitere Anwendungsfälle sind einfach programmierbar. Es reicht aus, den JS-Code
+des Tools zeitlich nach **Geolocation** zu laden oder in das [Geolocation-JS](install.md#ownjscss)
+einzubauen. Die gesamte Steuerungslogik im Javascript und im Backend basiert letztlich auf dem
+Tool-Namen und erfordert keine weiteren Eingriffe.
+
+> [Beispiele für eigene Tools](#tools2) sind in der Dokumentation enthalten. Die Datei
+> `redaxo/src/addons/geolocation/docs/example/geolocation.js` enthält die Beispiele und kann als
+> Basis für eigene Erweiterungen dienen.
+> Sollen die Beispielstools produktiv eingesetzt werden, sollten sie in das
+> [Geolocation-JS](install.md#ownjscss) einkompiliert werden.
+
+**Customs-Tools teilen**: In den [Tricks](https://friendsofredaxo.github.io/tricks/) bei
+[FriendsOfREDAXO](https://github.com/FriendsOfREDAXO) gibt es einen [Artikel](https://friendsofredaxo.github.io/tricks/addons/geolocation/add_infobox),
+über den selbst entwickelte Tools mit der Community geteilt werden können.  
 
 <a name="access"></a>
 ## Zugriff auf die Tools
@@ -241,8 +247,8 @@ Geolocation.Tools.Template = class {
 
 | Element | Funktion |
 |---|---|
-|constructor| Legt die Tool-Instanz an und belegt die Variablen |
-|setValue|Erhält die Tool-spezifischen Daten im korrekten Format. Sofern machbar werden die Daten zu Kartenelementen aufbereitet und falls möglich sofort auf die Karte gebracht.  |
+|constructor| Legt die Tool-Instanz an und belegt die Variablen mit Null-Werten vor (vorhanden, aber leer). |
+|setValue|Erhält die Tool-spezifischen Daten im korrekten Format. Sofern machbar werden die Daten zu Kartenelementen aufbereitet und falls möglich sofort auf die Karte gebracht (`if(this.map) {this.show(this.map })`).  |
 |show|Bringt die vorbereiteten Elemente auf die Karte und merkt sich die Karteninstanz. Bei folgenden `setValue` können die Daten auf der Karte nun direkt aktualisiert werden. |
 |remove|Löscht die Elemente aus der Karte, hält sie aber für ein erneutes `show` weiter vor.|
 |getCurrentBounds|Liefert die Koordinate (Beispiel [`position`](#)) oder des Bereichs (Beispiel: [`marker`](#)) oder null (Beispiel: leere Markerliste)|

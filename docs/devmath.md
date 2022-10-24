@@ -65,7 +65,7 @@ ungültige Koordinaten führen würden, wird eine `InvalidParameter`-Exception a
 
 ### factory()
 
-> static function factory( array $point, $keyLat, $keyLng ): self
+> static function factory(array $point, int|string $keyLat, int|string $keyLng): self
 
 Das ist die Basismethode zum Anlegen eines Punktes. Die (numerischen) Koordinaten müssen als Array
 angegeben werden. Je nach Kontext gibt es verschiedene Varianten. LeafletJS z.B. behandelt Länge und
@@ -138,7 +138,6 @@ dump(get_defined_vars());
     #lng: -105,00341892242
 }
 ```
-
 
 ### byText()
 
@@ -255,7 +254,7 @@ dump(get_defined_vars());
 
 ### pos()
 
-> function pos( $keyLat, $keyLng, ?int $precision=null ): array
+> function pos(int|string $keyLat, int|string $keyLng, ?int $precision = null): array
 
 Die Funktion ist das Gegenstück zu `Point::factory` und erlaubt, die Koordinaten in ein beliebig
 indiziertes Array zu überführen. Sofern `$precision` angegeben ist, wird die Anzahl der
@@ -288,7 +287,7 @@ dump(get_defined_vars());
 
 ### text()
 
-> function text( int $formatter=self::DD, ?string $delimiter=null, ?int $precision=null ): string
+> function text( int $formatter=self::DD, ?string $delimiter=',', ?int $precision=null ): string
 
 Die Funktion ist das Gegenstück zu `Point::byText` und erlaubt, die Koordinaten in eine Zeichenkette
 zu überführen. Sofern `$precision` angegeben ist, wird die Anzahl der Nachkommastellen bei der
@@ -764,11 +763,11 @@ dump(get_defined_vars());
 
 ### byInnerCircle()
 
-> static function byInnerCircle( Point $center, float $radius ): self
+> static function byInnerCircle( Point $center, int|float $radius ): self
 
 Die Box wird aus dem Mittelpunkt und einem darum gezogenen Kreis gebildet. Die Box umschließt den
 Kreis. Der Radius (in Meter) ist die Distanz vom Mittelpunkt auf der Nord/Süd- bzw. West/Ost-Achse
-zum Mittelpunkt zu den Seiten der Box.
+zu den Seiten der Box.
 
 ```php
 use \Geolocation\Calc\Point;
@@ -800,7 +799,7 @@ dump(get_defined_vars());
 
 ### byOuterCircle()
 
-> static function byOuterCircle( Point $center, float $radius ): self
+> static function byOuterCircle( Point $center, int|float $radius ): self
 
 Die Box wird aus dem Mittelpunkt und einem darum gezogenen Kreis gebildet. Die Kreis umschließt die
 Box. Der Radius (in Meter) ist die Distanz vom Mittelpunkt zu den Ecken der Box.
@@ -835,7 +834,7 @@ dump(get_defined_vars());
 
 ### bySize()
 
-> static function bySize( Point $center, float $width, float height ): self
+> static function bySize( Point $center, int|float $width, int|float height ): self
 
 Die Box wird um den Mittelpunkt gezeichnet. Breite und Höhe in Meter bestimmen die Größe.
 
@@ -961,7 +960,7 @@ die Punkte im Bedarfsfall jeweils neu abgefragt oder die Einzelwerte abgerufen w
 
 > function southWest(): Point
 
-Innerhalb der Box-Instanz sind `northEast()` und `southWest()` nicht existent da überflüssig.
+Innerhalb der Box-Instanz sind `northEast()` und `southWest()` nicht existent da redundant.
 Die hier übergebenen Point-Instanzen sind für den Abruf neu angelegter Punkte. Wurde die Box z.B.
 durch Hinzufügen eines Punktes erweitert, sind auch diese Point-Instanzen nicht mehr verwertbar.
 Die Punkte sollten im Bedarfsfall jeweils neu abgefragt oder ggf. die Einzelwerte abgerufen werden.
@@ -1373,7 +1372,7 @@ dump(get_defined_vars());
 
 ### extendBy()
 
-> function extendBy ( mixed $data ): self
+> function extendBy ( array|Point $data ): self
 
 Die Box wird so vergrößert, dass alle angegebenen Punkte in den Box-Grenzen liegen. Punkte, die
 bereits in der Box sind, werden ausgelassen. Eine Prüfung vorab ist nicht erforderlich. Die neue
@@ -1446,7 +1445,7 @@ dump(get_defined_vars());
 
 ### resizeBy()
 
-> function resizeBy ( float $factorLat, ?float $factorLng=null, int $reference=self::HOOK_CE ): self
+> function resizeBy(float $factorLat, ?float $factorLng = null, int $reference = self::HOOK_CE): self
 
 Die Methode erweitert die Box um einen angegebenen Faktor in der Länge oder Breite bezogen auf
 einen der Bezugspunkte:
@@ -1518,7 +1517,7 @@ werden.
 
 ### setBearingCalculator()
 
-> function setBearingCalculator( BearingInterface $bearingCalculator ): BearingInterface
+> static function setBearingCalculator( BearingInterface $bearingCalculator ): BearingInterface
 
 Die Methode ersetzt den Kalkulator durch das angegebene neue Interface. Der neue Kalkulator wird
 zurückgegeben, so dass Methodenverkettung möglich ist. Der zuvor gültige Kalkulator kann mit der
@@ -1528,7 +1527,7 @@ Voreingestellt ist `\Location\Bearing\BearingEllipsoidal`;
 
 ### bearingCalculator()
 
-> function bearingCalculator( ): BearingInterface
+> static function bearingCalculator( ): BearingInterface
 
 Die Methode liefert den aktuell eingestellten Kompasskalkulator. Sie wird in `Point` und `Box` für
 richtungsbezogene Operationen benutzt.
@@ -1570,7 +1569,7 @@ dump(get_defined_vars());
 
 ### setDistanceCalculator()
 
-> function setDistanceCalculator( DistanceInterface $distanceCalculator ): DistanceInterface
+> static function setDistanceCalculator( DistanceInterface $distanceCalculator ): DistanceInterface
 
 Die Methode ersetzt den Distanzberechner durch das angegebene neue Interface. Der neue Kalkulator
 wird zurückgegeben, so dass Methodenverkettung möglich ist. Der zuvor gültige Kalkulator kann mit
@@ -1580,9 +1579,9 @@ Voreingestellt ist `\Location\Distance\Vincenty;`;
 
 ### distanceCalculator()
 
-> function distanceCalculator( ): BearingInterface
+> static function distanceCalculator( ): DistanceInterface
 
-Die Methode liefert den aktuell eingestellten Distanzkalkulator Sie wird in `Point` und `Box` für
+Die Methode liefert den aktuell eingestellten Distanzkalkulator. Sie wird in `Point` und `Box` für
 distanzbezogene Operationen benutzt.
 
 ```php
@@ -1765,7 +1764,7 @@ dump([
 
 ### normalizeLongitude()
 
-> function normalizeLongitude( float $latitude ): float
+> function normalizeLongitude( float $longitude ): float
 
 Bei Überschreiten des Datumsgrenzen-Meridians (±180°) wird der Wert umgerechnet auf die Gegenseite.
 "-200°" entspricht "+160°".

@@ -173,8 +173,8 @@ bounds: '[46,5.5],[55,17]'
 ```
 
 Die mit `Geolocation\` beginnenden Einträge werden unter dem angegebenen Namen als Konstanten in die
-`boot.php` geschrieben. `bounds` und `zoom` werden auch in die JS-Datei `geolocation.min.js`
-übernommen.
+`boot.php` geschrieben. Einige Werte (`Geolocation\KEY_TILES`, `Geolocation\KEY_MAPSET`, `bounds`,
+`zoom`, `zoom_min`, `zoom_max:`) werden auch in die JS-Datei `geolocation.min.js` übernommen.
 
 Der Scope `mapset: false` **ist mit Vorsicht zu nutzen**. Darüber kann die Verwaltungsseite von
 Geolocation verändert werden. Alle Bereich betreffend Kartensätze werden ausgeblendet. Das ist
@@ -185,7 +185,7 @@ Die verknüpften Karten können nicht mehr gelöscht werden, da sie im Kartensat
 Soll nur die vereinfachte Proxy-Ansicht genutzt werden, sollte eine
 [Installation mit angepasstem Datensatz](#proxy) erfolgen.
 
-Um im Bedarfsfall selbst die konsolidierte Liste aller Konfigurationsparameter einzulesen, müssen
+Um im Bedarfsfall selber die konsolidierte Liste aller Konfigurationsparameter einzulesen, müssen
 beide Dateien eingelesen und verbunden werden.
 ```php
 $config = array_merge(
