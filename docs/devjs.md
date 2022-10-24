@@ -71,10 +71,10 @@ aktuellen Einstellungen in die jeweiligen Platzhalter `%«name»%` geschrieben.
 var Geolocation = {
 
     default: {  // Default-Werte
+        keyMapset: %keyMapset%,
+        keyLayer: %keyLayer%,
         mapOptions:
             {
-                keyMapset: %keyMapset%,
-                keyLayer: %keyLayer%,
                 minZoom:%zoomMin%,
                 maxZoom:%zoomMax%,
                 scrollWheelZoom:true,
@@ -84,6 +84,8 @@ var Geolocation = {
             },
         bounds: [%defaultBounds%],
         boundsRect: {fill:false,stroke:false},
+        markerColor: 'cornflowerblue',
+        positionColor: 'red',
         zoom: %defaultZoom%,
         locationMarker:
             {
@@ -124,6 +126,8 @@ Grundlegende, also dauerhafte Änderungen der Default-Werte sollten nach fogende
 Im einfachen Fall wird eine Datei *redaxo/data/addons/geolocation/geolocation.js* mit dem eigenen
 Custom-Code bereitgestellt. Sie wird bei jeder Neugenerierung der Assets automatisch geladen.
 (außer es gibt ein Script *redaxo/data/addons/geolocation/load_assets.php*).
+
+Hier ein Beispiel, um im Backend das Rechteck des bounds-Tools als Kontroll-Ansicht sichtbar zu machen:
 
 ```js
 /* Custom-JS */
