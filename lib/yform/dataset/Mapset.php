@@ -94,6 +94,22 @@ class Mapset extends rex_yform_manager_dataset
     // dataset-spezifisch
 
     /**
+     * Die Annahme, dass 'protected array $mapXxxxx = [];' in jeder neuen Instanz ein
+     * leeres Array initialisiert, ist falsch. Daher expliziet [] zuweisen.
+     *
+     * @return null|static
+     */
+    public static function get(int $id, ?string $table = null): ?self
+    {
+        $mapset = parent::get($id);
+        if (null !== $mapset) {
+            $mapset->mapDataset = [];
+            $mapset->mapAttributes = [];
+        }
+        return $mapset;
+    }
+
+    /**
      * baut einige Felder im Formular auf aktuelle Daten um.
      *
      * liefert das Formular und stellt bei ...
@@ -438,6 +454,7 @@ class Mapset extends rex_yform_manager_dataset
                 throw new InvalidMapsetParameter(InvalidMapsetParameter::MAPSET_DEF, [self::getDefaultId()]);
             }
         }
+        dump($map);
         return $map;
     }
 
