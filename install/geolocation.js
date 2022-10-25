@@ -86,9 +86,9 @@ Geolocation.fromJSON = function( data, def={} ){
 // Hier wird ein SVG-Pin zusammengebaut
 
 Geolocation.svgIconPin = function( color, nr, nrcolor ){
-    color = encodeURI(color || 'cornflowerblue');
-    nr = encodeURI(nr || '');
-    nrcolor = encodeURI(nrcolor || 'red');
+    color = encodeURIComponent(color || 'cornflowerblue');
+    nr = encodeURIComponent(nr || '');
+    nrcolor = encodeURIComponent(nrcolor || 'red');
     
     // Basic-SVG
     let svg =
