@@ -58,4 +58,4 @@ requires:
 installer_ignore:
     - .github
     - .gitignore
-    - .gitattributes 
+    - .gitattributes
