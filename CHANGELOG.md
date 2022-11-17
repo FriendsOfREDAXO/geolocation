@@ -21,7 +21,8 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
 - Farcodes (#123456) in `Geolocation.svgIconPin(..)` wurde nicht richtig URI-escaped (#69⇒#94)
 - RexStan-gesteuerte Überarbeitung aller PHP-Dateien (Level: 8, PHP: 8.0-8.2, Extensions: REDAXO Superglobals, Bleeding-Edge, Strict-Mode, Deprecation Warnings, phpstan-dba, dead code) und Code-Formatierung im REDAXO-Standard (#54…#62, #66, #68, #70…#72, #74…#76, #80…#82, #84, #85)
 - Dokumentation (/docs) aktualisiert (#92, #93)
-- Vendor-Update: phpGeo (#83)
+- Vendor-Update: phpGeo 4.2.0 (#83)
+- Vendor-Update: Leaflet 1.9.2 (#97)
 
 ## 06.05.2022 1.0.2
 
