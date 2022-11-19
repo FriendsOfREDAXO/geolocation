@@ -18,11 +18,11 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
 - Datentyp der Tabellenspalte `rex_geolocation_layer.online` von `text` in `int` geändert. Ggf. müssen eigene Datasets angepasst werden. (#77)
 - Workaround in `layer.php` für ein Typecast-Problem aus 'class dataset' (#79)
 - Fehlermeldungen in `class InvalidParameters` gebündelt (#80, #81)
-- Farcodes (#123456) in `Geolocation.svgIconPin(..)` wurde nicht richtig URI-escaped (#69⇒#94)
+- Farbcodes (#123456) in `Geolocation.svgIconPin(..)` jetzt mit korrekt URI-escaped (#69⇒#94)
 - RexStan-gesteuerte Überarbeitung aller PHP-Dateien (Level: 8, PHP: 8.0-8.2, Extensions: REDAXO Superglobals, Bleeding-Edge, Strict-Mode, Deprecation Warnings, phpstan-dba, dead code) und Code-Formatierung im REDAXO-Standard (#54…#62, #66, #68, #70…#72, #74…#76, #80…#82, #84, #85)
 - Dokumentation (/docs) aktualisiert (#92, #93)
 - Vendor-Update: phpGeo 4.2.0 (#83)
-- Vendor-Update: Leaflet 1.9.2 (#97)
+- Vendor-Update: Leaflet 1.9.3 (#99)
 - Vendor-Update: Leaflet.GestureHandling 1.2.2 (#98)
 
 ## 06.05.2022 1.0.2
