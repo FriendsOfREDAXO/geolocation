@@ -210,6 +210,10 @@ class ConfigForm extends rex_config_form
         $be_css = AssetPacker\AssetPacker::target($assetDir.'geolocation_be.min.css')
             ->overwrite()
             ->addFile($addonDir.'install/geolocation_be.css');
+        // JS für Backend-Formulare
+        $be_js = AssetPacker\AssetPacker::target($assetDir.'geolocation_be.min.js')
+            ->overwrite()
+            ->addFile($addonDir.'install/geolocation_be.js');
 
         // Leaflet und Co wird nur eingebaut, wenn auch angefordert
         if (0 < rex_config::get(ADDON, 'compile', 2)) {
@@ -258,5 +262,6 @@ class ConfigForm extends rex_config_form
         $js->create();
         $css->create();
         $be_css->create();
+        $be_js->create();
     }
 }
