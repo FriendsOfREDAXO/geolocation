@@ -84,4 +84,5 @@ if (rex::isBackend()) {
 
     Tools::echoAssetTags();
     rex_view::addCssFile($this->getAssetsUrl('geolocation_be.min.css'));
+    rex_view::addJsFile($this->getAssetsUrl('geolocation_be.min.js'));
 }

@@ -1,10 +1,11 @@
 <?php
 /**
  * Ab der Version 2.0.0 sind Klassennamen geändert:
- *  - der Cronjob-Type in rex_cronjob von `Geolocation\cronjob` in `Geolocation\Cronjob`
+ *  - der Cronjob-Typ in rex_cronjob von `Geolocation\cronjob` in `Geolocation\Cronjob`
  *      => Tabelle rex_cronjob anpassen
- *  - Layer-Klasse von layer in Layer
+ *  - Layer-Klasse von `layer` in `Layer`
  *      => Tabelle rex_yform_field anpassen.
+ *  - Layer-Feld "url" erhält den Datentyp rex_yform_value_geolocation_url
  */
 
 namespace Geolocation;
@@ -14,6 +15,8 @@ namespace Geolocation;
 use rex;
 use rex_addon;
 use rex_sql;
+use rex_sql_column;
+use rex_sql_table;
 use rex_version;
 
 /**
@@ -52,6 +55,26 @@ if (rex_version::compare('2.0.0', $this->getVersion(), '>')) {
     $sql->setTable(rex::getTable('yform_field'));
     $sql->setValue('function', 'Geolocation\\Layer::verifyLang');
     $sql->setWhere('`function`=:old', [':old' => 'Geolocation\\Layer::verifyLang']);
+    $sql->update();
+
+    /**
+     * Layer-Feld "url" erhält den Datentyp rex_yform_value_geolocation_url
+     * und in 'field' den Namen des Subdomain-Feldes.
+     * Spalte 'field' ggf. anlegen
+     */
+    rex_sql_table::get('yform_field')
+        ->ensureColumn(new rex_sql_column('field', 'text'))
+        ->ensure();
+
+    $sql->setTable(rex::getTable('yform_field'));
+    $sql->setValue('type_name', 'geolocation_url');
+    $sql->setValue('field', 'subdomain');
+    $sql->setWhere(
+        '`table_name`=:table AND `name`=:field',
+        [
+            ':table' => rex::getTable('geolocation_layer'),
+            ':field' => 'url',
+        ]);
     $sql->update();
 }
 
