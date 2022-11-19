@@ -79,7 +79,7 @@ try {
         ->ensureColumn(new rex_sql_column('name', 'varchar(191)'))
         ->ensureColumn(new rex_sql_column('url', 'text'))
         ->ensureColumn(new rex_sql_column('subdomain', 'varchar(191)'))
-        ->ensureColumn(new rex_sql_column('attribution', 'varchar(191)'))
+        ->ensureColumn(new rex_sql_column('attribution', 'text'))
         ->ensureColumn(new rex_sql_column('lang', 'text'))
         ->ensureColumn(new rex_sql_column('layertype', 'text'))
         ->ensureColumn(new rex_sql_column('ttl', 'int(11)', true))
