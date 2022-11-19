@@ -87,7 +87,7 @@
 				"prio": "5",
 				"type_id": "value",
 				"type_name": "text",
-				"db_type": "varchar(191)",
+				"db_type": "text",
 				"list_hidden": "1",
 				"search": "1",
 				"name": "attribution",
