@@ -64,6 +64,13 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
     markiert. Sofern der Anbieter URLs mit Sub-Domänen verarbeitet, wird die entsprechende
     Stelle mit `{s}` markiert.
 
+    Der Test-Button ermöglicht den direkten Test der eingegebenen Url. Sofern die eingegebene Url
+    formal grundlegend korrekt ist und - falls erforderlich - die Sub-Domänen angegeben sind, wird der
+    Button aktiviert. Klick auf den Button sendet die Feldinhalte zum Server, der als Proxy die eigentliche
+    Abfrage mit Test-Koordinaten (Konstanz am Bodensee) beim Kartenanbieter durchführt. Das Ergebnis wird
+    wird in einem modalen Fenster angezeigt.
+    ![Url-Test](assets/tiles_test.jpg)
+
 - **Sub-Domänen**  
     Die Sub-Domänen sind einzelne Ziffern oder Buchstaben, die als Zeichenfolge eingegeben werden.
     Beim Abruf eines Tiles mit der URL wird `{s}` durch eines der Zeichen, zufällig ausgewählt,
