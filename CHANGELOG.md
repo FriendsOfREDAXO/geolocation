@@ -23,6 +23,7 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
 - Dokumentation (/docs) aktualisiert (#92, #93)
 - Vendor-Update: phpGeo 4.2.0 (#83)
 - Vendor-Update: Leaflet 1.9.2 (#97)
+- Vendor-Update: Leaflet.GestureHandling 1.2.2 (#98)
 
 ## 06.05.2022 1.0.2
 
