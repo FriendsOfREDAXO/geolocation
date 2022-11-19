@@ -52,7 +52,7 @@
 				"table_name": "rex_geolocation_layer",
 				"prio": "3",
 				"type_id": "value",
-				"type_name": "text",
+				"type_name": "geolocation_url",
 				"db_type": "text",
 				"list_hidden": "1",
 				"search": "1",
@@ -60,11 +60,9 @@
 				"label": "translate:geolocation_layer_url",
 				"not_required": "",
 				"default": "",
-				"no_db": "",
 				"attributes": "",
 				"notice": "translate:geolocation_layer_url_notice",
-				"prepend": "",
-				"append": ""
+				"field": "subdomain"
 			},
 			{
 				"table_name": "rex_geolocation_layer",
