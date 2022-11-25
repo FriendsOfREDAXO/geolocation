@@ -5,6 +5,7 @@
 
 namespace Geolocation;
 
+use Geolocation\AssetPacker\AssetPacker;
 use rex;
 use rex_config;
 use rex_config_form;
@@ -202,16 +203,17 @@ class ConfigForm extends rex_config_form
 
         // AssetPacker-Instanzen für die Asset-Dateien öffnen
         // Kartensoftware
-        $css = AssetPacker\AssetPacker::target($assetDir.'geolocation.min.css')
+
+        $css = AssetPacker::target($assetDir.'geolocation.min.css')
             ->overwrite();
-        $js = AssetPacker\AssetPacker::target($assetDir.'geolocation.min.js')
+        $js = AssetPacker::target($assetDir.'geolocation.min.js')
             ->overwrite();
         // CCS für Backend-Formulare
-        $be_css = AssetPacker\AssetPacker::target($assetDir.'geolocation_be.min.css')
+        $be_css = AssetPacker::target($assetDir.'geolocation_be.min.css')
             ->overwrite()
-            ->addFile($addonDir.'install/geolocation_be.css');
+            ->addFile($addonDir.'install/geolocation_be.scss');
         // JS für Backend-Formulare
-        $be_js = AssetPacker\AssetPacker::target($assetDir.'geolocation_be.min.js')
+        $be_js = AssetPacker::target($assetDir.'geolocation_be.min.js')
             ->overwrite()
             ->addFile($addonDir.'install/geolocation_be.js');
 
@@ -228,7 +230,7 @@ class ConfigForm extends rex_config_form
             // Zusätzlich die von Geolocation benötigten Plugins und der Geolocation-Code
             $css
                 ->addFile($addonDir.'install/vendor/Leaflet.GestureHandling/leaflet-gesture-handling.min.css')
-                ->addFile($addonDir.'install/geolocation.css');
+                ->addFile($addonDir.'install/geolocation.scss');
             $js
                 ->addFile($addonDir.'install/vendor/Leaflet.GestureHandling/leaflet-gesture-handling.min.js')
                 ->replace('//# sourceMappingURL=leaflet-gesture-handling.min.js.map', '')
@@ -250,13 +252,21 @@ class ConfigForm extends rex_config_form
         if (is_readable($dataDir.'load_assets.php')) {
             include $dataDir.'load_assets.php';
         } else {
+            $cssFile = $dataDir.'geolocation.scss';
+            if (!is_file($cssFile)) {
+                $cssFile = $dataDir.'geolocation.css';
+            }
             $css
-                ->addOptionalFile($dataDir.'geolocation.css');
+                ->addOptionalFile($cssFile);
             $js
                 ->addOptionalFile($dataDir.'geolocation.js')
                 ->regReplace('%//#\s+sourceMappingURL=.*?$%im', '//');
+            $cssFile = $dataDir.'geolocation_be.scss';
+            if (!is_file($cssFile)) {
+                $cssFile = $dataDir.'geolocation_be.css';
+            }
             $be_css
-                ->addOptionalFile($dataDir.'geolocation_be.css');
+                ->addOptionalFile($cssFile);
         }
         // Zieldateien final erstellen
         $js->create();
