@@ -31,6 +31,7 @@ use rex_file;
 use rex_path;
 use rex_sql;
 use rex_sql_column;
+use rex_sql_exception;
 use rex_sql_table;
 use rex_sql_util;
 use rex_yform_manager_table;
@@ -121,26 +122,22 @@ try {
             }
 
             /**
-             * Falls in der REX-Instanz ein anderes TablePrefix als "rex_" eingestellt ist: anpassen.
+             * Falls der Import einen Fehler auswirft, wird er ausgegeben, führt aber
+             * nicht zu einem Abbruch. Dann sind die Tabellen halt leer.
+             * -> dataset.sql bereinigen und neu installieren.
              */
-            if ('rex_' !== rex::getTablePrefix()) {
-                $dataset = str_replace(
-                    ['`rex_geolocation_layer`', '`rex_geolocation_mapset`'],
-                    ['`'.$layer.'`', '`'.$mapset.'`'],
-                    $dataset
-                );
-            }
-            // etwas kompliziert, da importDump unbedingt eine .sql-Datei will.
-            $sqlfile = __DIR__ . '/tmp' . random_int(10000000, 99999999) . '.sql';
-            file_put_contents($sqlfile, $dataset);
-            rex_sql_util::importDump($sqlfile);
-            unlink($sqlfile);
-            // Hinweis auf ggf. auszutauschenden HERE-Key in Demo-Daten
-            if ($demoDataset) {
-                $msg[] = $this->i18n('geolocation_install_table_demo').
-                        '<p class="alert alert-warning" style="margin:0">'.$this->i18n('geolocation_install_table_demo_api').'</p>';
-            } else {
-                $msg[] = $this->i18n('install_table_filled');
+            try {
+                rex_sql_util::importDump($datasetfile);
+                if ($demoDataset) {
+                    $msg[] = $this->i18n('geolocation_install_table_demo').
+                            '<p class="alert alert-warning" style="margin:0">'.$this->i18n('geolocation_install_table_demo_api').'</p>';
+                } else {
+                    $msg[] = $this->i18n('install_table_filled');
+                }
+            } catch (rex_sql_exception $e) {
+                $sql->setQuery('TRUNCATE '.$layer);
+                $sql->setQuery('TRUNCATE '.$mapset);
+                $msg[] = '<p class="alert alert-warning" style="margin:0">'.$this->i18n('install_table_fill_error', $e->getMessage(), rex_path::relative($datasetfile)).'</p>';
             }
         }
     }
@@ -250,12 +247,4 @@ try {
     $this->setProperty('installmsg', $e->getMessage());
 } catch (Exception $e) {
     $this->setProperty('installmsg', $e->getMessage().' (file '.$e->getFile().' line '.$e->getLine().')');
-} finally {
-    // Sicher ist sicher
-    if (isset($filename)) {
-        @unlink($filename);
-    }
-    if (isset($sqlfile)) {
-        @unlink($sqlfile);
-    }
 }
