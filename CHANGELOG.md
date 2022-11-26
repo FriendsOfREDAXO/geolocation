@@ -20,6 +20,7 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
 - RexStan-gesteuerte Überarbeitung aller PHP-Dateien (Level: 8, PHP: 8.0-8.2, Extensions: REDAXO Superglobals, Bleeding-Edge, Strict-Mode, Deprecation Warnings, phpstan-dba, dead code) und Code-Formatierung im REDAXO-Standard (#54…#62, #66, #68, #70…#72, #74…#76, #80…#82, #84, #85)
 - CSS-Assets `install/geolocation_be.css` und `install/geolocatin.css`in .scss umbenannt. (#104)
 - Dokumentation (/docs) aktualisiert (#92, #93)
+- `install.php`vereinfacht; nutzt nun ausschließlich `%table_prefix%` beim Import (#106) 
 - Bugfix:
   - Workaround in `layer.php` für ein Typecast-Problem aus 'class dataset' (#79)
   - Farbcodes (#123456) in `Geolocation.svgIconPin(..)` jetzt korrekt URI-escaped (#69⇒#94)
