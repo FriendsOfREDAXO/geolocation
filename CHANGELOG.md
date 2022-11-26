@@ -24,6 +24,7 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
   - Workaround in `layer.php` für ein Typecast-Problem aus 'class dataset' (#79)
   - Farbcodes (#123456) in `Geolocation.svgIconPin(..)` jetzt korrekt URI-escaped (#69⇒#94)
   - Feld "attribution" im Layer-Formular von `varchar(191` in `text` geändert. Das Feld war zu klein. Beim Speichern gekapptes HTML kann zu Darstellungsproblemen führen. 
+  - Demo-Datensätze aktuaisiert (CyclOSM-Link tot und ausgetauscht), OSM nun als Mapset "1" default statt HERE. (#105) 
 - Vendor-Updates:
   - phpGeo 4.2.0 (#83)
   - Leaflet 1.9.3 (#99)
