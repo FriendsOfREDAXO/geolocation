@@ -53,7 +53,7 @@ Die Installation (I) bzw. Re-Installation (R) umfasst folgende Schritte
   Namespace "geolocation" eingetragen bzw. fehlende werden ergänzt (I|R).
 - Ein Teil der im Betrieb notwendigen Parameter werden als Konstanten in die *boot.php* eingetragen.
 - JS- und CSS-Dateien aus dem Asset-Verzeichnis des Addons werden in das öffentliche
-  Assets-Verzeichnis des addons kopiert
+  Assets-Verzeichnis des Addons kopiert. 
 - Die **Geolocation**-spezifischen JS- und CSS-Dateien werden neu in das öffentliche
   Assets-Verzeichnis kompiliert (I|R).
 
@@ -68,7 +68,7 @@ Grad auch die Re-Installaion individualisiert werden.
 |-|-|-|
 | config.yml | Die Grundeinstellungen des **Geolocation**-Addons wie Standard-Kartenausschnitt, Job-Parameter, Ausgabefragment | Überschreibt die angegebenen gleichnamigen Werte in der Originaldatei |
 | dataset.sql | SQL-Statements zur Erstbefüllung der Tabellen | *rex_geoocation_mapset*<br>*rex_geolocation_layer* |
-| geolocation.css | Zusätzliche CSS-Einstellungen, gedacht für zusätzliche Leaflet-Plugins bzw. Leaflet-Erweiterungen, eigene Erweiterungen und Anpassungen an die REDAXO-Instanz | [Eigene Scripte und CSS-Formatierungen](#ownjscss) |
+| geolocation.scss | Zusätzliche CSS-Einstellungen, gedacht für zusätzliche Leaflet-Plugins bzw. Leaflet-Erweiterungen, eigene Erweiterungen und Anpassungen an die REDAXO-Instanz | [Eigene Scripte und CSS-Formatierungen](#ownjscss) |
 |geolocation.js | Zusätzliche JS-Scripte, gedacht für zusätzliche Leaflet-Plugins bzw.Leaflet-Erweiterungen und individuelle JS-Geolocation-Erweiterungen  | [Eigene Scripte und CSS-Formatierungen](#ownjscss) |
 | load_assets.php | Multifile-Erweiterungen als Alternative zu den beiden vorgenannten Einzeldateien | [Eigene Scripte und CSS-Formatierungen](#ownjscss) |
 | lang_js | Equivalient zu den lang-Dateien mit Texten, die im JS benutzt werden |  |
@@ -313,6 +313,7 @@ bzw. beim Speichern der [Einstellungen](settings.md) werden die Asset-Dateien
 - `/assets/addons/geolocation/geolocation.css`  
 - `/assets/addons/geolocation/geolocation.js`  
 - `/assets/addons/geolocation/geolocation_be.css`  
+- `/assets/addons/geolocation/geolocation_be.js`  
 
 neu erzeugt. Dabei werden im Verzeichnis `data/addons/geolocation/` liegende gleichnamige Dateien
 nach den Standardkomponenten eingefügt. Solange es sich um relativ einfachen bzw. ohnehin
@@ -340,6 +341,7 @@ array:6 [▼
     "css" => Geolocation\AssetPacker\AssetPacker_css {#270 ▶}
     "js" => Geolocation\AssetPacker\AssetPacker_js {#271 ▶}
     "be_css" => Geolocation\AssetPacker\AssetPacker_css {#272 ▶}
+    "be_js" => Geolocation\AssetPacker\AssetPacker_js {#253 ▶}
 ]
 ```
 
@@ -352,7 +354,7 @@ $css = AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.css')
     ->overwrite()
     ->addFile( $addonDir.'install/vendor/leaflet/leaflet.css') )
     ->addFile( $addonDir.'install/vendor/Leaflet.GestureHandling/leaflet-gesture-handling.min.css') )
-    ->addFile( $addonDir.'install/geolocation.css') );
+    ->addFile( $addonDir.'install/geolocation.scss') );
 $js = AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.js')
     ->overwrite()
     ->addFile( $addonDir.'install/vendor/leaflet/leaflet.js') )
@@ -361,19 +363,25 @@ $js = AssetPacker\AssetPacker::target( $assetDir.'geolocation.min.js')
 
 $be_css = AssetPacker\AssetPacker::target( $assetDir.'geolocation_be.min.css')
     ->overwrite()
-    ->addFile( $addonDir.'install/geolocation_be.css' );
+    ->addFile( $addonDir.'install/geolocation_be.scss' );
+
+$be_js = AssetPacker\AssetPacker::target( $assetDir.'geolocation_be.min.js')
+    ->overwrite()
+    ->addFile( $addonDir.'install/geolocation_be.js' );
 
 if( is_file($dataDir.'load_assets.php') ) {
     include $dataDir.'load_assets.php';
 } else {
-    $css->addOptionalFile( $dataDir.'geolocation.css');
+    $css->addOptionalFile( $dataDir.'geolocation.scss');
     $js->addOptionalFile( $dataDir.'geolocation.js');
-    $be_css->addOptionalFile( $dataDir.'geolocation_be.css');
+    $be_css->addOptionalFile( $dataDir.'geolocation_be.scss');
+    $be_js->addOptionalFile( $dataDir.'geolocation_be.js');
 }
 
 $css->create();
 $js->create();
 $be_css->create();
+$be_js->create();
 ```
 
 Wie Dateien hinzugefügt werden, beschreibt als Beispiel der Code in `compileAssets()` und darüber
@@ -403,12 +411,12 @@ Außer beim Installieren bzw. Re-Installieren werden die Asset-Dateien bei Ände
 ### LeafletJS ohne **Geolocation**  
 
 Auch in der Betriebsart "Proxy/Cache" benötigt man eine Kartensoftware á la LeafletJS und ein wenig
-Javascript, um darauf aufbauend die Karte anzuzeigen. Über Installationsparameter Erweiterungen
+Javascript, um darauf aufbauend die Karte anzuzeigen. Über Installationsparameter
 können die Asset-Dateien entsprechend konfiguriert und geladen werden. Die Anpassung erfolgt wie
 oben beschrieben über die Dateien
 - `data/addons/geolocation/config.yml`
 - `data/addons/geolocation/geolocation.js`
-- `data/addons/geolocation/geolocation.css`
+- `data/addons/geolocation/geolocation.scss` (oder `.css`)
 - `data/addons/geolocation/load_assets.php`
 
 Die Schritte:
