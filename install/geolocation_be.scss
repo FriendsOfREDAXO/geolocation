@@ -53,19 +53,20 @@ geolocation-layerselect {
         .list-group {
             margin: 0;
     
-            // Up/Down-Button nur wenn es auch eine Zeile darüber/darunter gibt
-            :first-child > gelocation-trigger[event$=".xxup"],
-            :last-child > gelocation-trigger[event$=".down"] {
-                visibility: hidden;
-            }
-
             // Platz schaffen für den "hat Focus"-Rahmen
             :not(:last-child) {
-                margin-bottom:2px;
+                margin-bottom:1px;
             }
     
             .list-group-item {
                 padding: $padding-xs-vertical $geolocation-layerset-padding;
+
+                // Up/Down-Button nur wenn es auch eine Zeile darüber/darunter gibt
+                &:first-of-type gelocation-trigger[event$=".up"],
+                &:last-of-type gelocation-trigger[event$=".down"] {
+                    visibility: hidden;
+                }
+            
             }
         
         }
@@ -87,7 +88,6 @@ geolocation-layerselect {
     }
 
 }
-
 
 body.rex-theme-dark geolocation-layerselect [geolocation-layer-empty] {
     color: $color-text-light-inactive;
