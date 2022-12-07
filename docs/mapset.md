@@ -69,11 +69,17 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
     In einer Leaflet-Map kann immer nur ein Basiskarten-Layer aktiv sein. Im Unterschied dazu können
     mehrere Overlay-Karten auf dem aktuellen Basis-Layer übergeblendet werden.
 
-    Das Widget bietet die Auswahl von als Basiskarte bzw. als Overlay-Karte markierten
-    Karten und deren Anordnung (Reihenfolge). In genau der Reihenfolge würden die Layer auf der
-    Leaflet-Map bereitgestellt, der erste Basis-Layer wird zuerst aktiviert.
+    Das Widget ermöglicht die Auswahl von Basiskarten bzw. Overlay-Karten und deren Anordnung (Reihenfolge).
+    In genau der Reihenfolge würden die Layer im auf der Leaflet-Map bzw. Layer-Control bereitgestellt. 
+    
+    Der zuerst aktive Basis-Layer bzw. die auf dem Basislayer ab Start anzuzeigenden Overlay-Karten
+    können durch Klick auf die jeweilige Zeile aktiviert werden. Entsprechend kann per Button (rechts
+    in der Zeile) die reihenfolge verändert oder eine zeile gelöscht werden.
+    
+    Der Plus-Button rechts im Widget öffnet ein Overlay zur Auswahl und Übernahme von Karten in den Kartensatz.
 
-    Deaktivierte Karten/Layer können ausgewählt werden, sind aber nicht im Datensatz enthalten
+    Deaktivierte Karten/Layer können in den Kartensatz übernommen werden, sind aber nicht
+    in der Karte verfügbar.
 
     ```php
     // Mapset abrufen (::get(id) bzw. ::take())
@@ -81,7 +87,7 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
     // Kartendaten (Layer) abrufen
     $layerset = $mapset->getLayerset();
     ```
-    Die Layer (`$layerset`) werden als Array bereitgestell. Hier ein Beispiel:
+    Die Layer (`$layerset`) werden als Array bereitgestellt. Hier ein Beispiel:
     ```
     array:3 [▼
         0 => array:4 [▼
@@ -89,18 +95,21 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
             "label" => "Karte"
             "type" => "b"
             "attribution" => "Map Tiles &copy; 2020 <a href="http://developer.here.com">HERE</a>"
+            "active" => true
         ]
         1 => array:4 [▼
             "layer" => "2"
             "label" => "Satelit"
             "type" => "b"
             "attribution" => "Map Tiles &copy; 2020 <a href="http://developer.here.com">HERE</a>"
+            "active" => false
         ]
         2 => array:4 [▼
             "layer" => "3"
             "label" => "Hybrid"
             "type" => "b"
             "attribution" => "Map Tiles &copy; 2020 <a href="http://developer.here.com">HERE</a>"
+            "active" => false
         ]
     ]
     ```
