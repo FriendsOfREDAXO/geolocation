@@ -104,7 +104,7 @@ if (rex_version::compare('2.0.0', $this->getVersion(), '>')) {
     // - "geolocation_layerselect" als Feldtyp für die Mapset-Layer-Auswahl statt "be_manager_relation"
     $sql->setTable(rex::getTable('yform_field'));
     $sql->setValue('type_name', 'geolocation_layerselect');
-    $sql->setValue('notice', 'ranslate:geolocation_mapset_layer_notice');
+    $sql->setValue('notice', 'translate:geolocation_mapset_layer_notice');
     $sql->setValue('format', 'radio');
     $sql->setWhere(
         '`table_name`=:table AND `name`=:field',
@@ -116,7 +116,7 @@ if (rex_version::compare('2.0.0', $this->getVersion(), '>')) {
 
     $sql->setTable(rex::getTable('yform_field'));
     $sql->setValue('type_name', 'geolocation_layerselect');
-    $sql->setValue('notice', 'ranslate:geolocation_mapset_overlay_notice');
+    $sql->setValue('notice', 'translate:geolocation_mapset_overlay_notice');
     $sql->setValue('format', 'checkbox');
     $sql->setWhere(
         '`table_name`=:table AND `name`=:field',
