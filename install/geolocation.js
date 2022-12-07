@@ -41,6 +41,8 @@ var Geolocation = {
     Tools: {},      // Die Klassen für Map-Tools
     tools: {},      // Factory-Funktionen für Map-Tools
 
+    func: {},       // für Funktionen
+
     cLang: (window.navigator.userLanguage || window.navigator.language).substr(0,2),
     lang: {%i18n%}, // Sprachen / Textübersetzung
     i18n: function( t, data ) {
@@ -247,11 +249,11 @@ Geolocation.Classes.Map = class {
         layerNames = Object.keys(mapset);
         if( 0 == layerNames.length ) return;
 
-        let layer, label, layertype, tile, geolayer, defaultLayer = 'default';
-        // Wenn es keinen Layer "default" gibt: dann es ersten nehmen
-        if( layerNames.indexOf(defaultLayer) == -1 ) defaultLayer = layerNames[0];
-        if( layerNames.length > 1 ) this.layerControl.addTo( this.map );
         // Layer einfügen
+        // NOTE: hier wird jetzt nicht mehr geprüft, ob es mindestens eine 
+        // Karte gibt, die "active" gesetzt ist.
+        let layer, label, layertype, tile, geolayer, active;
+        if( layerNames.length > 1 ) this.layerControl.addTo( this.map );
         for( tile in mapset ){
             label = mapset[tile].label || tile;
             delete mapset[tile].label;
@@ -259,8 +261,12 @@ Geolocation.Classes.Map = class {
             delete mapset[tile].layer;
             layertype = mapset[tile].type || 'b';
             delete mapset[tile].type;
-            layer = L.tileLayer( 'index.php?'+Geolocation.default.keyLayer+'='+geolayer+'&z={z}&x={x}&y={y}',mapset[tile] );
-            if( tile == defaultLayer ) layer.addTo( this.map );
+            layer = L.tileLayer( `index.php?${Geolocation.default.keyLayer}=${geolayer}&z={z}&x={x}&y={y}`,mapset[tile] );
+            active = true === mapset[tile].active;
+            delete mapset[tile].active;
+            if( active ) {
+                layer.addTo( this.map );
+            }
             if( 'b' == layertype ){
                 this.layerControl.addBaseLayer( layer, label );
             } else {

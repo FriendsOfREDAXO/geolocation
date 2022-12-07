@@ -15,6 +15,6 @@ INSERT INTO `%TABLE_PREFIX%geolocation_layer` (`id`, `name`, `url`, `subdomain`,
 --
 
 TRUNCATE TABLE `%TABLE_PREFIX%geolocation_mapset`;
-INSERT INTO `%TABLE_PREFIX%geolocation_mapset` (`id`, `name`, `title`, `layer`, `overlay`, `mapoptions`, `outfragment`) VALUES
-(1, 'osm', 'Open Street Map', '4', '5,6', 'default', ''),
-(2, 'base', 'Basiskarte', '1,2,3', '', 'default', '');
+INSERT INTO `%TABLE_PREFIX%geolocation_mapset` (`id`, `name`, `title`, `layer`, `layer_selected`, `overlay`, `overlay_selected`, `mapoptions`, `outfragment`) VALUES
+(1, 'osm', 'Open Street Map', '4', '4', '5,6', '5', 'default', ''),
+(2, 'base', 'Basiskarte', '1,2,3', '1', '', '', 'default', '');
