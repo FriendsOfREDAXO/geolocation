@@ -30,6 +30,7 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
   - phpGeo 4.2.0 (#83)
   - Leaflet 1.9.3 (#99)
   - Leaflet.GestureHandling 1.2.2 (#98)
+  - AssetPacker 1.3.2 (#108)
 - Neu:
   - Test der Layer-URLs interaktiv im Eingabeformular (#100)
   - Individuelles CSS (`redaxo/data/geolocation/geolocation.css') kann auch in SCSS-Dateien stehen (Editor-frundlich) (#104)

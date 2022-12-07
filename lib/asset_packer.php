@@ -3,7 +3,7 @@
  *  AssetPacker - Support für REDAXO-Addons
  *
  *  @author      Christoph Böcker <https://github.com/christophboecker/>
- *  @version     1.3
+ *  @version     1.3.3
  *  @copyright   Christoph Böcker
  *  @license     Die AssetPacker-Klassen: MIT-License <https://opensource.org/licenses/MIT>
  *               Die JS-Minifier-Klasse: BSD 3-Clause License <https://github.com/tedivm/JShrink/blob/master/LICENSE>
@@ -23,6 +23,11 @@
  */
 
 namespace Geolocation\AssetPacker;
+
+use rex_view;
+use rex;
+use rex_url;
+
 /**
  *  @package AssetPacker
  *  @method AssetPacker     target( string $targetPath )
@@ -440,11 +445,17 @@ class AssetPacker_css extends AssetPacker
     {
 
         $scss_compiler = new \ScssPhp\ScssPhp\Compiler();
-        $scss_compiler->setNumberPrecision(10);
-        $scss_compiler->setFormatter(\ScssPhp\ScssPhp\Formatter\Compressed::class);
-        $styles = '@import \''.\rex_path::addon('be_style','plugins/redaxo/scss/_variables').'\';';
+        $scss_compiler->setOutputStyle(\ScssPhp\ScssPhp\OutputStyle::COMPRESSED);
+        $scss_compiler->setOutputStyle(\ScssPhp\ScssPhp\OutputStyle::EXPANDED);
+        $styles = '@import "'.\rex_path::addon('be_style','plugins/redaxo/scss/_variables').'";';
+        $styles .= '@import "'.\rex_path::addon('be_style','plugins/redaxo/scss/_variables-dark').'";';
+        $styles .= '@import "'.\rex_path::addon('be_style', 'vendor/font-awesome/scss/_variables.scss').'";';
     	$styles = str_replace('\\','/',$styles);
-        return $scss_compiler->compile($styles.$content);
+        /** 
+         * @var \ScssPhp\ScssPhp\CompilationResult $result
+         */
+        $result = $scss_compiler->compileString($styles.$content);
+        return $result->getCss();
 	}
 
     public function getTag( string $media = 'all' ) : string
@@ -485,17 +496,13 @@ class AssetPacker_js extends AssetPacker
         // Pathname relativ zu rex_path
         $asset = \rex_url::base( \rex_path::relative( $this->target ) );
 
-        if (array_key_exists(\rex_view::JS_IMMUTABLE, $options) && $options[\rex_view::JS_IMMUTABLE])
-        {
-		    if (!\rex::isDebugMode() && \rex::backendController() && $this->timestamp)
-		    {
-			    $asset = \rex_url::$controller(['asset' => $asset, 'buster' => $this->timestamp]);
-		    }
+        if (array_key_exists(rex_view::JS_IMMUTABLE, $options) && $options[rex_view::JS_IMMUTABLE]) {
+            if (!rex::isDebugMode() && rex::isBackend() && $this->timestamp) {
+                $asset = rex_url::backendController(['asset' => $asset, 'buster' => $this->timestamp]);
+            }
+        } elseif ($this->timestamp) {
+            $asset .= '?buster=' . $this->timestamp;
         }
-		elseif ( $this->timestamp )
-		{
-			$asset .= '?buster=' . $this->timestamp;
-		}
 
         $attributes = [];
         if (array_key_exists(\rex_view::JS_ASYNC, $options) && $options[\rex_view::JS_ASYNC]) {
