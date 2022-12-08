@@ -93,8 +93,10 @@ try {
         ->ensurePrimaryIdColumn()
         ->ensureColumn(new rex_sql_column('name', 'varchar(191)'))
         ->ensureColumn(new rex_sql_column('title', 'varchar(191)'))
-        ->ensureColumn(new rex_sql_column('layer', 'text'))
-        ->ensureColumn(new rex_sql_column('overlay', 'text'))
+        ->ensureColumn(new rex_sql_column('layer', 'varchar(191)'))
+        ->ensureColumn(new rex_sql_column('layer_selected', 'varchar(191)'))
+        ->ensureColumn(new rex_sql_column('overlay', 'varchar(191)'))
+        ->ensureColumn(new rex_sql_column('overlay_selected', 'varchar(191)'))
         ->ensureColumn(new rex_sql_column('mapoptions', 'varchar(191)'))
         ->ensureColumn(new rex_sql_column('outfragment', 'varchar(191)'))
         ->ensure();

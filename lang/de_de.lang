@@ -43,11 +43,14 @@ geolocation_mapset_title = Titel
 geolocation_mapset_title_error = Der Kartentitel fehlt bzw. ist nicht eindeutig
 geolocation_mapset_layer = Basiskarten
 geolocation_mapset_layer_error = Mindestens ein Basiskarten-Layer muss ausgewählt sein
+geolocation_mapset_layer_notice = Die markierte Basiskarte (&#9673;) wird als Hauptkarte angezeigt.
 geolocation_mapset_overlay = Overlay-Karten
+geolocation_mapset_overlay_notice = Markierte Overlay-Karten (&#9635;) werden direkt mit der ausgewählten Basiskarte angezeigt.
 geolocation_mapset_outfragment_notice = REDAXO-Fragment für die Ausgabe (leer: aus "Einstellungen" | Fallback auf «{0}»)
 geolocation_mapset_outfragment_error = Das Ausgabe-Fragment muss leer sein (Default aus "Einstellungen") oder ein PHP-Dateiname (Suffix fehlt)
 geolocation_mapset_mapoptions_default = Default; Werte aus "Einstellungen"
 geolocation_mapset_mapoptions_notice = (*) Bei Nutzung der Default-Einstellungen ist dieser Wert aktiviert.
+geolocation_mapset_widget_check = Layer auswählen/aktivieren
 
 # Tabelle "rex_geolacation_layer"
 geolocation_layer = Karte
@@ -117,3 +120,7 @@ geolocation_testurl_internalerror = Interner Fehler im Abruf der URL-Überprüfu
 geolocation_testurl_layer1ok = Url erfolgreich getestet!
 geolocation_testurl_layer2ok = Url mit SubDomain "{0}" aus "{1}" erfolgreich getestet!
 geolocation_testurl_providererror = Unerwartete Antwort vom Layer-Server
+
+# Layer-Widget (rex_yform_value_geolocation_layerselect)
+geolocation_yfv_layerselect_empty = Bitte eine Karte auswählen ...
+geolocation_yfv_layerselect_add = Karte auswählen

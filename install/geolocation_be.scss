@@ -1,4 +1,5 @@
 .geolocation-yform {
+
     @media (min-width: $screen-lg-min) {
 
         > div:not(.alert) > *:not(.control-label),
@@ -24,4 +25,111 @@
 
     }
 
+}
+
+/**
+ * CSS für das Custom-HTMLElement "geolocation-layerselect"
+ * Die Struktur des Markup, auf die sich diese CSS-Formate beziehen,
+ * ist im YTemplate "value.layerselect.tpl.php" zu finden.
+ * 
+ * Damit die .list-group und ihre .list-group-items optisch besser in die
+ * Formular-Formate passen, werden padding und margin etwas korrigiert.
+ * 
+ * Die Mindesthähe von 50px ist nur gschätzt mangels valider Erkenntnisse
+ * zur Berechnung der Mindesthöhe bzw. der automatischen Anpassung.
+ */
+geolocation-layerselect {
+
+    $geolocation-layerset-padding: ($padding-base-horizontal / 2);
+    $geolocation-layerset-widget-height: 50px;
+
+    display: block;
+
+    .form-control {
+        min-height: $geolocation-layerset-widget-height;
+        padding-left: $geolocation-layerset-padding;
+        padding-right: $geolocation-layerset-padding;
+
+        .list-group {
+            margin: 0;
+    
+            // Platz schaffen für den "hat Focus"-Rahmen
+            :not(:last-child) {
+                margin-bottom:1px;
+            }
+    
+            .list-group-item {
+                padding: $padding-xs-vertical $geolocation-layerset-padding;
+
+                // Up/Down-Button nur wenn es auch eine Zeile darüber/darunter gibt
+                &:first-of-type gelocation-trigger[event$=".up"],
+                &:last-of-type gelocation-trigger[event$=".down"] {
+                    visibility: hidden;
+                }
+            
+            }
+        
+        }
+
+        // Text hinter der Listgroup wird nur sichtbar, wenn die Liste leer ist.
+        p {
+            position:absolute;
+            top: (($geolocation-layerset-widget-height - $line-height-computed) / 2);
+            padding-left: $geolocation-layerset-padding;
+            color: $color-a;
+        }
+    }
+
+    
+    // Den select aus dem Original-Widget unsichtbar halten, da nur
+    // funktional für das YForm-Popup nötig.
+    select[id^="YFORM_DATASETLIST_SELECT_"] {
+        display: none;
+    }
+
+}
+
+body.rex-theme-dark geolocation-layerselect [geolocation-layer-empty] {
+    color: $color-text-light-inactive;
+}
+@media (prefers-color-scheme: dark) {
+    body.rex-has-theme:not(.rex-theme-light) geolocation-layerselect [geolocation-layer-empty] {
+        color: $color-text-light-inactive;
+    }
+}
+
+/**
+ * Die per Tab selektierbaren Elemente farblich so kennzeichnen
+ * wie andere tab-bare Formularelemente auch.
+ */ 
+/* dark: $color-blue-2*/
+@mixin geolocation-focus-dark ($color) {
+    $color-rgba: rgba(red($color), green($color), blue($color), .6);
+    &:focus {
+      border-color: $color !important;
+      outline: 0;
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px $color-rgba;
+    }
+}
+geolocation-layerselect-item {
+    @include  geolocation-focus-dark ($input-border-focus);
+}
+
+geolocation-layerselect .btn-popup {
+    @include  geolocation-focus-dark ($input-border-focus);
+}
+
+body.rex-theme-dark {
+    geolocation-layerselect-item,
+    geolocation-layerselect .btn-popup {
+        @include  geolocation-focus-dark ($color-blue-2);
+    }
+}
+@media (prefers-color-scheme: dark) {
+    body.rex-has-theme:not(.rex-theme-light) {
+        geolocation-layerselect-item,
+        geolocation-layerselect .btn-popup {
+            @include  geolocation-focus-dark ($color-blue-2);
+        }
+    }
 }

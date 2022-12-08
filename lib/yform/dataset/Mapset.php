@@ -56,6 +56,7 @@ use rex_yform;
 use rex_yform_manager_dataset;
 
 use function count;
+use function in_array;
 use function is_array;
 
 /**
@@ -63,11 +64,13 @@ use function is_array;
  *
  * aus der Datentabelle rex_geolocation_mapset
  * @property string $layer
+ * @property string $layer_selected
  * @property string $overlay
+ * @property string $overlay_selected
  * @property string $outfragment
  *
  * virtuelle Felder in Mapset
- * @property array $layerset
+ * @property list<int> $layerset
  */
 
 class Mapset extends rex_yform_manager_dataset
@@ -317,6 +320,7 @@ class Mapset extends rex_yform_manager_dataset
         if ('layerset' === $key) {
             $layer = explode(',', $this->layer.','.$this->overlay);
             $layer = array_filter($layer, 'trim');
+            $layer = array_map('intval', $layer);
             return array_unique($layer);
         }
         return parent::getValue($key);
@@ -339,16 +343,28 @@ class Mapset extends rex_yform_manager_dataset
      * daten z.B. für <rex-map mapset=...>
      *
      * @api
-     * NOTE: das muss doch einfache gehen als immer diese Definition (siehe Layer::getLayerConfigSet) abzuschreiben
-     * @return list<array{layer:int, label:string, type:string, attribution:string}>
+     * NOTE: das muss doch einfacher gehen als immer diese Definition (siehe Layer::getLayerConfigSet) abzuschreiben
+     * @return list<array{layer:int,label:string,type:string,attribution:string,active?:bool}>
      */
     // TODO: Warum hab ich hier keine Sprachauswahl optional vorgesehen?
     // Später angehen, keine Eile.
     public function getLayerset(): array
     {
-        // get layers ond overlays in scope
+        // get layers and overlays in scope
         $clang = rex_clang::getCurrent()->getCode();
-        return Layer::getLayerConfigSet($this->layerset, $clang);
+        $layerSet = Layer::getLayerConfigSet($this->layerset, $clang);
+
+        // Zus
+        $os = explode(',', $this->overlay_selected);
+        $ls = explode(',', $this->layer_selected);
+        foreach ($layerSet as &$v) {
+            if ('o' === $v['type']) {
+                $v['active'] = in_array((string) $v['layer'], $os, true);
+            } else {
+                $v['active'] = in_array((string) $v['layer'], $ls, true);
+            }
+        }
+        return $layerSet;
     }
 
     /**
@@ -363,8 +379,8 @@ class Mapset extends rex_yform_manager_dataset
      * @api
      * @return list<string>|array<string,bool>      Array mit Kartensatzoptionen
      */
-    // TODO: ist das sinnvoll, zwei Varianten der Ergebnisliste zuerzeugen, was wird wo benötigt?
-    // Erstmal so lassen; zu einem späteren Zeitpunkt prüfen und ggf. überarbeiten
+    // TODO: ist das sinnvoll, zwei Varianten der Ergebnisliste zu erzeugen, was wird wo benötigt?
+    // Erstmal so lassen, tut nicht weh; zu einem späteren Zeitpunkt prüfen und ggf. überarbeiten
     public function getMapOptions(bool $full = true): array
     {
         $value = [];
@@ -454,7 +470,6 @@ class Mapset extends rex_yform_manager_dataset
                 throw new InvalidMapsetParameter(InvalidMapsetParameter::MAPSET_DEF, [self::getDefaultId()]);
             }
         }
-        dump($map);
         return $map;
     }
 

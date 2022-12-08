@@ -13,7 +13,7 @@
  * Für ggf. zusätzliche Attribute muss die abgeleitete Klasse sorgen, die auch die
  * Grundlage des CustomHtml-Tags ist.
  */
- Geolocation.Classes.TestUrl = class extends HTMLElement {
+Geolocation.Classes.TestUrl = class extends HTMLElement {
 
     __api = null;
     __modalNode = null;
@@ -33,7 +33,7 @@
      */
     connectedCallback() {
         // erstmal deaktiviert
-        this._setActiveState( false )
+        this._setActiveState(false)
 
         // API-Soll-Parameter abrufen und als FormData bereitstellen
         try {
@@ -49,22 +49,22 @@
 
         // Modal-Code auslesen, Abbruch wenn nicht vorhanden
         let modal = (this.getAttribute('modal') || '').trim();
-        if( '' === modal ) {
+        if ('' === modal) {
             return;
         }
 
         // https://stackoverflow.com/questions/1912501/unescape-html-entities-in-javascript
         let elem = document.createElement('textarea');
         elem.innerHTML = modal;
-        modal = elem.value;   
+        modal = elem.value;
 
         // Modal vorne im Body einhängen (verhindert "seltsame" CSS-Effekte).
-        document.body.insertAdjacentHTML('afterbegin',modal);
+        document.body.insertAdjacentHTML('afterbegin', modal);
         this.__modalNode = document.body.firstElementChild;
 
         // Plausibility-Test des Modals durch Abruf des Content-Nodes
         this.__modalContentNode = this.__modalNode.querySelector('.modal-body') || null;
-        if(!this.__modalContentNode ) {
+        if (!this.__modalContentNode) {
             // Aufräumen vor dem Abbruch
             this.__modalNode.remove();
             this.__modalNode = null;
@@ -73,8 +73,8 @@
         }
 
         // Alles Übrige initialisieren
-        if( 'loading' === document.readyState ) {
-            document.addEventListener('DOMContentLoaded',this._initialize.bind(this));
+        if ('loading' === document.readyState) {
+            document.addEventListener('DOMContentLoaded', this._initialize.bind(this));
         } else {
             this._initialize();
         }
@@ -82,12 +82,12 @@
 
     disconnectedCallback() {
         this._turnOff();
-        $(this.__modalNode).off('shown.bs.modal',this._validate.bind(this));
-        this.removeEventListener('click',this._onClick.bind(this));
-        if( this.__urlNode) {
-            this.__urlNode.removeEventListener('input',this._checkActiveState.bind(this));
+        $(this.__modalNode).off('shown.bs.modal', this._validate.bind(this));
+        this.removeEventListener('click', this._onClick.bind(this));
+        if (this.__urlNode) {
+            this.__urlNode.removeEventListener('input', this._checkActiveState.bind(this));
         }
-        document.removeEventListener('DOMContentLoaded',this._DOMContentLoaded.bind(this));
+        document.removeEventListener('DOMContentLoaded', this._DOMContentLoaded.bind(this));
     }
 
     /**
@@ -105,11 +105,11 @@
 
         // Wenn UrlNode angegeben und wenn die nachgelagerten Elemente existieren
         // das Element aktivieren
-        if(this.__urlNode && this._turnOn()) {
+        if (this.__urlNode && this._turnOn()) {
             // Event-Handler das Modal und auf sich selbst
-            $(this.__modalNode).on('shown.bs.modal',this._validate.bind(this));
-            this.addEventListener('click',this._onClick.bind(this));
-            this.__urlNode.addEventListener('input',this._checkActiveState.bind(this));
+            $(this.__modalNode).on('shown.bs.modal', this._validate.bind(this));
+            this.addEventListener('click', this._onClick.bind(this));
+            this.__urlNode.addEventListener('input', this._checkActiveState.bind(this));
             // Freischalten?
             this._checkActiveState();
             return
@@ -129,7 +129,7 @@
      * this._setActiveState(this._hasValidContent()); wird nur aufgerufen,
      * wenn __url.value eine formal gültige Url ist.
      */
-    _checkActiveState () {
+    _checkActiveState() {
         try {
             // gültige URL?
             new URL(this.__urlNode.value);
@@ -142,11 +142,11 @@
     /**
      * Schaltet diesen Node frei oder nicht mittels Attribut "disabled"
      */
-    _setActiveState( state ) {
-        if( state ) {
+    _setActiveState(state) {
+        if (state) {
             this.removeAttribute('disabled');
         } else {
-            this.setAttribute('disabled','');
+            this.setAttribute('disabled', '');
         }
     }
 
@@ -158,7 +158,7 @@
      * Also: bei "Disabled" Click abfangen und nicht weiterleiten!
      */
     _onClick(event) {
-        if( this.hasAttribute('disabled') && 'false' !== this.getAttribute('disabled') ) {
+        if (this.hasAttribute('disabled') && 'false' !== this.getAttribute('disabled')) {
             event.stopImmediatePropagation();
             event.preventDefault();
             return;
@@ -175,24 +175,24 @@
      */
     _validate() {
         // Url-Object aktualisieren
-        this.__api.set('url',this.__urlNode.value);
+        this.__api.set('url', this.__urlNode.value);
         this._setValidationParams(this.__api);
-        fetch( window.location.origin + window.location.pathname, {
-                method: 'POST',
-                body: this.__api,
-            })
-            .then( (response ) => {
+        fetch(window.location.origin + window.location.pathname, {
+            method: 'POST',
+            body: this.__api,
+        })
+            .then((response) => {
                 if (!response.ok) {
                     throw new Error(response.statusText);
                 }
                 return response.text();
             })
-            .then( (HTML) => { this.__modalContentNode.innerHTML=HTML;})
-            .catch( (error) => {
-                this.__modalContentNode.innerHTML = '<p>'+Geolocation.i18n('There has been a problem with your fetch operation: {error}', {'error': error}) + '</p>';
+            .then((HTML) => { this.__modalContentNode.innerHTML = HTML; })
+            .catch((error) => {
+                this.__modalContentNode.innerHTML = '<p>' + Geolocation.i18n('There has been a problem with your fetch operation: {error}', { 'error': error }) + '</p>';
             });
     }
-    
+
     /**
      * Überschreiben! 
      * 
@@ -220,7 +220,7 @@
      * fügt die für dieses CustomFeld relevanten Parameter in das
      * FormData-Object "formData" ein, mit dem die Validierung per Ajax erfolgt
      */
-    _setValidationParams( formData){
+    _setValidationParams(formData) {
     }
 
     /**
@@ -236,7 +236,8 @@
     }
 }
 
-/**
+/** <geolocation-test-tile-url> Custom-HTML-Element für Url-Felder mit Test auf Tiles/Layer
+ * 
  * Custom-HTML-Element <geolocation-test-tile-url>button-label</geolocation-test-tile-url>
  * 
  * Attribute allgemein:
@@ -247,8 +248,7 @@
  * Zusätzliches Attribut hier:
  *      subdomain   HtmlID des Input-Feldes für die SubDomain
  */
-customElements.define('geolocation-test-tile-url', class extends Geolocation.Classes.TestUrl
-{
+customElements.define('geolocation-test-tile-url', class extends Geolocation.Classes.TestUrl {
     __subdomainNode = null;
 
     /**
@@ -257,12 +257,12 @@ customElements.define('geolocation-test-tile-url', class extends Geolocation.Cla
     _turnOn() {
         // Id des SubDomain-Eingabefeldes angegeben, Feld existent?
         this.__subdomainNode = document.getElementById(this.getAttribute('subdomain')) || null;
-        if(!this.__subdomainNode ) {
+        if (!this.__subdomainNode) {
             return false;
         }
 
         // Event-Handler aktivieren
-        this.__subdomainNode.addEventListener('input',this._checkActiveState.bind(this));
+        this.__subdomainNode.addEventListener('input', this._checkActiveState.bind(this));
         return true;
     }
 
@@ -271,8 +271,8 @@ customElements.define('geolocation-test-tile-url', class extends Geolocation.Cla
      * EventListener, die mit _turnOn aktiviert wurden.
      */
     _turnOff() {
-        if( this.__subdomainNode) {
-            this.__subdomainNode.removeEventListener('input',this._checkActiveState.bind(this));
+        if (this.__subdomainNode) {
+            this.__subdomainNode.removeEventListener('input', this._checkActiveState.bind(this));
         }
     }
 
@@ -280,8 +280,8 @@ customElements.define('geolocation-test-tile-url', class extends Geolocation.Cla
      * fügt die für dieses CustomFeld relevanten Parameter in das
      * FormData-Object "formData" ein, mit dem die Validierung per Ajax erfolgt
      */
-    _setValidationParams( formData ){
-        formData.set('subdomain',this.__subdomainNode.value);
+    _setValidationParams(formData) {
+        formData.set('subdomain', this.__subdomainNode.value);
     }
 
     /**
@@ -293,11 +293,11 @@ customElements.define('geolocation-test-tile-url', class extends Geolocation.Cla
      */
     _hasValidContent() {
         // keine SubDomain erforderlich?
-        if( -1 === this.__urlNode.value.indexOf('{s}')) {
+        if (-1 === this.__urlNode.value.indexOf('{s}')) {
             return true;
         }
         // erforderliche SubDomain angegeben?
-        if( 0 < this.__subdomainNode.value.trim().length ) {
+        if (0 < this.__subdomainNode.value.trim().length) {
             return true;
         }
         // Fehler, nötige Subdomain fehlt.
@@ -305,3 +305,336 @@ customElements.define('geolocation-test-tile-url', class extends Geolocation.Cla
     }
 
 });
+
+/**
+ * ein Workaround um sicherzustellen, dass alle Sub-Elemente geladen sind, bevor
+ * weitere Arbeitschritte im CustomHTML loslegen. Erübrigt in den meisten Fällen
+ * Hilfskrücken mit DOMContentLoaded, wenn es um die Nodes IM Element geht
+ * Quelle: https://stackoverflow.com/questions/48498581/textcontent-empty-in-connectedcallback-of-a-custom-htmlelement
+ */
+Geolocation.Classes.CustomHTMLBaseElement = (superclass) => class extends superclass {
+
+    constructor(...args) {
+        const self = super(...args);
+        self.parsed = false; // guard to make it easy to do certain stuff only once
+        self.parentNodes = [];
+        return self
+    }
+
+    connectedCallback() {
+        if (typeof super.connectedCallback === "function") {
+            super.connectedCallback();
+        }
+        // --> HTMLBaseElement
+        // when connectedCallback has fired, call super.setup()
+        // which will determine when it is safe to call childrenAvailableCallback()
+        this.setup()
+    }
+
+    childrenAvailableCallback() {
+    }
+
+    setup() {
+        // collect the parentNodes
+        let el = this;
+        while (el.parentNode) {
+            el = el.parentNode
+            this.parentNodes.push(el)
+        }
+        // check if the parser has already passed the end tag of the component
+        // in which case this element, or one of its parents, should have a nextSibling
+        // if not (no whitespace at all between tags and no nextElementSiblings either)
+        // resort to DOMContentLoaded or load having triggered
+        if ([this, ...this.parentNodes].some(el => el.nextSibling) || document.readyState !== 'loading') {
+            this.parsed = true;
+            if (this.mutationObserver) this.mutationObserver.disconnect();
+            this.childrenAvailableCallback();
+        } else {
+            this.mutationObserver = new MutationObserver((mutationList) => {
+                if ([this, ...this.parentNodes].some(el => el.nextSibling) || document.readyState !== 'loading') {
+                    this.childrenAvailableCallback()
+                    this.mutationObserver.disconnect()
+                }
+            });
+
+            // Wegen Problemen in der Erkennung mehrere aufeinander folgender gleicher CustomHtmlElemente
+            // geändert auf this.parentNode. Umd schon funktioniert es.
+            if (this.mutationObserver) this.mutationObserver.observe(this.parentNode, { childList: true });
+        }
+    }
+};
+
+/** <geolocation-layerselect-item> Klammer für Einträge in geolocation-layerselect
+ * 
+ * Dieses Custom-HTML bündelt Funktionen zur Verwaltung eines Eintrags im Widget.
+ * Konkretwerden diverse Events aufgenommen und in Aktionen umgesetzt.
+ * 
+ * - Klick-Event geolocation:layerselect.up bzw. Key ArrowUp
+ *      dieses Element eine Zeile höher schieben vor previousSibling
+ * 
+ * - Klick-Event geolocation:layerselect.down bzw. Key ArrowDown
+ *      dieses Element eine Zeile tiefer schieben nach nextSibling
+ * 
+ * - Klick-Event geolocation:layerselect.delete bzw. Key Delete
+ *      dieses Element löschen
+ * 
+ * - Klick auf den Container bzw. Key Space
+ *      den Radio/Checkbox-Input im Element anklicken
+ *
+ * Dieses Element schickt keine eigenen Events ab, wenn sich die Feldinhalte ändern!
+ * Die Original-Events der Inputs werden jedoch abgesetzt (ungetestet).
+ */
+customElements.define('geolocation-layerselect-item',
+    class extends HTMLElement {
+
+        connectedCallback() {
+            // Event-handler setzen
+            this.addEventListener('geolocation:layerselect.up', this._moveUp.bind(this));
+            this.addEventListener('geolocation:layerselect.down', this._moveDown.bind(this));
+            this.addEventListener('geolocation:layerselect.delete', this._delete.bind(this));
+            this.addEventListener('keydown', this._byKey.bind(this));
+            this.addEventListener('click', this._selectChoice.bind(this));
+        }
+
+        disconnectedCallback() {
+            this.removeEventListener('geolocation:layerselect.up', this._moveUp.bind(this));
+            this.removeEventListener('geolocation:layerselect.down', this._moveDown.bind(this));
+            this.removeEventListener('geolocation:layerselect.delete', this._delete.bind(this));
+            this.removeEventListener('keydown', this._byKey.bind(this));
+            this.removeEventListener('click', this._selectChoice.bind(this));
+        }
+
+        /** 
+         * Schiebt den Eintrag vor den davor stehenden Eintrag,
+         * also eine Position nach oben
+         * 
+         * @param {CustomEvent} event 
+         */
+        _moveUp(event) {
+            let sibling = this.previousElementSibling;
+            if (sibling) {
+                sibling.before(this);
+                this.focus();
+            }
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        /** 
+         * Schiebt den Eintrag hinter den Folgeeintrag,
+         * also eine Position nach unten
+         * 
+         * @param {CustomEvent} event 
+         */
+        _moveDown(event) {
+            let sibling = this.nextElementSibling;
+            if (sibling) {
+                sibling.after(this);
+                this.focus();
+            }
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        /** 
+         * Entfernt den Eintrag aus der Liste
+         * 
+         * @param {CustomEvent} event 
+         */
+        _delete(event) {
+            this.remove();
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        /** 
+         * Fängt den Event auf der Layer-Zeile ab und wandelt ihn in einen
+         * Click auf dem Input um.
+         * 
+         * Click auf dem Input fängt der Input selbst ab.
+         * 
+         * @param {Event} event 
+         */
+        _selectChoice(event) {
+            if (event.target == this) {
+                let input = this.querySelector('input:not([type="hidden"])');
+                if (input) {
+                    input.click();
+                }
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        }
+
+        /**
+         * Reagiert auf Tasten, die den drei Buttons je Eintrag entsprechen
+         * sowie der Auswahl des Choice-Input
+         * 
+         * @param {Event} event 
+         * @returns mixed
+         */
+        _byKey(event) {
+            if ('ArrowUp' == event.key) {
+                return this._moveUp(event);
+            } else if ('ArrowDown' == event.key) {
+                return this._moveDown(event)
+            } else if ('Delete' == event.key) {
+                return this._delete(event);
+            } else if (' ' == event.key) {
+                return this._selectChoice(event);
+            }
+        }
+    });
+
+/**
+* HTMLElement, das einfach einen Custom Event absetzt
+*
+*  <gelocation-trigger attributes>content</gelocation-trigger>
+*
+*      [from="«selector»"]                 Node-Qualifier, auf dem der Event abgeschickt werden soll
+*                                          default/Fallback: dieser DOM-Node
+*                                          Wenn der String mit << beginnt, wird mir dem ersten Element
+*                                          ein closest(...) durchgeführt um vom Ziel nach ':scope rest' zu kommen.
+*      event="«event-name»"                wie heißt der Event
+*      [detail="«data»"]                   Mit dem Event in event.detail verschickte Daten
+*      [on="«click»"]                      Auslösender Event auf dem Item (default: click)
+*      [call="callback"]                   aufzurufende CallbackFunktion beim auslösenden Event. Nur den Funktionsnamen!
+*                                          Beim Aufruf wird Detail als Parameter an die Funktion übergeben
+*      [accesskey="«key»"]                 Auslösender Key (Zeichen oder Name), https://www.freecodecamp.org/news/javascript-keycode-list-keypress-event-key-codes/
+* 
+* Beispiel:
+* <gelocation-trigger class="button" from="<<.panel" event="gelocation:add" detail="show"><i class="rex-icon rex-icon-view"></i></gelocation-trigger>
+*/
+customElements.define('gelocation-trigger',
+    class extends HTMLElement {
+
+        __node = this;
+        __from = '';
+        __event = null;
+        __detail = '';
+        __callback = null;
+        __on = 'click';
+        __isActive = false;
+        __key = '';
+
+        connectedCallback() {
+            this.style.cursor = 'pointer';
+            this.addEventListener(this.__on, this._onClick.bind(this));
+            this.addEventListener('keydown', this._onKey.bind(this));
+            this.__isActive = true;
+        }
+
+        disconnectedCallback() {
+            this.removeEventListener(this.__on, this._onClick.bind(this));
+            this.__isActive = false;
+        }
+
+        static get observedAttributes() {
+            return ['from', 'event', 'detail', 'on', 'call', 'accesskey'];
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (oldValue == newValue) {
+                return;
+            }
+            if ('from' == name) {
+                this.__node = null;
+                this.__from = newValue;
+                return;
+            }
+            if ('event' == name) {
+                if ('' == newValue) {
+                    this.__event = null;
+                } else {
+                    this.__event = newValue
+                }
+                return;
+            }
+            if ('detail' == name) {
+                try {
+                    this.__detail = JSON.parse(newValue);
+                } catch (e) {
+                    this.__detail = newValue;
+                }
+                return;
+            }
+            if ('on' == name) {
+                if (this.__isActive) {
+                    this.removeEventListener(this.__on, this._onClick.bind(this));
+                }
+                this.__on = newValue || 'click';
+                if (this.__isActive) {
+                    this.addEventListener(this.__on, this._onClick.bind(this));
+                }
+                return;
+            }
+            if ('call' == name) {
+                this.__callback = newValue;
+                if (this.__callback) {
+                    this.__callback = this.__callback.split('.').reduce((o, i) => o[i], window);
+                    if (typeof this.__callback !== 'function') {
+                        this.__callback = null;
+                    }
+                }
+                return;
+            }
+            if ('accesskey' == name) {
+                this.__key = newValue || '';
+                return;
+            }
+        }
+
+        _onClick(event) {
+            event.stopPropagation();
+            event.preventDefault();
+            this._trigger();
+        }
+
+        _onKey(event) {
+            if (event.key == this.__key) {
+                event.stopImmediatePropagation();
+                event.preventDefault();
+                this._trigger();
+            }
+        }
+
+        _trigger() {
+            if (this.__callback) {
+                this.__callback(this.__detail);
+            }
+            if (null === this.__callback && null == this.__event) {
+                return console.error(`${this.tagName}: Missing event-name; feature disabled`);
+            }
+            this._node().dispatchEvent(new CustomEvent(this.__event, { bubbles: true, cancelable: true, detail: this.__detail }));
+        }
+
+        _node() {
+            if (this.__node) {
+                return this.__node;
+            }
+            if ('' < this.__from) {
+                try {
+                    let match = this.__from.match(/^(\<\<)?([#.]?[\w-]+)([\s\<\>~].*)?$/);
+                    if (!match) {
+                        throw `Invalid formed attribute 'from="${this.__from}"'`;
+                    }
+                    if (match[1]) {
+                        this.__node = this.closest(match[2]);
+                        if (this.__node && match[3]) {
+                            this.__node = this.__node.querySelector(':scope ' + match[3].trim());
+                        }
+                    } else {
+                        this.__node = document.querySelector(this.__from);
+                    }
+                    if (!this.__node) {
+                        throw `Invalid attribute 'from="${this.__from}"', target not found`;
+                    }
+                } catch (error) {
+                    console.warn(`${this.tagName}: ${error}; replaced by this node`)
+                    this.__node = this;
+                }
+            }
+            return this.__node;
+        }
+    });
+
