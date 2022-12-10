@@ -10,7 +10,7 @@
 // TODO: negative Precision überall abfangen
 // TODO: Doku anpassen Schnittstellen ahben sich geändert
 
-namespace Geolocation\Calc;
+namespace FriendsOfRedaxo\Geolocation\Calc;
 
 use Exception;
 use Location\Coordinate;
@@ -37,7 +37,7 @@ class Point
     /**
      * Hier wird die \Location-Koordinate abgelegt, die durch Point gekapselt ist.
      * Es ist leider notwendig, dass die Koordinate zugänglich ist; egal ob so oder per getter
-     * Sie ist nur für interne Zwecke in Geolocation\Calc
+     * Sie ist nur für interne Zwecke in FriendsOfRedaxo\Geolocation\Calc
      */
     protected Coordinate $coord;
 

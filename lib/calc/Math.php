@@ -1,6 +1,6 @@
 <?php
 
-namespace Geolocation\Calc;
+namespace FriendsOfRedaxo\Geolocation\Calc;
 
 /**
  * baut auf phpGeo auf.

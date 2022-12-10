@@ -1,8 +1,8 @@
 <?php
 
-namespace Geolocation\Calc;
+namespace FriendsOfRedaxo\Geolocation\Calc;
 
-use Geolocation\InvalidParameter;
+use FriendsOfRedaxo\Geolocation\InvalidParameter;
 
 class InvalidPointParameter extends InvalidParameter
 {
