@@ -38,7 +38,7 @@
  *     parse                 erzeugt Karten-HTML gem. vorgegebenem Fragment
 */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use Exception;
 use rex;
@@ -320,8 +320,10 @@ class Mapset extends rex_yform_manager_dataset
         if ('layerset' === $key) {
             $layer = explode(',', $this->layer.','.$this->overlay);
             $layer = array_filter($layer, 'trim');
+            $layer = array_unique($layer);
             $layer = array_map('intval', $layer);
-            return array_unique($layer);
+            /** @var list<int> $layer */
+            return $layer;
         }
         return parent::getValue($key);
     }
@@ -344,8 +346,8 @@ class Mapset extends rex_yform_manager_dataset
      *
      * @api
      * NOTE: das muss doch einfacher gehen als immer diese Definition (siehe Layer::getLayerConfigSet) abzuschreiben
-     * @return list<array{layer:int,label:string,type:string,attribution:string,active?:bool}>
-     */
+     * @return array{layer:int,label:string,type:string,attribution:string,active?:bool}[]
+     */ 
     // TODO: Warum hab ich hier keine Sprachauswahl optional vorgesehen?
     // Später angehen, keine Eile.
     public function getLayerset(): array
@@ -354,7 +356,7 @@ class Mapset extends rex_yform_manager_dataset
         $clang = rex_clang::getCurrent()->getCode();
         $layerSet = Layer::getLayerConfigSet($this->layerset, $clang);
 
-        // Zus
+        // Zusätzlich den Anzeige-Status (active)
         $os = explode(',', $this->overlay_selected);
         $ls = explode(',', $this->layer_selected);
         foreach ($layerSet as &$v) {
@@ -418,7 +420,7 @@ class Mapset extends rex_yform_manager_dataset
      *
      * Falls kein Fragment angegeben ist, wird als Fallback das Default-Fragment zurückgemeldet
      *
-     * Achtung: REX-Fragment (addon/fragments/xyz) nicht yfragment!
+     * Achtung: REX-Fragment (addon/fragments/xyz) nicht ytemplate!
      *
      * @api
      * @return string      Name der Fragment-Datei (xyz.php)
@@ -434,7 +436,7 @@ class Mapset extends rex_yform_manager_dataset
      * Falls kein gesondertes Default-Fragment angegeben ist, wird als Fallback das voreingestellte
      * Basis-Fragment (Geolocation\OUT) zurückgemeldet
      *
-     * Achtung: REX-Fragment (addon/fragments/xyz) nicht yfragment!
+     * Achtung: REX-Fragment (addon/fragments/xyz) nicht ytemplate!
      *
      * @return string      Name der Fragment-Datei (xyz.php)
      */
