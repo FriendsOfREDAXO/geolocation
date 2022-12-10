@@ -19,7 +19,7 @@
  * Nutzung nur für das Feld "mapoptions"
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use rex_config;
 use rex_path;
@@ -51,7 +51,7 @@ if ('mapoptions' === $this->name) {
 
     // Finde die übrigen Choices und setze sie auf disabled wenn "default" aktiviert ist
     $disabled = false !== array_search('default', $this->value, true);
-    $options = rex_config::get(\Geolocation\ADDON, 'map_components');
+    $options = rex_config::get(ADDON, 'map_components');
     $options = explode('|', $options);
     $options = array_filter($options, 'strlen');
     foreach ($choiceListView->choices as &$v) {
