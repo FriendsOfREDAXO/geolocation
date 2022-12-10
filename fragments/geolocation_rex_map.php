@@ -8,7 +8,7 @@
  * <rex-map dataset="..." mapset="..." map="..." ... ></rex-map>
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use rex_fragment;
 use rex_string;

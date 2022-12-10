@@ -13,7 +13,7 @@
  *  
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use rex_fragment;
 
