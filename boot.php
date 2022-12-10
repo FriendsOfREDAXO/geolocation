@@ -3,7 +3,7 @@
  * API-Aprufe, Voreinstellungen.
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use rex;
 use rex_addon;
@@ -19,20 +19,20 @@ use function define;
  * @var rex_addon $this
  */
 
-define('Geolocation\ADDON', $this->getName());
-define('Geolocation\TTL_MIN', 0);
+define('FriendsOfRedaxo\\Geolocation\\ADDON', $this->getName());
+define('FriendsOfRedaxo\\Geolocation\\TTL_MIN', 0);
 
 // start...end nicht löschen!! Wird bei der (Re-)Installation benötigt
 // ##start
-define('Geolocation\TTL_DEF', 43200);
-define('Geolocation\TTL_MAX', 130000);
-define('Geolocation\CFM_DEF', 1000);
-define('Geolocation\CFM_MIN', 50);
-define('Geolocation\CFM_MAX', 100000);
-define('Geolocation\KEY_TILES', 'geolayer');
-define('Geolocation\KEY_MAPSET', 'geomapset');
-define('Geolocation\OUT', 'geolocation_rex_map.php');
-define('Geolocation\LOAD', true);
+define('FriendsOfRedaxo\\Geolocation\\TTL_DEF', 43200);
+define('FriendsOfRedaxo\\Geolocation\\TTL_MAX', 130000);
+define('FriendsOfRedaxo\\Geolocation\\CFM_DEF', 1000);
+define('FriendsOfRedaxo\\Geolocation\\CFM_MIN', 50);
+define('FriendsOfRedaxo\\Geolocation\\CFM_MAX', 100000);
+define('FriendsOfRedaxo\\Geolocation\\KEY_TILES', 'geolayer');
+define('FriendsOfRedaxo\\Geolocation\\KEY_MAPSET', 'geomapset');
+define('FriendsOfRedaxo\\Geolocation\\OUT', 'geolocation_rex_map.php');
+define('FriendsOfRedaxo\\Geolocation\\LOAD', true);
 // ##end
 
 // add additional functionality for YForm-tables
@@ -61,7 +61,7 @@ if (null !== $mapset) {
 }
 
 // Start of Cronjob
-rex_cronjob_manager::registerType('Geolocation\Cronjob');
+rex_cronjob_manager::registerType('FriendsOfRedaxo\\Geolocation\\Cronjob');
 
 // if BE: activate JS and CSS
 if (rex::isBackend()) {

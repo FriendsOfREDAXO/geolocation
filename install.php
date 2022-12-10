@@ -13,14 +13,14 @@
  * Datensätze bleiben beim Re-Install erhalten, es sei denn Zurücksetzen eines
  * Feldes auf den Datentyp führt zu Verlusten.
  *
- * Die Formulare im YForm-Tablemanager werden zuerst gelöscht (falls vorhanden)
- * und dann neu angelegt. Die Formulare sind "Programmcode" und daher nicht Update-sicher!
+ * Die Formulare im YForm-Tablemanager werden angelegt bzw. im Rahmen der Fähigkeiten
+ * von YForm aktualisiert. Die Formulare sind "Programmcode" und nicht update-sicher!
  *
  * Der Cronjob wird - sofern es keinen Cronjob dieses Namens gibt - neu angelegt.
  * Beim Re-Install bleiben also die eigenen Einstellungen erhalten.
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use Exception;
 use rex;
@@ -34,8 +34,10 @@ use rex_sql_column;
 use rex_sql_exception;
 use rex_sql_table;
 use rex_sql_util;
+use rex_version;
 use rex_yform_manager_table;
 use rex_yform_manager_table_api;
+use Throwable;
 
 use function define;
 use function defined;
@@ -47,11 +49,11 @@ use function is_string;
  */
 
 // das bin ich ...
-if (!defined('Geolocation\ADDON')) {
-    define('Geolocation\ADDON', $this->getName());
+if (!defined('FriendsOfRedaxo\\Geolocation\\ADDON')) {
+    define('FriendsOfRedaxo\\Geolocation\\ADDON', $this->getName());
 }
-if (!defined('Geolocation\TTL_MIN')) {
-    define('Geolocation\TTL_MIN', 0);
+if (!defined('FriendsOfRedaxo\\Geolocation\\TTL_MIN')) {
+    define('FriendsOfRedaxo\\Geolocation\\TTL_MIN', 0);
 }
 
 // Das sind die Tabellen
@@ -171,12 +173,14 @@ try {
     // Cronjob anlegen falls es den Cronjob noch nicht gibt
     //  - Neuinstallation
     //  - Re-Installation wenn gelöscht oder umbenannt
-    if (0 < $sql->setQuery('SELECT id, `type` FROM '.rex::getTable('cronjob').' WHERE name = ?', [Cronjob::LABEL])->getRows()) {
+    $user = rex::getUser();
+    if (0 === $sql->setQuery('SELECT id FROM '.rex::getTable('cronjob').' WHERE name = ?', [Cronjob::LABEL])->getRows()) {
+        $msg[] = 'Cronjob neu: "'.Cronjob::LABEL.'"';
         $timestamp = rex_cronjob_manager_sql::calculateNextTime($config['job_intervall']);
         $sql->setTable(rex::getTable('cronjob'));
         $sql->setValue('name', Cronjob::LABEL);
         $sql->setValue('description', '');
-        $sql->setValue('type', 'Geolocation\\Cronjob');
+        $sql->setValue('type', 'FriendsOfRedaxo\\Geolocation\\Cronjob');
         $sql->setValue('parameters', '[]');
         $sql->setValue('interval', json_encode($config['job_intervall']));
         $sql->setValue('nexttime', rex_sql::datetime($timestamp));
@@ -184,7 +188,6 @@ try {
         $sql->setValue('execution_moment', $config['job_moment']);
         $sql->setValue('execution_start', '0000-00-00 00:00:00');
         $sql->setValue('status', 1);
-        $user = rex::getUser();
         if (null !== $user) {
             $sql->addGlobalUpdateFields($user->getLogin());
             $sql->addGlobalCreateFields($user->getLogin());
@@ -201,17 +204,17 @@ try {
     $this->setConfig('map_zoom', $this->getConfig('map_zoom', $config['zoom']));
     $this->setConfig('map_zoom_min', $this->getConfig('map_zoom_min', $config['zoom_min']));
     $this->setConfig('map_zoom_max', $this->getConfig('map_zoom_max', $config['zoom_max']));
-    $this->setConfig('map_outfragment', $this->getConfig('map_outfragment', $config['Geolocation\\OUT']));
-    $this->setConfig('cache_ttl', $this->getConfig('ttl', $config['Geolocation\\TTL_DEF']));
-    $this->setConfig('cache_maxfiles', $this->getConfig('maxfiles', $config['Geolocation\\CFM_DEF']));
+    $this->setConfig('map_outfragment', $this->getConfig('map_outfragment', $config['FriendsOfRedaxo\\Geolocation\\OUT']));
+    $this->setConfig('cache_ttl', $this->getConfig('ttl', $config['FriendsOfRedaxo\\Geolocation\\TTL_DEF']));
+    $this->setConfig('cache_maxfiles', $this->getConfig('maxfiles', $config['FriendsOfRedaxo\\Geolocation\\CFM_DEF']));
     $this->setConfig('compile', $this->getConfig('compile', $config['scope']['compile']));
 
     // Ausgewählte Vorgabewerte als "define(...)" in die boot.php schreiben
     $defines = PHP_EOL;
-    $config['Geolocation\\LOAD'] = $config['scope']['load'];
+    $config['FriendsOfRedaxo\\Geolocation\\LOAD'] = $config['scope']['load'];
     $definedValues = [];
     foreach ($config as $k => $v) {
-        if ('Geolocation\\' !== substr($k, 0, 12)) {
+        if (str_starts_with($k, 'FriendsOfRedaxo\\Geolocation\\')) {
             continue;
         }
         $definedValues[$k] = $v;
@@ -242,6 +245,60 @@ try {
     // System_Cache löschen
     rex_delete_cache();
     rex_yform_manager_table::deleteCache();
+
+    /**
+     * Beim Umstieg von Versionen vor 2.0.0 müssen Anpassungen in den Tabellen vorgenommen werden:.
+     */
+    if (rex_version::compare('2.0.0', $this->getVersion(), '>')) {
+        // Behebt einen Fehler in rex_cronjob: überzählige Einträge entfernen
+        $sql->setTable(rex::getTable('cronjob'));
+        $sql->setWhere('`name`=:name AND `type`=:type', [':name' => Cronjob::LABEL, ':type' => 'Geolocation\\Cronjob']);
+        $sql->select('id');
+        if (1 < $sql->getRows()) {
+            /** @var array<int,array{id:int}> $liste */
+            $liste = $sql->getArray();
+            array_shift($liste);
+            $liste = array_column($liste, 'id');
+            $sql->setTable(rex::getTable('cronjob'));
+            $sql->setWhere('FIND_IN_SET(id,:liste)', [':liste' => implode(',', $liste)]);
+            $sql->delete();
+        }
+
+        // Cronjob-Klasse mit neuem Namespace: FriendsOfRedaxo\Geolocation\Cronjob statt Geolocation\cronjob.
+        $sql->setTable(rex::getTable('cronjob'));
+        $sql->setValue('type', 'FriendsOfRedaxo\\Geolocation\\Cronjob');
+        $sql->setWhere('type like :old', [':old' => 'Geolocation\\\\cronjob']);
+        if (null !== $user) {
+            $sql->addGlobalUpdateFields($user->getLogin());
+        }
+        $sql->update();
+
+        // Neue Zusatzfelder befüllen; spiegelt das bisherige Verhalten
+        // layer: der erste ist aktiviert; overlay: keiner aktiviert
+        $sql->setTable(rex::getTable('geolocation_mapset'));
+        $sql->setRawValue('layer_selected', 'SUBSTRING_INDEX(`layer`,\',\', 1)');
+        $sql->setValue('overlay_selected', '');
+        $sql->update();
+
+        // Namespace in einer evtl vorhandenen data/geolocation/config.yml anpassen:
+        // Konstanten "Geolocation\XXX" auf "FriendsOfRedaxo\Geolocation\XXX" ändern
+        $file = rex_file::get($this->getDataPath('config.yml'), '');
+        $pattern = '/^Geolocation\\\[A-Za-z_]+:/m';
+        $hasMatches = preg_match($pattern, $file);
+        if (false !== $hasMatches && 0 < $hasMatches) {
+            $file = preg_replace($pattern, 'FriendsOfRedaxo\\\$0', $file);
+            if( !is_string($file) ) {
+                throw new InstallException($this->i18n('install_data_config_error'), 1);
+            }
+            try {
+                rex_file::put($this->getDataPath('config.yml'), $file);
+            } catch (Throwable $th) {
+                throw new InstallException($this->i18n('install_data_config_error'), 1);
+            }
+        }
+        $msg[] = $this->i18n('install_update2_ok');
+        $msg[] = '<p class="alert alert-warning" style="margin:0">'.$this->i18n('install_update2_warn').'</p>';
+    }
 
     // Ergebnis übermitteln
     $this->setProperty('successmsg', '<ul><li>'.implode('</li><li>', $msg).'</li></ul>');
