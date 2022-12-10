@@ -83,7 +83,7 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
 
     ```php
     // Mapset abrufen (::get(id) bzw. ::take())
-    $mapset = \Geolocation\Mapset::get( $mapsetId );
+    $mapset = \FriendsOfRedaxo\Geolocation\Mapset::get( $mapsetId );
     // Kartendaten (Layer) abrufen
     $layerset = $mapset->getLayerset();
     ```
@@ -125,7 +125,7 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
 
     ```php
     // Mapset abrufen (::get(id) bzw. ::take())
-    $mapset = \Geolocation\Mapset::take();
+    $mapset = \FriendsOfRedaxo\Geolocation\Mapset::take();
     // Liste der Optionen abrufen ('|fullscreen|gestureHandling|locateControl|')
     $mapOptions = $mapset->getMapOptions();
     ```
@@ -141,7 +141,7 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
 
     ```php
     // Mapset abrufen (::get(id) bzw. ::take())
-    $mapset = \Geolocation\Mapset::take( $mapsetId );
+    $mapset = \FriendsOfRedaxo\Geolocation\Mapset::take( $mapsetId );
     // Ausgabe-Fragment abrufen inkl. Fallback
     $outFragment = $mapset->getOutFragment();
     ```

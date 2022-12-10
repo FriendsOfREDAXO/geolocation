@@ -119,21 +119,21 @@ dataset:
     overwrite : false
 
 # Time-To-Live im Karten-Cache
-Geolocation\TTL_DEF: 10080
-Geolocation\TTL_MIN: 0
-Geolocation\TTL_MAX: 130000
+FriendsOfRedaxo\Geolocation\TTL_DEF: 10080
+FriendsOfRedaxo\Geolocation\TTL_MIN: 0
+FriendsOfRedaxo\Geolocation\TTL_MAX: 130000
 
 # Maximale Anzahl Dateien pro Karten-Cache
-Geolocation\CFM_DEF: 1000
-Geolocation\CFM_MIN: 50
-Geolocation\CFM_MAX: 100000
+FriendsOfRedaxo\Geolocation\CFM_DEF: 1000
+FriendsOfRedaxo\Geolocation\CFM_MIN: 50
+FriendsOfRedaxo\Geolocation\CFM_MAX: 100000
 
 # URL-Name für API-Abrufe
-Geolocation\KEY_TILES: 'geolayer'
-Geolocation\KEY_MAPSET: 'geomapset'
+FriendsOfRedaxo\Geolocation\KEY_TILES: 'geolayer'
+FriendsOfRedaxo\Geolocation\KEY_MAPSET: 'geomapset'
 
 # Fragment zur Kartenausgabe
-Geolocation\OUT: 'geolocation_rex_map.php'
+FriendsOfRedaxo\Geolocation\OUT: 'geolocation_rex_map.php'
 
 # Darstellungsoptionen
 # true = Mapset::mapoptions, sonst '|xxx|yyy|' mit den Keys aus Mapset::mapoptions
@@ -172,8 +172,8 @@ werden:
 bounds: '[46,5.5],[55,17]'
 ```
 
-Die mit `Geolocation\` beginnenden Einträge werden unter dem angegebenen Namen als Konstanten in die
-`boot.php` geschrieben. Einige Werte (`Geolocation\KEY_TILES`, `Geolocation\KEY_MAPSET`, `bounds`,
+Die mit `FriendsOfRedaxo\Geolocation\` beginnenden Einträge werden unter dem angegebenen Namen als Konstanten in die
+`boot.php` geschrieben. Einige Werte (`FriendsOfRedaxo\Geolocation\KEY_TILES`, `FriendsOfRedaxo\Geolocation\KEY_MAPSET`, `bounds`,
 `zoom`, `zoom_min`, `zoom_max:`) werden auch in die JS-Datei `geolocation.min.js` übernommen.
 
 Der Scope `mapset: false` **ist mit Vorsicht zu nutzen**. Darüber kann die Verwaltungsseite von
@@ -189,8 +189,8 @@ Um im Bedarfsfall selber die konsolidierte Liste aller Konfigurationsparameter e
 beide Dateien eingelesen und verbunden werden.
 ```php
 $config = array_merge(
-    \rex_file::getConfig( \rex_path::addonData(\Geolocation\ADDON,'config.yml'), [] ),
-    \rex_file::getConfig( \rex_path::addon(\Geolocation\ADDON,'install/config.yml'), [] ),
+    \rex_file::getConfig( \rex_path::addonData(\FriendsOfRedaxo\Geolocation\ADDON,'config.yml'), [] ),
+    \rex_file::getConfig( \rex_path::addon(\FriendsOfRedaxo\Geolocation\ADDON,'install/config.yml'), [] ),
 );
 ```
 
@@ -325,7 +325,7 @@ in der Datei `lib/ConfigForm.php`.
 
 ```php
 // Assets neu kompilieren
-\Geolocation\ConfigForm::compileAssets();
+\FriendsOfRedaxo\Geolocation\ConfigForm::compileAssets();
 ```
 
 Komplexere Erweiterungen z.B. aus mehreren Leaflet-Plugins setzen voraus, dass die infrage kommenden
@@ -338,10 +338,10 @@ array:6 [▼
     "addonDir" => "«path_to_redaxo»/redaxo/src/addons/geolocation/"
     "dataDir" => "«path_to_redaxo»/redaxo/data/addons/geolocation/"
     "assetDir" => "«path_to_redaxo»/assets/addons/geolocation/"
-    "css" => Geolocation\AssetPacker\AssetPacker_css {#270 ▶}
-    "js" => Geolocation\AssetPacker\AssetPacker_js {#271 ▶}
-    "be_css" => Geolocation\AssetPacker\AssetPacker_css {#272 ▶}
-    "be_js" => Geolocation\AssetPacker\AssetPacker_js {#253 ▶}
+    "css" => FriendsOfRedaxo\Geolocation\AssetPacker\AssetPacker_css {#270 ▶}
+    "js" => FriendsOfRedaxo\Geolocation\AssetPacker\AssetPacker_js {#271 ▶}
+    "be_css" => FriendsOfRedaxo\Geolocation\AssetPacker\AssetPacker_css {#272 ▶}
+    "be_js" => FriendsOfRedaxo\Geolocation\AssetPacker\AssetPacker_js {#253 ▶}
 ]
 ```
 
@@ -390,7 +390,7 @@ Hier ein schematisches Beispiel für eine `load_config.php`:
 
 ```php
 // Asset-Dateien für Leaflet erweitern
-$dir = \rex_path::addonData(\Geolocation\ADDON);
+$dir = \rex_path::addonData(\FriendsOfRedaxo\Geolocation\ADDON);
 $js
     ->addFile( $dir.'/vendor/plugin_x/plugin_x.min.js')
     ->regReplace( '%//#\s+sourceMappingURL=.*?$%im','//' )
@@ -437,7 +437,7 @@ Die Schritte:
    ein alternatives Ausgabefragment eingesetzt werden, wenn die Karten auf dem HERE-JS aufsetzen
    (oder Google oder Apple oder ...)
    ```yml
-   Geolocation\OUT: 'my_nice_own_map_fragment.php'
+   FriendsOfRedaxo\Geolocation\OUT: 'my_nice_own_map_fragment.php'
    ```
 
 <a name="compile0"></a>

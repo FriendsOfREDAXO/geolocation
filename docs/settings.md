@@ -40,11 +40,11 @@ Die Einstellungen sind Vorbelegungen bzw. Parameter für die Darstellung von Kar
 
     ```php
     // ID abrufen und Mapset öffnen
-    $mapsetId = \rex_config::get(\Geolocation\ADDON,'default_map');
-    $mapset = \Geolocation\Mapset::get($mapsetId);
+    $mapsetId = \rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON,'default_map');
+    $mapset = \FriendsOfRedaxo\Geolocation\Mapset::get($mapsetId);
 
     // Mapset öffnen mit der Default-ID bzw. Fallback auf die Default-ID
-    $mapset = \Geolocation\Mapset::take();
+    $mapset = \FriendsOfRedaxo\Geolocation\Mapset::take();
     $mapsetId = $mapset->getId();
     ```
 
@@ -61,7 +61,7 @@ Die Einstellungen sind Vorbelegungen bzw. Parameter für die Darstellung von Kar
 
     ```php
     // Koordinaten abrufen
-    $bounds = \rex_config::get(\Geolocation\ADDON,'map_bounds');
+    $bounds = \rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON,'map_bounds');
     ```
     ```js
     // Koordinaten abrufen
@@ -75,7 +75,7 @@ Die Einstellungen sind Vorbelegungen bzw. Parameter für die Darstellung von Kar
 
     ```php
     // Zoom-Level abrufen
-    $zoom = \rex_config::get(\Geolocation\ADDON,'map_zoom');
+    $zoom = \rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON,'map_zoom');
     ```
     ```js
     // Zoom-Level abrufen
@@ -98,7 +98,7 @@ Die Einstellungen sind Vorbelegungen bzw. Parameter für die Darstellung von Kar
 
     ```php
     // Liste der Optionen abrufen ('|fullscreen|gestureHandling|locateControl|')
-    $options = \rex_config::get(\Geolocation\ADDON,'map_components');
+    $options = \rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON,'map_components');
     $hasFullscreen = false !== strpos($options,'|fullscreen|');
     $hasGestureHandling = false !== strpos($options,'|gestureHandling|');
     $hasLocateControl = false !== strpos($options,'|locateControl|');
@@ -126,9 +126,9 @@ Die Einstellungen sind Vorbelegungen bzw. Parameter für die Darstellung von Kar
     ```php
     // Default-Ausgabefragment abrufen
     // aus der Tabelle rex_config
-    $fragment = \rex_config::get(\Geolocation\ADDON,'map_outfragment');
+    $fragment = \rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON,'map_outfragment');
     // als Konstante
-    $fragment = \Geolocation\OUT;
+    $fragment = \FriendsOfRedaxo\Geolocation\OUT;
     ```
 
 <a name="cache"></a>
@@ -148,9 +148,9 @@ Cache-Verhalten.
     Der Maximalwert ist 130000, also ein Quartal.
     ```php
     // Vorgabewert für die Time-to-live
-    $ttl = \rex_config::get(\Geolocation\ADDON,'cache_ttl');
+    $ttl = \rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON,'cache_ttl');
     // ... oder ...
-    $ttl = \Geolocation\TTL_DEF;
+    $ttl = \FriendsOfRedaxo\Geolocation\TTL_DEF;
     ```
 
 - **Maximale Anzahl Dateien je Karten-Cache**  
@@ -162,7 +162,7 @@ Cache-Verhalten.
     gespeichert wird; sie wird unabhängig vom Caching dennoch an den Client ausgeliefert.
     ```php
     // Vorgabewert für die maximale Anzahl Dateien im Cache
-    $maxCacheFiles = \rex_config::get(\Geolocation\ADDON,'cache_maxfiles');
+    $maxCacheFiles = \rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON,'cache_maxfiles');
     // ... oder ...
-    $maxCacheFiles = \Geolocation\CFM_DEF;
+    $maxCacheFiles = \FriendsOfRedaxo\Geolocation\CFM_DEF;
     ```

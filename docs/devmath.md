@@ -79,7 +79,7 @@ Beispiele:
 - $point = Point::factory( ['lat'=>$lat,'lng'=>$lng], 'lat', 'lng' ); // Text-Keys
 
 ```php
-use \Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $coordinate = ['lat'=>39.753838434606,'lng'=>-105.00341892242];
 $point = Point::factory( $coordinate, 'lat', 'lng' );
@@ -91,7 +91,7 @@ dump(get_defined_vars());
     "lat" => 39,753838434606
     "lng" => -105,00341892242
 ]
-"point" => Geolocation\Calc\Point {#391 ▼
+"point" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
@@ -110,7 +110,7 @@ LeafletJS-kompatibel sein (`[0=>latitude,1=>longitude]`) oder geoJSON-kompatibel
 (`[0=>longitude,1=>latitude]`).
 
 ```php
-use \Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $coordinate = [39.753838434606,-105.00341892242];
 $reverse = [-105.00341892242,39.753838434606];
@@ -129,11 +129,11 @@ dump(get_defined_vars());
     0 => -105,00341892242
     1 => 39,753838434606
 ]
-"leafletJS" => Geolocation\Calc\Point {#391 ▼
+"leafletJS" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"geoJSON" => Geolocation\Calc\Point {#395 ▼
+"geoJSON" => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
@@ -153,7 +153,7 @@ Sofern die Einzelwerte nicht aus der Schreibweise als Länge bzw. Breite erkannt
 die Reihenfolge "Breite,Länge" (lat,lng).
 
 ```php
-use \Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $ddString = '[39.753838434606,-105.00341892242]';
 $dmsString = '39° 45′ 13.818″ N,105° 00′ 12.308″ W';
@@ -165,11 +165,11 @@ dump(get_defined_vars());
 ```
 "ddString" => "[39.753838434606,-105.00341892242]"
 "dmsString" => "39° 45′ 13.818″ N,105° 00′ 12.308″ W"
-"pointA" => Geolocation\Calc\Point {#391 ▼
+"pointA" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"pointB" => Geolocation\Calc\Point {#395 ▼
+"pointB" => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
     #lat: 39,753838333333
     #lng: -105,00341888333
 }
@@ -189,7 +189,7 @@ reduzieren, da spätestens nach der sechsten Stelle die Darstellungsgenauigkeita
 nicht mehr zunimmt.
 
 ```php
-use \Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $coordinate = [-105.00341892242,39.753838434606];
 $point = Point::byLngLat( $coordinate );
@@ -204,7 +204,7 @@ dump(get_defined_vars());
     0 => -105,00341892242
     1 => 39,753838434606
 ]
-"point" => Geolocation\Calc\Point {#391 ▼
+"point" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
@@ -223,7 +223,7 @@ Die Methode liefert die geografische Breite bzw. Länge des Koordinatenpunktes. 
 angegeben ist, wird die Anzahl der Nachkommastellen reduziert.
 
 ```php
-use \Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $coordinate = [39.753838434606,-105.00341892242];
 $point = Point::byLatLng( $coordinate );
@@ -238,7 +238,7 @@ dump(get_defined_vars());
     0 => 39,753838434606
     1 => -105,00341892242
 ]
-"point" => Geolocation\Calc\Point {#391 ▼
+"point" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
@@ -261,7 +261,7 @@ indiziertes Array zu überführen. Sofern `$precision` angegeben ist, wird die A
 Nachkommastellen reduziert. Die beiden Werte erhalten die in `$keyLat,$keyLng` angegebenen Schlüssel.
 
 ```php
-use \Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $coordinate = [39.753838434606,-105.00341892242];
 $point = Point::byLatLng( $coordinate );
@@ -275,7 +275,7 @@ dump(get_defined_vars());
     0 => 39,753838434606
     1 => -105,00341892242
 ]
-"point" => Geolocation\Calc\Point {#391 ▼
+"point" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
@@ -300,7 +300,7 @@ Ausgabe reduziert. Drei Ausgabeformate sind möglich:
 Zahlen erhalten einen Dezimalpunkt, kein Komma.
 
 ```php
-use \Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $coordinate = [39.753838434606,-105.00341892242];
 $point = Point::byLatLng( $coordinate );
@@ -316,7 +316,7 @@ dump(get_defined_vars());
     0 => 39,753838434606
     1 => -105,00341892242
 ]
-"point" => Geolocation\Calc\Point {#391 ▼
+"point" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
@@ -335,8 +335,7 @@ Anzahl der Nachkommastellen bei der Ausgabe reduziert.
 
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $point = Point::byLatLng( [39.741052354709,-104.98689651489] );
 
@@ -354,7 +353,7 @@ $dataset = [
 dump(get_defined_vars());
 ```
 ```
-"point" => Geolocation\Calc\Point {#396 ▼
+"point" => FriendsOfRedaxo\Geolocation\Calc\Point {#396 ▼
     #lat: 39,741052354709
     #lng: -104,98689651489
 }
@@ -385,7 +384,7 @@ Zielpunkt. Die Distanz wird auf dem [Großkreis](https://de.wikipedia.org/wiki/G
 ermittelt.
 
 ```PHP
-use \Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $northWest = [39.753838434606,-105.00341892242];
 $southEast = [39.741052354709,-104.98689651489];
@@ -405,11 +404,11 @@ dump(get_defined_vars());
     0 => 39,741052354709
     1 => -104,98689651489
 ]
-"NW" => Geolocation\Calc\Point {#391 ▼
+"NW" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"SE" => Geolocation\Calc\Point {#395 ▼
+"SE" => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
     #lat: 39,741052354709
     #lng: -104,98689651489
 }
@@ -431,7 +430,7 @@ Die Funktion ermittelt die Kompassrichtung der kürzesten Distanz zum Zielpunkt 
 "Ankunft" (am Zielpunkt) auf dem Großkreis (0°...360°).
 
 ```PHP
-use \Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $northWest = [39.753838434606,-105.00341892242];
 $southEast = [39.741052354709,-104.98689651489];
@@ -452,11 +451,11 @@ dump(get_defined_vars());
     0 => 39,741052354709
     1 => -104,98689651489
 ]
-"NW" => Geolocation\Calc\Point {#391 ▼
+"NW" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"SE" => Geolocation\Calc\Point {#395 ▼
+"SE" => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
     #lat: 39,741052354709
     #lng: -104,98689651489
 }
@@ -472,7 +471,7 @@ Aus den Parametern Distanz (in Meter) und Kompasskurs (0°...360°) am Ausgangsp
 Zielpunkt über den Großkreis berechnet.
 
 ```PHP
-use \Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $northWest = [39.753838434606,-105.00341892242];
 $bearing = 135.06623096152;
@@ -490,11 +489,11 @@ dump(get_defined_vars());
 ]
 "bearing" => 135,06623096152
 "distance" => 2005,167
-"NW" => Geolocation\Calc\Point {#391 ▼
+"NW" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"SE" => Geolocation\Calc\Point {#394 ▼
+"SE" => FriendsOfRedaxo\Geolocation\Calc\Point {#394 ▼
     #lat: 39,741052353721
     #lng: -104,98689651361
 }
@@ -509,7 +508,7 @@ angegeben in Meter. Der Vorgabewert ist 10 cm. Je nach Zoom-Faktor können so zu
 Punkte ermittelt werden.
 
 ```PHP
-use \Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $NW = Point::byLatLng( [39.753838434606,-105.00341892242] );
 $SE = Point::byLatLng( [39.741052354709,-104.98689651489] );
@@ -523,22 +522,22 @@ $SE_equals_B = $targetB->equals( $SE );
 dump(get_defined_vars());
 ```
 ```
-"NW" => Geolocation\Calc\Point {#391 ▼
+"NW" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"SE" => Geolocation\Calc\Point {#395 ▼
+"SE" => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
 #coord: Location\Coordinate {#393 ▼
     #lat: 39,741052354709
     #lng: -104,98689651489
 }
 "distanceA" => 2005
 "distanceB" => 2005,167
-"targetA" => Geolocation\Calc\Point {#397 ▼
+"targetA" => FriendsOfRedaxo\Geolocation\Calc\Point {#397 ▼
     #lat: 39,741053418707
     #lng: -104,98689788943
 }
-"targetB" => Geolocation\Calc\Point {#399 ▼
+"targetB" => FriendsOfRedaxo\Geolocation\Calc\Point {#399 ▼
     #lat: 39,741052353721
     #lng: -104,98689651361
 }
@@ -556,8 +555,8 @@ ausgelöst. Es ist nicht notwendig, vorher [isInBox()](#isinbox) abzufragen.
 
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $corner = Point::byLatLng( [39.753838434606,-105.00341892242] );
 $oppositeCorner = Point::byLatLng( [39.75189180397,-105.0008225441] );
@@ -570,34 +569,34 @@ $coordinate->extendBox( $rectB );
 dump(get_defined_vars());
 ```
 ```
-"corner" => Geolocation\Calc\Point {#391 ▼
+"corner" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"oppositeCorner" => Geolocation\Calc\Point {#395 ▼
+"oppositeCorner" => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
     #lat: 39,75189180397
     #lng: -105,0008225441
 }
-"coordinate" => Geolocation\Calc\Point {#398 ▼
+"coordinate" => FriendsOfRedaxo\Geolocation\Calc\Point {#398 ▼
     #lat: 39,741052354709
     #lng: -104,98689651489
 }
-"rectA" => Geolocation\Calc\Box {#399 ▼
-    #nw: Geolocation\Calc\Point {#402 ▼
+"rectA" => FriendsOfRedaxo\Geolocation\Calc\Box {#399 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#402 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#405 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#405 ▼
         #lat: 39,75189180397
         #lng: -105,0008225441
     }
 }
-"rectB" => Geolocation\Calc\Box {#407 ▼
-    #nw: Geolocation\Calc\Point {#417 ▼
+"rectB" => FriendsOfRedaxo\Geolocation\Calc\Box {#407 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#417 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#419 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#419 ▼
         #lat: 39,741052354709
         #lng: -104,98689651489
     }
@@ -611,8 +610,8 @@ dump(get_defined_vars());
 Die Funktion liefert TRUE, wenn der Punkt Teil der Box ist.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $corner = Point::byLatLng( [39.753838434606,-105.00341892242] );
 $oppositeCorner = Point::byLatLng( [39.75189180397,-105.0008225441] );
@@ -624,24 +623,24 @@ $coordinate->isInBox( $rect );
 dump(get_defined_vars());
 ```
 ```
-"corner" => Geolocation\Calc\Point {#391 ▼
+"corner" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"oppositeCorner" => Geolocation\Calc\Point {#395 ▼
+"oppositeCorner" => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
     #lat: 39,75189180397
     #lng: -105,0008225441
 }
-"coordinate" => Geolocation\Calc\Point {#398 ▼
+"coordinate" => FriendsOfRedaxo\Geolocation\Calc\Point {#398 ▼
     #lat: 39,741052354709
     #lng: -104,98689651489
 }
-"rectA" => Geolocation\Calc\Box {#399 ▼
-    #nw: Geolocation\Calc\Point {#402 ▼
+"rectA" => FriendsOfRedaxo\Geolocation\Calc\Box {#399 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#402 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#405 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#405 ▼
         #lat: 39,75189180397
         #lng: -105,0008225441
     }
@@ -673,8 +672,8 @@ Boxen werden aus eine Liste (array) von Punkten erzeugt. Aus den Punkten werden 
 und kleinsten Werte (Nord/Süd, Ost/West) ermittelt, die dann die Eck-Koordinaten ergeben.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $bikeRental = [
     Point::byLngLat(-104,9998241,39,7471494),
@@ -688,25 +687,25 @@ dump(get_defined_vars());
 ```
 ```
 "bikeRental" => array:3 [▼
-    0 => Geolocation\Calc\Point {#391 ▼
+    0 => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
         #lat: 39,7471494
         #lng: -104,9998241
     }
-    1 => Geolocation\Calc\Point {#395 ▼
+    1 => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
         #lat: 39,7502833
         #lng: -104,9983545
     }
-    2 => Geolocation\Calc\Point {#398 ▼
+    2 => FriendsOfRedaxo\Geolocation\Calc\Point {#398 ▼
         #lat: 39,7444271
         #lng: -104,9963919
     }
 ]
-"rect" => Geolocation\Calc\Box {#399 ▼
-    #nw: Geolocation\Calc\Point {#402 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#399 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#402 ▼
         #lat: 39,7502833
         #lng: -104,9998241
     }
-    #se: Geolocation\Calc\Point {#405 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#405 ▼
         #lat: 39,7444271
         #lng: -104,9963919
     }
@@ -720,8 +719,8 @@ dump(get_defined_vars());
 Die Box wird aus zwei diagonal gegenüberliegenden Punkten erzeugt.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $northWest = [39.753838434606,-105.00341892242];
 $southEast = [39.741052354709,-104.98689651489];
@@ -741,20 +740,20 @@ dump(get_defined_vars());
     0 => 39,741052354709
     1 => -104,98689651489
 ]
-"NW" => Geolocation\Calc\Point {#391 ▼
+"NW" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"SE" => Geolocation\Calc\Point {#395 ▼
+"SE" => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
     #lat: 39,741052354709
     #lng: -104,98689651489
 }
-"rect" => Geolocation\Calc\Box {#396 ▼
-    #nw: Geolocation\Calc\Point {#399 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#396 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#399 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#402 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#402 ▼
         #lat: 39,741052354709
         #lng: -104,98689651489
     }
@@ -770,8 +769,8 @@ Kreis. Der Radius (in Meter) ist die Distanz vom Mittelpunkt auf der Nord/Süd- 
 zu den Seiten der Box.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $center = Point::byLatLng( [39.747445394658,-104.99515771866] );
 $radius = 710;
@@ -780,17 +779,17 @@ $rect = Box::byinnerCircle( $center, $radius );
 dump(get_defined_vars());
 ```
 ```
-"center" => Geolocation\Calc\Point {#394 ▼
+"center" => FriendsOfRedaxo\Geolocation\Calc\Point {#394 ▼
     #lat: 39,747445394658
     #lng: -104,99515771866
 }
 "radius" => 710
-"rect" => Geolocation\Calc\Box {#413 ▼
-    #nw: Geolocation\Calc\Point {#416 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#413 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#416 ▼
         #lat: 39,75384007172
         #lng: -105,00344169592
     }
-    #se: Geolocation\Calc\Point {#419 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#419 ▼
         #lat: 39,741050717595
         #lng: -104,98687374139
     }
@@ -805,8 +804,8 @@ Die Box wird aus dem Mittelpunkt und einem darum gezogenen Kreis gebildet. Die K
 Box. Der Radius (in Meter) ist die Distanz vom Mittelpunkt zu den Ecken der Box.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $center = Point::byLatLng( [39.747445394658,-104.99515771866] );
 $radius = 710;
@@ -815,17 +814,17 @@ $rect = Box::byOuterCircle( $center, $radius );
 dump(get_defined_vars());
 ```
 ```
-"center" => Geolocation\Calc\Point {#394 ▼
+"center" => FriendsOfRedaxo\Geolocation\Calc\Point {#394 ▼
     #lat: 39,747445394658
     #lng: -104,99515771866
 }
 "radius" => 1003
-"box" => Geolocation\Calc\Box {#413 ▼
-    #nw: Geolocation\Calc\Point {#416 ▼
+"box" => FriendsOfRedaxo\Geolocation\Calc\Box {#413 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#416 ▼
         #lat: 39,753833119553
         #lng: -105,00343268974
     }
-    #se: Geolocation\Calc\Point {#419 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#419 ▼
         #lat: 39,741057669762
         #lng: -104,98688274757
     }
@@ -841,8 +840,8 @@ Die Box wird um den Mittelpunkt gezeichnet. Breite und Höhe in Meter bestimmen 
 Anmerkung: Wenn Höhe und Breite identisch sind entspricht das `Box::byInnerCircle($center,$breite/2)`.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $center = Point::byLatLng( [39.747445394658,-104.99515771866] );
 $height = 700;
@@ -852,18 +851,18 @@ $rect = Box::bySize( $center, $width, $height );
 dump(get_defined_vars());
 ```
 ```
-"center" => Geolocation\Calc\Point {#394 ▼
+"center" => FriendsOfRedaxo\Geolocation\Calc\Point {#394 ▼
     #lat: 39,747445394658
     #lng: -104,99515771866
 }
 "height" => 700
 "width" => 1000
-"rect" => Geolocation\Calc\Box {#413 ▼
-    #nw: Geolocation\Calc\Point {#416 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#413 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#416 ▼
         #lat: 39,750597701135
         #lng: -105,00099150548
     }
-    #se: Geolocation\Calc\Point {#419 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#419 ▼
         #lat: 39,744293088181
         #lng: -104,98932393184
     }
@@ -903,8 +902,8 @@ Die Funktion berechnet die Höhe der Box in Breitengraden. Sofern `$precision` a
 Anzahl der Nachkommastellen bei der Ausgabe reduziert.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $rect = Box::byCorner(
     Point::byLatLng( [39.741052354709,-104.98689651489] ),
@@ -921,12 +920,12 @@ $height = $rect->height();
 dump(get_defined_vars());
 ```
 ```
-"rect" => Geolocation\Calc\Box {#396 ▼
-    #nw: Geolocation\Calc\Point {#399 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#396 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#399 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#402 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#402 ▼
         #lat: 39,741052354709
         #lng: -104,98689651489
     }
@@ -966,8 +965,8 @@ durch Hinzufügen eines Punktes erweitert, sind auch diese Point-Instanzen nicht
 Die Punkte sollten im Bedarfsfall jeweils neu abgefragt oder ggf. die Einzelwerte abgerufen werden.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $rect = Box::factory(
     Point::byLatLng( [39.741052354709,-104.98689651489] ),
@@ -982,29 +981,29 @@ $southWest = $rect->southWest();
 dump(get_defined_vars());
 ```
 ```
-"rect" => Geolocation\Calc\Box {#396 ▼
-    #nw: Geolocation\Calc\Point {#399 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#396 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#399 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#402 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#402 ▼
         #lat: 39,741052354709
         #lng: -104,98689651489
     }
 }
-"northWest" => Geolocation\Calc\Point {#399 ▼
+"northWest" => FriendsOfRedaxo\Geolocation\Calc\Point {#399 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"southEast" => Geolocation\Calc\Point {#402 ▼
+"southEast" => FriendsOfRedaxo\Geolocation\Calc\Point {#402 ▼
     #lat: 39,741052354709
     #lng: -104,98689651489
 }
-"northEast" => Geolocation\Calc\Point {#394 ▼
+"northEast" => FriendsOfRedaxo\Geolocation\Calc\Point {#394 ▼
     #lat: 39,753838434606
     #lng: -104,98689651489
 }
-"southWest" => Geolocation\Calc\Point {#291 ▼
+"southWest" => FriendsOfRedaxo\Geolocation\Calc\Point {#291 ▼
     #lat: 39,741052354709
     #lng: -105,00341892242
 }
@@ -1027,8 +1026,8 @@ geoJSON-Reihenfolge als 2-dimensionales Array. Sofern `$precision` angegeben ist
 Anzahl der Nachkommastellen bei der Ausgabe reduziert.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $rect = Box::factory(
     Point::byLatLng( [39.741052354709,-104.98689651489] ),
@@ -1041,12 +1040,12 @@ $geoJSON = $rect->lngLat();
 dump(get_defined_vars());
 ```
 ```
-"rect" => Geolocation\Calc\Box {#396 ▼
-    #nw: Geolocation\Calc\Point {#399 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#396 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#399 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#402 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#402 ▼
         #lat: 39,741052354709
         #lng: -104,98689651489
     }
@@ -1093,8 +1092,8 @@ LeafletJS ein Rechteck. Sofern `$precision` angegeben ist, wird die Anzahl der N
 der Ausgabe reduziert.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $rect = Box::byCorner(
     Point::byLatLng( [39.741052354709,-104.98689651489] ),
@@ -1122,12 +1121,12 @@ $dataset = [
 dump(get_defined_vars());
 ```
 ```
-"rect" => Geolocation\Calc\Box {#452 ▼
-    #nw: Geolocation\Calc\Point {#449 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#452 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#449 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#446 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#446 ▼
         #lat: 39,741052354709
         #lng: -104,98689651489
     }
@@ -1194,8 +1193,8 @@ dump(get_defined_vars());
 Die Methode berechnet den Mittelpunkt der Box und gibt ein neu generiertes Point-Objekt zurück.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $rect = Box::factory(
     Point::byLatLng( [39.741052354709,-104.98689651489] ),
@@ -1207,17 +1206,17 @@ $center = $rect->center();
 dump(get_defined_vars());
 ```
 ```
-"rect" => Geolocation\Calc\Box {#396 ▼
-    #nw: Geolocation\Calc\Point {#399 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#396 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#399 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#402 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#402 ▼
         #lat: 39,741052354709
         #lng: -104,98689651489
     }
 }
-"center" => Geolocation\Calc\Point {#394 ▼
+"center" => FriendsOfRedaxo\Geolocation\Calc\Point {#394 ▼
     #lat: 39,747445394658
     #lng: -104,99515771866
 }
@@ -1259,8 +1258,8 @@ Geolocation.Tools.MyOnTheFlyTool = class extends Geolocation.Tools.GeoJSON
 Geolocation.tools.myontheflytool = function(...args) { return new Geolocation.Tools.MyOnTheFlyTool(args); };
 </script>
 <?php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $rect = Box::byCorner([ [39.753838434606,-105.00341892242], [39.731310943247,-104.95290862481] ]);
 $center = $rect->center();
@@ -1306,17 +1305,17 @@ echo $rex_map = \Geolocation\Mapset::take( )
 dump(get_defined_vars());
 ```
 ```
-"rect" => Geolocation\Calc\Box {#394 ▼
-    #nw: Geolocation\Calc\Point {#397 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#394 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#397 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#400 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#400 ▼
         #lat: 39,731310943247
         #lng: -104,95290862481
     }
 }
-"center" => Geolocation\Calc\Point {#392 ▼
+"center" => FriendsOfRedaxo\Geolocation\Calc\Point {#392 ▼
     #coord: Location\Coordinate {#393 ▼
         #lat: 39,742574688927
         #lng: -104,97816377361
@@ -1335,8 +1334,8 @@ dump(get_defined_vars());
 Die Funktion liefert TRUE, wenn der Punkt Teil der Box ist.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $rect = Box::factory(
     Point::byLatLng( [39.741052354709,-104.98689651489] ),
@@ -1349,17 +1348,17 @@ $isInBox = $rect->contains( $coordinate );
 dump(get_defined_vars());
 ```
 ```
-"rect" => Geolocation\Calc\Box {#396 ▼
-    #nw: Geolocation\Calc\Point {#399 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#396 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#399 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#402 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#402 ▼
         #lat: 39,741052354709
         #lng: -104,98689651489
     }
 }
-"coordinate" => Geolocation\Calc\Point {#394 ▼
+"coordinate" => FriendsOfRedaxo\Geolocation\Calc\Point {#394 ▼
     #coord: Location\Coordinate {#395 ▼
         #lat: 39,741052354709
         #lng: -104,98689651489
@@ -1385,8 +1384,8 @@ Parameter führen zu einer Exception.
 Bei einem Abbruch bleibt die Box unverändert.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $rect = Box::factory(
     Point::byLatLng( [39.741052354709,-104.98689651489] ),
@@ -1402,40 +1401,40 @@ $rect->extendBy( [$a,$b,$center] );
 dump(get_defined_vars());
 ```
 ```
-"rect" => Geolocation\Calc\Box {#396 ▼
-    #nw: Geolocation\Calc\Point {#409 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#396 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#409 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#411 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#411 ▼
         #lat: 39,741052354709
         #lng: -104,98689651489
     }
 }
-"center" => Geolocation\Calc\Point {#394 ▼
+"center" => FriendsOfRedaxo\Geolocation\Calc\Point {#394 ▼
     #coord: Location\Coordinate {#395 ▼
         #lat: 39,747445394658
         #lng: -104,99515771866
     }
 }
-"a" => Geolocation\Calc\Point {#291 ▼
+"a" => FriendsOfRedaxo\Geolocation\Calc\Point {#291 ▼
     #coord: Location\Coordinate {#391 ▼
         #lat: 39,763838434606
         #lng: -104,99515771866
     }
 }
-"b" => Geolocation\Calc\Point {#406 ▼
+"b" => FriendsOfRedaxo\Geolocation\Calc\Point {#406 ▼
     #coord: Location\Coordinate {#404 ▼
         #lat: 39,747445394658
         #lng: -105,01341892242
     }
 }
-"resized" => Geolocation\Calc\Box {#396 ▼
-    #nw: Geolocation\Calc\Point {#409 ▼
+"resized" => FriendsOfRedaxo\Geolocation\Calc\Box {#396 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#409 ▼
         #lat: 39,763838434606
         #lng: -105,01341892242
     }
-    #se: Geolocation\Calc\Point {#411 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#411 ▼
         #lat: 39,741052354709
         #lng: -104,98689651489
     }
@@ -1473,22 +1472,22 @@ $rect->resizeBy( 1.2, null, Box::HOOK_NW );
 dump(get_defined_vars());
 ```
 ```
-"rect" => Geolocation\Calc\Box {#394 ▼
-    #nw: Geolocation\Calc\Point {#397 ▼
+"rect" => FriendsOfRedaxo\Geolocation\Calc\Box {#394 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#397 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#400 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#400 ▼
         #lat: 39,731310943247
         #lng: -104,95290862481
     }
 }
-"rect2" => Geolocation\Calc\Box {#405 ▼
-    #nw: Geolocation\Calc\Point {#419 ▼
+"rect2" => FriendsOfRedaxo\Geolocation\Calc\Box {#405 ▼
+    #nw: FriendsOfRedaxo\Geolocation\Calc\Point {#419 ▼
         #lat: 39,753838434606
         #lng: -105,00341892242
     }
-    #se: Geolocation\Calc\Point {#421 ▼
+    #se: FriendsOfRedaxo\Geolocation\Calc\Point {#421 ▼
         #lat: 39,726805444975
         #lng: -104,94280656529
     }
@@ -1533,8 +1532,8 @@ Die Methode liefert den aktuell eingestellten Kompasskalkulator. Sie wird in `Po
 richtungsbezogene Operationen benutzt.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Math;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Math;
 use \Location\Bearing\BearingSpherical;
 
 $NW = Point::byLatLng( [39.753838434606,-105.00341892242] );
@@ -1552,11 +1551,11 @@ $bearingAt_Default = $NW->bearingAt( $SE );
 dump(get_defined_vars());
 ```
 ```
-"NW" => Geolocation\Calc\Point {#391 ▼
+"NW" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"SE" => Geolocation\Calc\Point {#395 ▼
+"SE" => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
     #lat: 39,741052354709
     #lng: -104,98689651489
 }
@@ -1585,8 +1584,8 @@ Die Methode liefert den aktuell eingestellten Distanzkalkulator. Sie wird in `Po
 distanzbezogene Operationen benutzt.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Math;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Math;
 use use \Location\Distance\Haversine;
 
 $NW = Point::byLatLng( [39.753838434606,-105.00341892242] );
@@ -1602,11 +1601,11 @@ $distance_Default = $NW->distanceTo( $SE );
 dump(get_defined_vars());
 ```
 ```
-"NW" => Geolocation\Calc\Point {#391 ▼
+"NW" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"SE" => Geolocation\Calc\Point {#395 ▼
+"SE" => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
     #lat: 39,741052354709
     #lng: -104,98689651489
 }
@@ -1653,8 +1652,8 @@ und der Kompasskurs am Startpunkt in Grad (0°...360°). Die Funktion wählt den
 Datumslinie (180°) nehmen (siehe [Hinweise weiter oben](#caveat)).
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Math;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Math;
 
 $NW = Point::byLatLng( [39.753838434606,-105.00341892242] );
 $SE = Point::byLatLng( [39.741052354709,-104.98689651489] );
@@ -1667,18 +1666,18 @@ $target = Math::goBearingDistance( $NW, $bearingTo, $distance );
 dump(get_defined_vars());
 ```
 ```
-"NW" => Geolocation\Calc\Point {#391 ▼
+"NW" => FriendsOfRedaxo\Geolocation\Calc\Point {#391 ▼
     #lat: 39,753838434606
     #lng: -105,00341892242
 }
-"SE" => Geolocation\Calc\Point {#395 ▼
+"SE" => FriendsOfRedaxo\Geolocation\Calc\Point {#395 ▼
     #lat: 39,741052354709
     #lng: -104,98689651489
 }
 "bearingTo" => 135,06623096152
 "bearingAt" => 135,07679546701
 "distance" => 2005,167
-"target" => Geolocation\Calc\Point {#398 ▼
+"target" => FriendsOfRedaxo\Geolocation\Calc\Point {#398 ▼
     #lat: 39,741052353721
     #lng: -104,98689651361
 }
@@ -1714,8 +1713,8 @@ Im Normalfall werden alle Dezimalstellen angegeben, sofern nicht `$precision` ei
 festlegt.
 
 ```php
-use \Geolocation\Calc\Point;
-use \Geolocation\Calc\Math;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\Math;
 
 $dm = Math::dd2dm( 39.753838434606 );
 $dms = Math::dd2dm( 39.753838434606, 3 );
@@ -1744,7 +1743,7 @@ Bei Pol-Überschreitung (Breite größer 90° oder kleiner -90°) wird lediglich
 -90° reduziert.
 
 ```php
-use \Geolocation\Calc\Math;
+use FriendsOfRedaxo\Geolocation\Calc\Math;
 
 dump([
     '95°'       => Math::normalizeLatitude( 95 ),
@@ -1770,7 +1769,7 @@ Bei Überschreiten des Datumsgrenzen-Meridians (±180°) wird der Wert umgerechn
 "-200°" entspricht "+160°".
 
 ```php
-use \Geolocation\Calc\Math;
+use FriendsOfRedaxo\Geolocation\Calc\Math;
 
 dump([
     '181.123°'  => Math::normalizeLongitude( 181.123 ),
@@ -1796,7 +1795,7 @@ Die Funktion rechnet positive oder negative Kompasskurse in Werte 0°...360° um
 wieder 270° oder aus 450° werden 90°.
 
 ```php
-use \Geolocation\Calc\Math;
+use FriendsOfRedaxo\Geolocation\Calc\Math;
 
 dump([
     '90°'   => Math::normalizeBearing( 90 ),
