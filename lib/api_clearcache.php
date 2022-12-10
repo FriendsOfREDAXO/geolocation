@@ -10,24 +10,30 @@
  * Hier kein Namespace, da sonst die API-Klasse nicht gefunden wird.
  */
 
+use FriendsOfRedaxo\Geolocation\Cache;
+use FriendsOfRedaxo\Geolocation\Mapset;
+use rex;
+use rex_api_exception;
+use rex_api_result;
+
 class rex_api_geolocation_clearcache extends \rex_api_function
 {
     /**
-     * @throws \rex_api_exception
-     * @return \rex_api_result
+     * @throws rex_api_exception
+     * @return rex_api_result
      */
     public function execute()
     {
-        $user = \rex::getUser();
+        $user = rex::getUser();
         if (null === $user || !$user->hasPerm('geolocation[clearcache]')) {
-            throw new \rex_api_exception('User has no permission to delete cache files!');
+            throw new rex_api_exception('User has no permission to delete cache files!');
         }
 
         if (0 < ($layerId = rex_request('layer_id', 'integer', 0))) {
-            $c = \Geolocation\Cache::clearLayerCache($layerId);
+            $c = Cache::clearLayerCache($layerId);
         } elseif (0 < ($mapsetId = rex_request('mapset_id', 'integer', 0))) {
             $c = 0;
-            $mapset = \Geolocation\Mapset::get($mapsetId);
+            $mapset = Mapset::get($mapsetId);
             if (null !== $mapset) {
                 /**
                  * STAN: Foreach overwrites $layerId with its value variable.
@@ -35,13 +41,13 @@ class rex_api_geolocation_clearcache extends \rex_api_function
                  * @phpstan-ignore-next-line
                  */
                 foreach ($mapset->layerset as $layerId) {
-                    $c += \Geolocation\Cache::clearLayerCache($layerId);
+                    $c += Cache::clearLayerCache($layerId);
                 }
             }
         } else {
-            $c = \Geolocation\Cache::clearCache();
+            $c = Cache::clearCache();
         }
 
-        return new \rex_api_result(true, \rex_i18n::msg('geolocation_cache_files_removed', $c));
+        return new rex_api_result(true, \rex_i18n::msg('geolocation_cache_files_removed', $c));
     }
 }

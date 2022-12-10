@@ -3,7 +3,7 @@
  * Helferlein, einige Hlfsfunktionen, gekapselt als  statische Klassenmethoden.
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use rex;
 use rex_clang;
@@ -129,8 +129,8 @@ class Tools
          */
         if (LOAD) {
             if (rex::isBackend()) {
-                rex_view::addCssFile(rex_url::addonAssets(\Geolocation\ADDON, 'geolocation.min.css'));
-                rex_view::addJsFile(rex_url::addonAssets(\Geolocation\ADDON, 'geolocation.min.js'));
+                rex_view::addCssFile(rex_url::addonAssets(ADDON, 'geolocation.min.css'));
+                rex_view::addJsFile(rex_url::addonAssets(ADDON, 'geolocation.min.js'));
             } else {
                 echo AssetPacker\AssetPacker::target(rex_path::addonAssets(ADDON, 'geolocation.min.css'))
                     ->getTag();

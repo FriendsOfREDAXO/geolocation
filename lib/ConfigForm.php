@@ -3,9 +3,9 @@
  * Konfiguration - Basisdaten und Defaults.
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
-use Geolocation\AssetPacker\AssetPacker;
+use FriendsOfRedaxo\Geolocation\AssetPacker\AssetPacker;
 use rex;
 use rex_config;
 use rex_config_form;
@@ -192,11 +192,11 @@ class ConfigForm extends rex_config_form
         // Entweder (install) sind sie noch nicht gesetzt (kein define) oder beim reinstall sind sie
         // via boot.php gesetzt, werden aber durch neuere Werte aus der Reinstallation überschrieben
         // leer geht gar nicht: das muss ein Fehler ein.
-        $keyMapset = $constant['Geolocation\\KEY_MAPSET'] ?? (defined('Geolocation\\KEY_MAPSET') ? KEY_MAPSET : null);
+        $keyMapset = $constant['FriendsOfRedaxo\\Geolocation\\KEY_MAPSET'] ?? (defined('FriendsOfRedaxo\\Geolocation\\KEY_MAPSET') ? KEY_MAPSET : null);
         if (null === $keyMapset) {
-            throw new Exception('Constant "Geolocation\\KEY_MAPSET" missing. Check your boot.php or config.yml (install)', 1);
+            throw new Exception('Constant "FriendsOfRedaxo\Geolocation\\KEY_MAPSET" missing. Check your boot.php or config.yml (install)', 1);
         }
-        $keyTiles = $constant['Geolocation\\KEY_TILES'] ?? (defined('Geolocation\\KEY_TILES') ? KEY_TILES : null);
+        $keyTiles = $constant['FriendsOfRedaxo\\Geolocation\\KEY_TILES'] ?? (defined('FriendsOfRedaxo\\Geolocation\\KEY_TILES') ? KEY_TILES : null);
         if (null === $keyTiles) {
             throw new Exception('Constant "Geolocation\\KEY_TILES" missing. Check your boot.php or config.yml (install)', 1);
         }

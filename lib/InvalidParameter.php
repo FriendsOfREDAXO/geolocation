@@ -4,11 +4,11 @@
  * an einer Stelle.
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use Throwable;
 
-class InvalidParameter extends \Geolocation\Exception
+class InvalidParameter extends \FriendsOfRedaxo\Geolocation\Exception
 {
     /** @api */
     public const KEY_LAT_LNG = 1;
