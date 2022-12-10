@@ -1,7 +1,7 @@
 # Basiskonfiguration, diverse Konstanten
 #
 # Wird bei der Installation benutzt und u.a. teilweise in die boot.php eingetragen als
-# define('Geolocation\ABC',wert); (ABC im Namespace Geolocation )
+# define('FriendsOfRedaxo\Geolocation\ABC',wert); (ABC im Namespace FriendsOfRedaxo\Geolocation )
 #
 # Überschreiben durch korrespondierende Werte aus redaxo/data/addons/geolocation/config.yml
 # Handle with care!
@@ -23,20 +23,20 @@ dataset:
     overwrite : false
 
 # Time-To-Live im Karten-Cache
-Geolocation\TTL_DEF: 43200
-Geolocation\TTL_MAX: 130000
+FriendsOfRedaxo\Geolocation\TTL_DEF: 43200
+FriendsOfRedaxo\Geolocation\TTL_MAX: 130000
 
 # Maximale Anzahl Dateien pro Karten-Cache
-Geolocation\CFM_DEF: 1000
-Geolocation\CFM_MIN: 50
-Geolocation\CFM_MAX: 100000
+FriendsOfRedaxo\Geolocation\CFM_DEF: 1000
+FriendsOfRedaxo\Geolocation\CFM_MIN: 50
+FriendsOfRedaxo\Geolocation\CFM_MAX: 100000
 
 # URL-Name für API-Abrufe
-Geolocation\KEY_TILES: 'geolayer'
-Geolocation\KEY_MAPSET: 'geomapset'
+FriendsOfRedaxo\Geolocation\KEY_TILES: 'geolayer'
+FriendsOfRedaxo\Geolocation\KEY_MAPSET: 'geomapset'
 
 # Fragment zur Kartenausgabe
-Geolocation\OUT: 'geolocation_rex_map.php'
+FriendsOfRedaxo\Geolocation\OUT: 'geolocation_rex_map.php'
 
 # Darstellungsoptionen
 # true = Mapset::mapoptions, sonst '|xxx|yyy|' mit den Keys aus Mapset::mapoptions
