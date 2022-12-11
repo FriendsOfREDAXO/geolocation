@@ -98,8 +98,6 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_be_manager
 
         if (is_string($value)) {
             $value = explode(',', $value);
-        } else {
-            $value = [];
         }
 
         if (is_string($selectedLayers)) {
