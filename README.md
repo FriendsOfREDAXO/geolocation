@@ -43,16 +43,16 @@ Kontakt: [Thomas Skerbis](https://github.com/skerbis)
         - weitere ältere Dateien löschen wenn das Verzeichnis zu viele Dateien enthält
 
 - [Rechnen mit Koordinaten (PHP)](docs/devmath.md)
-    - [class \Geolocation\Calc\Point](docs/devmath.md#point): Koordinaten verwalten
+    - [class FriendsOfRedaxo\Geolocation\Calc\Point](docs/devmath.md#point): Koordinaten verwalten
         - verschiedene Format als Input/Output; Konvertierung
         - Distanzen und Richtung ermitteln
         - Zielpunkt aus Richtung und Distanz
-    - [class \Geolocation\Calc\Box](docs/devmath.md#box): Rechteckigen Bereich verwalten
+    - [class FriendsOfRedaxo\Geolocation\Calc\Box](docs/devmath.md#box): Rechteckigen Bereich verwalten
         - Anlegen aus zwei gegenüberliegenden Ecken
         - Dynamisch erweitern
         - diverse Abfragen (north, south, ....)
         - Berechnete Werte (center, innerRadius, outerRadius)
-    - [class \Geolocation\Calc\Math](docs/devmath.md#math): Rechteckigen Bereich verwalten
+    - [class FriendsOfRedaxo\Geolocation\Calc\Math](docs/devmath.md#math): Rechteckigen Bereich verwalten
         - diverse Methoden und Defaults basierend auf phpGeo
         - Distanzen und Richtung ermitteln
         - Zielpunkt aus Richtung und Distanz
