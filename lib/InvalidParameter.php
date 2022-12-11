@@ -52,7 +52,7 @@ class InvalidParameter extends \FriendsOfRedaxo\Geolocation\Exception
     public const NOT_A_POINT = 20;
 
     /**
-     * @var list<string>
+     * @var array<int,string>
      */
     private array $msg = [
         self::KEY_LAT_LNG => 'Key-Error! Latitude/longitude-Key missing or equal. Given $lat="%s" and $lng="%s"',
