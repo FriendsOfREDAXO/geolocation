@@ -32,7 +32,7 @@ try {
     // Cronjobs löschen
     $sql = \rex_sql::factory();
     $sql->setTable( \rex::getTable( 'cronjob') );
-    $sql->setWhere( 'type=:type', [':type'=>'Geolocation\Cronjob'] );
+    $sql->setWhere( 'type=:type', [':type'=>'FriendsOfRedaxo\\Geolocation\\Cronjob'] );
     $sql->delete();
 
 } catch (\RuntimeException $e) {

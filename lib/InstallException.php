@@ -1,6 +1,6 @@
 <?php
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 class InstallException extends Exception
 {

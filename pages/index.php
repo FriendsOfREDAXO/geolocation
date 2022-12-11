@@ -3,7 +3,7 @@
  * Allgemeine Addon-Einstiegsseite (page-Rahmen).
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use rex_addon;
 use rex_api_function;
@@ -29,9 +29,9 @@ $config = array_merge(
     rex_file::getConfig(rex_path::addonData(ADDON, 'config.yml'), []),
     rex_file::getConfig(rex_path::addon(ADDON, '/install/config.yml'), []),
 );
-define('Geolocation\ZOOM_MIN', $config['zoom_min']);
-define('Geolocation\ZOOM_MAX', $config['zoom_max']);
-define('Geolocation\PROXY_ONLY', !$config['scope']['mapset']);
+define('FriendsOfRedaxo\\Geolocation\\ZOOM_MIN', $config['zoom_min']);
+define('FriendsOfRedaxo\\Geolocation\\ZOOM_MAX', $config['zoom_max']);
+define('FriendsOfRedaxo\\Geolocation\\PROXY_ONLY', !$config['scope']['mapset']);
 
 /**
  * für die nächsten Schritte vorab das Seitenobject bereitstellen.
@@ -69,14 +69,15 @@ echo rex_view::title($this->i18n('geolocation_title'));
 // ggf. vorhandene API Messages ausgeben
 echo rex_api_function::getMessage();
 
+// #REVIEW: geht das auch ohne "\FriendsOfRedaxo\Geolocation"?
 // Liste 'rex_geolocation_mapset' um eine Action zum Löschen des Layer-Cache erweitern
-rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS', '\Geolocation\mapset::YFORM_DATA_LIST_ACTION_BUTTONS');
+rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS', '\FriendsOfRedaxo\Geolocation\mapset::YFORM_DATA_LIST_ACTION_BUTTONS');
 
 // Liste 'rex_geolocation_layer' um eine Action zum Löschen der Layer-Caches erweitern
-rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS', '\Geolocation\Layer::YFORM_DATA_LIST_ACTION_BUTTONS');
+rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS', '\FriendsOfRedaxo\Geolocation\Layer::YFORM_DATA_LIST_ACTION_BUTTONS');
 
 // Liste 'rex_geolocation_layer' mit geänderter Sortierung
-rex_extension::register('YFORM_DATA_LIST_QUERY', '\Geolocation\Layer::YFORM_DATA_LIST_QUERY');
+rex_extension::register('YFORM_DATA_LIST_QUERY', '\FriendsOfRedaxo\Geolocation\Layer::YFORM_DATA_LIST_QUERY');
 
 // Und nun die aktuelle Seite anzeigen
 rex_be_controller::includeCurrentPageSubPath();

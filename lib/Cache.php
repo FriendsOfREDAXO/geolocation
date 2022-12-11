@@ -3,7 +3,7 @@
  * Cache-Verwaltung.
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use rex_config;
 use rex_dir;

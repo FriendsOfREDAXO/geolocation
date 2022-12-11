@@ -9,9 +9,9 @@
  * @see https://github.com/mjaschen/phpgeo/tree/master/docs
  */
 
-namespace Geolocation\Calc;
+namespace FriendsOfRedaxo\Geolocation\Calc;
 
-use Geolocation\InvalidParameter;
+use FriendsOfRedaxo\Geolocation\InvalidParameter;
 use Location\Coordinate;
 use Location\Formatter\Coordinate\DMS;
 

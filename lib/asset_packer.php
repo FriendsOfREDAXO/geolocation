@@ -22,7 +22,7 @@
  *  ------------------------------------------------------------------------------------------------
  */
 
-namespace Geolocation\AssetPacker;
+namespace FriendsOfRedaxo\Geolocation\AssetPacker;
 
 use rex_view;
 use rex;
@@ -487,7 +487,7 @@ class AssetPacker_js extends AssetPacker
 {
 
     public function minify( string $content = '' ) : string
-	{
+	{   return $content;
         return Minifier::minify($content);
 	}
 

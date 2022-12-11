@@ -15,11 +15,11 @@
  *	Erweiterungen "extendBy(Point)" führen, ab 180° Breite der Box zu einer Exception.
  *  Das Problem Pol-Überschreitung erledigt sich dann gleich mit.
  *
- * In den meisten Fällen werden die mit Leaflet/Geolocation/phpGeo gezeichneten Boxen eher im
+ * In den meisten Fällen werden die mit Leaflet | Geolocation | phpGeo gezeichneten Boxen eher im
  * Europäischen Raum liegen, so dass das Problem nicht auftritt.
  */
 
-namespace Geolocation\Calc;
+namespace FriendsOfRedaxo\Geolocation\Calc;
 
 use Location\Bounds;
 
@@ -60,7 +60,7 @@ class Box
      *
      * @api
      * @param array<Point> $points
-     * @throws \Geolocation\Calc\InvalidBoxParameter
+     * @throws InvalidBoxParameter
      */
     public static function factory(array $points): ?self
     {
@@ -96,7 +96,7 @@ class Box
      * Factory-Methode zum Anlegen der Box aus zwei gegenüberliegenden Koordinaten-Punkten.
      *
      * @api
-     * @throws \Geolocation\Calc\InvalidBoxParameter
+     * @throws InvalidBoxParameter
      */
     public static function byCorner(Point $cornerA, Point $cornerB): ?self
     {
@@ -110,7 +110,7 @@ class Box
      * Die Arbeit macht self::bySize. Aus dem Radius wird (mal 2) werden Höhe und Breite gesetzt.
      *
      * @api
-     * @throws \Geolocation\Calc\InvalidBoxParameter
+     * @throws InvalidBoxParameter
      */
     public static function byInnerCircle(Point $center, int|float $radius): ?self
     {
@@ -125,7 +125,7 @@ class Box
      * Die Arbeit macht self::bySize. Aus dem Radius wird (mal 2) Höhe und Breite gesetzt.
      *
      * @api
-     * @throws \Geolocation\Calc\InvalidBoxParameter
+     * @throws InvalidBoxParameter
      */
     public static function byOuterCircle(Point $center, int|float $radius): ?self
     {
@@ -141,7 +141,7 @@ class Box
      * Die maximale Boxbreite muss unter 180° sein.
      *
      * @api
-     * @throws \Geolocation\Calc\InvalidBoxParameter
+     * @throws InvalidBoxParameter
      */
     public static function bySize(Point $center, int|float $width, int|float $height): ?self
     {

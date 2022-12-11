@@ -33,7 +33,7 @@
  *     isOnline              liefert true wenn der Layer online ist ($layer->online == 1 )
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use PDO;
 use rex;
@@ -538,9 +538,9 @@ class Layer extends rex_yform_manager_dataset
      * @api
      * @param list<int>   $layerIds
      * STAN: das muss doch einfacher gehen als immer diesen Text (siehe getLayerConfig) abzuschreiben
-     * @return list<array{layer:int,label:string,type:string,attribution:string}>
+     * @return array<int,array{layer:int,label:string,type:string,attribution:string}>
      */
-    public static function getLayerConfigSet(array $layerIds, ?string $clang)
+    public static function getLayerConfigSet($layerIds, ?string $clang)
     {
         $set = [];
         foreach ($layerIds as $layerId) {

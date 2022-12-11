@@ -3,7 +3,7 @@
  * Basiskonfiguration.
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use rex_fragment;
 use rex_i18n;

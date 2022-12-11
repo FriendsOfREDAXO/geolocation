@@ -91,7 +91,7 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
 
     ```php
     // Layer-Datensatz aufrufen
-    $layer = \Geolocation\Layer::get( $layerId );
+    $layer = \FriendsOfRedaxo\Geolocation\Layer::get( $layerId );
     // Label passen zur aktuellen FE/BE-Sprache ermitteln
     $label = $layer->getLabel()
     ```
@@ -106,11 +106,11 @@ Die Daten für den Kartenaufbau werden für eine einzelne Karte oder für einen 
 
 ```php
 // Layer-Datensatz aufrufen
-$layer = \Geolocation\Layer::get($id);
+$layer = \FriendsOfRedaxo\Geolocation\Layer::get($id);
 // Layer-Konfiguration zum Kartenaufbau abrufen
 $layerConfig = $layer->getLayerConfig();
 // oder Layer-Konfiguration für mehrere Layer zum Kartenaufbau abrufen (nur online)
-$layerConfigSet = \Geolocation\Layer::getLayerConfigSet( [1,2,3] );
+$layerConfigSet = \FriendsOfRedaxo\Geolocation\Layer::getLayerConfigSet( [1,2,3] );
 ```
 ```
 array:4 [▼
@@ -147,9 +147,9 @@ Karten sind in den [Einstellungen](settings.md#cache) vorbelegt.
 
 - **Freigabe**  
     Über den Parameter wird festgelegt, ob die Karte freigegeben ist zur Nutzung oder nicht.
-    Der Status kann mit `\Geolocation\Layer::get($id)->isOnline()` abgefragt werden. Abrufe des
-    Layerset mit `\Geolocation\Layer::get($id)->getLayerConfigSet(...)` bzw. mit indirekt über
-    `\Geolocation\Mapset::take( $mapsetId )->getLayerset()` berücksichtigt den Status.
+    Der Status kann mit `\FriendsOfRedaxo\Geolocation\Layer::get($id)->isOnline()` abgefragt werden. Abrufe des
+    Layerset mit `\FriendsOfRedaxo\Geolocation\Layer::get($id)->getLayerConfigSet(...)` bzw. mit indirekt über
+    `\FriendsOfRedaxo\Geolocation\Mapset::take( $mapsetId )->getLayerset()` berücksichtigt den Status.
 
     Auch deaktivierte Karten können dem Kartensatz zugeordnet sein!
 

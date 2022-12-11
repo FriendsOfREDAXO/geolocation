@@ -21,34 +21,34 @@ die Klassen und globalen Konstanten. Hier die wichtigsten:
 
 | Objekt | Anmerkung |
 | --- | --- |
-| \Geolocation\Layer.php | YOrm-Dataset-Klasse für die einzelnen Karten-URLs |
-| \Geolocation\Mapset.php | YOrm-Dataset-Klasse für die Kartensätze aus mehreren Karten-URLs |
-| \Geolocation\Cache.php | Klasse mit Methoden zur Verwaltung des Karten-Cache |
-| \Geolocation\ConfigForm.php | rex_form-Klasse für das Formular "[Einstellungen](settings.md#config)" |
-| \Geolocation\Cronjob.php |rex_cronjob-Klasse für Cronjobs zum Cache-Hauskeeping |
-| \Geolocation\Tools.php | Diverse statische Methoden, die immer mal wieder hilfreich sind.|
-| \Geolocation\Exception.php | Exception-Klasse für von **Geolocation** ausgelöste \RuntimeException  |
-| \Geolocation\Calc\point.php | Rechnen mit Koordinaten: repräsentiert einen Punkt  |
-| \Geolocation\Calc\box.php | Rechnen mit Koordinaten: repräsentiert einen rechteckigen Bereich  |
-| \Geolocation\Calc\math.php | Rechnen mit Koordinaten: Klasse mit diversen Rechenmethoden  |
-| \Geolocation\ADDON | "geolocation" |
-| \Geolocation\TTL_DEF | Time-to-live im Cache: Default-Wert  |
-| \Geolocation\TTL_MIN | Time-to-live im Cache: Untergrenze-Wert |
-| \Geolocation\TTL_MAX | Time-to-live im Cache: Obergrenze-Wert |
-| \Geolocation\CFM_DEF | Maximale Anzahl Dateien im Cache: Default-Wert |
-| \Geolocation\CFM_MIN | Maximale Anzahl Dateien im Cache: Untergrenze-Wert |
-| \Geolocation\CFM_MAX | Maximale Anzahl Dateien im Cache: Obergrenze-Wert |
-| \Geolocation\KEY_TILES | Name im der URL für Kachelabrufe |
-| \Geolocation\KEY_MAPSET | Name im der URL für Kartensatzabrufe |
-| \Geolocation\OUT | Name des Default-Ausgabefragments |
-| \Geolocation\LOAD | FALSE: Die Assets `geolocation.min.js|css` werden nicht geladen |
+| FriendsOfRedaxo\Geolocation\Layer.php | YOrm-Dataset-Klasse für die einzelnen Karten-URLs |
+| FriendsOfRedaxo\Geolocation\Mapset.php | YOrm-Dataset-Klasse für die Kartensätze aus mehreren Karten-URLs |
+| FriendsOfRedaxo\Geolocation\Cache.php | Klasse mit Methoden zur Verwaltung des Karten-Cache |
+| FriendsOfRedaxo\Geolocation\ConfigForm.php | rex_form-Klasse für das Formular "[Einstellungen](settings.md#config)" |
+| FriendsOfRedaxo\Geolocation\Cronjob.php |rex_cronjob-Klasse für Cronjobs zum Cache-Hauskeeping |
+| FriendsOfRedaxo\Geolocation\Tools.php | Diverse statische Methoden, die immer mal wieder hilfreich sind.|
+| FriendsOfRedaxo\Geolocation\Exception.php | Exception-Klasse für von **Geolocation** ausgelöste \RuntimeException  |
+| FriendsOfRedaxo\Geolocation\Calc\point.php | Rechnen mit Koordinaten: repräsentiert einen Punkt  |
+| FriendsOfRedaxo\Geolocation\Calc\box.php | Rechnen mit Koordinaten: repräsentiert einen rechteckigen Bereich  |
+| FriendsOfRedaxo\Geolocation\Calc\math.php | Rechnen mit Koordinaten: Klasse mit diversen Rechenmethoden  |
+| FriendsOfRedaxo\Geolocation\ADDON | "geolocation" |
+| FriendsOfRedaxo\Geolocation\TTL_DEF | Time-to-live im Cache: Default-Wert  |
+| FriendsOfRedaxo\Geolocation\TTL_MIN | Time-to-live im Cache: Untergrenze-Wert |
+| FriendsOfRedaxo\Geolocation\TTL_MAX | Time-to-live im Cache: Obergrenze-Wert |
+| FriendsOfRedaxo\Geolocation\CFM_DEF | Maximale Anzahl Dateien im Cache: Default-Wert |
+| FriendsOfRedaxo\Geolocation\CFM_MIN | Maximale Anzahl Dateien im Cache: Untergrenze-Wert |
+| FriendsOfRedaxo\Geolocation\CFM_MAX | Maximale Anzahl Dateien im Cache: Obergrenze-Wert |
+| FriendsOfRedaxo\Geolocation\KEY_TILES | Name im der URL für Kachelabrufe |
+| FriendsOfRedaxo\Geolocation\KEY_MAPSET | Name im der URL für Kartensatzabrufe |
+| FriendsOfRedaxo\Geolocation\OUT | Name des Default-Ausgabefragments |
+| FriendsOfRedaxo\Geolocation\LOAD | FALSE: Die Assets `geolocation.min.js|css` werden nicht geladen |
 
 
 Hier ein Beispiel:
 
 ```PHP
-$id = \rex_request( \Geolocation\KEY_MAPSET, 'integer', 1 );
-$mapset = \Geolocation\Mapset::take( $id );
+$id = \rex_request( FriendsOfRedaxo\Geolocation\KEY_MAPSET, 'integer', 1 );
+$mapset = FriendsOfRedaxo\Geolocation\Mapset::take( $id );
 
 dump(get_defined_vars());
 ```
@@ -83,7 +83,7 @@ erforderlich sind, kann der Name durch ein Suffix eindeutig gemacht werden. Das 
 
 Die Methoden können verkettet werden:
 ```PHP
-echo \Geolocation\Mapset::take( $mapsetId )
+echo FriendsOfRedaxo\Geolocation\Mapset::take( $mapsetId )
     ->attributes( 'id', 'my-map-id' )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'bounds', [ $latLngSW,$latLngNO ] )
@@ -103,7 +103,7 @@ Das Resultat ist ein HTML-Tag mit fünf Attributen:
 
 Alternatives Vorgehen:
 ```PHP
-$mapset = \Geolocation\Mapset::take( $mapsetId );
+$mapset = FriendsOfRedaxo\Geolocation\Mapset::take( $mapsetId );
 
 $fragment = new \rex_fragment();
 $fragment->setVar( 'mapset', $mapset->getLayerset(), false );
@@ -163,7 +163,7 @@ Der erzeugte HTML-Code ist
 <script type="text/javascript" src="./assets/addons/geolocation/geolocation.min.js?buster=1234567890" ></script>
 ```
 
-Im Template wird an geeigneter Stelle der Aufruf der Methode `\Geolocation\Tools::echoAssetTags();`
+Im Template wird an geeigneter Stelle der Aufruf der Methode `FriendsOfRedaxo\Geolocation\Tools::echoAssetTags();`
 eingebaut:
 
 ```HTML
@@ -175,7 +175,7 @@ eingebaut:
 <?php
 
     // Geolocation- und Leaflet-Assets einbinden
-    \Geolocation\Tools::echoAssetTags();
+    FriendsOfRedaxo\Geolocation\Tools::echoAssetTags();
 
 ?>
 
@@ -228,7 +228,7 @@ Zusätzlich zu den verfügbaren Kartensätzen wird die Auswahl "Standardkarte" e
             <select name="REX_INPUT_VALUE[2]" id="mapset-select" class="form-control">
             <option value="">(Standardkarte)</option>
             <?php
-            $mapsets = \Geolocation\Mapset::query()
+            $mapsets = FriendsOfRedaxo\Geolocation\Mapset::query()
                 ->orderBy('title')
                 ->findValues( 'title', 'id' );
             foreach( $mapsets as $k=>$v ){
@@ -284,9 +284,9 @@ Wie das Bounds-Rechteck sichtbar gemacht wird, ist [hier beschrieben](devtools.m
 <?php
 // Kartendaten aus dem Slice abrufen
 $mapsetId = (int) 'REX_VALUE[2]';
-$center =\Geolocation\Calc\Point::byText( 'REX_VALUE[3]' );
+$center = FriendsOfRedaxo\Geolocation\Calc\Point::byText( 'REX_VALUE[3]' );
 $radius = max( (float)'REX_VALUE[4]', 1) * 1000; // Kilometer in Meter umrechnen
-$bounds = \Geolocation\Calc\Box::byInnerCircle( $center, $radius );
+$bounds = FriendsOfRedaxo\Geolocation\Calc\Box::byInnerCircle( $center, $radius );
 
 // Beispieldatensatz für die geoJSON-Darstellung von Elementen, hier Kreis
 $geoJSON = [
@@ -329,7 +329,7 @@ Geolocation.tools.myprivatetool = function(...args) { return new Geolocation.Too
 }
 
 // Kartensatzdaten in den HTML-Tag überführen
-$rex_map = \Geolocation\Mapset::take( $mapsetId )
+$rex_map = FriendsOfRedaxo\Geolocation\Mapset::take( $mapsetId )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'bounds', $bounds->latLng() )
     ->dataset( 'position', $center->latLng() )

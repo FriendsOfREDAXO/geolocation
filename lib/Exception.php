@@ -4,7 +4,7 @@
  * => Geolocation\Exception.
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use RuntimeException;
 

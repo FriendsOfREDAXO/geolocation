@@ -29,7 +29,7 @@ der Leaflet-Dokumentation auf. Die Beispieldaten liegen als PHP-Array in der Dat
 Modul-Output) eingebunden werden:
 
 ```php
-include \rex_path::addon(\Geolocation\ADDON,'docs/example/geojson_data.php');
+include \rex_path::addon('geolocation','docs/example/geojson_data.php');
 dump(get_defined_vars());
 ```
 
@@ -61,12 +61,13 @@ Universalmethode `L.geoJSON( geojsonData, options )`. Der Code in einem Demo-Aus
 übersichtlich:
 
 ```php
-include \rex_path::addon(\Geolocation\ADDON,'docs/example/geojson_data.php');
+use FriendsOfRedaxo\Geolocation\Mapset;
+include \rex_path::addon('geolocation','docs/example/geojson_data.php');
 $position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';
-echo $rex_map = \Geolocation\Mapset::take( )
+echo $rex_map = Mapset::take( )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'center', [$position,$zoom,$radius,$color])
     ->dataset( 'geojson', [$geosonLightRailStop,$geojsonFreeBus,$geojsonBicycleRental,$geojsonCoorsField,$geojsonCampus] )
@@ -185,12 +186,13 @@ Geolocation.tools.geojsonfreebus = function(...args) { return new Geolocation.To
 Das neue Tool wird als `dataset` mit den Daten zur Buslinie verknüpft der Karte zugeordnet:
 
 ```php
-include \rex_path::addon(\Geolocation\ADDON,'docs/example/geojson_data.php');
+use FriendsOfRedaxo\Geolocation\Mapset;
+include \rex_path::addon('geolocation','docs/example/geojson_data.php');
 $position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';
-echo $rex_map = \Geolocation\Mapset::take( )
+echo $rex_map = Mapset::take( )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'center', [$position,$zoom,$radius,$color])
     ->dataset( 'geojson', [$geosonLightRailStop,$geojsonBicycleRental,$geojsonCoorsField,$geojsonCampus] )
@@ -243,12 +245,13 @@ Geolocation.tools.geojsonbicyclerental = function(...args) { return new Geolocat
 Das neue Tool wird als `dataset` mit den Daten der Verleihstationen verknüpft der Karte zugeordnet:
 
 ```php
-include \rex_path::addon(\Geolocation\ADDON,'docs/example/geojson_data.php');
+use FriendsOfRedaxo\Geolocation\Mapset;
+include \rex_path::addon('geolocation','docs/example/geojson_data.php');
 $position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';
-echo $rex_map = \Geolocation\Mapset::take( )
+echo $rex_map = Mapset::take( )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'center', [$position,$zoom,$radius,$color])
     ->dataset( 'geojson', [$geosonLightRailStop,$geojsonCoorsField,$geojsonCampus] )
@@ -294,12 +297,13 @@ Geolocation.tools.geojsoncoorsfield = function(...args) { return new Geolocation
 Das neue Tool wird als `dataset` mit den Daten des Coors Field verknüpft der Karte zugeordnet:
 
 ```php
-include \rex_path::addon(\Geolocation\ADDON,'docs/example/geojson_data.php');
+use FriendsOfRedaxo\Geolocation\Mapset;
+include \rex_path::addon('geolocation','docs/example/geojson_data.php');
 $position = [39.747,-104.995];  // lat,lng
 $zoom = 14;
 $radius = 1000;
 $color = 'blue';
-echo $rex_map = \Geolocation\Mapset::take( )
+echo $rex_map = Mapset::take( )
     ->attributes( 'class', 'mymapclass' )
     ->dataset( 'center', [$position,$zoom,$radius,$color])
     ->dataset( 'geojson', [$geosonLightRailStop,$geojsonCampus] )

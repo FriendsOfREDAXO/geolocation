@@ -8,11 +8,10 @@
  *  geolocation-layerselect-item
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
 
 use rex_i18n;
 use rex_yform_value_geolocation_layerselect;
-use rex_request;
 
 /**
  * rex_yform_value-Instanz und die daraus gelieferten Daten.

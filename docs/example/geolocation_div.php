@@ -8,10 +8,12 @@
  * <div rex-map dataset="..." mapset="..." map="..."></div>
  */
 
-namespace Geolocation;
+namespace FriendsOfRedaxo\Geolocation;
+
+use rex_fragment;
 
 /**
- * @var \rex_fragment $this
+ * @var rex_fragment $this
  */
 
 $classes = [];
