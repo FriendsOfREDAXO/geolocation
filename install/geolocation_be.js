@@ -87,7 +87,7 @@ Geolocation.Classes.TestUrl = class extends HTMLElement {
         if (this.__urlNode) {
             this.__urlNode.removeEventListener('input', this._checkActiveState.bind(this));
         }
-        document.removeEventListener('DOMContentLoaded', this._DOMContentLoaded.bind(this));
+        document.removeEventListener('DOMContentLoaded', this._initialize.bind(this));
     }
 
     /**
