@@ -76,7 +76,7 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_be_manager
     public function preValidateAction(): void
     {
         $value = $this->getValue();
-
+        
         /**
          * aus der Formular-Erfasung (add/edit) kommt ein Array
          * feldname[value][]    IDs der insgesamt selektuerten Layer
@@ -87,13 +87,19 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_be_manager
          * Fallback (neuer Datensatz): leeres Array
          */
         if ($this->params['send']) {
-            $selectedLayers = $value['choice'];
-            $value = $value['value'];
-            $this->setValue($value);
+            if( null === $value ) {
+                $selectedLayers = [];
+                $value = [];
+            } else {
+                $selectedLayers = $value['choice'];
+                $value = $value['value'];
+                $this->setValue($value);
+            }
         } elseif (0 < $this->params['main_id']) {
             $selectedLayers = $this->getParam('manager_dataset')->getValue($this->subField);
         } else {
             $selectedLayers = [];
+            $value = [];
         }
 
         if (is_string($value)) {
