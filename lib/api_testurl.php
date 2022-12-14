@@ -46,6 +46,7 @@ class rex_api_geolocation_testurl extends rex_api_function
         '{y}' => 5718,
         '{z}' => 14,
         '{s}' => '',
+        '{r}' => '@2x',
     ];
 
     /**
@@ -63,7 +64,7 @@ class rex_api_geolocation_testurl extends rex_api_function
             case self::TILE_URL:
                 $this->ensurePermission('geolocation[layer]');
                 $this->testTileUrl();
-                break;
+                //break;
         }
 
         /**
