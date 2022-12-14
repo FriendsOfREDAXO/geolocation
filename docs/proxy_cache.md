@@ -64,11 +64,11 @@ werden. Die URL unterscheiden sich nur über die Datensatznummer, unter der die 
 [Karten-Verwaltung](layer.md) erfasst wurde.
 
 ```html
-index.php?geolayer=«id»&x={x}&y={y}&z={z}
+index.php?geolayer=«id»&x={x}&y={y}&z={z}&r={r}
 ```
 oder
 ```html
-?geolayer=«id»&x={x}&y={y}&z={z}
+?geolayer=«id»&x={x}&y={y}&z={z}&r={r}
 ```
 
 Erkennt die `boot.php` von **Geolocation** den URL-Parameter `geolayer` wird versucht, die
