@@ -250,8 +250,8 @@ Geolocation.Classes.Map = class {
         if( 0 == layerNames.length ) return;
 
         // Layer einfügen
-        // NOTE: hier wird jetzt nicht mehr geprüft, ob es mindestens eine 
-        // Karte gibt, die "active" gesetzt ist.
+        // NOTE: hier wird jetzt nicht mehr geprüft, ob es mindestens eine Karte gibt, die "active" gesetzt ist.
+        // NOTE: hier auch nicht geprüft, ob es mindestens eine (Basis-)karte gibt.
         let layer, label, layertype, tile, geolayer, active;
         if( layerNames.length > 1 ) this.layerControl.addTo( this.map );
         for( tile in mapset ){
@@ -261,7 +261,7 @@ Geolocation.Classes.Map = class {
             delete mapset[tile].layer;
             layertype = mapset[tile].type || 'b';
             delete mapset[tile].type;
-            layer = L.tileLayer( `index.php?${Geolocation.default.keyLayer}=${geolayer}&z={z}&x={x}&y={y}`,mapset[tile] );
+            layer = L.tileLayer( `index.php?${Geolocation.default.keyLayer}=${geolayer}&z={z}&x={x}&y={y}&r={r}`,mapset[tile] );
             active = true === mapset[tile].active;
             delete mapset[tile].active;
             if( active ) {

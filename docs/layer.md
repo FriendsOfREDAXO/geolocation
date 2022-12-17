@@ -64,12 +64,22 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
     markiert. Sofern der Anbieter URLs mit Sub-Domänen verarbeitet, wird die entsprechende
     Stelle mit `{s}` markiert.
 
+    Sofern die URL die Apple-Notation für Retina-URLs (`@2x`) unterstützt, kann die Position in der URL mit `{r}`
+    markiert werden. Dadurch wird automatisch die jeweils für den Browser passende Version benutzt.
+
     Der Test-Button ermöglicht den direkten Test der eingegebenen Url. Sofern die eingegebene Url
     formal grundlegend korrekt ist und - falls erforderlich - die Sub-Domänen angegeben sind, wird der
     Button aktiviert. Klick auf den Button sendet die Feldinhalte zum Server, der als Proxy die eigentliche
     Abfrage mit Test-Koordinaten (Konstanz am Bodensee) beim Kartenanbieter durchführt. Das Ergebnis wird
     wird in einem modalen Fenster angezeigt.
     ![Url-Test](assets/tiles_test.jpg)
+
+- **Retina-URL**
+    Falls die Standard-URL die Apple-Notation nicht unterstützt, kann in diesem Feld eine zusätzliche
+    Retina-URL angegeben werden. Je nach Anbieter haben URLs z.B. 256 als Standard-Auflösung in der URL
+    stehen und 512 für hochauflösende Tiles.
+
+    Wenn bereits die Standard-Karte hoch auflösend ist, sollte keine zusätzliche Retina-Url angegeben werden.
 
 - **Sub-Domänen**  
     Die Sub-Domänen sind einzelne Ziffern oder Buchstaben, die als Zeichenfolge eingegeben werden.

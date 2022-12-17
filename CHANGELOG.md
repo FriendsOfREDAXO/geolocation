@@ -37,7 +37,8 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
   - Individuelles CSS (`redaxo/data/geolocation/geolocation.css') kann auch in SCSS-Dateien stehen (Editor-freundlich) (#104)
   - Für Basiskarten im Kartensatz/Mapset kann die aktive Karte unabhängig von der Reihenfolge (bisher immer die erste) per Radio-Button aktiviert werden (#107)
   - Für Overlay-Karten im Kartensatz/Mapset können sofort sichtbare Overlays aktiviert werden (Checkbox); bisher waren die Karten immer initial ausgeblendet (#107, #115)
-  - Karten-URLs nun auch mit @-Zusatz möglich (by @xong Robert Rupf) (#110)
+  - Karten-URLs nun auch mit @2x-Zusatz möglich (by @xong Robert Rupf) (#110)
+  - Retina-Unterstützung: Parameter `{r}` als Platzhalter für `@2x`-Kartenanforderung; zusätzliche URL für HiRes-Karten/Retina-Karten-URLs ohne '@2x'-support. (#118)  
 
 ## 06.05.2022 1.0.2
 

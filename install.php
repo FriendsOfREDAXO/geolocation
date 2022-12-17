@@ -81,6 +81,7 @@ try {
         ->ensurePrimaryIdColumn()
         ->ensureColumn(new rex_sql_column('name', 'varchar(191)'))
         ->ensureColumn(new rex_sql_column('url', 'text'))
+        ->ensureColumn(new rex_sql_column('retinaurl','text'))
         ->ensureColumn(new rex_sql_column('subdomain', 'varchar(191)'))
         ->ensureColumn(new rex_sql_column('attribution', 'text'))
         ->ensureColumn(new rex_sql_column('lang', 'text'))

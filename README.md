@@ -89,8 +89,9 @@ Details - auch zu individualisierten Installationen - stehen in der [Installatio
 
 ## OSMProxy ersetzten
 OSM-Proxy-Nutzer müssen im Abschnitt Karten die gewünschten Tileserver hinterlegen und im Anschluss die URL für die Tiles im z.B. Leaflet JS ändern.
-/index.php?geolayer=ID&x={x}&y={y}&z={z}
-(ID steht für die ID der gewünschten Karte)
+```
+/index.php?geolayer=«id»&x={x}&y={y}&z={z}&r={r}
+```(«id» steht für die Datensatz-ID der gewünschten Karte)
 
 
 ## Beispielmasken:
@@ -164,19 +165,22 @@ kartensatz = [
         "layer":"1",
         "label":"Karte",
         "type" :"b",
-        "attribution":"Map Tiles &copy; 2020 <a href=\"http:\/\/developer.here.com\">HERE<\/a>"
+        "attribution":"Map Tiles &copy; 2020 <a href=\"http:\/\/developer.here.com\">HERE<\/a>",
+        "active": true,
     },
     {
         "layer":"2",
-        "label":"Satelit",
+        "label":"Satellit",
         "type" :"b",
         "attribution":"Map Tiles &copy; 2020 <a href=\"http:\/\/developer.here.com\">HERE<\/a>"
+        "active": false,
     },
     {
         "layer":"3",
         "label":"Hybrid",
         "type" :"b",
         "attribution":"Map Tiles &copy; 2020 <a href=\"http:\/\/developer.here.com\">HERE<\/a>"
+        "active": false,
     }
 ]
 ```

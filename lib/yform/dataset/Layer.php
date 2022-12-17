@@ -59,6 +59,7 @@ use rex_yform_value_abstract;
 
 use function count;
 use function is_bool;
+use function is_string;
 use function strlen;
 
 /**
@@ -67,6 +68,7 @@ use function strlen;
  * aus der Datentabelle rex_geolocation_layer
  * @property string $name
  * @property string $url
+ * @property string $retinaurl
  * @property string $subdomain
  * @property string $attribution
  * @property string $layertype
@@ -83,7 +85,7 @@ class Layer extends rex_yform_manager_dataset
      *
      * @api
      */
-    public const FILE_PATTERN = '{x}-{y}-{z}.{suffix}';
+    public const FILE_PATTERN = '{x}-{y}-{z}-{r}.{suffix}';
 
     // dataset-spezifisch
 
@@ -241,7 +243,7 @@ class Layer extends rex_yform_manager_dataset
      * Angabe von Subdomains ohne {s} in der Url ist egal
      *
      * Die Parameter sind so belegt:
-     *  - Array mit den Feldnamen ('url', 'subdomain')
+     *  - Array mit den Feldnamen
      *  - Array mit den aktuellen Werten für 'url' und 'subdomain'
      *  - Rückgabewert als Vorbelegung (sollte leer sein), ignorieren
      *  - Instanz der aktiven Validator-Klasse
@@ -255,7 +257,13 @@ class Layer extends rex_yform_manager_dataset
      */
     public static function verifySubdomain($fields, $values, $return, $self, $elements): bool
     {
-        return false !== strpos($values['url'], '{s}') && '' === trim($values['subdomain']);
+        $urlFieldName = $fields[0];
+        $subdomainFieldName = $fields[1];
+
+        $urlValue = trim($values[$urlFieldName]);
+        $subdomainValue = trim($values[$subdomainFieldName]);
+
+        return false !== strpos($urlValue, '{s}') && '' === $subdomainValue;
     }
 
     /**
@@ -277,8 +285,12 @@ class Layer extends rex_yform_manager_dataset
      */
     public static function verifyUrl($field, $value, $return, $self, $elements): bool
     {
+        $url = trim($value);
+        if ('' === $url) {
+            return false;
+        }
         $url = str_replace(['{', '}'], '', $value);
-        $xsRegEx_url = '/^(?:http[s]?:\/\/)[a-zA-Z0-9][a-zA-Z0-9._-]*\.(?:[a-zA-Z0-9][a-zA-Z0-9._-]*\.)*[a-zA-Z]{2,20}(?:\/[^\\/\:\*\?\"<>\|]*)*(?:\/[a-zA-Z0-9_%,\.\=\?\-#&@]*)*$' . '/';
+        $xsRegEx_url = '/^(?:http[s]?:\/\/)[a-zA-Z0-9][a-zA-Z0-9._-]*\.(?:[a-zA-Z0-9][a-zA-Z0-9._-]*\.)*[a-zA-Z]{2,20}(?:\/[^\\/\:\*\?\"<>\|]*)*(?:\/[a-zA-Z0-9_%,\.\=\?\-#&@]*)*$/';
         return 0 === preg_match($xsRegEx_url, $url);
     }
 
@@ -416,6 +428,10 @@ class Layer extends rex_yform_manager_dataset
         if (null !== $zoom) {
             $fileNameElements['{z}'] = $zoom;
         }
+        $retina = rex_request('r', 'string', null);
+        if (null !== $retina) {
+            $fileNameElements['{r}'] = $retina;
+        }
 
         // prepare targetCacheDir-Name
         $cacheDir = rex_path::addonCache(ADDON, $layer->getId().'/');
@@ -438,7 +454,12 @@ class Layer extends rex_yform_manager_dataset
 
         // no cache or no cached file found; retrieve from tile-server and store in cache-dir
         // Prepare the tile-URL and fetch the tile
-        $url = str_replace(array_keys($fileNameElements), $fileNameElements, $layer->url);
+        if ('' < $retina && '' < $layer->retinaurl) {
+            $url = $layer->retinaurl;
+        } else {
+            $url = $layer->url;
+        }
+        $url = str_replace(array_keys($fileNameElements), $fileNameElements, $url);
 
         $ch = curl_init($url);
         if (is_bool($ch)) {
@@ -567,23 +588,21 @@ class Layer extends rex_yform_manager_dataset
      * Aus welchem Grunde auch immer werden teilweise Werte, die in der DB integer sind,
      * tatsächlich im internen Array $data als String vorgehalten und demnach auch von
      * parent::getValue als String ausgeliefert.
-     * 
+     *
      * Ist leider keine Kleinigkeit bei striker Typ-Prüfung (z.B. 1 === getValue('online')
-     * 
+     *
      * Hier werden die Werte vor der Nutzung in int umgewandelt
-     * 
-     * TODO: Testcase bauen und Issue aufmachen 
+     *
+     * TODO: Testcase bauen und Issue aufmachen
      *
      * @return mixed
      */
     public function getValue(string $key)
     {
         $value = parent::getValue($key);
-        if( is_string($value) && ('ttl' === $key || 'cfmax' === $key || 'online' === $key) ) {
+        if (is_string($value) && ('ttl' === $key || 'cfmax' === $key || 'online' === $key)) {
             $value = (int) $value;
         }
         return $value;
     }
-
-
 }
