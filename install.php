@@ -215,7 +215,7 @@ try {
     $config['FriendsOfRedaxo\\Geolocation\\LOAD'] = $config['scope']['load'];
     $definedValues = [];
     foreach ($config as $k => $v) {
-        if (str_starts_with($k, 'FriendsOfRedaxo\\Geolocation\\')) {
+        if (!str_starts_with($k, 'FriendsOfRedaxo\\Geolocation\\')) {
             continue;
         }
         $definedValues[$k] = $v;
