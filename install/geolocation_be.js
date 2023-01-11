@@ -678,7 +678,7 @@ customElements.define('gelocation-trigger',
         }
 
         _onClick(event) {
-            event.stopPropagation();
+            event.stopImmediatePropagation();
             event.preventDefault();
             this._trigger();
         }
