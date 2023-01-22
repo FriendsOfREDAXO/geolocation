@@ -1,5 +1,5 @@
 package: geolocation
-version: '1.0.2'
+version: '2.0.0-beta1'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/geolocation
 
@@ -49,9 +49,9 @@ conflicts:
 
 requires:
     php:
-        version: '>=7.3, <9'
+        version: '^8'
         extensions: [curl]
-    redaxo: '^5.13.1'
+    redaxo: '^5.14.0'
     packages:
         cronjob: '^2.8.0'
         yform: '^4.0.0'
