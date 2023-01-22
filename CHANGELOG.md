@@ -2,7 +2,8 @@
 
 ## 22.01.2023 2.0.0 (under construction)
 
-Diese Version enthält Breacking Changes!
+Diese Version enthält **Breacking Changes!**
+- Mindestversionen: REDAXO 5.14 und **PHP 8**
 - Umstellung des Namespace von `Geolocation` auf `FriendsOfRedaxo\Geolocation` (#113). **Referenzen in eigenem Code auf `Gelocation\xxx` müssen angepasst werden.**
 - Klassen umbenannt (Großbuchstabe am Anfang). **Referenzen in eigenem Code auf die Klassennamen müssen angepasst werden.**
   - Klasse `Geolocation\cache` umbenannt in `Geolocation\Cache`; Aufrufe und Doku angepasst. (#51)
