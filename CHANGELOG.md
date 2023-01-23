@@ -1,32 +1,32 @@
 # Changelog
 
-## xx.xx.2022 2.0.0 (under construction)
+## 22.01.2023 2.0.0 (under construction)
 
-Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu einem BC.
-(Das ist noch nicht der finale Text, erst mal nur die diversen PR auflisten)
+Diese Version enthält **Breacking Changes!**
+- Mindestversionen: REDAXO 5.14 und **PHP 8**
+- Umstellung des Namespace von `Geolocation` auf `FriendsOfRedaxo\Geolocation` (#113). **Referenzen in eigenem Code auf `Gelocation\xxx` müssen angepasst werden.**
+- Klassen umbenannt (Großbuchstabe am Anfang). **Referenzen in eigenem Code auf die Klassennamen müssen angepasst werden.**
+  - Klasse `Geolocation\cache` umbenannt in `Geolocation\Cache`; Aufrufe und Doku angepasst. (#51)
+  - Klasse `Geolocation\cronjob` umbenannt in `Geolocation\Cronjob`; Aufrufe und Doku angepasst. (#52)
+  - Klasse `Geolocation\tools` umbenannt in `Geolocation\Tools`; Aufrufe und Doku angepasst. (#53)
+  - Klasse `Geolocation\config_form` umbenannt in `Geolocation\ConfigForm`; Aufrufe und Doku angepasst. (#66)
+  - Klasse `Geolocation\layer` umbenannt in `Geolocation\Layer`; Aufrufe, Dateinamen und Doku angepasst. (#86, #88)
+  - Klasse `Geolocation\mapset` umbenannt in `Geolocation\Mapset`; Aufrufe, Dateinamen und Doku angepasst. (#87)
+  - Dateinamen an die Schreibweise der Klassen angepasst: `Box.php`, `Math.php`, `Point.php` (#50) und `Exception.php` (#73)
+- Fehlerklassen neu strukturiert. **Referenzen in eigenem Code z.B. in Try-Catch müssen ggf. angepasst werden.***
+  - diverse Fehlerklassen in eigene Dateien ausgelagert (#48)
+  - Fehlerklasse `GeolocationInstallException` umbenannt in `Geolocation\InstallException` (#48)
+  - Fehlermeldungen in `class InvalidParameters` gebündelt (#80, #81)
+- Datenbank-Tabellen sind geändert. **Eigene Dataset-Dateien in `data/addons/geolocation`müssen angepasst werden**
+  - Datentyp der Tabellenspalte `rex_geolocation_layer.online` von `text` in `int` geändert. Ggf. müssen eigene Datasets angepasst werden. (#77)
+  - Feld "attribution" im Layer-Formular von `varchar(191` in `text` geändert. (#105)
+  - zusätzliche URL für HiRes-Karten/Retina-Karten-URLs ohne '@2x'-support. (#118)
+- RexStan-gesteuerte Überarbeitung aller PHP-Dateien, wodurch sich teilweise die Methoden_Aufrufe der Klassen geändert haben.
+  (Level: 8, PHP: 8.0-8.2, Extensions: REDAXO Superglobals, Bleeding-Edge, Strict-Mode, Deprecation Warnings, phpstan-dba, dead code)
+  und Code-Formatierung im REDAXO-Standard (#54…#62, #66, #68, #70…#72, #74…#76, #80…#82, #84, #85)
+  **Referenzen in eigenem Code auf die KMethoden müssen überprüft und ggf. angepasst werden.**
 
-- diverse Fehlerklassen in eigene Dateien ausgelagert (#48)
-- Fehlerklasse `GeolocationInstallException` umbenannt in `Geolocation\InstallException` (#48)
-- Dateinamen an die Schreibweise der Klassen angepasst (`Box.php`, `Math.php`, `Point.php`) (#50)
-- Klasse `Geolocation\cache` umbenannt in `Geolocation\Cache`; Aufrufe und Doku angepasst. (#51)
-- Klasse `Geolocation\cronjob` umbenannt in `Geolocation\Cronjob`; Aufrufe und Doku angepasst. (#52)
-- Klasse `Geolocation\tools` umbenannt in `Geolocation\Tools`; Aufrufe und Doku angepasst. (#53)
-- Klasse `Geolocation\config_form` umbenannt in `Geolocation\ConfigForm`; Aufrufe und Doku angepasst. (#66)
-- Klasse `Geolocation\layer` umbenannt in `Geolocation\Layer`; Aufrufe, Dateinamen und Doku angepasst. (#86, #88)
-- Klasse `Geolocation\mapset` umbenannt in `Geolocation\Mapset`; Aufrufe, Dateinamen und Doku angepasst. (#87)
-- Dateinamen `lib/exception.php` an den Klassennamen angeglichen (`lib/exception.php`) (#73)
-- Datentyp der Tabellenspalte `rex_geolocation_layer.online` von `text` in `int` geändert. Ggf. müssen eigene Datasets angepasst werden. (#77)
-- Fehlermeldungen in `class InvalidParameters` gebündelt (#80, #81)
-- RexStan-gesteuerte Überarbeitung aller PHP-Dateien (Level: 8, PHP: 8.0-8.2, Extensions: REDAXO Superglobals, Bleeding-Edge, Strict-Mode, Deprecation Warnings, phpstan-dba, dead code) und Code-Formatierung im REDAXO-Standard (#54…#62, #66, #68, #70…#72, #74…#76, #80…#82, #84, #85)
-- CSS-Assets `install/geolocation_be.css` und `install/geolocatin.css`in .scss umbenannt. (#104)
-- Dokumentation (/docs) aktualisiert (#92, #93)
-- `install.php`vereinfacht; nutzt nun ausschließlich `%table_prefix%` beim Import (#106) 
-- Umstellung des Namespace von `Geolocation` auf `FriendsOfRedaxo\Geolocation` (#113)
-- Bugfix:
-  - Workaround in `layer.php` für ein Typecast-Problem aus 'class dataset' (#79)
-  - Farbcodes (#123456) in `Geolocation.svgIconPin(..)` jetzt korrekt URI-escaped (#69⇒#94)
-  - Feld "attribution" im Layer-Formular von `varchar(191` in `text` geändert. Das Feld war zu klein. Beim Speichern gekapptes HTML kann zu Darstellungsproblemen führen. 
-  - Demo-Datensätze aktuaisiert (CyclOSM-Link tot und ausgetauscht), OSM nun als Mapset "1" default statt HERE. (#105) 
+Weitere Änderungen:
 - Vendor-Updates:
   - phpGeo 4.2.0 (#83)
   - Leaflet 1.9.3 (#99)
@@ -34,11 +34,19 @@ Bearbeitung mit RexStan und Bereinigung diverser Fehler. Das alles führt zu ein
   - AssetPacker 1.3.2 (#108)
 - Neu:
   - Test der Layer-URLs interaktiv im Eingabeformular (#100)
-  - Individuelles CSS (`redaxo/data/geolocation/geolocation.css') kann auch in SCSS-Dateien stehen (Editor-freundlich) (#104)
+  - Individuelles CSS (`redaxo/data/geolocation/geolocation.css') kann auch in SCSS-Dateien stehen (Editor-freundlich) (#104).
+    Daher die CSS-Assets `install/geolocation_be.css` und `install/geolocation.css`in `.scss` umbenannt. (#104)
   - Für Basiskarten im Kartensatz/Mapset kann die aktive Karte unabhängig von der Reihenfolge (bisher immer die erste) per Radio-Button aktiviert werden (#107)
   - Für Overlay-Karten im Kartensatz/Mapset können sofort sichtbare Overlays aktiviert werden (Checkbox); bisher waren die Karten immer initial ausgeblendet (#107, #115)
   - Karten-URLs nun auch mit @2x-Zusatz möglich (by @xong Robert Rupf) (#110)
   - Retina-Unterstützung: Parameter `{r}` als Platzhalter für `@2x`-Kartenanforderung; zusätzliche URL für HiRes-Karten/Retina-Karten-URLs ohne '@2x'-support. (#118)  
+  - `install.php`vereinfacht; nutzt nun ausschließlich `%table_prefix%` beim Import (#106) 
+- Bugfix:
+  - Workaround in `layer.php` für ein Typecast-Problem aus 'class dataset' (#79)
+  - Farbcodes (#123456) in `Geolocation.svgIconPin(..)` jetzt korrekt URI-escaped (#69⇒#94)
+  - Feld "attribution" im Layer-Formular von `varchar(191` in `text` geändert. Das Feld war zu klein. Beim Speichern gekapptes HTML kann zu Darstellungsproblemen führen. 
+  - Demo-Datensätze aktuaisiert (CyclOSM-Link tot und ausgetauscht), OSM nun als Mapset "1" default statt HERE. (#105) 
+- Dokumentation (/docs) aktualisiert (#92, #93)
 
 ## 06.05.2022 1.0.2
 
