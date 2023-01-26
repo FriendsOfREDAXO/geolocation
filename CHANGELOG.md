@@ -2,6 +2,13 @@
 
 ## 22.01.2023 2.0.0 (under construction)
 
+Beta2:
+
+- Bugfix:
+  - Fehler bei nicht initialisiertem Choice-Array, wenn keine Choices ausgewählt wurden, behoben (@dpf-dd Stefan Dannfald, #126)
+
+Beta1:
+
 Diese Version enthält **Breacking Changes!**
 - Mindestversionen: REDAXO 5.14 und **PHP 8**
 - Umstellung des Namespace von `Geolocation` auf `FriendsOfRedaxo\Geolocation` (#113). **Referenzen in eigenem Code auf `Gelocation\xxx` müssen angepasst werden.**
