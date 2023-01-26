@@ -91,8 +91,8 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_be_manager
                 $selectedLayers = [];
                 $value = [];
             } else {
-                $selectedLayers = $value['choice'];
-                $value = $value['value'];
+                $selectedLayers = isset($value['choice']) ? $value['choice'] : [];
+                $value = isset($value['value']) ? $value['value'] : [];
                 $this->setValue($value);
             }
         } elseif (0 < $this->params['main_id']) {
