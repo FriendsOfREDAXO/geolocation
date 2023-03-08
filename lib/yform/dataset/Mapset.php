@@ -223,6 +223,7 @@ class Mapset extends rex_yform_manager_dataset
      * nur für Admins und User mit Permission "geolocation[clearcache]"
      * Rückgabe ist das erweiterte Array aus getSubject
      *
+     * @api
      * @param rex_extension_point<array<string,string>> $ep
      * @return array<string,string>|void
      */
@@ -236,6 +237,7 @@ class Mapset extends rex_yform_manager_dataset
 
         // Button-Code abspeichern für YFORM_DATA_LIST
         $action_delete = $ep->getSubject()['delete'] ?? null;
+
         if (null !== $action_delete) {
             rex_extension::register(
                 'YFORM_DATA_LIST',
@@ -244,19 +246,33 @@ class Mapset extends rex_yform_manager_dataset
                     if ($ep->getParam('table_name') !== $ep->getParam('table')->getTableName()) {
                         return;
                     }
+                    $columnName = rex_i18n::msg('yform_function').' ';
                     // Daten zusammensuchen
+                    /** @var rex_yform_list $list */
                     $list = $ep->getSubject();
                     $default = self::getDefaultId();
                     $toDelete = '<li>'.$ep->getParam('action_delete').'</li>';
+
+                    // Vorhandene Custom-Function auf der Spalte auch ausführen (Kaskadieren)
+                    $customFunction = $list->getColumnFormat($columnName);
+                    $customCallback = null;
+                    $customParams = null;
+                    if (null !== $customFunction && isset($customFunction[0]) && 'custom' === $customFunction[0]) {
+                        $customCallback = $customFunction[1];
+                        $customParams = $customFunction[2];
+                    }
                     // Spalte "Functions": delete-Action entfernen wenn Default-Mapset
                     $list->setColumnFormat(
                         rex_i18n::msg('yform_function').' ',
                         'custom',
-                        static function ($params) use ($toDelete, $default) {
+                        static function ($params) use ($toDelete, $default, $customCallback, $customParams) {
+                            if (null !== $customCallback) {
+                                $params['value'] = $customCallback(array_merge($params, ['params' => $customParams]));
+                            }
                             return $params['list']->getValue('id') === $default
                                 ? str_replace($toDelete, '', $params['value'])
                                 : $params['value'];
-                        }
+                        },
                     );
                 },
                 rex_extension::NORMAL,
