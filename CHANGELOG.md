@@ -4,6 +4,9 @@
 
 Beta2:
 
+- Neu:
+  - In zukünftigen Versionen von YForm (post 4.0.4) werden Action-Buttons anders verwaltet. Geolocation ist so mgestellt,
+    dass beide Varianten unterstützt werden. Das gilt bereits für die aktulle Github-Version Stand 07.03.2023. (#135)
 - Bugfix:
   - Fehler bei nicht initialisiertem Choice-Array, wenn keine Choices ausgewählt wurden, behoben (@dpf-dd Stefan Dannfald, #126)
   - Mapset: Listeformatierung der Spalte "Funktion" via `SetColumnFormat()` berücksichtigt ein vorher gesetztes CustomCallback (#134)
