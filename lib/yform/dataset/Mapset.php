@@ -224,8 +224,8 @@ class Mapset extends rex_yform_manager_dataset
      * Rückgabe ist das erweiterte Array aus getSubject
      *
      * @api
-     * @param rex_extension_point<array<string,string>> $ep
-     * @return array<string,string>|void
+     * @param rex_extension_point<array<string,string|mixed>> $ep
+     * @return array<string,string|mixed>|void
      */
     public static function YFORM_DATA_LIST_ACTION_BUTTONS(rex_extension_point $ep)
     {
@@ -235,23 +235,24 @@ class Mapset extends rex_yform_manager_dataset
             return;
         }
 
-        // Button-Code abspeichern für YFORM_DATA_LIST
-        $action_delete = $ep->getSubject()['delete'] ?? null;
+        $buttons = $ep->getSubject();
 
-        if (null !== $action_delete) {
+        // Delete-Button entfernen wenn Default-Mapset
+        if (isset($buttons['delete'])) {
             rex_extension::register(
                 'YFORM_DATA_LIST',
                 static function (rex_extension_point $ep) {
+
                     // nur für diese Tabelle
                     if ($ep->getParam('table_name') !== $ep->getParam('table')->getTableName()) {
                         return;
                     }
-                    $columnName = rex_i18n::msg('yform_function').' ';
+
                     // Daten zusammensuchen
+                    $columnName = rex_i18n::msg('yform_function').' ';
                     /** @var rex_yform_list $list */
                     $list = $ep->getSubject();
                     $default = self::getDefaultId();
-                    $toDelete = '<li>'.$ep->getParam('action_delete').'</li>';
 
                     // Vorhandene Custom-Function auf der Spalte auch ausführen (Kaskadieren)
                     $customFunction = $list->getColumnFormat($columnName);
@@ -261,24 +262,36 @@ class Mapset extends rex_yform_manager_dataset
                         $customCallback = $customFunction[1];
                         $customParams = $customFunction[2];
                     }
-                    // Spalte "Functions": delete-Action entfernen wenn Default-Mapset
+
+                    // es wird der A-Tag mit der Zeichenkette "func=delete" entfernt.
+                    // Die einzelne Aktion ist nicht besser identifizierbar als über hoffentlich eindeutige
+                    // Zeichenketten.
                     $list->setColumnFormat(
                         rex_i18n::msg('yform_function').' ',
                         'custom',
-                        static function ($params) use ($toDelete, $default, $customCallback, $customParams) {
+                        static function ($params) use ($default, $customCallback, $customParams) {
                             if (null !== $customCallback) {
                                 $params['value'] = $customCallback(array_merge($params, ['params' => $customParams]));
                             }
-                            return $params['list']->getValue('id') === $default
-                                ? str_replace($toDelete, '', $params['value'])
-                                : $params['value'];
+                            if ($params['list']->getValue('id') === $default) {
+                                preg_match_all('<a.*?/a>', $params['value'], $match, PREG_OFFSET_CAPTURE);
+                                foreach ($match[0] as $item) {
+                                    if (str_contains($item[0], 'func=delete')) {
+                                        $params['value'] = substr_replace($params['value'], '', $item[1] - 1, strlen($item[0]) + 2);
+                                        break;
+                                    }
+                                }
+                            }
+                            return $params['value'];
                         },
                     );
                 },
                 rex_extension::NORMAL,
-                ['action_delete' => $action_delete, 'table_name' => $table_name]);
+                ['table_name' => $table_name],
+            );
         }
 
+        // Button "Cache Löschen" einbauen
         $user = rex::getUser();
         if (null !== $user && $user->hasPerm('geolocation[clearcache]')) {
             $link_vars = $ep->getParam('link_vars') + [
@@ -288,9 +301,29 @@ class Mapset extends rex_yform_manager_dataset
             $href = rex_url::backendController($link_vars, false);
             $confirm = rex_i18n::msg('geolocation_clear_cache_confirm', '___name___ [id=___id___]');
             $label = '<i class="rex-icon rex-icon-delete"></i> ' . rex_i18n::msg('geolocation_clear_cache');
-            $action = '<a onclick="return confirm(\''.$confirm.'\')" href="'.$href.'">'.$label.'</a>';
-            return $ep->getSubject() + ['geolocationClearCache' => $action];
+
+            /**
+             * bis YForm 4.0.4 waren die Action-Buttons einfach HTML-Strings.
+             * Post-4.0.4. sind es Arrays, die in einem List-Fragment verwertet werden.
+             * Hier die beiden Fälle unterscheiden.
+             * Note:
+             * Stand 07.03.2023 gibt es nur das GH-Repo und keine neue Versionsnummer.
+             * Daher auf das neue Fragment als Unterscheidungsmerkmal setzen.
+             */
+            if (is_file(rex_path::plugin('yform', 'manager', 'fragments/yform/manager/page/list.php'))) {
+                $buttons['geolocationClearCache'] = [
+                    'url' => $href,
+                    'content' => $label,
+                    'attributes' => [
+                        'onclick' => 'return confirm(\''.$confirm.'\')',
+                    ],
+                ];
+            } else {
+                $buttons['geolocationClearCache'] = '<a onclick="return confirm(\''.$confirm.'\')" href="'.$href.'">'.$label.'</a>';
+            }
+            $ep->setSubject($buttons);
         }
+
     }
 
     // AJAX-Abrufe
