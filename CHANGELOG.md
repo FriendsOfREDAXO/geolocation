@@ -6,6 +6,7 @@ Beta2:
 
 - Bugfix:
   - Fehler bei nicht initialisiertem Choice-Array, wenn keine Choices ausgewählt wurden, behoben (@dpf-dd Stefan Dannfald, #126)
+  - Mapset: Listeformatierung der Spalte "Funktion" via `SetColumnFormat()` berücksichtigt ein vorher gesetztes CustomCallback (#134)
 
 Beta1:
 
