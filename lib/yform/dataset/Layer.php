@@ -341,17 +341,40 @@ class Layer extends rex_yform_manager_dataset
         }
 
         $user = rex::getUser();
-        if (null !== $user && $user->hasPerm('geolocation[clearcache]')) {
-            $link_vars = $ep->getParam('link_vars') + [
-                'layer_id' => '___id___',
-                'rex-api-call' => 'geolocation_clearcache',
-            ];
-            $href = rex_url::backendController($link_vars, false);
-            $confirm = rex_i18n::msg('geolocation_clear_cache_confirm', '___name___');
-            $label = '<i class="rex-icon rex-icon-delete"></i> ' . rex_i18n::msg('geolocation_clear_cache');
-            $action = '<a onclick="return confirm(\''.$confirm.'\')" href="'.$href.'">'.$label.'</a>';
-            return $ep->getSubject() + ['geolocationClearCache' => $action];
+        if (null === $user || !$user->hasPerm('geolocation[clearcache]')) {
+            return;
         }
+
+        $link_vars = $ep->getParam('link_vars') + [
+            'layer_id' => '___id___',
+            'rex-api-call' => 'geolocation_clearcache',
+        ];
+        $href = rex_url::backendController($link_vars, false);
+        $confirm = rex_i18n::msg('geolocation_clear_cache_confirm', '___name___');
+        $label = '<i class="rex-icon rex-icon-delete"></i> ' . rex_i18n::msg('geolocation_clear_cache');
+
+        $buttons = $ep->getSubject();
+
+        /**
+         * bis YForm 4.0.4 waren die Action-Buttons einfach HTML-Strings.
+         * Post-4.0.4. sind es Arrays, die in einem List-Fragment verwertet werden.
+         * Hier die beiden Fälle unterscheiden.
+         * Note:
+         * Stand 07.03.2023 gibt es nur das GH-Repo und keine neue Versionsnummer.
+         * Daher auf das neue Fragment als Unterscheidungsmerkmal setzen.
+         */
+        if (is_file(rex_path::plugin('yform', 'manager', 'fragments/yform/manager/page/list.php'))) {
+            $buttons['geolocationClearCache'] = [
+                'url' => $href,
+                'content' => $label,
+                'attributes' => [
+                    'onclick' => 'return confirm(\''.$confirm.'\')',
+                ],
+            ];
+        } else {
+            $buttons['geolocationClearCache'] = '<a onclick="return confirm(\''.$confirm.'\')" href="'.$href.'">'.$label.'</a>';
+        }
+        $ep->setSubject($buttons);
     }
 
     /**
