@@ -1,13 +1,14 @@
 # Changelog
 
-## 10.03.2023 2.0.0-beta3
+## 10.03.2023 2.0.0 (under construction)
+
+beta3: 
 
 - Neu
-  - Per Config (z.B. im project AddOn) kann ein Socket-Proxy angegeben werden, falls erforderlich. Die config für den namespace geolocation lautet: 'socket_proxy' (#131).
+  - Per Config (z.B. im project AddOn) kann ein Socket-Proxy angegeben werden, falls erforderlich. Die config für den namespace geolocation lautet: 'socket_proxy' (#131) - Siehe (https://curl.se/libcurl/c/CURLOPT_PROXY.html).
 - Fixed
   - Probleme mit der Einbindung der Action-Buttons in YForm 4.1.0 wurden behoben (#130). 
 
-## 22.01.2023 2.0.0 (under construction)
 
 Beta2:
 
