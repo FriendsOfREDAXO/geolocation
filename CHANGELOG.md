@@ -1,5 +1,12 @@
 # Changelog
 
+## 10.03.2023 2.0.0-beta3
+
+- Neu
+  - Per Property kann ein Socket-Proxy angegeben werden, falls erforderlich. Die Property lautet 'socket_proxy' (#131).
+- Fixed
+  - Probleme mit der Einbindung der Action-Buttons in YForm 4.1.0 wurden behoben (#130). 
+
 ## 22.01.2023 2.0.0 (under construction)
 
 Beta2:
