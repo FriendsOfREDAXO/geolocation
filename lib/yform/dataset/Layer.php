@@ -491,9 +491,9 @@ class Layer extends rex_yform_manager_dataset
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        if(($proxy = rex::getProperty('socket_proxy')) != '') {
+        if(($proxy = rex_addon::get('geolocation')->getConfig('socket_proxy')) != '') {
              curl_setopt($ch, CURLOPT_PROXY, $proxy);
-         }
+        }
         $content = (string) curl_exec($ch);
         $returnCode = (string) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
