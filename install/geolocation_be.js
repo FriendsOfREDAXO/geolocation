@@ -619,6 +619,7 @@ customElements.define('gelocation-trigger',
 
         disconnectedCallback() {
             this.removeEventListener(this.__on, this._onClick.bind(this));
+            this.removeEventListener('keydown', this._onKey.bind(this));
             this.__isActive = false;
         }
 
