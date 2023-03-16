@@ -2,6 +2,9 @@
 
 ## 10.03.2023 2.0.0 (under construction)
 
+- Bugfix:
+  - Tastatursteuerung in der Baisiskarten-Auswahl der Kartensätze korrigiert. (#139)
+
 beta3: 
 
 - Neu

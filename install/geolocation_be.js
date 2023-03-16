@@ -498,7 +498,7 @@ customElements.define('geolocation-layerselect-item',
              this.focus();
          }
          event.preventDefault();
-         event.stopPropagation();
+         event.stopImmediatePropagation();
      }
 
      /** 
@@ -514,7 +514,7 @@ customElements.define('geolocation-layerselect-item',
              this.focus();
          }
          event.preventDefault();
-         event.stopPropagation();
+         event.stopImmediatePropagation();
      }
 
      /** 
@@ -537,7 +537,7 @@ customElements.define('geolocation-layerselect-item',
              container.firstElementChild.click();
          }
          event.preventDefault();
-         event.stopPropagation();
+         event.stopImmediatePropagation();
      }
 
      /** 
@@ -553,9 +553,10 @@ customElements.define('geolocation-layerselect-item',
              let input = this.querySelector('input:not([type="hidden"])');
              if (input) {
                  input.click();
+                 this.focus();
              }
              event.preventDefault();
-             event.stopPropagation();
+             event.stopImmediatePropagation();
          }
      }
 
@@ -573,7 +574,7 @@ customElements.define('geolocation-layerselect-item',
              return this._moveDown(event)
          } else if ('Delete' == event.key) {
              return this._delete(event);
-         } else if (' ' == event.key) {
+         } else if (32 == event.keyCode) {
              return this._selectChoice(event);
          }
      }
@@ -688,7 +689,9 @@ customElements.define('gelocation-trigger',
             if (event.key == this.__key) {
                 event.stopImmediatePropagation();
                 event.preventDefault();
-                this._trigger();
+                if( !event.repeat ) {
+                    this._trigger();
+                }
             }
         }
 
@@ -731,4 +734,3 @@ customElements.define('gelocation-trigger',
             return this.__node;
         }
     });
-
