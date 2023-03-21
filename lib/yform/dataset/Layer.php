@@ -1,6 +1,6 @@
 <?php
 /**
- * Geolocatin|Layer ist eine erweiterte yform-dataset-Klasse für Kartenlayer.
+ * Geolocation|Layer ist eine erweiterte yform-dataset-Klasse für Kartenlayer.
  *
  * - dataset-spezifisch
  *
@@ -37,6 +37,7 @@ namespace FriendsOfRedaxo\Geolocation;
 
 use PDO;
 use rex;
+use rex_addon;
 use rex_clang;
 use rex_config;
 use rex_csrf_token;
@@ -55,6 +56,7 @@ use rex_yform;
 use rex_yform_manager_dataset;
 use rex_yform_manager_query;
 use rex_yform_validate_customfunction;
+
 use rex_yform_value_abstract;
 
 use function count;
@@ -263,7 +265,7 @@ class Layer extends rex_yform_manager_dataset
         $urlValue = trim($values[$urlFieldName]);
         $subdomainValue = trim($values[$subdomainFieldName]);
 
-        return false !== strpos($urlValue, '{s}') && '' === $subdomainValue;
+        return str_contains($urlValue, '{s}') && '' === $subdomainValue;
     }
 
     /**
@@ -491,8 +493,8 @@ class Layer extends rex_yform_manager_dataset
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        if(($proxy = rex_addon::get('geolocation')->getConfig('socket_proxy')) !== '') {
-             curl_setopt($ch, CURLOPT_PROXY, $proxy);
+        if (($proxy = rex_addon::get('geolocation')->getConfig('socket_proxy')) !== '') {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }
         $content = (string) curl_exec($ch);
         $returnCode = (string) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
