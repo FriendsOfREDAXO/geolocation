@@ -1,11 +1,14 @@
 # Changelog
 
-## 10.03.2023 2.0.0 (under construction)
+## 21.03.2023 2.0.0 (under construction)
+
+Beta4:
 
 - Bugfix:
   - Tastatursteuerung in der Baisiskarten-Auswahl der Kartensätze korrigiert. (#139)
+  - Namespace-Fehler in Layer.php korrigiert (#140)
 
-beta3: 
+Beta3: 
 
 - Neu
   - Per Config (z.B. im project AddOn) kann ein Socket-Proxy angegeben werden, falls erforderlich. Die config für den namespace geolocation lautet: 'socket_proxy' (#131) - Siehe (https://curl.se/libcurl/c/CURLOPT_PROXY.html).
