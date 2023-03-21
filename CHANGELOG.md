@@ -4,6 +4,7 @@
 
 - Bugfix:
   - Tastatursteuerung in der Baisiskarten-Auswahl der Kartensätze korrigiert. (#139)
+  - Namespace-Fehler in Layer.php korrigiert (#140)
 
 beta3: 
 
