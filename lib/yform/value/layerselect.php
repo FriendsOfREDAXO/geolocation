@@ -96,7 +96,15 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_be_manager
                 $this->setValue($value);
             }
         } elseif (0 < $this->params['main_id']) {
-            $selectedLayers = $this->getParam('manager_dataset')->getValue($this->subField);
+            // Strange! Verlässt man das Formular über "Speichern" ist der YOrm-Dataset verfügbar.
+            // Speichert man mit "Übernehmen" fehlt er.
+            try {
+                // "Speichern"
+                $selectedLayers = $this->getParam('manager_dataset')->getValue($this->subField);
+            } catch (\Throwable $th) {
+                // "Übernehmen"
+                $selectedLayers = $this->getParam('sql_object')->getValue($this->subField);
+            }
         } else {
             $selectedLayers = [];
             $value = [];
