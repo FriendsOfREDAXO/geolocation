@@ -1,7 +1,11 @@
 # Changelog
 
-## 21.03.2023 2.0.0
+## 28.05.2023 2.0.1
 
+- Bugfix:
+  - Behebt einen Fehler `Unable to rollback, no transaction started before` beim Speichern eines Mapset-Formulars mit "Übernehmen" statt "Speichern".
+
+## 21.03.2023 2.0.0
 
 - Bugfix:
   - Tastatursteuerung in der Baisiskarten-Auswahl der Kartensätze korrigiert. (#139)
@@ -13,7 +17,6 @@ Beta3:
   - Per Config (z.B. im project AddOn) kann ein Socket-Proxy angegeben werden, falls erforderlich. Die config für den namespace geolocation lautet: 'socket_proxy' (#131) - Siehe (https://curl.se/libcurl/c/CURLOPT_PROXY.html).
 - Fixed
   - Probleme mit der Einbindung der Action-Buttons in YForm 4.1.0 wurden behoben (#130). 
-
 
 Beta2:
 
