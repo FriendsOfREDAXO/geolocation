@@ -3,7 +3,7 @@
 ## 28.05.2023 2.0.1
 
 - Bugfix:
-  - Behebt einen Fehler `Unable to rollback, no transaction started before` beim Speichern eines Mapset-Formulars mit "Übernehmen" statt "Speichern".
+  - Behebt einen Fehler `Unable to rollback, no transaction started before` beim Speichern eines Mapset-Formulars mit "Übernehmen" statt "Speichern" (#144)
 
 ## 21.03.2023 2.0.0
 
