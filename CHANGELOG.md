@@ -1,5 +1,10 @@
 # Changelog
 
+## 25.06.2023 2.1.0
+
+- Erweiterung:
+  - Fehler in der cUrl-Kommunikation mit dem Tile-Server werden in das Logfile geschrieben. (#145)
+
 ## 28.05.2023 2.0.1
 
 - Bugfix:
