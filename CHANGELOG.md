@@ -1,6 +1,11 @@
 # Changelog
 
-## 25.06.2023 2.1.1
+## 25.06.2023 2.1.2
+
+- BugFix:
+  - ";" in Layer.php#43 ergänzt (#148)
+
+## 25.06.2023 2.1.0
 
 - BugFix:
   - Im vorigen Release ("Fehler in der cUrl-Kommunikation mit dem Tile-Server werden in das Logfile geschrieben") fehlten use-Statements (Korrektur durch @TobiasKrais, #146)
