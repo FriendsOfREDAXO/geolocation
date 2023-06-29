@@ -40,7 +40,7 @@ use rex;
 use rex_addon;
 use rex_clang;
 use rex_config;
-use rex_context
+use rex_context;
 use rex_csrf_token;
 use rex_extension;
 use rex_extension_point;
