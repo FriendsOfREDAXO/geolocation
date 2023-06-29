@@ -40,10 +40,12 @@ use rex;
 use rex_addon;
 use rex_clang;
 use rex_config;
+use rex_context
 use rex_csrf_token;
 use rex_extension;
 use rex_extension_point;
 use rex_file;
+use rex_logger;
 use rex_i18n;
 use rex_path;
 use rex_request;
