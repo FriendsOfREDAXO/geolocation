@@ -61,7 +61,7 @@ if (null !== $mapset) {
 }
 
 // Start of Cronjob
-rex_cronjob_manager::registerType('FriendsOfRedaxo\\Geolocation\\Cronjob');
+rex_cronjob_manager::registerType(Cronjob::class);
 
 // if BE: activate JS and CSS
 if (rex::isBackend()) {
