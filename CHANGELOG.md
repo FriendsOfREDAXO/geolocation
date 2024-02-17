@@ -4,6 +4,7 @@
 
 - BugFix:
   - Fehler in der Namespace-Unterstützung (Dateistruktur, Cronjob-Registrierung) bereinigt.
+  - behebt [#143](https://github.com/FriendsOfREDAXO/geolocation/issues/143) (@tyrant88)
 
 ## 25.06.2023 2.1.2
 
