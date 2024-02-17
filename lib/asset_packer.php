@@ -3,7 +3,7 @@
  *  AssetPacker - Support für REDAXO-Addons
  *
  *  @author      Christoph Böcker <https://github.com/christophboecker/>
- *  @version     1.3.3
+ *  @version     1.3.4
  *  @copyright   Christoph Böcker
  *  @license     Die AssetPacker-Klassen: MIT-License <https://opensource.org/licenses/MIT>
  *               Die JS-Minifier-Klasse: BSD 3-Clause License <https://github.com/tedivm/JShrink/blob/master/LICENSE>
@@ -461,7 +461,9 @@ class AssetPacker_css extends AssetPacker
     public function getTag( string $media = 'all' ) : string
     {
         // Pathname relativ zu rex_path
-        $asset = \rex_url::base( \rex_path::relative( $this->target ) );
+        // für Windows: \ in / ändern
+        $asset = str_replace('\\','/',\rex_path::relative( $this->target));
+        $asset = \rex_url::base( $asset );
 
         if (!\rex::isDebugMode() && \rex::isBackend() && $this->timestamp)
         {
