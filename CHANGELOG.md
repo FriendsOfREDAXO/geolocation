@@ -1,5 +1,10 @@
 # Changelog
 
+## 25.06.2023 2.1.3
+
+- BugFix:
+  - Fehler in der Namespace-Unterstützung (Dateistruktur, Cronjob-Registrierung) bereinigt.
+
 ## 25.06.2023 2.1.2
 
 - BugFix:
