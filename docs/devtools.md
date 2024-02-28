@@ -136,7 +136,7 @@ geändert werden.
 
 Der Beispiel-Code ergänzt das im PHP-Kapitel beschriebene [Modul](devphp.md#output).
 
-```PHP
+```php
 if( rex::isBackend() ){
     echo '<script type="text/javascript">
     Geolocation.default.boundsRect={color:"#ff7800",weight:1,fillOpacity: 0.1};

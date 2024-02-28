@@ -23,10 +23,58 @@ page:
             perm: 'geolocation[layer]'
             icon: fa fa-cloud-download
             subPath: pages/yform.php
-        docs:
+        manual: 
             title: translate:geolocation_manpage
             icon: fa fa-book
-            subPath: help.php
+            subpages: 
+                install:
+                    title: translate:geolocation_manpage_install
+                    icon: fa fa-book
+                    perm: 'admin[]'
+                    subpages:
+                        install:
+                            title: Installation
+                            icon: fa fa-wrench
+                            subpath:  help.php
+                        settings:
+                            title: Einstellungen
+                            subpath:  help.php
+                mapset:
+                    title: translate:geolocation_manpage_mapset
+                    icon: fa fa-book
+                    perm: 'geolocation[mapset]'
+                    subpath:  help.php
+                layer:
+                    title: translate:geolocation_manpage_layer
+                    icon: fa fa-book
+                    perm: 'geolocation[layer]'
+                    subpath:  help.php
+                proxy:
+                    title: translate:geolocation_manpage_proxy
+                    icon: fa fa-book
+                    perm: 'admin[]'
+                    subpath:  help.php
+                developer:
+                    title: translate:geolocation_manpage_developer
+                    icon: fa fa-book
+                    perm: 'admin[]'
+                    subpages:
+                        php:
+                            title: translate:geolocation_manpage_devphp
+                            linkclass: xxx
+                            subpath:  help.php
+                        js:
+                            title: translate:geolocation_manpage_devjs
+                            subpath:  help.php
+                        tools:
+                            title: translate:geolocation_manpage_devtools
+                            subpath:  help.php
+                        geojson:
+                            title: translate:geolocation_manpage_devgeojson
+                            subpath:  help.php
+                        math:
+                            title: translate:geolocation_manpage_devmath
+                            subpath:  help.php
         clear_cache:
             title: 'translate:geolocation_clear_cache'
             perm: 'geolocation[clearcache]'
@@ -42,6 +90,19 @@ yform:
         table_name: rex_geolocation_layer
     geolocation/service:
         table_name: rex_geolocation_service
+
+# Schema: Seitenname = dateiname im ./docs-Verzeichnis
+manual:
+    geolocation/manual/install/install: install.md
+    geolocation/manual/install/settings: settings.md
+    geolocation/manual/mapset: mapset.md
+    geolocation/manual/layer: layer.md
+    geolocation/manual/proxy: proxy_cache.md
+    geolocation/manual/developer/php: devphp.md
+    geolocation/manual/developer/js: devjs.md
+    geolocation/manual/developer/tools: devtools.md
+    geolocation/manual/developer/geojson: devgeojson.md
+    geolocation/manual/developer/math: devmath.md
 
 conflicts:
     packages:
