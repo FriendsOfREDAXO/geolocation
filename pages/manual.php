@@ -25,21 +25,19 @@ use function count;
 use function is_string;
 use function strlen;
 
-use const PATHINFO_EXTENSION;
-
 $addon = rex_addon::get('geolocation');
 $context = rex_context::restore();
 
 /**
- * Das eigentliche Dokument aus den Addon-Properties abrufen.
- * Der Key "manual" enthält eine Liste "page"=>datei.md.
+ * Das eigentliche Dokument identifizieren. Der Dokumentenname
+ * ist der Page-Key mit Suffix .md.
  *
- * Fehlende Datei oder ein Dateityp anders als Markdown führt zum Whoops
+ * Fehlende Datei im docs-Verzeichnis führt zum Whoops
  */
 $page = rex_be_controller::getCurrentPageObject();
-$path = $addon->getPath('docs/' . $page->getKey() . '.md'); 
+$path = $addon->getPath('docs/' . $page->getKey() . '.md');
 if (!is_readable($path)) {
-    throw new rex_functional_exception($addon->getName().'-Manual: file «' . basename($path) . '»not found');
+    throw new rex_functional_exception($addon->getName() . '-Manual: file «' . basename($path) . '»not found');
 }
 
 /**
@@ -51,8 +49,8 @@ if ('' < $res) {
     rex_response::cleanOutputBuffers();
     if (is_readable($filePath)) {
         $mime = mime_content_type($filePath);
-        $disposition = str_starts_with($mime,'image/') ? 'inline' : 'attachment';
-        rex_response::sendFile( $filePath, $mime, $disposition, basename($path) );
+        $disposition = str_starts_with($mime, 'image/') ? 'inline' : 'attachment';
+        rex_response::sendFile($filePath, $mime, $disposition, basename($path));
     } else {
         rex_response::setStatus(rex_response::HTTP_NOT_FOUND);
         rex_response::sendContent(rex_response::HTTP_NOT_FOUND);
@@ -86,20 +84,20 @@ $document = preg_replace_callback('/(```.*?```|`.*?`)/s', static function ($matc
 
 /**
  * Für die Link-Korrektur wird eine Zuordnungsliste "page => MD-Datei"
- * benötigt. Die wird aus der Handbuchstruktur ermittelt
+ * benötigt. Die wird aus der Handbuchstruktur ermittelt.
  */
 $treeBuilderFunc = static function ($page, $key, $xref, $callback) {
     $key = $key . '/' . $page->getKey();
-    if( 0 === count($page->getSubpages())) {
-        $xref[$key] = $page->getKey().'.md';
+    if (0 === count($page->getSubpages())) {
+        $xref[$key] = $page->getKey() . '.md';
     } else {
-        foreach( $page->getSubpages() as $subPage) {
-            $xref = $callback($subPage,$key,$xref,$callback);
+        foreach ($page->getSubpages() as $subPage) {
+            $xref = $callback($subPage, $key, $xref, $callback);
         }
     }
     return $xref;
 };
-$manual = $treeBuilderFunc(rex_be_controller::getPageObject('geolocation/manual'),'geolocation',[],$treeBuilderFunc);
+$manual = $treeBuilderFunc(rex_be_controller::getPageObject('geolocation/manual'), 'geolocation', [], $treeBuilderFunc);
 
 /**
  * Links korrigieren.
