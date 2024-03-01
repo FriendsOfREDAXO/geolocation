@@ -1,11 +1,11 @@
-> - Installation und Einstellungen
+> - [Installation und Einstellungen](install.md)
 >   - [Installation](install.md)
 >   - [Einstellungen](settings.md)
 > - [Kartensätze verwalten](mapset.md)
 > - [Karten/Layer verwalten](layer.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
 > - Für Entwickler
->   - PHP
+>   - __PHP_
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
@@ -14,9 +14,9 @@
 # Für Entwickler &dash; PHP
 
 <a name="namespace"></a>
-## Namespace **Geolocation**
+## Namespace **FriendsOfRedaxo\Geolocation**
 
-Alle PHP-Komponenten der serverseitigen Verarbeitung liegen im Namespace `Geolocation`. Das betrifft
+Alle PHP-Komponenten der serverseitigen Verarbeitung liegen im Namespace `FriendsOfRedaxo\Geolocation`. Das betrifft
 die Klassen und globalen Konstanten. Hier die wichtigsten:
 
 | Objekt | Anmerkung |
@@ -140,7 +140,7 @@ Das Anwendungsbeispiel referenziert auf das weiter unten beschriebene Modul, bei
 die Auswahl des Kartensatzes gespeichert ist.
 
 ```php
-\rex_extension::register('GEOLOCATION_MAPSET_DELETE', function( \rex_extension_point $ep ){
+\rex_extension::register('GEOLOCATION_MAPSET_DELETE', static function( \rex_extension_point $ep ){
     $id = $ep->getParam('id');
     $sql = rex_sql::factory();
     $sql->setQuery( 'SELECT id FROM '.rex::getTable('article_slice').' WHERE value2 = ? LIMIT 1', [$id] );

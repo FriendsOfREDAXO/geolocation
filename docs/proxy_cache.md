@@ -1,9 +1,10 @@
-> - Installation und Einstellungen
+> **Hauptmenü**
+> - [Installation und Einstellungen](install.md)
 >   - [Installation](install.md)
 >   - [Einstellungen](settings.md)
 > - [Kartensätze verwalten](mapset.md)
 > - [Karten/Layer verwalten](layer.md)
-> - [Karten-Proxy und -Cache](proxy_cache.md)
+> - __Karten-Proxy und -Cache::
 > - [Für Entwickler](devphp.md)
 >   - [PHP](devphp.md)
 >   - [Javascript](devjs.md)
@@ -11,7 +12,7 @@
 >   - [geoJSON](devgeojson.md)
 >   - [Rechnen (PHP) (PHP)](devmath.md)
 
-#Karten-Proxy und -Cache
+# Karten-Proxy und -Cache
 
 ## Inhalte
 

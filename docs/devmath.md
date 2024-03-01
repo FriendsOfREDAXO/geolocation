@@ -1,4 +1,5 @@
-> - Installation und Einstellungen
+> **Hauptmenü**
+> - [Installation und Einstellungen](install.md)
 >   - [Installation](install.md)
 >   - [Einstellungen](settings.md)
 > - [Kartensätze verwalten](mapset.md)
@@ -9,7 +10,7 @@
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
->   - Rechnen (PHP)
+>   - __Rechnen (PHP)__
 
 # Für Entwickler &dash; Rechnen mit Koordinaten (PHP)
 
@@ -22,8 +23,8 @@ der kugeligen Realität etwas komplizierter.
 In **Geolocation** ist die PHP-Bibliothek [**phpGeo**](https://github.com/mjaschen/phpgeo) von
 [Markus Jaschen](https://github.com/mjaschen) enthalten. Sie stellt eine Reihe von Klassen zur
 Verwaltung von und Rechnen mit Koordinaten (`Coordinate`), Rechtecken (`Bounds`) etc. im Namespace
-`\Location` zur Verfügung. **Geolocation** baut darauf auf und stellt drei eigene Klassen bereit,
-die erweiterte Funktionen im Namespace `\Geolocation` bereitstellen.
+`Location` zur Verfügung. **Geolocation** baut darauf auf und stellt drei eigene Klassen bereit,
+die erweiterte Funktionen im Namespace `FriendsOfRedaxo\Geolocation` bereitstellen.
 
 - `class Point`: Verwaltet einen geografischen Punkt
     - Factory-Methoden für verschiedene Quelldaten-Formate inkl. Zeichenketten

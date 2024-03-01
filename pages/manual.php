@@ -5,19 +5,20 @@
  * Das Handbuch sollte sowohl auf GitHub als auch im BE mit allen Verweisen und Grafiken
  * angezeigt werden. Damit das klappt müssen ein paar Regeln beachtet werden.
  *
- * siehe Datei ./docs/README.md
+ * siehe Datei ./docs/README.manual.md
  */
 
 namespace FriendsOfRedaxo\Geolocation;
 
 use rex_addon;
 use rex_be_controller;
+use rex_context;
 use rex_file;
 use rex_fragment;
 use rex_functional_exception;
 use rex_i18n;
 use rex_markdown;
-use rex_media_manager;
+use rex_response;
 use rex_url;
 
 use function count;
@@ -27,7 +28,7 @@ use function strlen;
 use const PATHINFO_EXTENSION;
 
 $addon = rex_addon::get('geolocation');
-$mmType = 'geolocation_passthru';
+$context = rex_context::restore();
 
 /**
  * Das eigentliche Dokument aus den Addon-Properties abrufen.
@@ -36,19 +37,26 @@ $mmType = 'geolocation_passthru';
  * Fehlende Datei oder ein Dateityp anders als Markdown führt zum Whoops
  */
 $page = rex_be_controller::getCurrentPageObject();
-$manual = $addon->getProperty('manual');
-
-if (!isset($manual[$page->getFullKey()])) {
-    throw new rex_functional_exception('Manual: no file assigned to page-key «' . $page->getFullKey() . '»');
-}
-
-$path = $addon->getPath('docs/' . $manual[$page->getFullKey()]);
-if ('md' !== pathinfo($path, PATHINFO_EXTENSION)) {
-    throw new rex_functional_exception('Manual: file-type not supported for file «' . basename($path) . '»');
-}
-
+$path = $addon->getPath('docs/' . $page->getKey() . '.md'); 
 if (!is_readable($path)) {
-    throw new rex_functional_exception('Manual: file «' . basename($path) . '»not found');
+    throw new rex_functional_exception($addon->getName().'-Manual: file «' . basename($path) . '»not found');
+}
+
+/**
+ * PassThru für Bilder.
+ */
+$res = $context->getParam('res', '');
+if ('' < $res) {
+    $filePath = $addon->getPath('docs/assets/' . $res);
+    rex_response::cleanOutputBuffers();
+    if (is_readable($filePath)) {
+        $mime = mime_content_type($filePath);
+        $disposition = str_starts_with($mime,'image/') ? 'inline' : 'attachment';
+        rex_response::sendFile( $filePath, $mime, $disposition, basename($path) );
+    } else {
+        rex_response::setStatus(rex_response::HTTP_NOT_FOUND);
+        rex_response::sendContent(rex_response::HTTP_NOT_FOUND);
+    }
 }
 
 /**
@@ -61,7 +69,7 @@ if (is_readable($languagePath)) {
 $document = rex_file::require($path);
 
 /**
- * GitHub-Menü entfernen.
+ * Das für die Github-Darstellung eingebaute GitHub-Menü entfernen.
  */
 $document = preg_replace('/^(\>\s+\-\s?.*?\\n)*\s*\\n/', '', $document);
 
@@ -77,6 +85,23 @@ $document = preg_replace_callback('/(```.*?```|`.*?`)/s', static function ($matc
 }, $document);
 
 /**
+ * Für die Link-Korrektur wird eine Zuordnungsliste "page => MD-Datei"
+ * benötigt. Die wird aus der Handbuchstruktur ermittelt
+ */
+$treeBuilderFunc = static function ($page, $key, $xref, $callback) {
+    $key = $key . '/' . $page->getKey();
+    if( 0 === count($page->getSubpages())) {
+        $xref[$key] = $page->getKey().'.md';
+    } else {
+        foreach( $page->getSubpages() as $subPage) {
+            $xref = $callback($subPage,$key,$xref,$callback);
+        }
+    }
+    return $xref;
+};
+$manual = $treeBuilderFunc(rex_be_controller::getPageObject('geolocation/manual'),'geolocation',[],$treeBuilderFunc);
+
+/**
  * Links korrigieren.
  *
  * Die Liste aller Links aus dem Text heraussuchen,
@@ -89,7 +114,7 @@ $document = preg_replace_callback('/(```.*?```|`.*?`)/s', static function ($matc
  */
 $document = preg_replace_callback(
     '/((!?)\[(.*?)\]\()\s*([^#^\?](.*?))\s*(\))/',
-    static function ($matches) use ($manual, $mmType) {
+    static function ($matches) use ($manual, $context) {
         $link = $matches[4];
         // komplette Url lassen wie sie ist
         if (preg_match('/^.*?\:\/\/.*?$/', $link)) {
@@ -98,7 +123,8 @@ $document = preg_replace_callback(
 
         // Grafik-Links mit MM-Type anzeigen
         if ('!' === $matches[2]) {
-            return $matches[1] . rex_media_manager::getUrl($mmType, basename($link), null, false) . $matches[6];
+            $context->setParam('res', basename($link));
+            return $matches[1] . $context->getUrl([], false) . $matches[6];
         }
 
         /**
@@ -126,7 +152,7 @@ if (0 < count($codeBlock)) {
 
 /**
  * Bei Dokumenten der Ebene vier (außerhalb des normalen Page-Menüs) wird
- * über dem Text ein weiteres Tab-Menü eingebaut.
+ * über dem Text ein weiteres Tab-Menü erstellt.
  */
 $navigation = [];
 if (4 === count(explode('/', $page->getFullKey())) && 1 < count($page->getParent()->getSubpages())) {
@@ -135,7 +161,7 @@ if (4 === count(explode('/', $page->getFullKey())) && 1 < count($page->getParent
             'linkAttr' => $page->getLinkAttr(null),
             'itemAttr' => $page->getItemAttr(null),
             'href' => rex_url::backendPage($subPage->getFullKey()),
-            'icon' => $page->getIcon(),
+            'icon' => $subPage->getIcon(),
             'title' => $subPage->getTitle(),
             'active' => $key === $page->getKey(),
         ];
@@ -143,7 +169,7 @@ if (4 === count(explode('/', $page->getFullKey())) && 1 < count($page->getParent
 }
 
 /**
- * Dokument formtieren
+ * Dokument formatieren.
  *
  * Eingebautes PHP-Highlighting nur wenn das Tool PrismJS nicht verfügbar ist.
  */
@@ -167,25 +193,24 @@ if (!$phpHighlight) {
     echo '<link rel="stylesheet" type="text/css" media="all" href="',$url,'" />';
 }
 
-// audi öööl reklamrion
 // Hotel
 
 /**
- * Ausgabe 
+ * Ausgabe.
  */
 $navi = '';
 if (0 < count($navigation)) {
     // nötiges HTML direckt ausgeben
     echo '<style>
-        #abcdefghih {
+        #EB3HA4EL99 {
             margin-bottom: 0;
         }
-        #abcdefghih + * > .panel-manual {
+        #EB3HA4EL99 + * > .panel-manual {
             border-top-width: 0;
         }
     </style>';
     $fragment = new rex_fragment();
-    $fragment->setVar('id', 'abcdefghih');
+    $fragment->setVar('id', 'EB3HA4EL99');
     $fragment->setVar('left', $navigation);
     $navi = $fragment->parse('core/navigations/content.php');
 }
@@ -193,10 +218,11 @@ if (0 < count($navigation)) {
 $fragment = new rex_fragment();
 $fragment->setVar('content', $content, false);
 $fragment->setVar('toc', $toc, false);
-$content .= $fragment->parse('core/page/docs.php');
+$content = $fragment->parse('core/page/docs.php');
 
 $fragment = new rex_fragment();
-$fragment->setVar('sectionAttributes', ['id' => 'abcdefghih-']);
 $fragment->setVar('class', 'manual');
 $fragment->setVar('body', $content, false);
 echo $navi,$fragment->parse('core/page/section.php');
+
+echo '<script>Prism.highlightAll();</script>';

@@ -1,4 +1,5 @@
-> - Installation und Einstellungen
+> **Hauptmenü**
+> - [Installation und Einstellungen](install.md)
 >   - [Installation](install.md)
 >   - [Einstellungen](settings.md)
 > - [Kartensätze verwalten](mapset.md)
@@ -7,7 +8,7 @@
 > - [Für Entwickler](devphp.md)
 >   - [PHP](devphp.md)
 >   - [Javascript](devjs.md)
->   - JS-Tools
+>   - __JS-Tools__
 >   - [geoJSON](devgeojson.md)
 >   - [Rechnen (PHP)](devmath.md)
 
