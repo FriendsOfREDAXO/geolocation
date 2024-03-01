@@ -1,4 +1,5 @@
-> - Installation und Einstellungen
+> **Hauptmenü**
+> - [Installation und Einstellungen](install.md)
 >   - [Installation](install.md)
 >   - [Einstellungen](settings.md)
 > - [Kartensätze verwalten](mapset.md)
@@ -9,7 +10,7 @@
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
->   - Rechnen (PHP)
+>   - __Rechnen (PHP)__
 
 # Für Entwickler &dash; Rechnen mit Koordinaten (PHP)
 
@@ -22,8 +23,8 @@ der kugeligen Realität etwas komplizierter.
 In **Geolocation** ist die PHP-Bibliothek [**phpGeo**](https://github.com/mjaschen/phpgeo) von
 [Markus Jaschen](https://github.com/mjaschen) enthalten. Sie stellt eine Reihe von Klassen zur
 Verwaltung von und Rechnen mit Koordinaten (`Coordinate`), Rechtecken (`Bounds`) etc. im Namespace
-`\Location` zur Verfügung. **Geolocation** baut darauf auf und stellt drei eigene Klassen bereit,
-die erweiterte Funktionen im Namespace `\Geolocation` bereitstellen.
+`Location` zur Verfügung. **Geolocation** baut darauf auf und stellt drei eigene Klassen bereit,
+die erweiterte Funktionen im Namespace `FriendsOfRedaxo\Geolocation` bereitstellen.
 
 - `class Point`: Verwaltet einen geografischen Punkt
     - Factory-Methoden für verschiedene Quelldaten-Formate inkl. Zeichenketten
@@ -383,7 +384,7 @@ Die Funktion ermittelt die kürzeste Distanz in Meter zwischen `$point` und dem 
 Zielpunkt. Die Distanz wird auf dem [Großkreis](https://de.wikipedia.org/wiki/Gro%C3%9Fkreis)
 ermittelt.
 
-```PHP
+```php
 use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $northWest = [39.753838434606,-105.00341892242];
@@ -429,7 +430,7 @@ Die Funktion ermittelt die Kompassrichtung der kürzesten Distanz zum Zielpunkt 
 Die Funktion ermittelt die Kompassrichtung der kürzesten Distanz zum Zielpunkt `$point` bei der
 "Ankunft" (am Zielpunkt) auf dem Großkreis (0°...360°).
 
-```PHP
+```php
 use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $northWest = [39.753838434606,-105.00341892242];
@@ -470,7 +471,7 @@ dump(get_defined_vars());
 Aus den Parametern Distanz (in Meter) und Kompasskurs (0°...360°) am Ausgangspunkt wird der
 Zielpunkt über den Großkreis berechnet.
 
-```PHP
+```php
 use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $northWest = [39.753838434606,-105.00341892242];
@@ -507,7 +508,7 @@ Die Funktion ermittelt, ob der Abstand zum Referenzpunkt nicht größer ist als 
 angegeben in Meter. Der Vorgabewert ist 10 cm. Je nach Zoom-Faktor können so zu vernachlässigende
 Punkte ermittelt werden.
 
-```PHP
+```php
 use FriendsOfRedaxo\Geolocation\Calc\Point;
 
 $NW = Point::byLatLng( [39.753838434606,-105.00341892242] );

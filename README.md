@@ -8,51 +8,51 @@ Kartenanzeige mit LeafletJS kann mit eigenen JS-Schnipseln rasch und on the fly 
 
 Kontakt: [Thomas Skerbis](https://github.com/skerbis)
 
-![Titelbild](docs/assets/titel.jpg)
+![Titelbild](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/assets/titel.jpg?raw=true)
 
 ## Features:
 
 - Backend
-    - [Karten-URLs](docs/admin.md#tile) zu Karten-Anbietern mit weiteren Parametern inkl.
+    - [Karten-URLs](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/setings.md#tile) zu Karten-Anbietern mit weiteren Parametern inkl.
       Sprachunterstützung und Cache-Verhalten
-    - [Kartensätze](docs/admin.md#mapset) zusammenstellen und verwalten, die auf einer oder mehreren
+    - [Kartensätze](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/settings.md#mapset) zusammenstellen und verwalten, die auf einer oder mehreren
       Karten-Urls basieren
     - Datenverwaltung mit YForm
-    - [Proxy-Server](docs/proxy_cache.md#proxy) für Karten-Abrufe vom Browser
-    - [Cache](docs/proxy_cache.md#cache) für Karten-Abrufe
+    - [Proxy-Server](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/proxy_cache.md#proxy) für Karten-Abrufe vom Browser
+    - [Cache](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/proxy_cache.md#cache) für Karten-Abrufe
     - Verschleierung der tatsächlichen Karten-Url ggü. dem Client / Schutz der ggf. kostenpflichtigen
       appId´s z.B. von Google oder HERE
     - Kartendarstellung im Moduloutput mit demselben Code wie im Frontend
-    - Ausführliche Dokumentation online im Backend bzw. auf GitHub
+    - Ausführliche Dokumentation online im Backend (bei installiertem Addon) bzw. auf GitHub
 
 - Karten
     - LeafletJS als Kartensoftware integriert
     - Karten-HTML als [Custom-HTML-Element](#rm) `<rex-map .... ></rex-map>`
-    - [Erweiterbare Tools](docs/devtools.md) zur Datendarstellung inkl. geoJSON (Basis, erweiterbar)
-    - Anwendungsbeispiel für [Module](docs/devphp.md#module)
+    - [Erweiterbare Tools](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/devtools.md) zur Datendarstellung inkl. geoJSON (Basis, erweiterbar)
+    - Anwendungsbeispiel für [Module](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/devphp.md#module)
     - Einfache Einbindung des komprimierten JS / CSS im Frontend passend zur individuellen Konfiguration.
 
 - Demo
-    - [Stand-alone-Demo](docs/example/demo.html) zur Demonstration des Custom-HTML-Elements und des Cache
+    - [Stand-alone-Demo](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/example/demo.html) zur Demonstration des Custom-HTML-Elements und des Cache
     - *redaxo/src/addons/geolocation/docs/example/demo.html* bitte ins REDAXO-Root kopieren wg. der Pfade
 
-- [Cache](docs/proxy_cache.md#cache)
+- [Cache](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/proxy_cache.md#cache)
     - Je Tile-URL ein eigenes Verzeichnis, separat löschbar
-    - [Cronjob](docs/proxy_cache.md#cron) zum Aufräumen
+    - [Cronjob](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/proxy_cache.md#cron) zum Aufräumen
         - Dateien löschen, die älter sind als die Time-to-live der Tile-URL
         - weitere ältere Dateien löschen wenn das Verzeichnis zu viele Dateien enthält
 
-- [Rechnen mit Koordinaten (PHP)](docs/devmath.md)
-    - [class FriendsOfRedaxo\Geolocation\Calc\Point](docs/devmath.md#point): Koordinaten verwalten
+- [Rechnen mit Koordinaten (PHP)](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/devmath.md)
+    - [class FriendsOfRedaxo\Geolocation\Calc\Point](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/devmath.md#point): Koordinaten verwalten
         - verschiedene Format als Input/Output; Konvertierung
         - Distanzen und Richtung ermitteln
         - Zielpunkt aus Richtung und Distanz
-    - [class FriendsOfRedaxo\Geolocation\Calc\Box](docs/devmath.md#box): Rechteckigen Bereich verwalten
+    - [class FriendsOfRedaxo\Geolocation\Calc\Box](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/devmath.md#box): Rechteckigen Bereich verwalten
         - Anlegen aus zwei gegenüberliegenden Ecken
         - Dynamisch erweitern
         - diverse Abfragen (north, south, ....)
         - Berechnete Werte (center, innerRadius, outerRadius)
-    - [class FriendsOfRedaxo\Geolocation\Calc\Math](docs/devmath.md#math): Rechteckigen Bereich verwalten
+    - [class FriendsOfRedaxo\Geolocation\Calc\Math](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/devmath.md#math): Rechteckigen Bereich verwalten
         - diverse Methoden und Defaults basierend auf phpGeo
         - Distanzen und Richtung ermitteln
         - Zielpunkt aus Richtung und Distanz
@@ -85,7 +85,7 @@ Der Cronjob für die Cache-Bereinigung hat die Einstellungen
 - Scriptanfang
 - aktiviert
 
-Details - auch zu individualisierten Installationen - stehen in der [Installationsanleitung](docs/install.md)
+Details - auch zu individualisierten Installationen - stehen in der [Installationsanleitung](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/install.md)
 
 ## OSMProxy ersetzten
 OSM-Proxy-Nutzer müssen im Abschnitt Karten die gewünschten Tileserver hinterlegen und im Anschluss die URL für die Tiles im z.B. Leaflet JS ändern.
@@ -100,22 +100,22 @@ OSM-Proxy-Nutzer müssen im Abschnitt Karten die gewünschten Tileserver hinterl
 
 ### Allgemeine Konfiguration
 
-![Konfiguration](docs/assets/config.jpg)
+![Konfiguration](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/assets/config.jpg?raw=true)
 
 ### Kartensatz
 
-![Kartensatz: Auflistung](docs/assets/maps_list.jpg)
-![Kartensatz: Formular](docs/assets/maps_edit.jpg)
+![Kartensatz: Auflistung](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/assets/maps_list.jpg?raw=true)
+![Kartensatz: Formular](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/assets/maps_edit.jpg?raw=true)
 
 ### Layer-/Tile-Server
 
-![Tile-Layer: Auflistung](docs/assets/tiles_list.jpg)
-![Tile-Layer: Formular](docs/assets/tiles_edit.jpg)
+![Tile-Layer: Auflistung](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/assets/tiles_list.jpg?raw=true)
+![Tile-Layer: Formular](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/assets/tiles_edit.jpg?raw=true)
 
 <a name="rm"></a>
 ### `<rex-map .... ></rex-map>`
 
-Darstellung der Karte im Browser über ein [Custom-HTML-Element](docs/devphp#maphtml):
+Darstellung der Karte im Browser über ein [Custom-HTML-Element](https://github.com/FriendsOfREDAXO/geolocation/blob/master/docs/devphp#maphtml):
 
 ```html
 <rex-map mapset="..." dataset="..."></rex-map>

@@ -1,11 +1,11 @@
-> - Installation und Einstellungen
+> - [Installation und Einstellungen](install.md)
 >   - [Installation](install.md)
 >   - [Einstellungen](settings.md)
 > - [Kartensätze verwalten](mapset.md)
 > - [Karten/Layer verwalten](layer.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
 > - Für Entwickler
->   - PHP
+>   - __PHP_
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
@@ -14,9 +14,9 @@
 # Für Entwickler &dash; PHP
 
 <a name="namespace"></a>
-## Namespace **Geolocation**
+## Namespace **FriendsOfRedaxo\Geolocation**
 
-Alle PHP-Komponenten der serverseitigen Verarbeitung liegen im Namespace `Geolocation`. Das betrifft
+Alle PHP-Komponenten der serverseitigen Verarbeitung liegen im Namespace `FriendsOfRedaxo\Geolocation`. Das betrifft
 die Klassen und globalen Konstanten. Hier die wichtigsten:
 
 | Objekt | Anmerkung |
@@ -46,7 +46,7 @@ die Klassen und globalen Konstanten. Hier die wichtigsten:
 
 Hier ein Beispiel:
 
-```PHP
+```php
 $id = \rex_request( FriendsOfRedaxo\Geolocation\KEY_MAPSET, 'integer', 1 );
 $mapset = FriendsOfRedaxo\Geolocation\Mapset::take( $id );
 
@@ -82,7 +82,7 @@ erforderlich sind, kann der Name durch ein Suffix eindeutig gemacht werden. Das 
 `|` angehängt (`position|eins`).  
 
 Die Methoden können verkettet werden:
-```PHP
+```php
 echo FriendsOfRedaxo\Geolocation\Mapset::take( $mapsetId )
     ->attributes( 'id', 'my-map-id' )
     ->attributes( 'class', 'mymapclass' )
@@ -102,7 +102,7 @@ Das Resultat ist ein HTML-Tag mit fünf Attributen:
 ```
 
 Alternatives Vorgehen:
-```PHP
+```php
 $mapset = FriendsOfRedaxo\Geolocation\Mapset::take( $mapsetId );
 
 $fragment = new \rex_fragment();
@@ -128,7 +128,7 @@ zur Verfügung.
 
 Der Rückgabewert `TRUE` signalisiert, dass der Kartensatz-Datensatz gelöscht werden darf.
 
-```PHP
+```php
 $delete = \rex_extension::registerPoint(new \rex_extension_point(
     'GEOLOCATION_MAPSET_DELETE',
     true,
@@ -139,8 +139,8 @@ $delete = \rex_extension::registerPoint(new \rex_extension_point(
 Das Anwendungsbeispiel referenziert auf das weiter unten beschriebene Modul, bei dem in `value2`
 die Auswahl des Kartensatzes gespeichert ist.
 
-```PHP
-\rex_extension::register('GEOLOCATION_MAPSET_DELETE', function( \rex_extension_point $ep ){
+```php
+\rex_extension::register('GEOLOCATION_MAPSET_DELETE', static function( \rex_extension_point $ep ){
     $id = $ep->getParam('id');
     $sql = rex_sql::factory();
     $sql->setQuery( 'SELECT id FROM '.rex::getTable('article_slice').' WHERE value2 = ? LIMIT 1', [$id] );
@@ -280,7 +280,7 @@ Die Kartenausgabe beinhaltet
 
 Wie das Bounds-Rechteck sichtbar gemacht wird, ist [hier beschrieben](devtools.md#boundsvisible).
 
-```PHP
+```php
 <?php
 // Kartendaten aus dem Slice abrufen
 $mapsetId = (int) 'REX_VALUE[2]';

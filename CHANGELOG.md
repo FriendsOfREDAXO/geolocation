@@ -1,5 +1,13 @@
 # Changelog
 
+## xx-xx-2024
+
+- Umbau
+  - Die Handbuchseiten sind technisch etwas anders realisiert.
+  - Fehlerkorrekturen
+  - geänderte Darstellung der Code-Blöcke im Handbuch; neue Verson von PrismJS 
+
+
 ## 25.06.2023 2.1.3
 
 - BugFix:

@@ -1,5 +1,6 @@
+> **Hauptmenü**
 > - Installation und Einstellungen
->   - Installation
+>   - __Installation__
 >   - [Einstellungen](settings.md)
 > - [Kartensätze verwalten](mapset.md)
 > - [Karten/Layer verwalten](layer.md)
@@ -50,7 +51,7 @@ Die Installation (I) bzw. Re-Installation (R) umfasst folgende Schritte
 - Sofern es keinen Cron-Job "Geolocation: Cleanup Cache" gibt, wird er angelegt. Ein vorhandener Job
   wird nicht verändert, ist also update-sicher (I|R).
 - Ein Teil der im Betrieb notwendigen Parameter werden in die Konfigurationstabelle *rex_config* im
-  Namespace "geolocation" eingetragen bzw. fehlende werden ergänzt (I|R).
+  Namespace "FriendsOfRedaxo\Geolocation" eingetragen bzw. fehlende werden ergänzt (I|R).
 - Ein Teil der im Betrieb notwendigen Parameter werden als Konstanten in die *boot.php* eingetragen.
 - JS- und CSS-Dateien aus dem Asset-Verzeichnis des Addons werden in das öffentliche
   Assets-Verzeichnis des Addons kopiert. 
@@ -97,7 +98,7 @@ logische Richtigkeit noch auf Vollständigkeit geprüft.
 # Basiskonfiguration, diverse Konstanten
 #
 # Wird bei der Installation benutzt und u.a. teilweise in die boot.php eingetragen als
-# define('ABC',wert); (ABC im Namespace Geolocation )
+# define('ABC',wert); (ABC im Namespace FriendsOfRedaxo\Geolocation )
 #
 # Überschreiben durch korrespondierende Werte aus redaxo/data/addons/geolocation/config.yml
 # Handle with care!

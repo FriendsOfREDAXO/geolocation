@@ -1,7 +1,8 @@
+> **Hauptmenü**
 > - Installation und Einstellungen
 >   - [Installation](install.md)
 >   - [Einstellungen](settings.md)
-> - Kartensätze verwalten
+> - __Kartensätze verwalten__
 > - [Karten/Layer verwalten](layer.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
 > - [Für Entwickler](devphp.md)
