@@ -45,7 +45,7 @@ page:
                 developer:
                     title: translate:geolocation_manpage_developer
                     icon: fa fa-user-gear
-                    perm: 'admin[]'
+                    perm: 'geolocation[developer]'
                     subpages:
                         devphp:
                             title: translate:geolocation_manpage_devphp

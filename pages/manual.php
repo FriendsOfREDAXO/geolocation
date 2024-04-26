@@ -69,7 +69,7 @@ $document = rex_file::require($path);
 /**
  * Das für die Github-Darstellung eingebaute GitHub-Menü entfernen.
  */
-$document = preg_replace('/^(\>\s+\-\s?.*?\\n)*\s*\\n/', '', $document);
+$document = preg_replace('/^(\\>\\s.*?\\n)?\\n/s', '', $document);
 
 /**
  * Für den Link-Austausch zuerst Code-Blöcke durch Platzhalter ersetzen

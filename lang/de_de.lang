@@ -80,6 +80,7 @@ geolocation_layer_fs_rest = Weitere Parameter
 # Permissions
 perm_general_geolocation[layer] = Karten/Layer verwalten
 perm_general_geolocation[mapset] = Kartensätze verwalten
+perm_general_geolocation[developer] = Entwickler (erweiterte Dokumentation)
 perm_general_geolocation[clearcache] = Cache löschen
 
 # Cronjob
