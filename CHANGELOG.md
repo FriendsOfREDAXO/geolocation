@@ -1,11 +1,19 @@
 # Changelog
 
-## xx-xx-2024
+## 26-02-2024 2.2.0
 
-- Umbau
+- Umbau (#152)
   - Die Handbuchseiten sind technisch etwas anders realisiert.
-  - Fehlerkorrekturen
-  - geänderte Darstellung der Code-Blöcke im Handbuch; neue Verson von PrismJS 
+    - help.php/help.yml aufgelöst - kaum Chancen für die Zulassung durch RexStan :-)
+    - statt dessen eine vereinfachte Lösung als page/manual.php
+    - Handbuch-Menü komplett über package.yml realisiert
+  - Inhalte der Doku angepasst und formal optimiert (z.B. ```php statt ```)
+  - Beautifier für Code-Blöcke (PrismJS) aktualisiert (als help.min.js/css), anderes Farbschema (hell)
+  - Handbuch-Berechtigungen um "geolocation[developer]" erweitert
+
+- BugFix
+  - Typos in package.yml korrigiert (#154 @TobiasKrais)
+
 
 
 ## 25.06.2023 2.1.3
