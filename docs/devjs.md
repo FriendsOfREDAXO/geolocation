@@ -1,4 +1,5 @@
-> - Installation und Einstellungen
+> **Hauptmenü**
+> - [Installation und Einstellungen](install.md)
 >   - [Installation](install.md)
 >   - [Einstellungen](settings.md)
 > - [Kartensätze verwalten](mapset.md)
@@ -6,7 +7,7 @@
 > - [Karten-Proxy und -Cache](proxy_cache.md)
 > - [Für Entwickler](devphp.md)
 >   - [PHP](devphp.md)
->   - Javascript
+>   - __Javascript__
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
 >   - [Rechnen (PHP)](devmath.md)

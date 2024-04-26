@@ -9,10 +9,6 @@ page:
     icon: rex-icon fa-globe
     perm: geolocation[]
     subpages:
-        config:
-            title: translate:geolocation_config
-            icon: fa fa-wrench
-            perm: 'admin[]'
         mapset:
             title: translate:geolocation_mapset
             perm: 'geolocation[mapset]'
@@ -23,10 +19,62 @@ page:
             perm: 'geolocation[layer]'
             icon: fa fa-cloud-download
             subPath: pages/yform.php
-        docs:
+        config:
+            title: translate:geolocation_config
+            icon: fa fa-cog
+            perm: 'admin[]'
+        manual: 
             title: translate:geolocation_manpage
             icon: fa fa-book
-            subPath: help.php
+            subpages: 
+                mapset:
+                    title: translate:geolocation_manpage_mapset
+                    icon: fa fa-earth-europe
+                    perm: 'geolocation[mapset]'
+                    subpath:  pages/manual.php
+                layer:
+                    title: translate:geolocation_manpage_layer
+                    icon: fa fa-map
+                    perm: 'geolocation[layer]'
+                    subpath:  pages/manual.php
+                proxy_cache:
+                    title: translate:geolocation_manpage_proxy
+                    icon: fa fa-route
+                    perm: 'admin[]'
+                    subpath:  pages/manual.php
+                developer:
+                    title: translate:geolocation_manpage_developer
+                    icon: fa fa-user-gear
+                    perm: 'admin[]'
+                    subpages:
+                        devphp:
+                            title: translate:geolocation_manpage_devphp
+                            subpath:  pages/manual.php
+                        devjs:
+                            title: translate:geolocation_manpage_devjs
+                            subpath:  pages/manual.php
+                        devtools:
+                            title: translate:geolocation_manpage_devtools
+                            subpath:  pages/manual.php
+                        devgeojson:
+                            title: translate:geolocation_manpage_devgeojson
+                            subpath:  pages/manual.php
+                        devmath:
+                            title: translate:geolocation_manpage_devmath
+                            subpath:  pages/manual.php
+                install:
+                    title: translate:geolocation_manpage_install
+                    icon: fa fa-wrench
+                    perm: 'admin[]'
+                    subpages:
+                        install:
+                            title: Installation
+                            icon: fa fa-wrench
+                            subpath:  pages/manual.php
+                        settings:
+                            title: Einstellungen
+                            icon: fa fa-cog
+                            subpath:  pages/manual.php
         clear_cache:
             title: 'translate:geolocation_clear_cache'
             perm: 'geolocation[clearcache]'

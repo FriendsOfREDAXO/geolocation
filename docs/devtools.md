@@ -1,4 +1,5 @@
-> - Installation und Einstellungen
+> **Hauptmenü**
+> - [Installation und Einstellungen](install.md)
 >   - [Installation](install.md)
 >   - [Einstellungen](settings.md)
 > - [Kartensätze verwalten](mapset.md)
@@ -7,7 +8,7 @@
 > - [Für Entwickler](devphp.md)
 >   - [PHP](devphp.md)
 >   - [Javascript](devjs.md)
->   - JS-Tools
+>   - __JS-Tools__
 >   - [geoJSON](devgeojson.md)
 >   - [Rechnen (PHP)](devmath.md)
 
@@ -136,7 +137,7 @@ geändert werden.
 
 Der Beispiel-Code ergänzt das im PHP-Kapitel beschriebene [Modul](devphp.md#output).
 
-```PHP
+```php
 if( rex::isBackend() ){
     echo '<script type="text/javascript">
     Geolocation.default.boundsRect={color:"#ff7800",weight:1,fillOpacity: 0.1};
