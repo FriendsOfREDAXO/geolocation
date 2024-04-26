@@ -30,8 +30,8 @@ page:
         clear_cache:
             title: 'translate:geolocation_clear_cache'
             perm: 'geolocation[clearcache]'
-            itemclass: pull-right
-            linkclass: 'btn btn-delete'
+            itemClass: pull-right
+            linkClass: 'btn btn-delete'
             href:
                 # Zur Info: Die konkreten Parameter setzt kontext-bezogen pages/index.php
 
