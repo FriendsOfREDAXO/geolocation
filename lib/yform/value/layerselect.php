@@ -1,42 +1,41 @@
 <?php
 /**
- * YForm-Eingabefeld für Layersets im Geolocation-Addon.
- *
- * Im Prinzip ist es ein be_manager_relation-Feld Typ 3
+ * YForm-Eingabefeld für Layer-Sets im Geolocation-Addon.
  *
  * Zusätzlich zum eigentlichen Feld xxxx (id-Liste) wird ein zweites
- * Datenfeld xxxx_selected erwartet, das im Datensatz erwartet wird,
+ * Datenfeld xxxx_selected erwartet, das im Datensatz vorkommt,
  * aber nicht als YForm-Value in der Tabelle.
  *
- * Für Typ-3-Felder erzeugt be_manager_relation HTML basierend auf
- * dem Fragment "widget-list". Das HTML wird leicht modifiziert und mit
- * Zusatzinformationen bzgl. xxxx_selected versehen. dazu dient das
- * YFragment "value.geolocation_layerselect.tpl.php".
- *
- * Hier kein Namespace, da sonst die Value-Klasse nicht gefunden wird.
+ * Hier kein Namespace, da andernfalls diese Value-Klasse nicht gefunden wird.
  */
 
+use FriendsOfRedaxo\Geolocation\Layer;
+use FriendsOfRedaxo\Geolocation\Mapset;
 use rex_i18n;
-use rex_request;
-use rex_yform_value_be_manager_relation;
 
-class rex_yform_value_geolocation_layerselect extends rex_yform_value_be_manager_relation
+class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
 {
     /**
-     * Der Name des zusätzlichen DB-Feldes mit den IDs der selektierten
-     * Einträge im Hauptfeld.
-     * Aufbau: DB-Feldname des Hauptfeldes plus "_selected".
-     * Wird in init() gesetzt.
+     * Das zweite Feld, das hier gleich mitverwaltet wird, ist die Liste
+     * der ID(s) (Checkbox, optional bzw. die Option, mandatory), die
+     * als aktiv markiert sind. Darf nur ID(s) enthalten, die auch im
+     * Value vorkommen.
      */
-    protected string $subField = '';
+    protected string $subField;
 
     /**
-     * Array mit den IDs der Layer, die markiert sind (Feld xxxx_selected).
-     * Wird in preValidateAction() gesetzt.
-     *
-     * @var string[]
+     * Das eigene value-Feld der DB ist eine Komma-Liste mit Layer-IDs
+     * wird hier für interne Zwecke als Array geführt.
+     * @var array<int>
      */
-    protected array $selectedLayers = [];
+    public array $layer;
+
+    /**
+     * Das SubFeld in der DB ist eine Komma-Liste mit Layer-IDs
+     * wird hier für interne Zwecke als Array geführt.
+     * @var array<int>
+     */
+    public array $activeLayer;
 
     /**
      * In Feldern mit Mehrfachauswahl gelten andere Regeln
@@ -45,172 +44,292 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_be_manager
     protected bool $isRadioSelect = false;
 
     /**
-     * Dieses Feld ist vom Typ 3, also hier noch mal sicherstellen
      * Alle intern benötigten Variablen zusammenstellen.
      *
      * @return void
      */
     public function init()
     {
-        $this->setElement('type', 3); // 'Multiple (popup)'
-        $this->setElement('relation_table', '');
-
         parent::init();
-
         $this->subField = $this->getName() . '_selected';
         $this->isRadioSelect = 'radio' === $this->getElement('format');
     }
 
     /**
-     * Das YFragment arbeitet mit einem input-Name, der sowohl die
-     * Liste der Layer-Ids als auch der markierten Layer als ein
-     * übergreifendes Array darstellt.
-     *
-     * feldname[value][]    IDs der insgesamt selektuerten Layer
-     * feldname[choice][]   Subset aus Value: IDs der markierten Layer.
-     *
-     * Je nach Situation wird entweder die Formularrückgabe in $selectedLayers
-     * und den re_manager_relation-Value aufgesplittet oder zusätzlich
-     * $selectedLayers aus der DB bzw. leer initialisiert.
+     * Erste Methode, in der die Daten im Value zur Verfügung stehen.
+     * Aufbereiten zu folgenden Formaten:
+     * - value selbst immer als Array ['value' => [...], 'choice' => [...]]
+     * - Außerdem die SubArrays nach $this->layer und $this->activeLayer.
      */
     public function preValidateAction(): void
     {
         $value = $this->getValue();
-        
+
         /**
-         * aus der Formular-Erfasung (add/edit) kommt ein Array
-         * feldname[value][]    IDs der insgesamt selektuerten Layer
-         * feldname[choice][]   Subset aus Value: IDs der markierten Layer.
-         *
-         * Alternativ könnten die Werte auch aus dem Datensatz stammen.
-         *
-         * Fallback (neuer Datensatz): leeres Array
+         * Rückgabe aus dem Formular sollte immer ein Array sein.
+         * Sicherstellen, dass die beiden Sub-Arrays vorkommen und
+         * zumindest numerischen Inhalt haben.
          */
-        if ($this->params['send']) {
-            if( null === $value ) {
-                $selectedLayers = [];
-                $value = [];
-            } else {
-                $selectedLayers = isset($value['choice']) ? $value['choice'] : [];
-                $value = isset($value['value']) ? $value['value'] : [];
-                $this->setValue($value);
-            }
-        } elseif (0 < $this->params['main_id']) {
-            // Strange! Verlässt man das Formular über "Speichern" ist der YOrm-Dataset verfügbar.
-            // Speichert man mit "Übernehmen" fehlt er.
-            try {
-                // "Speichern"
-                $selectedLayers = $this->getParam('manager_dataset')->getValue($this->subField);
-            } catch (\Throwable $th) {
-                // "Übernehmen"
-                $selectedLayers = $this->getParam('sql_object')->getValue($this->subField);
-            }
-        } else {
-            $selectedLayers = [];
-            $value = [];
+        if (is_array($value)) {
+            $value = array_merge(
+                ['value' => [], 'choice' => []],
+                $value,
+            );
+            $this->layer = array_filter($value['value'], is_numeric(...));
+            $this->activeLayer = array_filter($value['choice'], is_numeric(...));
         }
 
-        if (is_string($value)) {
-            $value = explode(',', $value);
+        /**
+         * Wenn aus dem Bestand ausgelesen, wird es ein String sein (1,2,..).
+         * Der Value betrifft nur die Layer-Liste. Die aktiven Layer der Liste
+         * stehen im SubFeld und werden von dort ausgelesen.
+         * Beide in ein Array umwandeln.
+         */
+        elseif (is_string($value)) {
+            $this->layer = array_filter(
+                $this->getArrayFromString($value),
+                static function ($k) {return '' !== trim($k); },
+                ARRAY_FILTER_USE_KEY,
+            );
+            $subValue = $this->getValueForKey($this->subField) ?? '';
+            $this->activeLayer = array_filter(
+                $this->getArrayFromString($subValue),
+                static function ($k) {return '' !== trim($k); },
+                ARRAY_FILTER_USE_KEY,
+            );
         }
 
-        if (is_string($selectedLayers)) {
-            $selectedLayers = explode(',', $selectedLayers);
+        /**
+         * In allen anderen Fällen (kann eigentlich nur "neuer Satz sein und
+         * damit null als Wert) wird eben "leer" angenommen.
+         */
+        else {
+            $this->layer = [];
+            $this->activeLayer = [];
         }
 
-        $this->selectedLayers = array_map('trim', $selectedLayers);
-        $this->selectedLayers = array_filter($this->selectedLayers, 'strlen');
-        $this->selectedLayers = array_unique($this->selectedLayers);
-
-        // nur Elemente auswählbar, die auch im Hauptfeld vorkommen
-        $this->selectedLayers = array_intersect($this->selectedLayers, $value);
-
-        // Bei Radio-Auswahl: wenn kein Feld selektiert => das erste auswählen
-        if ($this->isRadioSelect && 0 === count($this->selectedLayers) && 0 < count($value)) {
-            $this->selectedLayers[] = reset($value);
+        /**
+         * Sicherstellen, dass in activeLayer nur IDs stehen, die auch in der
+         * Layer-Liste vorkommen
+         * Im Fall der Basis-Layer muss mindestens ein Layer aktiviert sein
+         * (notfalls der erste der Liste).
+         */
+        $this->activeLayer = array_intersect($this->layer, $this->activeLayer);
+        if ($this->isRadioSelect && 0 < count($this->layer) && 0 === count($this->activeLayer)) {
+            $this->activeLayer = array_slice($this->layer, 0, 1);
         }
 
-        // normale Verarbeitung
-        parent::preValidateAction();
+        /**
+         * Normierte Darstellung des Value in allen folgenden Schritten analog
+         * zum Rückgabewert aus Formularen.
+         */
+        $this->setValue([
+            'value' => $this->layer,
+            'choice' => $this->activeLayer,
+        ]);
     }
 
-    /**
-     * Hauptverarbeitung: Das Feld wird regulär über die Parent-Methode von be_manager_relation
-     * generiert. Der Output wird im Fragment dieses Values überarbeitet.
-     * Die Teile ab Anfang inkl. Label bzw. ab Notice bleiben (leadIn, leadOut)
-     * Aus dem inneren Teil werden ein paar Angaben extrahiert:
-     *  - die verfügbaren Optionen (id,name)
-     *  - Parameter für den Popup-Aufruf (selectId, PopupButton)
-     * Dazu kommen Informationen zur Struktur des Eingabefeldes.
-     *
-     * @return void
-     */
     public function enterObject()
     {
         /**
-         * zunächst be_manager_relaton das Feld normal erzeugen lassen.
-         */
-        parent::enterObject();
-
-        /**
-         * Das erzeugte HTML umarbeiten:
-         *  - Den inneren Block und die Teile davor und danach separieren
-         *  - Die vorhandenen Optionen im Select extrahieren
-         *  - Die Parameter für das YForm-Popup extrahieren.
+         * Formularausgabe.
          */
         if ($this->needsOutput()) {
-            $html = $this->params['form_output'][$this->getId()];
-            preg_match('/(?<leadIn>.*?<\\/label>)\\s*(?<inner><div.*<\\/div>)\\s*(?<leadOut>(<p.*?<\\/p>\\s*)?<\\/div>)/ms', $html, $matchStructure);
-            preg_match_all('/<option.*?value="(?<id>.*?)".*?\>(?<name>.*?)<\\/option>/ms', $matchStructure['inner'], $matchOptions, PREG_SET_ORDER);
-            preg_match('/(<a href).*?openYFormDatasetList\((?<id>.*?),.*?<\\/a>/', $matchStructure['inner'], $matchButton);
+            $linkParams = [
+                'page' => 'yform/manager/data_edit',
+                'table_name' => Layer::table()->getTableName(),
+                'rex_yform_filter[layertype]' => $this->getElement('filter'),
+                'rex_yform_set[layertype]' => $this->getElement('filter'),
+            ];
 
             $params = [
-                'leadIn' => trim($matchStructure['leadIn']),
-                'leadOut' => trim($matchStructure['leadOut']),
-                'options' => array_map(static function ($option) {
-                    return array_filter($option, 'is_string', ARRAY_FILTER_USE_KEY);
-                }, $matchOptions),
-                'popupButton' => $popupButton = '<button type="button"' . substr($matchButton[0], 2, -2) . 'button>',
-                'selectId' => $matchButton['id'],
                 'valueInput' => $this->getFieldName('value'),
                 'choiceInput' => $this->getFieldName('choice'),
                 'choiceType' => $this->isRadioSelect ? 'radio' : 'checkbox',
+                'options' => self::getLayerList($this->layer),
+                'selected' => $this->activeLayer,
+                'link' => rex_url::backendPage('', $linkParams),
+                'dataField' => sprintf('%s.%s', $this->params['main_table'], $this->getName()),
             ];
-
-            foreach ($params['options'] as &$option) {
-                $option['checked'] = in_array($option['id'], $this->selectedLayers, true) ? 'checked' : '';
-            }
 
             $this->params['form_output'][$this->getId()] = $this->parse('value.layerselect.tpl.php', $params);
         }
 
         /**
-         * Daten speichern wie in anderen Values auch.
+         * Speichern.
          */
-        $selectedLayers = array_intersect($this->selectedLayers, $this->getValue());
-        $this->params['value_pool']['email'][$this->subField] = implode(',', $selectedLayers);
-        if ($this->saveInDB()) {
-            $this->params['value_pool']['sql'][$this->subField] = implode(',', $selectedLayers);
+        $this->params['value_pool']['email'][$this->getName()] = implode(',', $this->layer);
+        $this->params['value_pool']['email'][$this->subField] = implode(',', $this->activeLayer);
+
+        if ($this->saveInDb()) {
+            $this->params['value_pool']['sql'][$this->getName()] = implode(',', $this->layer);
+            $this->params['value_pool']['sql'][$this->subField] = implode(',', $this->activeLayer);
         }
     }
 
     /**
-     * Individualisierte Definitions
-     * alles raus, was nicht nötig ist bzw. hidden setzen oder anpassen.
+     * Definitions.
      *
      * @return array<string,mixed>
      */
     public function getDefinitions(): array
     {
-        $definitions = parent::getDefinitions();
-        $definitions['name'] = 'geolocation_layerselect';
-        $definitions['description'] = rex_i18n::msg('yform_values_be_manager_relation_description');
-        $definitions['db_type'] = ['text', 'varchar(191)', 'int'];
-        $definitions['values']['format'] = ['type' => 'choice',  'label' => rex_i18n::msg('yform_values_be_manager_relation_type'), 'default' => 'checkbox', 'choices' => ['checkbox' => 'Multiple (Checkboxen)', 'radio' => 'Einfach (Radio-Button)']];
-        $definitions['manager'] = rex_request::request('table_name', 'string', '') === rex::getTable('geolocation_mapset');
-        $definitions['values']['type']['type'] = 'hidden';
-        $definitions['values']['type']['default'] = '3';
-        $definitions['values']['relation_table']['type'] = 'hidden';
-        return $definitions;
+        return [
+            'type' => 'value',
+            'name' => 'geolocation_layerselect',
+            'description' => rex_i18n::msg('geolocation_yfv_layserselect_description'),
+            'values' => [
+                'name' => [
+                    'type' => 'name',
+                    'label' => rex_i18n::msg('yform_values_defaults_name'),
+                ],
+                'label' => [
+                    'type' => 'text',
+                    'label' => rex_i18n::msg('yform_values_defaults_label'),
+                ],
+                'format' => [
+                    'type' => 'choice',
+                    'label' => rex_i18n::msg('geolocation_yfv_layserselect_format'),
+                    'default' => 'checkbox',
+                    'choices' => [
+                        'checkbox' => rex_i18n::msg('geolocation_yfv_layserselect_format_ckeckbox'),
+                        'radio' => rex_i18n::msg('geolocation_yfv_layserselect_format_radio'),
+                    ],
+                ],
+                'filter' => [
+                    'type' => 'choice',
+                    'label' => rex_i18n::msg('geolocation_layer_type'),
+                    'default' => 'b',
+                    'choices' => [
+                        'b' => rex_i18n::msg('geolocation_layer_type_choice_b'),
+                        'o' => rex_i18n::msg('geolocation_layer_type_choice_o'),
+                    ],
+                ],
+                'attributes' => [
+                    'type' => 'text',
+                    'label' => rex_i18n::msg('yform_values_defaults_attributes'),
+                    'notice' => rex_i18n::msg('yform_values_defaults_attributes_notice'),
+                ],
+                'notice' => [
+                    'type' => 'text',
+                    'label' => rex_i18n::msg('yform_values_defaults_notice'),
+                ],
+            ],
+            'db_type' => ['varchar(191)'],
+            'famous' => false,
+            // Der Feldtyp ist sehr Geolocation-speziell. Im YForm-Manager nicht allgemein zur Auswahl anbieten
+            'manager' => rex_request::request('table_name', 'string', '') === Mapset::table()->getTableName(),
+        ];
+    }
+
+    public function getDescription(): string
+    {
+        return 'geolocation_layerselect|name|label|radio/checkbox|b/o|[attributes]|[notice]|';
+    }
+
+    /**
+     * Aus den gegebenen Layer-IDs ein Array id => label zusammenbauen.
+     *
+     * @param array<int> $list
+     * @return array<string>
+     */
+    public static function getLayerList(array $list = []): array
+    {
+        $result = [];
+        foreach (self::getLayerListItems($list) as $layer) {
+            $result[$layer->getId()] = sprintf(
+                '%s (%s) [ID=%d]',
+                $layer->name,
+                $layer->status,
+                $layer->getId(),
+            );
+        }
+        return $result;
+    }
+
+    /**
+     * Aus den gegebenen Layer-IDs die zugehörige Datensatz-Liste abrufen.
+     * "online" wird zusätzlich als Text in der aktuellen Sprache bereitgestellt
+     * (Feld "status").
+     *
+     * @param array<int> $list
+     * @return array<Layer>
+     */
+    public static function getLayerListItems(array $list = []): array
+    {
+        $list = array_filter($list, strlen(...));
+        if (0 === count($list)) {
+            return [];
+        }
+
+        // In der Reihenfolder der IDs
+        $order = sprintf('FIELD(`id`,%s)', implode(',', $list));
+        // "online" als Text
+        $online = sprintf(
+            'IF(`online`=1,"%s","%s")',
+            rex_i18n::msg('geolocation_form_active_choice_1'),
+            rex_i18n::msg('geolocation_form_active_choice_0'),
+        );
+        $data = Layer::query()
+            ->selectRaw($online, 'status')
+            ->orderByRaw($order)
+            ->findIds($list);
+
+        return $data->toArray();
+    }
+
+    /**
+     * @param mixed $params
+     */
+    public static function getListValue($params): string
+    {
+        $layer = array_filter(
+            explode(',', (string) $params['subject']),
+            static function ($k) {return '' !== trim($k); },
+            ARRAY_FILTER_USE_KEY,
+        );
+        $options = [];
+        foreach (self::getLayerListItems($layer) as $item) {
+            $template = $item->isOnline() ? '<span title="%s">%s</span>' : '<s class="text-muted" title="%s">%s</s>';
+            $options[] = sprintf(
+                $template,
+                rex_escape($item->status),
+                rex_escape($item->name),
+            );
+        }
+        return implode('<br />', $options);
+    }
+
+    /**
+     * Baut die Suchfelder auf
+     * In Anlehnung an be_manager_relation.
+     *
+     * @param mixed $params
+     * @return void
+     */
+    public static function getSearchField($params)
+    {
+        $params['searchForm']->setValueField('be_manager_relation', [
+            'name' => $params['field']->getName(),
+            'label' => $params['field']->getLabel(),
+            'empty_option' => true,
+            'table' => Layer::table()->getTableName(),
+            'field' => 'name',
+            'filter' => 'layertype = ' . $params['field']->getElement('filter'),
+            'type' => 2,
+        ]);
+    }
+
+    /**
+     * Baut den Inhalt des Suchfeldes in die Query ein.
+     * Hier kann komplett auf den Code aus be_manager_relation zurückgegriffen
+     * werden.
+     *
+     * @param mixed $params
+     * @return rex_yform_manager_query
+     */
+    public static function getSearchFilter($params)
+    {
+        return rex_yform_value_be_manager_relation::getSearchFilter($params);
     }
 }

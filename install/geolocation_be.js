@@ -374,10 +374,10 @@ Geolocation.Classes.CustomHTMLBaseElement = (superclass) => class extends superc
  * 
  * Der Item-Rohling steckt im Attribut "template". 
  * 
- * Bei Radio-Items wird zudem sichergestellt, dass wenn es nu ein Item gibt, dieses
+ * Bei Radio-Items wird zudem sichergestellt, dass wenn es nur ein Item gibt, dieses
  * auch selektiert ist.   
  */
- customElements.define('geolocation-layerselect',
+customElements.define('geolocation-layerselect',
  class extends Geolocation.Classes.CustomHTMLBaseElement(HTMLElement) {
 
      __template = '{label}';
@@ -409,11 +409,11 @@ Geolocation.Classes.CustomHTMLBaseElement = (superclass) => class extends superc
          // Das Warten hat ein Ende
          this.parsed = true;
 
-         // Den eigenen list-group-Container ausfindigmachen  sowie den hidden Select,
+         // Den eigenen list-group-Container ausfindig machen sowie den hidden Select,
          // in dem die neuen Options aus dem YForm-Popup ankommen
          // Überwachen per MutationObserver
          this.__container = this.querySelector('.list-group');
-         this.__select = this.querySelector('select[id^="YFORM_DATASETLIST_SELECT_"]');
+         this.__select = this.querySelector('select[id^="yform-dataset-view-"]');
          if( !this.__select || !this.__container ) {
              return;
          }

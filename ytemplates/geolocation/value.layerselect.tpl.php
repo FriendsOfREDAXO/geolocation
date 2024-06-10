@@ -1,34 +1,60 @@
 <?php
-/**
- * yform-Fragment für das Geolocation-Value rex_yform_value_geolocation_layerselect.
- *
- * benötigt aus geolocation_be.js die CustomHTML-Elemente
- *  geolocation-trigger
- *  geolocation-layerselect
- *  geolocation-layerselect-item
- */
-
-namespace FriendsOfRedaxo\Geolocation;
-
-use rex_i18n;
-use rex_yform_value_geolocation_layerselect;
 
 /**
- * rex_yform_value-Instanz und die daraus gelieferten Daten.
+ * baut das HTML für das Geolocation-Value rex_yform_value_geolocation_layerselect
+ * zusammen.
  *
+ * Parameter aus dem Value:
+ * @var string $valueInput      FORM[data_edit-rex_geolocation_mapset][3][value][]
+ * @var string $choiceInput     FORM[data_edit-rex_geolocation_mapset][3][choice][]
+ * @var string $choiceType      checkbox|radio
+ * @var array<string> $options  [id=>label,...]
+ * @var array<int> $selected    [id,..]
+ * @var string $link            Link für das Popup zur Auswahl der Layer
+ * @var string $dataField       Paramter für das Popup
+ * 
+ * Die Auswahl neuer Layer erfolgt durch ein be_manager_relation-Popup ($link).
+ * Das Fenster hinterlegt die ausgewählten Daten in einem SELECT-Tag, der hier
+ * als hidden-Element zur Verfügung gestellt wird. wird. Per JS werden die
+ * Änderungen im Select in die .list-group übertragen.
+ *
+ * Das Value an sich:
  * @var rex_yform_value_geolocation_layerselect $this
- * @var string $leadIn
- * @var string $leadOut
- * @var string $choiceInput
- * @var string $valueInput
- * @var string $choiceType
- * @var array $options
- * @var string $selectId
- * @var string $popupButton
  */
 
+$notices = [];
+if ('' != $this->getElement('notice')) {
+    $notices[] = rex_i18n::translate($this->getElement('notice'), false);
+}
+if (isset($this->params['warning_messages'][$this->getId()]) && !$this->params['hide_field_warning_messages']) {
+    $notices[] = '<span class="text-warning">' . rex_i18n::translate($this->params['warning_messages'][$this->getId()], false) . '</span>';
+}
+
+$notice = '';
+if (count($notices) > 0) {
+    $notice = '<p class="help-block">' . implode('<br />', $notices) . '</p>';
+}
+
+$class = $this->getElement('required') ? 'form-is-required ' : '';
+
+if ('' != trim($this->getLabel())) {
+    $labelAttributes = [
+        'class' => 'control-label',
+        'for' => $this->getFieldId(),
+    ];
+
+    $containerAttributes = [
+        'class' => trim('form-group formgeolocation_layerselect ' . $class . $this->getWarningClass()),
+        'id' => $this->getHTMLId(),
+        'data-be-relation-wrapper' => $this->getFieldName(),
+    ];
+
+    echo '<div',rex_string::buildAttributes($containerAttributes),'>
+    <label',rex_string::buildAttributes($labelAttributes),'>' . $this->getLabel() . '</label>';
+}
+
 /**
- * Für die Elemente in der Hauptliste wird ein Template erstellt.
+ * Für die Elemente in der Auswahlliste wird ein Template erstellt.
  */
 $template = <<<HTML
     <geolocation-layerselect-item type="button" class="list-group-item" tabindex="0">
@@ -44,25 +70,47 @@ $template = <<<HTML
     HTML;
 
 /**
- * Die List-Group mit den aktuellen Elementen aufbauen
- * Basis ist das $template.
+ * Für die vorhandenen Elemente (Options) werden direkt die Einträge
+ * der Auswahlliste erzeugt.
  */
 $layerEntries = '';
-foreach ($options as $option) {
-    $layerEntries .= str_replace(['{value}', '{label}', '{checked}'], [$option['id'], $option['name'], $option['checked']], $template);
+foreach ($options as $id => $option) {
+    $checked = in_array($id, $selected) ? 'checked' : '';
+    $layerEntries .= str_replace(['{value}', '{label}', '{checked}'], [$id, $option, $checked], $template);
 }
 
-echo $leadIn;
+/**
+ * Attribute für den Rahmen.
+ */
+$bmrId = random_int(10000000, 99999999);
+$selectAttributes = [
+    'class' => 'input-group yform-dataset-widget',
+    'template' => $template,
+    'data-widget_type' => 'multiple',
+    'data-id' => $bmrId,
+    'data-link' => $link,
+    'data-field_name' => $dataField,
+];
+
 ?>
-<geolocation-layerselect class="input-group" template="<?= rex_escape($template)?>">
+<geolocation-layerselect <?= rex_string::buildAttributes($selectAttributes) ?>>
     <div class="form-control">
         <p><?= rex_i18n::msg('geolocation_yfv_layerselect_empty') ?></p>
-        <div class="list-group"><?= $layerEntries ?></div>
+        <div class="list-group">
+            <?= $layerEntries ?>
+        </div>
     </div>
     <span class="input-group-addon">
-        <div class="btn-group-vertical"><?= $popupButton ?></div>
+        <div class="btn-group-vertical">
+            <a class="btn btn-popup yform-dataset-widget-open" title="<?= rex_i18n::msg('yform_relation_choose_entry') ?>"><i class="rex-icon rex-icon-add"></i></a>
+        </div>
     </span>
-    <select id="YFORM_DATASETLIST_SELECT_<?= $selectId ?>"></select>
+    <select class="hidden" id="yform-dataset-view-<?= $bmrId ?>"></select>
 </geolocation-layerselect>
 <?php
-echo $leadOut;
+
+echo $notice;
+
+if ('' != trim($this->getLabel())) {
+    echo '</div>';
+}
