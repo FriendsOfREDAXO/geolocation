@@ -96,8 +96,18 @@ $selectAttributes = [
 $bmrLink = rex_url::backendController($linkParams, false);
 $bmrId = $linkParams['rex_yform_manager_opener[id]'];
 
+/**
+ * ID-String für den Select abhängig von der YForm-Version
+ * ab YForm 4.2.0 ist es: yform-dataset-view-
+ * 
+ * NOTICE: kann entfallen wenn irgendwann die Yform-Mindestversion ab 4.2 ist
+ */
+$selectId = rex_version::compare(rex_addon::get('yform')->getVersion(),'4.2.0','<')
+    ? 'YFORM_DATASETLIST_SELECT_'
+    : 'yform-dataset-view-';
+
 ?>
-<geolocation-layerselect id="test4711-<?= $bmrId ?>" <?= rex_string::buildAttributes($selectAttributes) ?>>
+<geolocation-layerselect <?= rex_string::buildAttributes($selectAttributes) ?>>
     <div class="form-control">
         <p><?= rex_i18n::msg('geolocation_yfv_layerselect_empty') ?></p>
         <div class="list-group">
@@ -109,7 +119,7 @@ $bmrId = $linkParams['rex_yform_manager_opener[id]'];
             <gelocation-trigger class="btn btn-default" event="geolocation:layerselect.add" detail="<?= rex_escape($bmrLink) ?>"><i class="rex-icon rex-icon-add"></i></gelocation-trigger>
         </div>
     </span>
-    <select class="hidden" id="yform-dataset-view-<?= $bmrId ?>"></select>
+    <select class="hidden" id="<?= $selectId ?><?= $bmrId ?>"></select>
 </geolocation-layerselect>
 <?php
 

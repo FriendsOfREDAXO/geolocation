@@ -414,6 +414,12 @@ customElements.define('geolocation-layerselect',
             // Überwachen per MutationObserver
             this.__container = this.querySelector('.list-group');
             this.__select = this.querySelector('select[id^="yform-dataset-view-"]');
+            // Fallback für YForm vor 4.2
+            let preYform420 = false;
+            if (!this.__select) {
+                preYform420 = true;
+                this.__select = this.querySelector('select[id^="YFORM_DATASETLIST_SELECT_"]');
+            }
             if (!this.__select || !this.__container) {
                 return;
             }
@@ -422,7 +428,11 @@ customElements.define('geolocation-layerselect',
 
             // Event fordert das Popup-Fenster (be_manager_relation-Style) an,
             // mit dem neue Layer hinzugefügt werden.
-            this.addEventListener('geolocation:layerselect.add', this._openPopup.bind(this));
+            if(preYform420) {
+                this.addEventListener('geolocation:layerselect.add', this._openPopupPre420.bind(this));
+            } else {
+                this.addEventListener('geolocation:layerselect.add', this._openPopup.bind(this));
+            }
         }
 
         /**
@@ -436,7 +446,20 @@ customElements.define('geolocation-layerselect',
             let id = event.detail.substr(index + 1);
             return newWindow(id, event.detail, 1200, 800, ',status=yes,resizable=yes');
         }
-
+        // Da in YForm vor 4.2 die Nummer in der Select-ID von YForm-JS verändert
+        // wird, tauschen wir hier in diesem Fall die Nummer in der URL gegen die
+        // Nummer aus der ID. Die Nummer steht am Ende der URL.
+        // 
+        // NOTICE: kann zurückgebaut werden wenn die Mindestversion von YForm
+        // auf 4.2 oder höher geändert wird.
+        _openPopupPre420(event) {
+            let url = event.detail;
+            let index = this.__select.id.lastIndexOf('_');
+            let id = this.__select.id.substr(index + 1);
+            index = url.lastIndexOf('=');
+            url = url.substr(0, index + 1) + id;
+            return newWindow(id, url, 1200, 800, ',status=yes,resizable=yes');
+        }
 
         /**
          * Wenn vom YForm-Popup ein neu ausgwählter Layer im select abgelegt wurde,
