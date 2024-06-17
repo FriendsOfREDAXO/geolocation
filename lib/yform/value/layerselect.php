@@ -140,6 +140,9 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
                 'table_name' => Layer::table()->getTableName(),
                 'rex_yform_filter[layertype]' => $this->getElement('filter'),
                 'rex_yform_set[layertype]' => $this->getElement('filter'),
+                'rex_yform_manager_opener[field]' => sprintf('%s.%s', $this->params['main_table'], $this->getName()),
+                'rex_yform_manager_opener[multiple]' => 1,
+                'rex_yform_manager_opener[id]' => random_int(10000000, 99999999),
             ];
 
             $params = [
@@ -148,8 +151,7 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
                 'choiceType' => $this->isRadioSelect ? 'radio' : 'checkbox',
                 'options' => self::getLayerList($this->layer),
                 'selected' => $this->activeLayer,
-                'link' => rex_url::backendPage('', $linkParams),
-                'dataField' => sprintf('%s.%s', $this->params['main_table'], $this->getName()),
+                'linkParams' => $linkParams,
             ];
 
             $this->params['form_output'][$this->getId()] = $this->parse('value.layerselect.tpl.php', $params);
@@ -214,6 +216,28 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
                     'type' => 'text',
                     'label' => rex_i18n::msg('yform_values_defaults_notice'),
                 ],
+                // Hier versteckte Felder, die die fixen Parameter für den
+                // Popup-Aufruf á la be_manager_relation eintragen.
+                'html1' => [
+                    'type' => 'html',
+                    'html' => '<div class="hidden">',
+                ],
+                'table' => [
+                    'type' => 'text',
+                    'attributes' => sprintf('{"value":"%s"}', Layer::table()->getTableName()),
+                ],
+                'field' => [
+                    'type' => 'text',
+                    'attributes' => '{"value":"name"}',
+                ],
+                'type' => [
+                    'type' => 'text',
+                    'attributes' => '{"value":"3"}',
+                ],
+                'html2' => [
+                    'type' => 'html',
+                    'html' => '</div>',
+                ],
             ],
             'db_type' => ['varchar(191)'],
             'famous' => false,
@@ -238,9 +262,8 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
         $result = [];
         foreach (self::getLayerListItems($list) as $layer) {
             $result[$layer->getId()] = sprintf(
-                '%s (%s) [ID=%d]',
+                '%s [ID=%d]',
                 $layer->name,
-                $layer->status,
                 $layer->getId(),
             );
         }
@@ -249,8 +272,6 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
 
     /**
      * Aus den gegebenen Layer-IDs die zugehörige Datensatz-Liste abrufen.
-     * "online" wird zusätzlich als Text in der aktuellen Sprache bereitgestellt
-     * (Feld "status").
      *
      * @param array<int> $list
      * @return array<Layer>

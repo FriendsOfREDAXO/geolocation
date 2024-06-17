@@ -459,14 +459,17 @@
                 "name": "layer",
                 "label": "translate:geolocation_mapset_layer",
                 "not_required": "",
+                "type": "3",
                 "format": "radio",
+                "table": "rex_geolocation_layer",
+                "field": "name",
                 "attributes": "",
                 "notice": "translate:geolocation_mapset_layer_notice",
                 "filter": "b"
             },
             {
                 "table_name": "rex_geolocation_mapset",
-                "prio": 5,
+                "prio": 4,
                 "type_id": "value",
                 "type_name": "geolocation_layerselect",
                 "db_type": "varchar(191)",
@@ -475,14 +478,17 @@
                 "name": "overlay",
                 "label": "translate:geolocation_mapset_overlay",
                 "not_required": "",
+                "type": "3",
                 "format": "checkbox",
+                "table": "rex_geolocation_layer",
+                "field": "name",
                 "attributes": "",
                 "notice": "translate:geolocation_mapset_overlay_notice",
                 "filter": "o"
             },
             {
                 "table_name": "rex_geolocation_mapset",
-                "prio": 6,
+                "prio": 5,
                 "type_id": "value",
                 "type_name": "choice",
                 "db_type": "varchar(191)",
@@ -507,7 +513,7 @@
             },
             {
                 "table_name": "rex_geolocation_mapset",
-                "prio": 7,
+                "prio": 6,
                 "type_id": "value",
                 "type_name": "text",
                 "db_type": "varchar(191)",
@@ -525,7 +531,7 @@
             },
             {
                 "table_name": "rex_geolocation_mapset",
-                "prio": 8,
+                "prio": 7,
                 "type_id": "validate",
                 "type_name": "unique",
                 "db_type": "",
@@ -540,7 +546,7 @@
             },
             {
                 "table_name": "rex_geolocation_mapset",
-                "prio": 9,
+                "prio": 8,
                 "type_id": "validate",
                 "type_name": "empty",
                 "db_type": "",
@@ -553,7 +559,7 @@
             },
             {
                 "table_name": "rex_geolocation_mapset",
-                "prio": 10,
+                "prio": 9,
                 "type_id": "validate",
                 "type_name": "unique",
                 "db_type": "",
@@ -568,7 +574,7 @@
             },
             {
                 "table_name": "rex_geolocation_mapset",
-                "prio": 11,
+                "prio": 10,
                 "type_id": "validate",
                 "type_name": "empty",
                 "db_type": "",
@@ -581,7 +587,7 @@
             },
             {
                 "table_name": "rex_geolocation_mapset",
-                "prio": 12,
+                "prio": 11,
                 "type_id": "validate",
                 "type_name": "preg_match",
                 "db_type": "",

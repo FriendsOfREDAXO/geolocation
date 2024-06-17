@@ -1,12 +1,12 @@
 # Changelog
 
-## 10.06.2024 2.3.0
+## 16.06.2024 2.3.0
 
 - Bugfix:
   - Im Formular für Kartensätze (Mapset) ist die Auswahl der Karten/Layer ab YForm 4.3.0 defekt,
-    da mit YForm 4.2.0 das zugrunde liegende Widget aus dem value be_manager_relation
-    anders aufgebaut ist. Das Feld zur Layerauswahl ist nun an die neue Struktur angepasst;
-    daher funktiniert Geolocation ab dieser Version nur mit YForm ab 4.2.0.
+    da mit YForm 4.2.0 das zugrunde liegende Widget samt JS aus dem Value be_manager_relation
+    anders aufgebaut ist. Das Feld zur Layer-Auswahl ist nun weitgehend eigenständig,
+    nutzt aber weiterhin das Popup-Fenster aus be_manager_relation zur Layer-Auswahl. 
 
 ## 26.02.2024 2.2.0
 
