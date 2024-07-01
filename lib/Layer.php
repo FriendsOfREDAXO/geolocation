@@ -45,8 +45,8 @@ use rex_csrf_token;
 use rex_extension;
 use rex_extension_point;
 use rex_file;
-use rex_logger;
 use rex_i18n;
+use rex_logger;
 use rex_path;
 use rex_request;
 use rex_response;
@@ -58,13 +58,21 @@ use rex_yform;
 use rex_yform_manager_dataset;
 use rex_yform_manager_query;
 use rex_yform_validate_customfunction;
-
 use rex_yform_value_abstract;
 
 use function count;
 use function is_bool;
 use function is_string;
 use function strlen;
+
+use const CURLINFO_CONTENT_TYPE;
+use const CURLINFO_RESPONSE_CODE;
+use const CURLOPT_FOLLOWLOCATION;
+use const CURLOPT_HEADER;
+use const CURLOPT_PROXY;
+use const CURLOPT_RETURNTRANSFER;
+use const E_WARNING;
+use const PATHINFO_EXTENSION;
 
 /**
  * Mittels parent::__get bereitgestellte Daten.
@@ -125,7 +133,7 @@ class Layer extends rex_yform_manager_dataset
 
             if ('lang' === $fe[1]) {
                 // Auswahlfähige Sprachcodes ermitteln
-                $fe[3] = 'choice|lang|Sprache|{'.implode(',', Tools::getLocales()).'}|,text|label|Bezeichnung|';
+                $fe[3] = 'choice|lang|Sprache|{' . implode(',', Tools::getLocales()) . '}|,text|label|Bezeichnung|';
                 continue;
             }
             if ('ttl' === $fe[1] && '' === trim($fe[3])) {
@@ -160,7 +168,7 @@ class Layer extends rex_yform_manager_dataset
     {
         $sql = rex_sql::factory();
         $table = Mapset::table();
-        $qry = 'SELECT `id`, `title` FROM `'.$table->getTableName().'` WHERE FIND_IN_SET(:id,`layer`)';
+        $qry = 'SELECT `id`, `title` FROM `' . $table->getTableName() . '` WHERE FIND_IN_SET(:id,`layer`)';
         /**
          * STAN: Possible SQL-injection in expression $table->getTableName().
          * False positive: der TableName kommt aus rex_yform_manager_dataset und ist m.E. safe.
@@ -179,9 +187,9 @@ class Layer extends rex_yform_manager_dataset
             /** @var string $v */
             foreach ($data as $k => &$v) {
                 $params['data_id'] = $k;
-                $v = '<li><a href="'.rex_url::backendController($params).'" target="_blank">'.$v.'</li>';
+                $v = '<li><a href="' . rex_url::backendController($params) . '" target="_blank">' . $v . '</li>';
             }
-            $result = rex_i18n::msg('geolocation_layer_in_use', $this->name) .'<ul>'.implode('', $data).'</ul>';
+            $result = rex_i18n::msg('geolocation_layer_in_use', $this->name) . '<ul>' . implode('', $data) . '</ul>';
 
             rex_extension::register('YFORM_DATA_LIST', function ($ep) {
                 // nur abarbeiten wenn es um diese Instanz geht
@@ -224,7 +232,7 @@ class Layer extends rex_yform_manager_dataset
      * Da das Formular sichert per db_action, nicht via dataset::save()!
      * Daher hier den Cache per EP löschen
      */
-    public function executeForm(rex_yform $yform, callable $afterFieldsExecuted = null): string
+    public function executeForm(rex_yform $yform, ?callable $afterFieldsExecuted = null): string
     {
         rex_extension::register('YFORM_DATA_UPDATED', function (rex_extension_point $ep) {
             // nur abarbeiten wenn es um diese Instanz geht
@@ -310,18 +318,30 @@ class Layer extends rex_yform_manager_dataset
      *  - Array mit einem Element: Instanz des Feldes 'lang'
      *
      * @param string $field
-     * @param string $value
+     * @param string|array<array<string,string>> $value
      * @param string $return
      * @param rex_yform_validate_customfunction $self
      * @param array<string,rex_yform_value_abstract> $elements
      */
     public static function verifyLang($field, $value, $return, $self, $elements): bool
     {
-        if ('' !== trim($value)) {
+        /**
+         * Kompatibilität zu YForm < 4.2.0
+         * 4.2.0 lieber nicht benutzen!
+         * TODO: rauswerfen wenn irgendwann mal die Mindestversion YFORM > 4.2. ist.
+         */
+        if (is_string($value)) {
+            $value = trim($value);
+            if ('' === $value) {
+                return true;
+            }
             $value = json_decode($value, true);
-            return 0 === count($value) || count(array_unique(array_column($value, '0'))) !== count($value);
         }
-        return true;
+
+        /**
+         * ab YForm 4.2.1 sollte das hier funktionieren.
+         */
+        return 0 === count($value) || count(array_unique(array_column($value, '0'))) !== count($value);
     }
 
     // Listenbezogen
@@ -372,11 +392,11 @@ class Layer extends rex_yform_manager_dataset
                 'url' => $href,
                 'content' => $label,
                 'attributes' => [
-                    'onclick' => 'return confirm(\''.$confirm.'\')',
+                    'onclick' => 'return confirm(\'' . $confirm . '\')',
                 ],
             ];
         } else {
-            $buttons['geolocationClearCache'] = '<a onclick="return confirm(\''.$confirm.'\')" href="'.$href.'">'.$label.'</a>';
+            $buttons['geolocationClearCache'] = '<a onclick="return confirm(\'' . $confirm . '\')" href="' . $href . '">' . $label . '</a>';
         }
         $ep->setSubject($buttons);
     }
@@ -461,7 +481,7 @@ class Layer extends rex_yform_manager_dataset
         }
 
         // prepare targetCacheDir-Name
-        $cacheDir = rex_path::addonCache(ADDON, $layer->getId().'/');
+        $cacheDir = rex_path::addonCache(ADDON, $layer->getId() . '/');
         $cacheFileName = null;
         $contentType = null;
         $ttl = $layer->ttl * 60;
@@ -470,7 +490,7 @@ class Layer extends rex_yform_manager_dataset
         if (0 < $ttl) {
             $fileNameElements['{suffix}'] = '*';
             $fileName = str_replace(array_keys($fileNameElements), $fileNameElements, self::FILE_PATTERN);
-            $cacheFileName = $cache->findCachedFile($cacheDir.$fileName, $ttl);
+            $cacheFileName = $cache->findCachedFile($cacheDir . $fileName, $ttl);
 
             // Tile-File exists; send to the requestor
             if (null !== $cacheFileName) {
@@ -506,7 +526,7 @@ class Layer extends rex_yform_manager_dataset
         // no reply at all, abort completely
         if ('0' === $returnCode) {
             $msg = sprintf('Geolocation: Tile-Request failed (cUrl Error %d / %s)', curl_errno($ch), curl_error($ch));
-            rex_logger::logError(E_WARNING, $msg, __FILE__, __LINE__ - 8, rex_context::fromGet()->getUrl([], false).' ➜ '.$url);
+            rex_logger::logError(E_WARNING, $msg, __FILE__, __LINE__ - 8, rex_context::fromGet()->getUrl([], false) . ' ➜ ' . $url);
             Tools::sendInternalError();
         }
 
