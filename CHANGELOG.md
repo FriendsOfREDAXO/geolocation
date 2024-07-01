@@ -1,5 +1,10 @@
 # Changelog
 
+## 01-07-2024 2.3.0
+
+-  Widget: Select durch eine List-group ersetzt.
+
+
 ## 01-07-2024 2.2.1
 
 - BugFix
