@@ -2,15 +2,19 @@
 
 ## 01-07-2024 2.3.0
 
--  Widget: Select durch eine List-group ersetzt.
-
-
-## 01-07-2024 2.2.1
-
+- Anpassungen für YForm ab 4.2.1
+  - Im Kartensatz-Formular erfolgt die Layerauswahl mit einem modifizierten Widget
+    (Select durch eine List-group ersetzt) Da sich mit YForm 4.2 der Aufbau des
+    Original-Widgets geändert hat, muss die Modofikation anders erfolgen. (#159)
+  - Die Funktionsweise der Spracheingabe in einem feld vom Typ be_table wurde
+    angepasst, da be_table seit 4.2.1 intern Daten anders vearbeitet. (#160)
+  - Beide Änderungen sind weitgehed abwärtskompatibel zur YForm-Mindestversion 4.0
+    (ausgenommen generiertes HTML).
+    
 - BugFix
-  - JS: Die Verlinkung der internen Geolocation -Strukturen im Karten-Container
+  - JS: Die Verlinkung der internen Geolocation-Strukturen im Karten-Container
     erfolgte zu spät. `map._conainer.__rmMap` ist nun bei der Tool-initialisierung
-    wie geplant verfügbar. 
+    wie geplant früher verfügbar. (#158)
 
 
 ## 26-02-2024 2.2.0
