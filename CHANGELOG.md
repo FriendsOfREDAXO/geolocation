@@ -1,5 +1,13 @@
 # Changelog
 
+## 01-07-2024 2.2.1
+
+- BugFix
+  - JS: Die Verlinkung der internen Geolocation -Strukturen im Karten-Container
+    erfolgte zu spät. `map._conainer.__rmMap` ist nun bei der Tool-initialisierung
+    wie geplant verfügbar. 
+
+
 ## 26-02-2024 2.2.0
 
 - Umbau (#152)
