@@ -1,14 +1,14 @@
 # Changelog
 
-## 16.06.2024 2.3.0
+## 01-07-2024 2.2.1
 
-- Bugfix:
-  - Im Formular für Kartensätze (Mapset) ist die Auswahl der Karten/Layer ab YForm 4.3.0 defekt,
-    da mit YForm 4.2.0 das zugrunde liegende Widget samt JS aus dem Value be_manager_relation
-    anders aufgebaut ist. Das Feld zur Layer-Auswahl ist nun weitgehend eigenständig,
-    nutzt aber weiterhin das Popup-Fenster aus be_manager_relation zur Layer-Auswahl. 
+- BugFix
+  - JS: Die Verlinkung der internen Geolocation -Strukturen im Karten-Container
+    erfolgte zu spät. `map._conainer.__rmMap` ist nun bei der Tool-initialisierung
+    wie geplant verfügbar. 
 
-## 26.02.2024 2.2.0
+
+## 26-02-2024 2.2.0
 
 - Umbau (#152)
   - Die Handbuchseiten sind technisch etwas anders realisiert.
