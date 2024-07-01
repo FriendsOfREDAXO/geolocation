@@ -11,6 +11,7 @@
  * Hier kein Namespace, da sonst die Value-Klasse nicht gefunden wird.
  */
 
+use FriendsOfRedaxo\Geolocation\Layer;
 use rex;
 use rex_api_geolocation_testurl;
 use rex_fragment;
@@ -26,7 +27,7 @@ class rex_yform_value_geolocation_url extends rex_yform_value_text
     public function enterObject()
     {
         /**
-         * Attribute für den Button zusammenstellen
+         * Attribute für den Button zusammenstellen.
          */
         $fragment = new rex_fragment();
         $fragment->setVar('id', $this->getHTMLId('modal'), false);
@@ -41,7 +42,7 @@ class rex_yform_value_geolocation_url extends rex_yform_value_text
         ];
 
         /**
-         * Die ID des Subdomain-Feldes ermitteln und in die Attribute eintragen
+         * Die ID des Subdomain-Feldes ermitteln und in die Attribute eintragen.
          */
         $subdomainField = $this->getElement('field');
         $valueFields = $this->getParam('values');
@@ -55,7 +56,7 @@ class rex_yform_value_geolocation_url extends rex_yform_value_text
         /**
          * "append" mit dem Code für den Test-Button belegen.
          */
-        $append = '<geolocation-test-tile-url '.rex_string::buildAttributes($attr).'>'.rex_i18n::msg('geolocation_testurl_label').'</geolocation-test-tile-url>';
+        $append = '<geolocation-test-tile-url ' . rex_string::buildAttributes($attr) . '>' . rex_i18n::msg('geolocation_testurl_label') . '</geolocation-test-tile-url>';
         $this->setElement('append', $append);
 
         /**
@@ -73,7 +74,7 @@ class rex_yform_value_geolocation_url extends rex_yform_value_text
      */
     public function getDescription(): string
     {
-        return 'geolocation_url|name|label|[default]|[notice]|'.rex_i18n::msg('geolocation_yfv_url_subdomain').'|';
+        return 'geolocation_url|name|label|[default]|[notice]|' . rex_i18n::msg('geolocation_yfv_url_subdomain') . '|';
     }
 
     /**
@@ -93,7 +94,8 @@ class rex_yform_value_geolocation_url extends rex_yform_value_text
         $definitions['description'] = rex_i18n::msg('geolocation_yfv_url_description');
         $definitions['is_searchable'] = false;
         $definitions['famous'] = false;
-        $definitions['manager'] = rex_request::request('table_name', 'string', '') === rex::getTable('geolocation_layer');
+        // Der Feldtyp ist sehr Geolocation-speziell. Im YForm-Manager nicht allgemein zur Auswahl anbieten
+        $definitions['manager'] = rex_request::request('table_name', 'string', '') === Layer::table()->getTableName();
         $definitions['values']['field'] = ['type' => 'select_name', 'label' => rex_i18n::msg('geolocation_yfv_url_subdomain')];
         unset($definitions['hooks']);
         unset($definitions['values']['no_db']);
@@ -101,5 +103,4 @@ class rex_yform_value_geolocation_url extends rex_yform_value_text
         unset($definitions['values']['append']);
         return $definitions;
     }
-
 }

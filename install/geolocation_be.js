@@ -374,76 +374,116 @@ Geolocation.Classes.CustomHTMLBaseElement = (superclass) => class extends superc
  * 
  * Der Item-Rohling steckt im Attribut "template". 
  * 
- * Bei Radio-Items wird zudem sichergestellt, dass wenn es nu ein Item gibt, dieses
+ * Bei Radio-Items wird zudem sichergestellt, dass wenn es nur ein Item gibt, dieses
  * auch selektiert ist.   
  */
- customElements.define('geolocation-layerselect',
- class extends Geolocation.Classes.CustomHTMLBaseElement(HTMLElement) {
+customElements.define('geolocation-layerselect',
+    class extends Geolocation.Classes.CustomHTMLBaseElement(HTMLElement) {
 
-     __template = '{label}';
-     __isRadio = false;
-     __observer = null;
-     __container = null;
+        __template = '{label}';
+        __isRadio = false;
+        __observer = null;
+        __container = null;
 
-     connectedCallback() {
-         // Template abrufen, Choive-Typ ermitteln
-         this.__template = this.getAttribute('template') || this.__template;
-         this.__isRadio = null !== this.__template.match(/type\s*=\s*"radio"/);
+        connectedCallback() {
+            // Template abrufen, Choive-Typ ermitteln
+            this.__template = this.getAttribute('template') || this.__template;
+            this.__isRadio = null !== this.__template.match(/type\s*=\s*"radio"/);
 
-         // alles Weitere wenn die Child-Elemente geladen sind
-         super.connectedCallback(); 
-     }
+            // alles Weitere wenn die Child-Elemente geladen sind
+            super.connectedCallback();
+        }
 
-     disconnectedCallback() {
-         this.__observer.disconnect();
-         this.__observer = null;
-     }
+        disconnectedCallback() {
+            this.__observer.disconnect();
+            this.__observer = null;
+        }
 
-     /**
-      * Ermittelt die beiden relevanten Sub-Container (select und eigene Items).
-      * Aktiviert darauf den EventListener für gelöschte eigene Items und
-      * den MutationObserver für neue Einträge.
-      * @returns
-      */
-     childrenAvailableCallback() {
-         // Das Warten hat ein Ende
-         this.parsed = true;
+        /**
+         * Ermittelt die beiden relevanten Sub-Container (select und eigene Items).
+         * Aktiviert darauf den EventListener für gelöschte eigene Items und
+         * den MutationObserver für neue Einträge.
+         * @returns
+         */
+        childrenAvailableCallback() {
+            // Das Warten hat ein Ende
+            this.parsed = true;
 
-         // Den eigenen list-group-Container ausfindigmachen  sowie den hidden Select,
-         // in dem die neuen Options aus dem YForm-Popup ankommen
-         // Überwachen per MutationObserver
-         this.__container = this.querySelector('.list-group');
-         this.__select = this.querySelector('select[id^="YFORM_DATASETLIST_SELECT_"]');
-         if( !this.__select || !this.__container ) {
-             return;
-         }
-         this.__observer = new MutationObserver(this._addEntry.bind(this));
-         this.__observer.observe(this.__select,{childList:true});
-     }
+            // Den eigenen list-group-Container ausfindig machen sowie den hidden Select,
+            // in dem die neuen Options aus dem YForm-Popup ankommen
+            // Überwachen per MutationObserver
+            this.__container = this.querySelector('.list-group');
+            this.__select = this.querySelector('select[id^="yform-dataset-view-"]');
+            // Fallback für YForm vor 4.2
+            let preYform420 = false;
+            if (!this.__select) {
+                preYform420 = true;
+                this.__select = this.querySelector('select[id^="YFORM_DATASETLIST_SELECT_"]');
+            }
+            if (!this.__select || !this.__container) {
+                return;
+            }
+            this.__observer = new MutationObserver(this._addEntry.bind(this));
+            this.__observer.observe(this.__select, { childList: true });
 
-     /**
-      * Wenn vom YForm-Popup ein neu ausgwählter Layer im select abgelegt wurde,
-      * wird der Eintrag in einen template-konformen Einrag im Ziel-Container
-      * umgewandelt. 
-      * Doppelte Einträge werden ignoriert.
-      * 
-      * @param {MutationRecord[]} mutations 
-      */
-     _addEntry( mutations ) {
-         mutations.forEach(mutation => mutation.addedNodes.forEach( option => {
-             if (!this.__container.querySelector(`[value="${option.value}"]`) ) {
-                 let checked = this.__isRadio && 0 == this.__container.children.length;
-                 let template = this.__template
-                     .replaceAll('{label}',option.innerHTML)
-                     .replaceAll('{value}',option.value)
-                     .replaceAll('{checked}',checked?'checked':'');
-                 this.__container.insertAdjacentHTML('beforeEnd',template);
-             }
-             option.remove();
-         }));
-     }
+            // Event fordert das Popup-Fenster (be_manager_relation-Style) an,
+            // mit dem neue Layer hinzugefügt werden.
+            if(preYform420) {
+                this.addEventListener('geolocation:layerselect.add', this._openPopupPre420.bind(this));
+            } else {
+                this.addEventListener('geolocation:layerselect.add', this._openPopup.bind(this));
+            }
+        }
 
- });
+        /**
+         * öffnet das Popup-Fenster zur Auswahl neuer Layer.
+         * Event.detail enthält den kompletten Abruf-Link
+         * Der letzte Teil des Links ist die Popup-ID, die zusätzlich als id an
+         * newWindow() übergeben werden muss
+         */
+        _openPopup(event) {
+            let index = event.detail.lastIndexOf('=');
+            let id = event.detail.substr(index + 1);
+            return newWindow(id, event.detail, 1200, 800, ',status=yes,resizable=yes');
+        }
+        // Da in YForm vor 4.2 die Nummer in der Select-ID von YForm-JS verändert
+        // wird, tauschen wir hier in diesem Fall die Nummer in der URL gegen die
+        // Nummer aus der ID. Die Nummer steht am Ende der URL.
+        // 
+        // NOTICE: kann zurückgebaut werden wenn die Mindestversion von YForm
+        // auf 4.2 oder höher geändert wird.
+        _openPopupPre420(event) {
+            let url = event.detail;
+            let index = this.__select.id.lastIndexOf('_');
+            let id = this.__select.id.substr(index + 1);
+            index = url.lastIndexOf('=');
+            url = url.substr(0, index + 1) + id;
+            return newWindow(id, url, 1200, 800, ',status=yes,resizable=yes');
+        }
+
+        /**
+         * Wenn vom YForm-Popup ein neu ausgwählter Layer im select abgelegt wurde,
+         * wird der Eintrag in einen template-konformen Einrag im Ziel-Container
+         * umgewandelt. 
+         * Doppelte Einträge werden ignoriert.
+         * 
+         * @param {MutationRecord[]} mutations 
+         */
+        _addEntry(mutations) {
+            mutations.forEach(mutation => mutation.addedNodes.forEach(option => {
+                if (!this.__container.querySelector(`[value="${option.value}"]`)) {
+                    let checked = this.__isRadio && 0 == this.__container.children.length;
+                    let template = this.__template
+                        .replaceAll('{label}', option.innerHTML)
+                        .replaceAll('{value}', option.value)
+                        .replaceAll('{checked}', checked ? 'checked' : '');
+                    this.__container.insertAdjacentHTML('beforeEnd', template);
+                }
+                option.remove();
+            }));
+        }
+
+    });
 
 /** <geolocation-layerselect-item> Klammer für Einträge in geolocation-layerselect
 * 
@@ -466,119 +506,119 @@ Geolocation.Classes.CustomHTMLBaseElement = (superclass) => class extends superc
 * Die Original-Events der Inputs werden jedoch abgesetzt (ungetestet).
 */
 customElements.define('geolocation-layerselect-item',
- class extends HTMLElement {
+    class extends HTMLElement {
 
-     connectedCallback() {
-         // Event-handler setzen
-         this.addEventListener('geolocation:layerselect.up', this._moveUp.bind(this));
-         this.addEventListener('geolocation:layerselect.down', this._moveDown.bind(this));
-         this.addEventListener('geolocation:layerselect.delete', this._delete.bind(this));
-         this.addEventListener('keydown', this._byKey.bind(this));
-         this.addEventListener('click', this._selectChoice.bind(this));
-     }
+        connectedCallback() {
+            // Event-handler setzen
+            this.addEventListener('geolocation:layerselect.up', this._moveUp.bind(this));
+            this.addEventListener('geolocation:layerselect.down', this._moveDown.bind(this));
+            this.addEventListener('geolocation:layerselect.delete', this._delete.bind(this));
+            this.addEventListener('keydown', this._byKey.bind(this));
+            this.addEventListener('click', this._selectChoice.bind(this));
+        }
 
-     disconnectedCallback() {
-         this.removeEventListener('geolocation:layerselect.up', this._moveUp.bind(this));
-         this.removeEventListener('geolocation:layerselect.down', this._moveDown.bind(this));
-         this.removeEventListener('geolocation:layerselect.delete', this._delete.bind(this));
-         this.removeEventListener('keydown', this._byKey.bind(this));
-         this.removeEventListener('click', this._selectChoice.bind(this));
-     }
+        disconnectedCallback() {
+            this.removeEventListener('geolocation:layerselect.up', this._moveUp.bind(this));
+            this.removeEventListener('geolocation:layerselect.down', this._moveDown.bind(this));
+            this.removeEventListener('geolocation:layerselect.delete', this._delete.bind(this));
+            this.removeEventListener('keydown', this._byKey.bind(this));
+            this.removeEventListener('click', this._selectChoice.bind(this));
+        }
 
-     /** 
-      * Schiebt den Eintrag vor den davor stehenden Eintrag,
-      * also eine Position nach oben
-      * 
-      * @param {CustomEvent} event 
-      */
-     _moveUp(event) {
-         let sibling = this.previousElementSibling;
-         if (sibling) {
-             sibling.before(this);
-             this.focus();
-         }
-         event.preventDefault();
-         event.stopImmediatePropagation();
-     }
+        /** 
+         * Schiebt den Eintrag vor den davor stehenden Eintrag,
+         * also eine Position nach oben
+         * 
+         * @param {CustomEvent} event 
+         */
+        _moveUp(event) {
+            let sibling = this.previousElementSibling;
+            if (sibling) {
+                sibling.before(this);
+                this.focus();
+            }
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
 
-     /** 
-      * Schiebt den Eintrag hinter den Folgeeintrag,
-      * also eine Position nach unten
-      * 
-      * @param {CustomEvent} event 
-      */
-     _moveDown(event) {
-         let sibling = this.nextElementSibling;
-         if (sibling) {
-             sibling.after(this);
-             this.focus();
-         }
-         event.preventDefault();
-         event.stopImmediatePropagation();
-     }
+        /** 
+         * Schiebt den Eintrag hinter den Folgeeintrag,
+         * also eine Position nach unten
+         * 
+         * @param {CustomEvent} event 
+         */
+        _moveDown(event) {
+            let sibling = this.nextElementSibling;
+            if (sibling) {
+                sibling.after(this);
+                this.focus();
+            }
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
 
-     /** 
-      * Entfernt den Eintrag aus der Liste.
-      * 
-      * Falls es ein Radio-Element ist und dieser Eintrag der selektierte (checked)
-      * wird nach dem Löschen geprüft, ob es noch Elemente im Parent-Container gibt.
-      * Wenn ja, wird das erste Element angeklickt, um genau ein selektiertes
-      * Element zu haben. 
-      * 
-      * @param {CustomEvent} event 
-      */
-      _delete(event) {
-         let input = this.querySelector('input:not([type="hidden"])');
-         let container = input.type == 'radio' && input.checked ? this.parentNode : null;
+        /** 
+         * Entfernt den Eintrag aus der Liste.
+         * 
+         * Falls es ein Radio-Element ist und dieser Eintrag der selektierte (checked)
+         * wird nach dem Löschen geprüft, ob es noch Elemente im Parent-Container gibt.
+         * Wenn ja, wird das erste Element angeklickt, um genau ein selektiertes
+         * Element zu haben. 
+         * 
+         * @param {CustomEvent} event 
+         */
+        _delete(event) {
+            let input = this.querySelector('input:not([type="hidden"])');
+            let container = input.type == 'radio' && input.checked ? this.parentNode : null;
 
-         this.remove();
+            this.remove();
 
-         if( container && 0 < container.childNodes.length) {
-             container.firstElementChild.click();
-         }
-         event.preventDefault();
-         event.stopImmediatePropagation();
-     }
+            if (container && 0 < container.childNodes.length) {
+                container.firstElementChild.click();
+            }
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
 
-     /** 
-      * Fängt den Event auf der Layer-Zeile ab und wandelt ihn in einen
-      * Click auf dem Input um.
-      * 
-      * Click auf dem Input fängt der Input selbst ab.
-      * 
-      * @param {Event} event 
-      */
-     _selectChoice(event) {
-         if (event.target == this) {
-             let input = this.querySelector('input:not([type="hidden"])');
-             if (input) {
-                 input.click();
-                 this.focus();
-             }
-             event.preventDefault();
-             event.stopImmediatePropagation();
-         }
-     }
+        /** 
+         * Fängt den Event auf der Layer-Zeile ab und wandelt ihn in einen
+         * Click auf dem Input um.
+         * 
+         * Click auf dem Input fängt der Input selbst ab.
+         * 
+         * @param {Event} event 
+         */
+        _selectChoice(event) {
+            if (event.target == this) {
+                let input = this.querySelector('input:not([type="hidden"])');
+                if (input) {
+                    input.click();
+                    this.focus();
+                }
+                event.preventDefault();
+                event.stopImmediatePropagation();
+            }
+        }
 
-     /**
-      * Reagiert auf Tasten, die den drei Buttons je Eintrag entsprechen
-      * sowie der Auswahl des Choice-Input
-      * 
-      * @param {Event} event 
-      * @returns mixed
-      */
-     _byKey(event) {
-         if ('ArrowUp' == event.key) {
-             return this._moveUp(event);
-         } else if ('ArrowDown' == event.key) {
-             return this._moveDown(event)
-         } else if ('Delete' == event.key) {
-             return this._delete(event);
-         } else if (32 == event.keyCode) {
-             return this._selectChoice(event);
-         }
-     }
- });
+        /**
+         * Reagiert auf Tasten, die den drei Buttons je Eintrag entsprechen
+         * sowie der Auswahl des Choice-Input
+         * 
+         * @param {Event} event 
+         * @returns mixed
+         */
+        _byKey(event) {
+            if ('ArrowUp' == event.key) {
+                return this._moveUp(event);
+            } else if ('ArrowDown' == event.key) {
+                return this._moveDown(event)
+            } else if ('Delete' == event.key) {
+                return this._delete(event);
+            } else if (32 == event.keyCode) {
+                return this._selectChoice(event);
+            }
+        }
+    });
 
 /**
 * HTMLElement, das einfach einen Custom Event absetzt
@@ -689,7 +729,7 @@ customElements.define('gelocation-trigger',
             if (event.key == this.__key) {
                 event.stopImmediatePropagation();
                 event.preventDefault();
-                if( !event.repeat ) {
+                if (!event.repeat) {
                     this._trigger();
                 }
             }

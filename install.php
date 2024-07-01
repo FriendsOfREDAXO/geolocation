@@ -44,9 +44,9 @@ use function defined;
 use function is_bool;
 use function is_string;
 
-/**
- * @var rex_addon $this
- */
+use const PHP_EOL;
+
+/** @var rex_addon $this */
 
 // das bin ich ...
 if (!defined('FriendsOfRedaxo\\Geolocation\\ADDON')) {
@@ -81,7 +81,7 @@ try {
         ->ensurePrimaryIdColumn()
         ->ensureColumn(new rex_sql_column('name', 'varchar(191)'))
         ->ensureColumn(new rex_sql_column('url', 'text'))
-        ->ensureColumn(new rex_sql_column('retinaurl','text'))
+        ->ensureColumn(new rex_sql_column('retinaurl', 'text'))
         ->ensureColumn(new rex_sql_column('subdomain', 'varchar(191)'))
         ->ensureColumn(new rex_sql_column('attribution', 'text'))
         ->ensureColumn(new rex_sql_column('lang', 'text'))
@@ -109,9 +109,8 @@ try {
     if ($config['dataset']['load']) {
         if (!$config['dataset']['overwrite']) {
             $config['dataset']['overwrite'] =
-                (0 === $sql->setQuery('SELECT 1 FROM '.$layer.' LIMIT 1')->getRows())
-                &&
-                (0 === $sql->setQuery('SELECT 1 FROM '.$mapset.' LIMIT 1')->getRows());
+                (0 === $sql->setQuery('SELECT 1 FROM ' . $layer . ' LIMIT 1')->getRows())
+                && (0 === $sql->setQuery('SELECT 1 FROM ' . $mapset . ' LIMIT 1')->getRows());
         }
 
         if ($config['dataset']['overwrite']) {
@@ -134,15 +133,15 @@ try {
             try {
                 rex_sql_util::importDump($datasetfile);
                 if ($demoDataset) {
-                    $msg[] = $this->i18n('geolocation_install_table_demo').
-                            '<p class="alert alert-warning" style="margin:0">'.$this->i18n('geolocation_install_table_demo_api').'</p>';
+                    $msg[] = $this->i18n('geolocation_install_table_demo') .
+                            '<p class="alert alert-warning" style="margin:0">' . $this->i18n('geolocation_install_table_demo_api') . '</p>';
                 } else {
                     $msg[] = $this->i18n('install_table_filled');
                 }
             } catch (rex_sql_exception $e) {
-                $sql->setQuery('TRUNCATE '.$layer);
-                $sql->setQuery('TRUNCATE '.$mapset);
-                $msg[] = '<p class="alert alert-warning" style="margin:0">'.$this->i18n('install_table_fill_error', $e->getMessage(), rex_path::relative($datasetfile)).'</p>';
+                $sql->setQuery('TRUNCATE ' . $layer);
+                $sql->setQuery('TRUNCATE ' . $mapset);
+                $msg[] = '<p class="alert alert-warning" style="margin:0">' . $this->i18n('install_table_fill_error', $e->getMessage(), rex_path::relative($datasetfile)) . '</p>';
             }
         }
     }
@@ -159,8 +158,8 @@ try {
     if ('rex_' !== rex::getTablePrefix()) {
         $tableset = str_replace(
             ['"rex_geolocation_layer"', '"rex_geolocation_mapset"'],
-            ['"'.$layer.'"', '"'.$mapset.'"'],
-            $tableset
+            ['"' . $layer . '"', '"' . $mapset . '"'],
+            $tableset,
         );
     }
 
@@ -175,8 +174,8 @@ try {
     //  - Neuinstallation
     //  - Re-Installation wenn gelöscht oder umbenannt
     $user = rex::getUser();
-    if (0 === $sql->setQuery('SELECT id FROM '.rex::getTable('cronjob').' WHERE name = ?', [Cronjob::LABEL])->getRows()) {
-        $msg[] = 'Cronjob neu: "'.Cronjob::LABEL.'"';
+    if (0 === $sql->setQuery('SELECT id FROM ' . rex::getTable('cronjob') . ' WHERE name = ?', [Cronjob::LABEL])->getRows()) {
+        $msg[] = 'Cronjob neu: "' . Cronjob::LABEL . '"';
         $timestamp = rex_cronjob_manager_sql::calculateNextTime($config['job_intervall']);
         $sql->setTable(rex::getTable('cronjob'));
         $sql->setValue('name', Cronjob::LABEL);
@@ -198,9 +197,9 @@ try {
     }
 
     // rex_config: Default-Werte eintragen bzw. sicherstellen
-    $ct = $sql->getArray('SELECT id FROM '.$mapset.' ORDER BY id ASC LIMIT 1');
+    $ct = $sql->getArray('SELECT id FROM ' . $mapset . ' ORDER BY id ASC LIMIT 1');
     $this->setConfig('default_map', $this->getConfig('default_map', $ct[0]['id'] ?? 0));
-    $this->setConfig('map_components', $this->getConfig('map_components', '|'.implode('|', array_keys(Mapset::$mapoptions)).'|'));
+    $this->setConfig('map_components', $this->getConfig('map_components', '|' . implode('|', array_keys(Mapset::$mapoptions)) . '|'));
     $this->setConfig('map_bounds', $this->getConfig('map_bounds', $config['bounds']));
     $this->setConfig('map_zoom', $this->getConfig('map_zoom', $config['zoom']));
     $this->setConfig('map_zoom_min', $this->getConfig('map_zoom_min', $config['zoom_min']));
@@ -224,17 +223,17 @@ try {
         } elseif (is_bool($v)) {
             $v = $v ? 'true' : 'false';
         }
-        $defines .= "define('$k',$v);".PHP_EOL;
+        $defines .= "define('$k',$v);" . PHP_EOL;
     }
-    $boot_php = rex_file::get(__DIR__.'/boot.php');
+    $boot_php = rex_file::get(__DIR__ . '/boot.php');
     if (null !== $boot_php) {
-        $boot_php = preg_replace('%(//##start)(.*?)(//##end)%s', '$1'.$defines.'$3', $boot_php, 1);
-        rex_file::put(__DIR__.'/boot.php', (string) $boot_php);
+        $boot_php = preg_replace('%(//##start)(.*?)(//##end)%s', '$1' . $defines . '$3', $boot_php, 1);
+        rex_file::put(__DIR__ . '/boot.php', (string) $boot_php);
     }
 
     // Die JS/CSS-Dateien neu kompilieren, um Instanz-eigene Erweiterungen und Parameter
     // aus data/addons/geolocation einzubinden
-    ConfigForm::compileAssets(__DIR__.'/', $definedValues);
+    ConfigForm::compileAssets(__DIR__ . '/', $definedValues);
     $msg[] = $this->i18n('install_assets_prepared');
 
     // Den Ordner 'data/addons/geolocation/assets' falls vorhanden in den Ordner 'assets/addons/geolocation' kopieren
@@ -288,7 +287,7 @@ try {
         $hasMatches = preg_match($pattern, $file);
         if (false !== $hasMatches && 0 < $hasMatches) {
             $file = preg_replace($pattern, 'FriendsOfRedaxo\\\$0', $file);
-            if( !is_string($file) ) {
+            if (!is_string($file)) {
                 throw new InstallException($this->i18n('install_data_config_error'), 1);
             }
             try {
@@ -298,13 +297,34 @@ try {
             }
         }
         $msg[] = $this->i18n('install_update2_ok');
-        $msg[] = '<p class="alert alert-warning" style="margin:0">'.$this->i18n('install_update2_warn').'</p>';
+        $msg[] = '<p class="alert alert-warning" style="margin:0">' . $this->i18n('install_update2_warn') . '</p>';
+    }
+
+    /**
+     * Beim Umstieg von Versionen vor 2.2.1 müssen Anpassungen in Feld-Definitionen
+     * vorgenommen werden. Grund siehe hier:
+     */
+    if (rex_version::compare('2.2.1', $this->getVersion(), '>')) {
+        $sql->setTable(rex::getTable('yform_field'));
+        $sql->setWhere(
+            'table_name = :table and name = :field',
+            ['table' => $mapset, 'name' => 'layer'],
+        );
+        $sql->setValue('filter', 'b');
+        $sql->update();
+        $sql->setTable(rex::getTable('yform_field'));
+        $sql->setWhere(
+            'table_name = :table and name = :field',
+            ['table' => $mapset, 'name' => 'overlay'],
+        );
+        $sql->setValue('filter', 'o');
+        $sql->update();
     }
 
     // Ergebnis übermitteln
-    $this->setProperty('successmsg', '<ul><li>'.implode('</li><li>', $msg).'</li></ul>');
+    $this->setProperty('successmsg', '<ul><li>' . implode('</li><li>', $msg) . '</li></ul>');
 } catch (InstallException $e) {
     $this->setProperty('installmsg', $e->getMessage());
 } catch (Exception $e) {
-    $this->setProperty('installmsg', $e->getMessage().' (file '.$e->getFile().' line '.$e->getLine().')');
+    $this->setProperty('installmsg', $e->getMessage() . ' (file ' . $e->getFile() . ' line ' . $e->getLine() . ')');
 }

@@ -118,7 +118,7 @@ geolocation_install_update2_warn = Achtung: Ab dieser Version haben sich mehrere
 geolocation_install_data_config_error = Das Namespace-Update auf "FriendsOfRedaxo\Geolocation" in der Datei "redaxo/data/geolocatin/config.xml" schlug fehl.
 
 # URL-Test (yform-value, api)
-geolocation_yfv_url_description = URL mit Testbild-Abruf
+geolocation_yfv_url_description = Geolocation-Addon: URL mit Testbild-Abruf
 geolocation_yfv_url_subdomain = Sub-Domänen-Feld
 geolocation_testurl_label = Test
 geolocation_testurl_title = Testabruf der URL
@@ -127,6 +127,10 @@ geolocation_testurl_layer1ok = Url erfolgreich getestet!
 geolocation_testurl_layer2ok = Url mit SubDomain "{0}" aus "{1}" erfolgreich getestet!
 geolocation_testurl_providererror = Unerwartete Antwort vom Layer-Server
 
-# Layer-Widget (rex_yform_value_geolocation_layerselect)
+# geolocation_layserselect (yform-value, widget)
+geolocation_yfv_layserselect_description = Geolocation-Addon: Layer/Karten-Auswahl für den Kartensatz
+geolocation_yfv_layserselect_format = Auswahl-Format
+geolocation_yfv_layserselect_format_ckeckbox = Multiple (Checkboxen)
+geolocation_yfv_layserselect_format_radio = Einfach (Radio-Button)
 geolocation_yfv_layerselect_empty = Bitte eine Karte auswählen ...
 geolocation_yfv_layerselect_add = Karte auswählen
