@@ -188,6 +188,9 @@ Geolocation.Classes.Map = class {
         this.map = L.map( container, mapOptions );
         if( !this.map ) return null;
 
+        // frühzetig interne Verlinkung herstellen; notwendig für Tool-initialisierung
+        container.__rmMap = this;
+
         // Zusatzbuttons für "Zoom" und "Home" einbauen, indem das neue Zoom-Control aktiviert wird.
         this.map.on( 'load', function(e){
             this.zoomControl = this.zoomControl || new L.Control.GeolocationZoom().addTo(this.map);
