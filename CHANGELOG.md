@@ -1,5 +1,12 @@
 # Changelog
 
+## 25-07-2024 2.3.1
+
+- BugFix
+  - Behebt einen Fehler beim Speichern einer Karte (Layer), die ohne
+    Label-Angabe ist. (danke @dtpop) (#162),
+
+
 ## 01-07-2024 2.3.0
 
 - Anpassungen für YForm ab 4.2.1
