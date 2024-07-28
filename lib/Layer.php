@@ -312,19 +312,22 @@ class Layer extends rex_yform_manager_dataset
      * Theoretisch können Sprachen mehrfach belegt werden. Hier kontrollieren, dass es nicht passiert
      * Die Parameter sind so belegt:
      *  - Feldname ('lang')
-     *  - der aktuelle Werte für 'lang' (JSON-String)
+     *  - der aktuelle Werte für 'lang' (je nach YForm-Version JSON-String, array oder null)
      *  - Rückgabewert als Vorbelegung (sollte leer sein), ignorieren
      *  - Instanz der aktiven Validator-Klasse
      *  - Array mit einem Element: Instanz des Feldes 'lang'
      *
      * @param string $field
-     * @param string|array<array<string,string>> $value
+     * @param string|array<array<string,string>>|null $value
      * @param string $return
      * @param rex_yform_validate_customfunction $self
      * @param array<string,rex_yform_value_abstract> $elements
      */
     public static function verifyLang($field, $value, $return, $self, $elements): bool
     {
+        // wenn keine Sprachen angegeben sind kann auch null kommen.
+        $value = $value ?? '';
+
         /**
          * Kompatibilität zu YForm < 4.2.0
          * 4.2.0 lieber nicht benutzen!
