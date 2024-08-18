@@ -1,5 +1,10 @@
 # Changelog
 
+## xx-xx-2024 2.3.2
+
+- Bugfix
+  - Tabellennamen auch in der package.yml i.V.m pages/yform.php Prefix-neutral (#163)
+
 ## 25-07-2024 2.3.1
 
 - BugFix
