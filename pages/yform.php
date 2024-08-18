@@ -15,7 +15,7 @@
  *
  *      yform:
  *          «addon»/mytable1:
- *              table_name: rex_mytable_a     mandatory
+ *              table_name: mytable_a         mandatory; ohne Prefix «rex_»!!!
  *              show_title: FALSE/true        optional; default ist false!
  *              wrapper_class: myclass        optional
  *
@@ -26,7 +26,13 @@
 $yform = $this->getProperty('yform', []);
 $yform = $yform[\rex_be_controller::getCurrentPage()] ?? [];
 
-$table_name = rex_request('table_name', 'string', $yform['table_name'] ?? '');
+if( isset($yform['table_name']) ) {
+    $table_name = rex::getTable($yform['table_name']);
+} else {
+    $table_name = '';
+}
+
+$table_name = rex_request('table_name', 'string', $table_name);
 $show_title = true === ($yform['show_title'] ?? false);
 $wrapper_class = $yform['wrapper_class'] ?? '';
 
