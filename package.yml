@@ -85,11 +85,11 @@ page:
 
 yform:
     geolocation/mapset:
-        table_name: rex_geolocation_mapset
+        table_name: geolocation_mapset
     geolocation/layer:
-        table_name: rex_geolocation_layer
+        table_name: geolocation_layer
     geolocation/service:
-        table_name: rex_geolocation_service
+        table_name: geolocation_service
 
 conflicts:
     packages:
