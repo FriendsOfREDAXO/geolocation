@@ -327,7 +327,7 @@ class Mapset extends rex_yform_manager_dataset
     }
 
     /**
-     * @deprecated 3.0.0 Aufrufe auf "Layer::epYformDataListActionButtons" geändert
+     * @deprecated 3.0.0 Aufrufe auf "Mapset::epYformDataListActionButtons" geändert
      * @param rex_extension_point<array<string,string>> $ep
      * @return array<string,string>|void
      */
