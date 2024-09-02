@@ -16,8 +16,8 @@
  *
  * - Listenbezogen
  *
- *     YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" für die Datentabelle
- *                                     Action-Button "delete" entfernen beim Default-Mapset
+ *     epYformDataListActionButtons  Button "Cache löschen" für die Datentabelle
+ *                                   Action-Button "delete" entfernen beim Default-Mapset
  *
  * - AJAX-Abrufe
  *

@@ -18,8 +18,8 @@
  *
  * - Listenbezogen
  *
- *     YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" für die Datentabelle
- *     YFORM_DATA_LIST_QUERY           Initiale Sortiertung die Liste nach zwei Kriterien
+ *     epYformDataListActionButtons  Button "Cache löschen" für die Datentabelle
+ *     epYformDataListQuery          Initiale Sortiertung die Liste nach zwei Kriterien
  *
  * - AJAX-Abrufe
  *
