@@ -1,6 +1,6 @@
 # Changelog
 
-## xx-xx-2024 3.0.0
+## xx-xx-2024 2.4.0
 
 - Bugfix
   - YForm-Tabellennamen für _pages/yform.php: via _package.yml_:
