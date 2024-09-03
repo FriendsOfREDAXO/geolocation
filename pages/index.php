@@ -69,15 +69,14 @@ echo rex_view::title($this->i18n('geolocation_title'));
 // ggf. vorhandene API Messages ausgeben
 echo rex_api_function::getMessage();
 
-// #REVIEW: geht das auch ohne "\FriendsOfRedaxo\Geolocation"?
 // Liste 'rex_geolocation_mapset' um eine Action zum Löschen des Layer-Cache erweitern
-rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS', '\FriendsOfRedaxo\Geolocation\mapset::YFORM_DATA_LIST_ACTION_BUTTONS');
+rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS', Mapset::epYformDataListActionButtons(...));
 
 // Liste 'rex_geolocation_layer' um eine Action zum Löschen der Layer-Caches erweitern
-rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS', '\FriendsOfRedaxo\Geolocation\Layer::YFORM_DATA_LIST_ACTION_BUTTONS');
+rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS', Layer::epYformDataListActionButtons(...));
 
 // Liste 'rex_geolocation_layer' mit geänderter Sortierung
-rex_extension::register('YFORM_DATA_LIST_QUERY', '\FriendsOfRedaxo\Geolocation\Layer::YFORM_DATA_LIST_QUERY');
+rex_extension::register('YFORM_DATA_LIST_QUERY', Layer::epYformDataListQuery(...));
 
 // Und nun die aktuelle Seite anzeigen
 rex_be_controller::includeCurrentPageSubPath();

@@ -16,8 +16,8 @@
  *
  * - Listenbezogen
  *
- *     YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" für die Datentabelle
- *                                     Action-Button "delete" entfernen beim Default-Mapset
+ *     epYformDataListActionButtons  Button "Cache löschen" für die Datentabelle
+ *                                   Action-Button "delete" entfernen beim Default-Mapset
  *
  * - AJAX-Abrufe
  *
@@ -227,7 +227,7 @@ class Mapset extends rex_yform_manager_dataset
      * @param rex_extension_point<array<string,string|mixed>> $ep
      * @return array<string,string|mixed>|void
      */
-    public static function YFORM_DATA_LIST_ACTION_BUTTONS(rex_extension_point $ep)
+    public static function epYformDataListActionButtons(rex_extension_point $ep)
     {
         // nur wenn diese Tabelle im Scope ist
         $table_name = $ep->getParam('table')->getTableName();
@@ -324,6 +324,15 @@ class Mapset extends rex_yform_manager_dataset
             $ep->setSubject($buttons);
         }
 
+    }
+
+    /**
+     * @deprecated 3.0.0 Aufrufe auf "Mapset::epYformDataListActionButtons" geändert
+     * @param rex_extension_point<array<string,string>> $ep
+     * @return array<string,string>|void
+     */
+    public static function YFORM_DATA_LIST_ACTION_BUTTONS(rex_extension_point $ep) { 
+        return self::epYformDataListActionButtons($ep);
     }
 
     // AJAX-Abrufe

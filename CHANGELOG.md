@@ -1,9 +1,15 @@
 # Changelog
 
-## xx-xx-2024 2.3.2
+## xx-xx-2024 2.4.0
 
 - Bugfix
-  - Tabellennamen auch in der package.yml i.V.m pages/yform.php Prefix-neutral (#163)
+  - YForm-Tabellennamen für _pages/yform.php: via _package.yml_:
+    - als reiner Tabellenname Prefix-neutral angeben (ohne rex_) (#163)
+    - indirekt über den Namen der ModelClass
+  - EP-Callbacks: 
+    - Aufruf in der "First class callable syntax"
+    - Methoden-Namen gem. PSR angepasst
+
 
 ## 25-07-2024 2.3.1
 

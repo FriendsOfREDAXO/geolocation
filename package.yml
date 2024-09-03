@@ -85,9 +85,9 @@ page:
 
 yform:
     geolocation/mapset:
-        table_name: geolocation_mapset
+        table_name: FriendsOfRedaxo\Geolocation\Mapset
     geolocation/layer:
-        table_name: geolocation_layer
+        table_name: FriendsOfRedaxo\Geolocation\Layer
     geolocation/service:
         table_name: geolocation_service
 

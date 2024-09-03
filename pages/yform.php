@@ -15,10 +15,15 @@
  *
  *      yform:
  *          «addon»/mytable1:
- *              table_name: mytable_a         mandatory; ohne Prefix «rex_»!!!
+ *              table_name: mytable_a         mandatory; sieh Anmerkung unten!!!
  *              show_title: FALSE/true        optional; default ist false!
  *              wrapper_class: myclass        optional
  *
+ * "table_name" entweder als Tabellenname ohne den Prefix angegeben werden oder
+ * als Model-Class/Dataset-Class:
+ *      tabelle:            wird über rex::getTable($table_name) zu rex_tabelle
+ *      Namespace\Tabelle:  wird über $table_name::table()->getTableName() zu rex_tabelle
+ * 
  * @see https://friendsofredaxo.github.io/tricks/addons/yform/im-addon
  * @var \rex_addon $this
  */
@@ -27,7 +32,14 @@ $yform = $this->getProperty('yform', []);
 $yform = $yform[\rex_be_controller::getCurrentPage()] ?? [];
 
 if( isset($yform['table_name']) ) {
-    $table_name = rex::getTable($yform['table_name']);
+    $table_name = $yform['table_name'];
+    if( is_subclass_of($table_name,rex_yform_manager_dataset::class)) {
+        // table_name ist eine Dataset-Klasse
+        $table_name = $table_name::table()->getTableName();
+    } else {
+        // table_name ist ein Tabellenname
+        $table_name = rex::getTable($table_name);
+    }
 } else {
     $table_name = '';
 }

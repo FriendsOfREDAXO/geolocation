@@ -18,8 +18,8 @@
  *
  * - Listenbezogen
  *
- *     YFORM_DATA_LIST_ACTION_BUTTONS  Button "Cache löschen" für die Datentabelle
- *     YFORM_DATA_LIST_QUERY           Initiale Sortiertung die Liste nach zwei Kriterien
+ *     epYformDataListActionButtons  Button "Cache löschen" für die Datentabelle
+ *     epYformDataListQuery          Initiale Sortiertung die Liste nach zwei Kriterien
  *
  * - AJAX-Abrufe
  *
@@ -359,7 +359,7 @@ class Layer extends rex_yform_manager_dataset
      * @param rex_extension_point<array<string,string>> $ep
      * @return array<string,string>|void
      */
-    public static function YFORM_DATA_LIST_ACTION_BUTTONS(rex_extension_point $ep)
+    public static function epYformDataListActionButtons(rex_extension_point $ep)
     {
         // nur wenn diese Tabelle im Scope ist
         $table_name = $ep->getParam('table')->getTableName();
@@ -405,6 +405,15 @@ class Layer extends rex_yform_manager_dataset
     }
 
     /**
+     * @deprecated 3.0.0 Aufrufe auf "Layer::epYformDataListActionButtons" geändert
+     * @param rex_extension_point<array<string,string>> $ep
+     * @return array<string,string>|void
+     */
+    public static function YFORM_DATA_LIST_ACTION_BUTTONS(rex_extension_point $ep) { 
+        return self::epYformDataListActionButtons($ep);
+    }
+
+    /**
      * Initiale Sortiertung die Datentabelle nach zwei Kriterien.
      *
      * sorgt initial für die Sortierung nach 'layertyp,name', sofern es keine
@@ -412,10 +421,14 @@ class Layer extends rex_yform_manager_dataset
      * \rex_request('sort') als Indikator.
      *
      * @param rex_extension_point<rex_yform_manager_query<rex_yform_manager_dataset>> $ep
-     * @return void
+     * @return void|rex_yform_manager_query<rex_yform_manager_dataset>
      */
-    public static function YFORM_DATA_LIST_QUERY(rex_extension_point $ep)
+    public static function epYformDataListQuery(rex_extension_point $ep)
     {
+        if($ep->getSubject()->getTableName() !== self::table()->getTableName()) {
+            return;
+        }
+        
         // nichts tun wenn es schon einen Sort gibt
         if ('' === rex_request::request('sort', 'string', '')) {
             return;
@@ -430,6 +443,15 @@ class Layer extends rex_yform_manager_dataset
             ->resetOrderBy()
             ->orderBy('layertype')
             ->orderBy('name');
+    }
+
+    /**
+     * @deprecated 3.0.0 Aufrufe auf "Layer::epYformDataListQuery" geändert
+     * @param rex_extension_point<rex_yform_manager_query<rex_yform_manager_dataset>> $ep
+     * @return void|rex_yform_manager_query<rex_yform_manager_dataset>
+     */
+    public static function YFORM_DATA_LIST_QUERY(rex_extension_point $ep) { 
+        return self::epYformDataListQuery($ep);
     }
 
     // AJAX-Abrufe
