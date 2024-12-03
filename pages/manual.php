@@ -55,6 +55,7 @@ if ('' < $res) {
         rex_response::setStatus(rex_response::HTTP_NOT_FOUND);
         rex_response::sendContent(rex_response::HTTP_NOT_FOUND);
     }
+    exit;
 }
 
 /**

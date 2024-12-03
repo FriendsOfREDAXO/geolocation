@@ -1,5 +1,5 @@
 package: geolocation
-version: '2.3.1'
+version: '2.4.0'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/geolocation
 
@@ -88,8 +88,6 @@ yform:
         table_name: FriendsOfRedaxo\Geolocation\Mapset
     geolocation/layer:
         table_name: FriendsOfRedaxo\Geolocation\Layer
-    geolocation/service:
-        table_name: geolocation_service
 
 conflicts:
     packages:

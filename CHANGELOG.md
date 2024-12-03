@@ -1,14 +1,18 @@
 # Changelog
 
-## xx-xx-2024 2.4.0
+## 03-12-2024 2.4.0
 
-- Bugfix
-  - YForm-Tabellennamen für _pages/yform.php: via _package.yml_:
+- kleinere interne Modifikationen
+  - YForm-Tabellennamen für _pages/yform.php: via _package.yml_ in zusätzlichen Schreibvarianten:
     - als reiner Tabellenname Prefix-neutral angeben (ohne rex_) (#163)
     - indirekt über den Namen der ModelClass
+    - als Tabellenname inkl. Prefix
   - EP-Callbacks: 
     - Aufruf in der "First class callable syntax"
     - Methoden-Namen gem. PSR angepasst
+
+- Bugfix
+  Fehlendes `exit` in _manual.php_ führte bei der Bilderdurchleitung zu Warnings in Systemlog. Behoben.  
 
 
 ## 25-07-2024 2.3.1
