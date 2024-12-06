@@ -502,7 +502,8 @@ class AssetPacker_js extends AssetPacker
     public function getTag(array $options = []): string
     {
         // Pathname relativ zu rex_path
-        $asset = rex_url::base(rex_path::relative($this->target, rex_path::frontend()));
+        $asset = str_replace('\\', '/', rex_path::relative($this->target, rex_path::frontend()));
+        $asset = rex_url::base($asset);
 
         if (array_key_exists(rex_view::JS_IMMUTABLE, $options) && $options[rex_view::JS_IMMUTABLE]) {
             if (!rex::isDebugMode() && rex::isBackend() && $this->timestamp) {
