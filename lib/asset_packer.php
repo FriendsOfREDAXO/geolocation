@@ -470,7 +470,7 @@ class AssetPacker_css extends AssetPacker
     {
         // Pathname relativ zu rex_path
         // für Windows: \ in / ändern
-        $asset = str_replace('\\', '/', rex_path::relative($this->target));
+        $asset = str_replace('\\', '/', rex_path::relative($this->target, rex_path::frontend()));
         $asset = rex_url::base($asset);
 
         if (!rex::isDebugMode() && rex::isBackend() && $this->timestamp) {
@@ -502,7 +502,7 @@ class AssetPacker_js extends AssetPacker
     public function getTag(array $options = []): string
     {
         // Pathname relativ zu rex_path
-        $asset = rex_url::base(rex_path::relative($this->target));
+        $asset = rex_url::base(rex_path::relative($this->target, rex_path::frontend()));
 
         if (array_key_exists(rex_view::JS_IMMUTABLE, $options) && $options[rex_view::JS_IMMUTABLE]) {
             if (!rex::isDebugMode() && rex::isBackend() && $this->timestamp) {
