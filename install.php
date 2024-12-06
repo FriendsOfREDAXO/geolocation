@@ -174,7 +174,8 @@ try {
     //  - Neuinstallation
     //  - Re-Installation wenn gelöscht oder umbenannt
     $user = rex::getUser();
-    if (0 === $sql->setQuery('SELECT id FROM ' . rex::getTable('cronjob') . ' WHERE name = ?', [Cronjob::LABEL])->getRows()) {
+    $cronjob = $sql->getArray('SELECT * FROM ' . rex::getTable('cronjob') . ' WHERE name = ?', [Cronjob::LABEL]);
+    if( 0 === count($cronjob)) {
         $msg[] = 'Cronjob neu: "' . Cronjob::LABEL . '"';
         $timestamp = rex_cronjob_manager_sql::calculateNextTime($config['job_intervall']);
         $sql->setTable(rex::getTable('cronjob'));
@@ -247,10 +248,13 @@ try {
     rex_yform_manager_table::deleteCache();
 
     /**
-     * Beim Umstieg von Versionen vor 2.0.0 müssen Anpassungen in den Tabellen vorgenommen werden:.
+     * Beim Umstieg von Versionen vor 2.0.0 müssen Anpassungen in den Tabellen vorgenommen werden:
+     * 
+     * (Da die bedingte Ausführung über Versionsvergleich stolpert: immer durchführen, schadet nicht.)
      */
-    if (rex_version::compare('2.0.0', $this->getVersion(), '>')) {
-        // Behebt einen Fehler in rex_cronjob: überzählige Einträge entfernen
+    //if (rex_version::compare('2.0.0', $this->getVersion(), '>')) {
+        // Behebt einen Fehler in rex_cronjob: doppelte Einträge aus vorhergehenden Installationen entfernen
+        // kommt nur in alten Versionen ohne Namespace-Umstellung vor.
         $sql->setTable(rex::getTable('cronjob'));
         $sql->setWhere('`name`=:name AND `type`=:type', [':name' => Cronjob::LABEL, ':type' => 'Geolocation\\Cronjob']);
         $sql->select('id');
@@ -262,6 +266,7 @@ try {
             $sql->setTable(rex::getTable('cronjob'));
             $sql->setWhere('FIND_IN_SET(id,:liste)', [':liste' => implode(',', $liste)]);
             $sql->delete();
+            $msg[] = $this->i18n('install_update1_ok',Cronjob::LABEL);
         }
 
         // Cronjob-Klasse mit neuem Namespace: FriendsOfRedaxo\Geolocation\Cronjob statt Geolocation\cronjob.
@@ -272,54 +277,63 @@ try {
             $sql->addGlobalUpdateFields($user->getLogin());
         }
         $sql->update();
+        if(0 < $sql->getRows()) {
+            $msg[] = $this->i18n('install_update2_ok');
+        }
 
         // Neue Zusatzfelder befüllen; spiegelt das bisherige Verhalten
         // layer: der erste ist aktiviert; overlay: keiner aktiviert
+        // Nur Ausführen wenn layer_selected noch leer ist.
         $sql->setTable(rex::getTable('geolocation_mapset'));
         $sql->setRawValue('layer_selected', 'SUBSTRING_INDEX(`layer`,\',\', 1)');
         $sql->setValue('overlay_selected', '');
+        $sql->setWhere('layer_selected IS NULL OR TRIM(layer_selected) = \'\'');
         $sql->update();
+        if(0 < $sql->getRows()) {
+            $msg[] = $this->i18n('install_update3_ok');
+        }
 
         // Namespace in einer evtl vorhandenen data/geolocation/config.yml anpassen:
         // Konstanten "Geolocation\XXX" auf "FriendsOfRedaxo\Geolocation\XXX" ändern
         $file = rex_file::get($this->getDataPath('config.yml'), '');
-        $pattern = '/^Geolocation\\\[A-Za-z_]+:/m';
+        $pattern = '/^Geolocation\\\\[A-Za-z_]+:/m';
         $hasMatches = preg_match($pattern, $file);
         if (false !== $hasMatches && 0 < $hasMatches) {
-            $file = preg_replace($pattern, 'FriendsOfRedaxo\\\$0', $file);
+            $file = preg_replace($pattern, 'FriendsOfRedaxo\\\\$0', $file);
             if (!is_string($file)) {
                 throw new InstallException($this->i18n('install_data_config_error'), 1);
             }
             try {
                 rex_file::put($this->getDataPath('config.yml'), $file);
+                $msg[] = $this->i18n('install_update4_ok');
             } catch (Throwable $th) {
                 throw new InstallException($this->i18n('install_data_config_error'), 1);
             }
         }
-        $msg[] = $this->i18n('install_update2_ok');
-        $msg[] = '<p class="alert alert-warning" style="margin:0">' . $this->i18n('install_update2_warn') . '</p>';
-    }
+    //}
 
     /**
      * Beim Umstieg von Versionen vor 2.2.1 müssen Anpassungen in Feld-Definitionen
-     * vorgenommen werden. Grund siehe hier:
+     * vorgenommen werden.
+     * 
+     * (Da die bedingte Ausführung über Versionsvergleich stolpert: immer durchführen, schadet nicht.)
      */
-    if (rex_version::compare('2.2.1', $this->getVersion(), '>')) {
+    // if (rex_version::compare('2.2.1', $this->getVersion(), '>')) {
         $sql->setTable(rex::getTable('yform_field'));
         $sql->setWhere(
             'table_name = :table and name = :field',
-            ['table' => $mapset, 'name' => 'layer'],
+            [':table' => $mapset, ':field' => 'layer'],
         );
         $sql->setValue('filter', 'b');
         $sql->update();
         $sql->setTable(rex::getTable('yform_field'));
         $sql->setWhere(
-            'table_name = :table and name = :field',
-            ['table' => $mapset, 'name' => 'overlay'],
+            'table_name = :table AND name = :field',
+            [':table' => $mapset, ':field' => 'overlay'],
         );
         $sql->setValue('filter', 'o');
         $sql->update();
-    }
+    //}
 
     // Ergebnis übermitteln
     $this->setProperty('successmsg', '<ul><li>' . implode('</li><li>', $msg) . '</li></ul>');

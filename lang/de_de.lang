@@ -104,18 +104,20 @@ geolocation_manpage_devmath = Rechnen (PHP)
 
 # Installation
 geolocation_install_missing = Die Installationsdatei «{0}» fehlt!
-geolocation_install_table_prepared = Die Tabelle «{0}» ist angelegt.
+geolocation_install_table_prepared = Die Tabelle «{0}» ist angelegt bzw. aktualisiert.
 geolocation_install_table_demo = Die Tabellen sind mit Beispieldaten vorbefüllt.
 geolocation_install_table_filled = Die Tabellen sind vorbefüllt (Quelle: data-Verzeichnis).
-geolocation_install_tableset_prepared = Die YForm-Formulare sind angelegt.
+geolocation_install_tableset_prepared = Die YForm-Formulare sind angelegt bzw. aktualisiert.
 geolocation_install_cronjob_prepared = Der Cronjob zur Cache-Pflege ist angelegt.
 geolocation_install_assets_prepared = Die Asset-Dateien sind neu compiliert.
 geolocation_install_tableset = Fehler beim Import der YForm-Formulare: «{0}»
 geolocation_install_table_demo_api = In den Beispieldaten muss unbedingt der eigene API-Key der HERE-Karten eingetragen werden!<br>Addon: Geolocation | Tab: Karte | Datensatz: HERE:... | Feld: URL.<br>Andernfalls blockt HERE die Kartenabrufe.
 geolocation_install_table_fill_error = Fehler beim Befüllen der Datenbank aus Datei «{1}»:<br>"{0}"<br>Die Tabellen sind leer.
-geolocation_install_update2_ok = Breaking Change: Anpassung von Formularen und Tabellen beim Umstieg auf diese Version; siehe Hinweise im ChangeLog.
-geolocation_install_update2_warn = Achtung: Ab dieser Version haben sich mehrere Klassennamen und der Namespace geändert. Bitte in eigenem Code (z.B. Module und Templates) den Namespace von "Geolocation" in "FriendsOfRedaxo\Geolocation" ändern!
-geolocation_install_data_config_error = Das Namespace-Update auf "FriendsOfRedaxo\Geolocation" in der Datei "redaxo/data/geolocatin/config.xml" schlug fehl.
+geolocation_install_update1_ok = Doppelte Cronjobs («{0}») aus Version 1.x entfernt.
+geolocation_install_update2_ok = Namespace der Coronjob-Klasse angepasst (ab Version 2.0.0).
+geolocation_install_update3_ok = Zusätzliche Datenfelder initialisiert (ab Version 2.0.0).
+geolocation_install_update4_ok = Namespace angepasst in «data/geolocation/config.yml» (ab Version 2.0.0).
+geolocation_install_data_config_error = Das Namespace-Update auf "FriendsOfRedaxo\Geolocation" in der Datei «redaxo/data/geolocation/config.yml» schlug fehl.
 
 # URL-Test (yform-value, api)
 geolocation_yfv_url_description = Geolocation-Addon: URL mit Testbild-Abruf
