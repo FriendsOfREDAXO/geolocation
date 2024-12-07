@@ -1,6 +1,6 @@
 # Changelog
 
-## 03-12-2024 2.4.0
+## 06-12-2024 2.4.0
 
 - kleinere interne Modifikationen
   - YForm-Tabellennamen für _pages/yform.php: via _package.yml_ in zusätzlichen Schreibvarianten:
@@ -12,7 +12,9 @@
     - Methoden-Namen gem. PSR angepasst
 
 - Bugfix
-  Fehlendes `exit` in _manual.php_ führte bei der Bilderdurchleitung zu Warnings in Systemlog. Behoben.  
+  - Fehlendes `exit` in _manual.php_ führte bei der Bilderdurchleitung zu Warnings in Systemlog. Behoben.
+  - Update-Aktionen in _install.php_ wueden nicht korrekt Versions-abhängig angesteuert. Umgestellt auf "immer prüfen und ggf. ausführen"
+  - Typo korrigiert (Democode in _devmath.md_)
 
 
 ## 25-07-2024 2.3.1

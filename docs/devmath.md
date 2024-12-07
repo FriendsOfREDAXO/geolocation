@@ -775,7 +775,7 @@ use FriendsOfRedaxo\Geolocation\Calc\Box;
 
 $center = Point::byLatLng( [39.747445394658,-104.99515771866] );
 $radius = 710;
-$rect = Box::byinnerCircle( $center, $radius );
+$rect = Box::byInnerCircle( $center, $radius );
 
 dump(get_defined_vars());
 ```
