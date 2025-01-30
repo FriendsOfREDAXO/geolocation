@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Helferlein, einige Hlfsfunktionen, gekapselt als  statische Klassenmethoden.
  */
@@ -13,6 +14,8 @@ use rex_request;
 use rex_response;
 use rex_url;
 use rex_view;
+
+use const PHP_URL_HOST;
 
 class Tools
 {
@@ -34,7 +37,7 @@ class Tools
             $locales[$v->getCode()][] = 'FE';
         }
         foreach ($locales as $k => &$v) {
-            $v = '"' .$k . ' [ '.implode('/', $v).' ]":"' .$k. '"';
+            $v = '"' . $k . ' [ ' . implode('/', $v) . ' ]":"' . $k . '"';
         }
         ksort($locales);
         /**
@@ -108,9 +111,25 @@ class Tools
     {
         $time2elapse = $timestamp + ($ttl * 60);
         rex_response::cleanOutputBuffers();
-        rex_response::setHeader('Expires', gmdate('D, d M Y H:i:s', $time2elapse) .' GMT');
+        rex_response::setHeader('Expires', gmdate('D, d M Y H:i:s', $time2elapse) . ' GMT');
         rex_response::sendCacheControl('public, max-age=' . $ttl * 60);
         rex_response::sendContent($tileFileName, $contentType, $timestamp);
+        exit;
+    }
+
+    /**
+     * schickt ein JSON-Objekt an den Client.
+     *
+     * @api
+     * @return never
+     */
+    public static function sendJson(array $data, int $timestamp, int $ttl): void
+    {
+        $time2elapse = $timestamp + ($ttl * 60);
+        rex_response::cleanOutputBuffers();
+        rex_response::setHeader('Expires', gmdate('D, d M Y H:i:s', $time2elapse) . ' GMT');
+        rex_response::sendCacheControl('public, max-age=' . $ttl * 60);
+        rex_response::sendJson($data);
         exit;
     }
 

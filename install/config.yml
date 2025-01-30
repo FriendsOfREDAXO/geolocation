@@ -34,6 +34,7 @@ FriendsOfRedaxo\Geolocation\CFM_MAX: 100000
 # URL-Name für API-Abrufe
 FriendsOfRedaxo\Geolocation\KEY_TILES: 'geolayer'
 FriendsOfRedaxo\Geolocation\KEY_MAPSET: 'geomapset'
+FriendsOfRedaxo\Geolocation\KEY_GEOCODER: 'geocode'
 
 # Fragment zur Kartenausgabe
 FriendsOfRedaxo\Geolocation\OUT: 'geolocation_rex_map.php'

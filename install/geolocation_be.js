@@ -1,6 +1,200 @@
 /* Geolocation Backend-JS */
 
 /**
+ * Tool "locationpicker"
+ * 
+ * Dataset:
+ *              [lat,lng] oder null:    Position des Markers 
+ *              radius:                 Umkreis um latlng (default 1000)
+ *              [[lat,lng],[lat,lng]]:  Kartenbereich wenn es keinen gültigen Marker gibt (Default: Systemdefault)
+ *              {...}                   Diverse Parameter zur optischen Konfiguration der Kartenelemente
+ *                                      pin.color => Farbe des Pins/Markers
+ *                                      circle.color => Farbe des Kreises
+ *                                      circle.weight => Breite des Randes (0=aus)
+ *                                      circle.opacity => Transparenz der Fläche des Kreises (0..1)
+ *          
+ *        JS:   [ [lat,lng], 250, [[latNE,lngNE],[latSW.lngSW]], {pin: {color: blue}, circle: {color: orange, ...}}]
+ *        PHP:  [ [lat,lng], 250, [[latNE,lngNE],[latSW.lngSW]], [pin => [color => blue], circle => [color => orange, ...]]]
+ * 
+ * Konzept:
+ *          Der LocationPicker stellt die verschiedenen Zustände der Karte mehr oder weniger automatisch her.
+ *          So gesehen ein recht komplexer Marker:
+ *          Gültige Positionsangabe:
+ *              Blendet den Marker an der Position ein
+ *              Blendet einen Kreis an der Position ein, dessen Radius die Größe des Kartenausschnitts setzt.
+ *              Positioniert und zoomt die Karte passen dazu.
+ *          ungültige  bzw. unvollständige Positionsangabe:
+ *              Blendet Marker und Kreis aus, lässt die Karte ansonsten unvwerändert.
+ *              (Passiert nur bei manueller, noch unvollständiger Koordinateneingabe)
+ *          keine Positionsangabe, null:
+ *              blendet alles aus und stellt den Kartenausschnitt auf die Grundposition
+ * 
+ * Verhalten:
+ *          Bein normalen initialisieren (setValue(...)) sollten die Parameter vollständig angegen werde,
+ *          Auf Basis der Auswertungwerden Circle, Marker und Bounds konfiguriert.
+ * 
+ *          Weitere Änderungen passieren nicht mehr über setValue(...), sondern die drei Anzeige-Methoden
+ *          - showValidPosition
+ *          - showInvalidPosition
+ *          - showVoidPosition 
+ * 
+ *          Der Marker unterstützt Dragging. An der Endposition angekommen, wird der Event "dragend"
+ *          aufgefangen und daraus ein CustomEvent mit der Position auf dem Karten-Container gesendet.
+ *          Der Kreis wird um den Marker gezogen und bestimmt damit bei gültigem Marker die räumliche
+ *          Ausdehnung und dmait den Mindest-Kartenausschnitt. Nicht verwirren lassen: je nach Circle-
+ *          Parametern (z.b. "weight":0,"fillOpacity":0}) ist der Kreis unsichtbar, aber vorhanden!
+ *          
+ * Events (ausgehend)
+ *          geolocation:locationpicker.dragend  =>  detail.latlng 
+ */
+Geolocation.Tools.LocationPicker = class extends Geolocation.Tools.Template {
+    radius = 1000;      // integer
+    marker = null;      // L.Marker
+    circle = null;      // L.Circle
+    bounds = null;      // L.latLngBounds
+    status = -1;        // -1, 0, 1
+    params = {};
+
+    /**
+     * data ist ein Array mit der initialen Position und den zusätzlichen Angaben 
+     * für Radius und Fallback-Karte.
+     *  data[2] => [PosNW,PosSE], also zwei Ecken, die die Default-Karte ergeben
+     *  data[1] => radius, mit der gewünschten Umgebung um den Marker
+     *  data[1] => [lat,lng] oder null, also die Position des Markers
+     */
+    setValue(data) {
+        super.setValue(data);
+
+        this.radius = isNaN(data[1]) ? 1000 : data[1];
+
+        this.bounds = L.latLngBounds(data[2]);
+        if (!this.bounds.isValid()) {
+            this.bounds = L.latLngBounds(Geolocation.default.bounds);
+        }
+
+        this.params = data[3] || this.params;
+        this.params.circle = this.params.circle || {};
+        this.params.pin = this.params.pin || {};
+
+        this.pos = L.latLng(data[0]);
+        this.status = this.pos ? 1 : -1;
+        this.pos = this.pos || this.bounds.getCenter();
+
+        if (this.circle instanceof L.Circle) {
+            this.circle.setRadius($this.radius);
+            this.circle.setLatLng(this.pos);
+        } else {
+            this.params.circle.radius = this.radius;
+            this.circle = L.circle(this.pos, this.params.circle);
+            this.circle.on('add', (e) => this.map.fitBounds(this.circle.getBounds()));
+        }
+
+        if (this.marker instanceof L.Marker) {
+            this.marker.setLatLng(this.pos);
+        } else {
+            this.marker = L.marker(this.pos, {
+                icon: Geolocation.svgIconPin(this.params.pin.color || Geolocation.default.positionColor),
+                draggable: true,
+                autoPan: true,
+                zIndexOffset: 100,
+            });
+            this.marker.on('dragend', this.evtDragend.bind(this));
+        }
+        return this;
+    }
+
+    show(map) {
+        super.show(map);
+        this.map = map;
+        if (this.status === 0) {
+            this.showInvalidPosition();
+            return this;
+        }
+        if (this.status === 1) {
+            this.showValidPosition(this.pos, map);
+            return this;
+        }
+        this.showVoidPosition();
+        return this;
+    }
+
+    remove() {
+        if (this.marker instanceof L.Marker) this.marker.remove();
+        if (this.marker instanceof L.Circle) this.circle.remove();
+        super.remove();
+        this.map = null;
+        return this;
+    }
+
+    getCurrentBounds() {
+        if (this.status === -1) {
+            return this.bounds;
+        }
+        return (this.circle instanceof L.Circle) ? this.circle.getBounds() : null;
+    }
+
+    evtDragend(e) {
+        let latlng = e.target.getLatLng();
+        this.showValidPosition(latlng);
+        let event = new CustomEvent(
+            'geolocation:locationpicker.dragend',
+            {
+                bubbles: true,
+                cancelable: true,
+                detail: latlng,
+            });
+        this.map.getContainer().dispatchEvent(event);
+    }
+
+    /**
+     * Zusätzliche Methoden, um den Marker zu positionieren oder auszublenden 
+     * 
+     * showVoidPosition
+     *      blendet die Objekte marker und circle aus
+     *      repositioniert die Karte um die Bounds
+     * 
+     * showValidPosition
+     *      berechnet den Circle um die Position
+     *      blendet den circle ein
+     *      blendet den Marker ein
+     *      repositioniert die Karte um den circle
+     * 
+     * showInvalidPosition
+     *      behällt die aktuellen Einstellungen, keine Repositionierung der Karte
+     *      blendet die Objekte marker und circle aus
+     */
+    showVoidPosition() {
+        this.status = -1;
+        if (this.map) {
+            this.marker.remove();
+            this.circle.remove();
+            this.map.fitBounds(this.bounds);
+        }
+    }
+
+    showValidPosition(latlng) {
+        this.status = 1;
+        this.pos = latlng;
+        this.marker.setLatLng(latlng);
+        this.circle.setLatLng(latlng);
+        if (this.map) {
+            this.marker.addTo(this.map);
+            this.circle.addTo(this.map);
+            this.map.setView(latlng, this.map.getZoom())
+            // ein "this.map.fitBounds(this.circle.getBounds())"" funktioniert hier nicht (timing-Problem)
+            // daher oben ein "this.circle.on('add' ...)"
+        }
+    }
+
+    showInvalidPosition() {
+        this.status = 0;
+        this.marker.remove();
+        this.circle.remove();
+    }
+}
+Geolocation.tools.locationpicker = function (...args) { return new Geolocation.Tools.LocationPicker(args); };
+
+/**
  * Die Klasse bildet den allgemeinen Ablaufrahmen für URL-Tests mittels CustomHTML-Elementen.
  * 
  * Derzeit gibt es nur den Test auf Tile/Layer-Urls.
@@ -772,5 +966,375 @@ customElements.define('gelocation-trigger',
                 }
             }
             return this.__node;
+        }
+    });
+
+
+/**
+ * Im HTML-Tag <geolocation-geocoder-search> ist die Adress-Eingabe und die 
+ * Suche nach Orten mittels des Geocoders zusammengefasst.
+ * 
+ * - Eingabefeld für die Suche,
+ * - Button zum Befüllen der Suche aus Adressfeldern
+ * - eine Liste für die Anzeige der Ergebnisse
+ * 
+ * Als Input bekommt der Tag drei Attribute
+ * - geocoder: die URL des Geocoders
+ * - template: das Template für die Anzeige der Adressen in der Auswahlliste
+ * - addresslink: eine JSON-Liste mit den IDs der Adressfelder, die als Suchbegriff herangezogen werden können
+ */
+customElements.define('geolocation-geocoder-search',
+    class extends Geolocation.Classes.CustomHTMLBaseElement(HTMLElement)
+    {
+        geoSearchTimeout = 0;
+        geoInput = null;
+        geoSelect = null;
+        geoUrl = '';
+        geoTemplate = null;
+        geoAdressNodes = [];
+
+        /**
+         * Event-Handler einrichten
+         */
+        connectedCallback() {
+            this.geoAdressNodes = [];
+            this.addEventListener('focusin', this.evtInitialFocusIn.bind(this), { once: true });
+            this.addEventListener('focusout', this.evtFocusOut.bind(this));
+            this.addEventListener('keyup', this.evtEscapeKey.bind(this));
+            this.geoUrl = decodeURIComponent(this.getAttribute('geocoder') || this.geoUrl);
+            this.geoTemplate = this.getAttribute('template') || '';
+        }
+
+        /**
+         * Schließt die Select-Box, wenn der Focus außerhalb
+         * dieses customElements landet
+         */
+        evtFocusOut(e) {
+            if (!e.relatedTarget || e.relatedTarget.closest(this.tagName) !== this) {
+                this.geoListVisibility(false);
+            }
+        }
+
+        /**
+         * Wenn das Element erstmalig den Focus erhält, werden die
+         * ausstehenden Verlinkungen der Formularfelder vorgenommen
+         * 
+         * Wenn der Event vom Adress-Suche-Button ausgelöst wurde muss zusätzlich
+         * dessen eigener EventHandler ausgeführt werden. 
+         * (den Button gibt es eh nur, wenn es auch die Address-Felder gibt)
+         */
+        evtInitialFocusIn(e) {
+            this.geoInput = this.querySelector('input');
+            this.geoSelect = this.querySelector('.list-group');
+            this.geoAdressBtn = this.querySelector('button');
+            this.geoInput.addEventListener('input', this.evtInput.bind(this));
+            this.geoInput.addEventListener('focusin', this.evtFocusIn.bind(this));
+            this.geoSelect.addEventListener('click', this.evtSelect.bind(this));
+            let adrFields = JSON.parse(this.getAttribute('addresslink') || '[]');
+            if (this.geoAdressBtn) {
+                this.geoAdressBtn.addEventListener('click', this.evtSearchByAddress.bind(this))
+                adrFields.forEach((id) => {
+                    let node = document.getElementById(id);
+                    if (node) {
+                        this.geoAdressNodes.push(node);
+                    }
+                });
+                /* versuchsweise abgeschaltet; es gab Doppelaufrufe
+                if (e.target === this.geoAdressBtn) {
+                    this.evtSearchByAddress();
+                }
+                */
+            }
+        }
+
+        /**
+         * Wenn das Eingebefeld den Focus zurückbekommt und in der Liste noch 
+         * Elemente stehen, wird die Liste wieder eingeblendet
+         */
+        evtFocusIn() {
+            this.geoListVisibility(0 < this.geoSelect.childElementCount);
+        }
+
+        /**
+         * Eingaben im Input on the fly in Suchen übersetzen
+         * Aber nicht sofoert loslegen, evtl kommt ja noch ein oder
+         * zwei Zeichen dazu
+         */
+        evtInput() {
+            clearTimeout(this.geoSearchTimeout);
+            this.geoSearchTimeout = setTimeout(this.geoHandleSearch.bind(this), 300);
+        }
+
+        /**
+         * Übernimmt die Inhalte der Adress-Felder in das Suchfeld
+         * und löst die Suche selbst aus.
+         */
+        evtSearchByAddress(e) {
+            let term = [];
+            this.geoAdressNodes.forEach((node) => {
+                if (node.value) {
+                    term.push(node.value);
+                }
+            });
+            this.geoInput.value = term.join(', ');
+            this.geoHandleSearch();
+        }
+
+        /**
+         * Wenn ein Element aus der Liste ausgewählt wurde (Click oder Enter), 
+         * werden die wesentlichen Informationen (Längengrad, Breitengrad, Beschreibung)
+         * via Event propagiert.
+         * Die Liste wird dann ausgeblendet.
+         */
+        evtSelect(e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            this.geoListVisibility(false);
+            let item = e.target;
+            this.geoInput.value = item.innerHTML;
+            let event = new CustomEvent(
+                'geolocation:address.selected',
+                {
+                    bubbles: true,
+                    cancelable: true,
+                    detail: {
+                        lat: item.getAttribute('lat'),
+                        lng: item.getAttribute('lng'),
+                        label: item.innerHTML,
+                        data: item.geoData,
+                    }
+                });
+            this.dispatchEvent(event);
+        }
+
+        /**
+         * Escape-Key auf Input oder Select schließt ein evtl offenes Select
+         * durch 
+         */
+        evtEscapeKey(e) {
+            if (e.key === 'Escape') {
+                this.geoListVisibility(false);
+            }
+        }
+
+        /**
+         * Schaltet die Sichtbarkeit des Listen-Overlays entsprechend
+         * des Status um. True=Sichtbar.
+         * Umschalten durch Toggeln der hidden-Klasse
+         */
+        geoListVisibility(status) {
+            this.geoSelect.classList.toggle('hidden', !status);
+        }
+
+        /**
+         * Bei weniger als drei Zeichen keine Suche, Ergebnisliste ausblenden
+         * Ansonsten über die Resolver-Url eine Adress-Suche durchführen.
+         */
+        geoHandleSearch() {
+            let value = this.geoInput.value;
+            if (value.length < 3) {
+                this.geoListVisibility(false);
+                return;
+            }
+            // TODO: Testausgaben löschen
+            // TODO: Fehlerbehandlung verbessern 
+            fetch(this.geoUrl.replace(/\{value\}/, encodeURIComponent(value)), {
+                method: 'get',
+            })
+                .then(function (response) {
+                    console.log(response)
+                    return response.json();
+                })
+                .then((data) => {
+                    // TODO: Testausgaben löschen
+                    console.log(data)
+                    this.geoSelect.innerHTML = '';
+                    data.forEach(item => {
+                        let entry = this.geoTemplate.replace(/\{ *([\w_-]+) *\}/g, function (t, key) { return item[key] || '{' + key + '}'; });
+                        this.geoSelect.insertAdjacentHTML('beforeend', entry);
+                        this.geoSelect.lastElementChild.geoData = item;
+                    });
+                    this.geoListVisibility(true);
+                })
+                .catch((function (e) {
+                    // TODO: Das muss präzieser werden, z.B. NotFound = leere Liste, 
+                    // Fehlermeldungen sprachabhängig
+                    console.log(e)
+                    this.geoSelect.innerHTML = '<p class="list-group-item">Sorry, Übertragungsfehler';
+                    this.geoListVisibility(true);
+                }).bind(this));
+        }
+    });
+
+/**
+ * Der Html-Tag <geolocation-geopicker> ist der Container für die intzeraktive
+ * Ermitlung einer Position. Darin einmal eine Karte, die die Position anzeigt
+ * und auf der die Position (Marker/Kreis) per D&D verschoben bzw. Click gesetzt
+ * werden kann.
+ * 
+ * Über Attribute werden die Konfigurationsinformationen übermittelt. Darauf aufbauend 
+ * setzt das Element die Verlinkungen zwischen den Eingabefeldern und der Karte.
+ * Dazu kommen diverse Event-Handler für die Interaktionen.
+ */
+customElements.define('geolocation-geopicker',
+    class extends Geolocation.Classes.CustomHTMLBaseElement(HTMLElement)
+    {
+        geoConfig = null;
+        geoMap = null;
+        geoMarker = null;
+        geoLatFld = null;
+        geoLngFld = null;
+
+        /**
+         * Wird aufgerufen wenn dieses HTML-Element angelegt ist und in dem DOM eingehängt wird.
+         * Hauptaktion: die eigene Konfiguration einlesen (Attribut) und den Rest des Setup über
+         * einen EvtHandler zu gegebenem Zeitpunkt durchführen
+         */
+        connectedCallback() {
+            /**
+             * Die Feld-Attribute einlesen; es wird unterstellt, dass das Objekt korrektes
+             * JSON ist und alle benötigten Werte im richtigen Format aufweist.
+             * Hier finden keine zu 99,9% überflüssigen in-deep-Analysen mehr statt.
+             */
+            this.geoConfig = this.getAttribute('config') || null;
+            if (!this.geoConfig) {
+                return;
+            }
+            this.geoConfig = JSON.parse(this.geoConfig) || null;
+            if (!this.geoConfig) {
+                return;
+            }
+            /**
+             * EventHandler einrichten, der auf die Fertigstellung der Karte
+             * inkl. der Tools wartet und dann die weitere Initialisierung durchführt
+             */
+            this.addEventListener('geolocation:map.ready', this.evtCatchMap.bind(this));
+            this.addEventListener('geolocation:locationpicker.dragend', this.evtMarkerFromDrag.bind(this));
+            this.addEventListener('geolocation:address.selected', this.evtMarkerFromSearch.bind(this));
+        }
+
+        /**
+         * EvtHandler: wird aufgerufen nachdem in der Karte die Tools instanziert sind.
+         * - ermittelt das Position-Tool und die Leaflet-Karte
+         * - macht weiter mit childrenAvailableCallback (via super.connectedCallback())
+         *   wenn alle DOM-Elemente innerhalb von this geladen sind
+         */
+        evtCatchMap(e) {
+            this.geoMap = e.detail.map;
+            this.geoMarker = e.detail.container.__rmMap.tools.get(this.geoConfig.marker);
+            this.geoMap.on('locationfound', this.evtMarkerFromLocate.bind(this));
+            this.geoMap.doubleClickZoom.disable();
+            this.geoMap.on('dblclick', this.evtMarkerFromDblClick.bind(this));
+            super.connectedCallback();
+        }
+
+        /**
+         * Wird von connectedCallback() aufgerufen, nachdem alle zu this gehörenden
+         * DOM-Elemente geladen sind und die Karte bekannt ist.
+         * Die nötigen Verlinkungen zwischen diveren Eingabefeldern etc kann also
+         * hergestellt werden.
+         */
+        childrenAvailableCallback() {
+            // Das Warten hat ein Ende
+            this.parsed = true;
+
+            /**
+             * Die Eingabefelder verlinken; bei externen Feldern, die erst hinter dem
+             * Geopicker stehen, muss in dem Fall (nicht gefunden) das Feld via
+             * DOMContentLoaded ermittelt werden.
+             */
+            this.geoLatFld = document.getElementById(this.geoConfig.coordFld.lat);
+            this.geoLngFld = document.getElementById(this.geoConfig.coordFld.lng);
+            if (this.geoLatFld && this.geoLngFld) {
+                this.geoLatFld.addEventListener('input', this.evtMarkerFromInput.bind(this));
+                this.geoLngFld.addEventListener('input', this.evtMarkerFromInput.bind(this));
+                //this.evtMarkerFromInput();
+            } else {
+                document.addEventListener('DOMContentLoaded', (function () {
+                    this.geoLatFld = document.getElementById(this.geoConfig.coordFld.lat);
+                    this.geoLngFld = document.getElementById(this.geoConfig.coordFld.lng);
+                    this.geoLatFld.addEventListener('input', this.evtMarkerFromInput.bind(this));
+                    this.geoLngFld.addEventListener('input', this.evtMarkerFromInput.bind(this));
+                    //this.evtMarkerFromInput();
+                }).bind(this))
+            }
+        }
+
+        /**
+         * EvtHandler:  Wenn der locationfound-Event seitens Leaflet ausgelöst wird,
+         * die Karte also an die aktuelle Position des Devices geschoben wird, wird
+         * auch der Position-Marker dorthin geschoben und die LatLng-Felder angepasst
+         */
+        evtMarkerFromLocate(e) {
+            this.geoMarker.showValidPosition(e.latlng);
+            this.geoSetLatLngFields(e.latlng);
+        }
+
+        /**
+         * EvtHandler: Der Marker wurde per Drag verschoben und die Karte
+         * automatisch angepasst. Die Information über die neue Position muss
+         * auch an die Eingebefelder gegeben werden.
+         */
+        evtMarkerFromDrag(e) {
+            this.geoSetLatLngFields(e.detail);
+        }
+
+        /**
+         * EvtHandler: Aus dem Input der LatLng-Felder wird der Marker gesetzt
+         * - Beide Felder leer: 
+         *      auf die "Leer"-Karte springen (showVoidPosition)
+         * - eine irgendwie ungültige oder teil-leere Eingabe:
+         *      einen evtl schon vorhandenen Marker einfach ausblenden (showInvalidPosition)
+         * - eine gültige Koordinate
+         *      den Marker an die Position verschieben (showValidPosition
+         * Marker entsprechend gesetzt.
+         * 
+         */
+        evtMarkerFromInput(e) {
+            let lat = this.geoLatFld.value.trim();
+            let lng = this.geoLngFld.value.trim();
+            let hasLat = lat > '' && !isNaN(lat);
+            let hasLng = lng > '' && !isNaN(lng);
+
+            if (!hasLat && !hasLng) {
+                this.geoMarker.showVoidPosition();
+                return;
+            }
+            if (hasLat && hasLng) {
+                let pos = L.latLng(lat, lng);
+                if (pos) {
+                    this.geoMarker.showValidPosition(pos);
+                    return;
+                }
+            }
+            this.geoMarker.showInvalidPosition();
+        }
+
+        /**
+         * Nach Doppelklick auf die Karte wird an der Event-Position der Marker gesetzt und die
+         * Koordinaten in die Eingabefelder übertragen
+         */
+        evtMarkerFromDblClick(e) {
+            this.geoMarker.showValidPosition(e.latlng);
+            this.geoSetLatLngFields(e.latlng);
+            return false;
+        }
+
+        /**
+         * Die seitens die Suche (<geolocation-geocoder-search>) ausgewählte Adresse
+         * Adresse wird in die Eingabefelder übertragen und der Marker an die Position
+         */
+        evtMarkerFromSearch(e) {
+            let pos = L.latLng(e.detail.lat, e.detail.lng);
+            this.geoMarker.showValidPosition(pos);
+            this.geoSetLatLngFields(pos)
+        }
+
+        /**
+         * Die Lat-Lng-Felder mit Inhalt füllen.
+         */
+        geoSetLatLngFields(pos) {
+            this.geoLatFld.value = pos.lat || pos[0];
+            this.geoLngFld.value = pos.lng || pos[1];
         }
     });
