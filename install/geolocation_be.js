@@ -180,9 +180,10 @@ Geolocation.Tools.LocationPicker = class extends Geolocation.Tools.Template {
         if (this.map) {
             this.marker.addTo(this.map);
             this.circle.addTo(this.map);
-            this.map.setView(latlng, this.map.getZoom())
-            // ein "this.map.fitBounds(this.circle.getBounds())"" funktioniert hier nicht (timing-Problem)
-            // daher oben ein "this.circle.on('add' ...)"
+            this.map.setView(latlng, this.map.getZoom());
+            this.map.fitBounds(this.circle.getBounds());
+            // ein "this.map.fitBounds(this.circle.getBounds())" funktioniert hier nicht immer (timing-Problem??)
+            // daher oben auch ein "this.circle.on('add' ...)"
         }
     }
 
@@ -622,7 +623,7 @@ customElements.define('geolocation-layerselect',
 
             // Event fordert das Popup-Fenster (be_manager_relation-Style) an,
             // mit dem neue Layer hinzugefügt werden.
-            if(preYform420) {
+            if (preYform420) {
                 this.addEventListener('geolocation:layerselect.add', this._openPopupPre420.bind(this));
             } else {
                 this.addEventListener('geolocation:layerselect.add', this._openPopup.bind(this));
@@ -968,7 +969,6 @@ customElements.define('gelocation-trigger',
             return this.__node;
         }
     });
-
 
 /**
  * Im HTML-Tag <geolocation-geocoder-search> ist die Adress-Eingabe und die 
