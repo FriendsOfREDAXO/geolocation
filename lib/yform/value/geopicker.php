@@ -404,7 +404,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 ],
                 'format' => [
                     'type' => 'choice',
-                    'label' => 'geolocation_yfv_geopicker_format',
+                    'label' => 'translate:geolocation_yfv_geopicker_format',
                     'default' => 'dd1',
                     'choices' => [
                         'dd' => 'translate:geolocation_yfv_geopicker_format_c_dd',
