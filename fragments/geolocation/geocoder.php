@@ -35,21 +35,15 @@ if (null === $geoCoder) {
 $addressFields = $this->getVar('address_fields', []);
 
 /**
- * Das Suchfeld erzeugen.
- * Wenn es verlinkte Adress-Felder gibt, aus denen ggf. der Suchstring erzeugt
- * werden kann, wird dazu ein Button angelegt.
- * Alternativ nur die Lupe.
- * Formal ist das eine input-group.
- * 
- * // TODO: geolocation_trigger statt Button nehmen?
+ * Wenn es Suchfelder gibt, wird dazu ein Button angelegt, der aus den hinterlegten Feldern
+ * die Werte abruft und in die Suchzeile einträgt.
  */
 if (0 === \count($addressFields)) {
-    $left = '<i class="rex-icon rex-icon-search"></i> ' . rex_i18n::msg('yform_search');
-    $before = '';
+    $left = '<i class="rex-icon rex-icon-search"></i>';
 } else {
     $i18nId = 1 === \count($addressFields) ? 'geolocation_geocoder_adress_btn' : 'geolocation_geocoder_adresses_btn';
     $button = [
-        'label' => rex_i18n::msg($i18nId),
+        'label' => sprintf('<span class="wide">%s</span><i class="rex-icon rex-icon-search"></i>',rex_i18n::msg($i18nId,'')),
         'attributes' => [
             'class' => ['btn btn-primary'],
             'type' => 'button',
@@ -60,9 +54,11 @@ if (0 === \count($addressFields)) {
     $fragment = new rex_fragment();
     $fragment->setVar('buttons', [$button], false);
     $left = $fragment->parse('core/buttons/button.php');
-    $before = '<span class="input-group-addon"><i class="rex-icon rex-icon-search"></i></span>';
 }
 
+/**
+ * Die Attribute für das Suchfeld zusammenstellen.
+ */
 $searchAttributes = [
     'class' => 'form-control',
     'type' => 'text',
@@ -71,12 +67,13 @@ $searchAttributes = [
     'autocomplete' => 'off',
 ];
 
+/**
+ * Aus den obigen Informationen die Input-Group mit dem Suchfeld unf ggf. Buttons zusammenschrauben
+ */
 $fragment = new rex_fragment();
 $n = [
-    'class' => '',
     'left' => $left,
     'field' => '<input' . rex_string::buildAttributes($searchAttributes) . '/>',
-    'before' => $before,
 ];
 
 $fragment->setVar('elements', [$n], false);
@@ -99,12 +96,14 @@ $attr = [
     'geocoder' => $geoCoder->getRequestUrl(),
     'template' => $geoCoder->htmlMappingTag($searchResultItemTemplate),
     'addresslink' => json_encode(array_keys($addressFields)),
+    'class' => 'form-group',
 ];
 
 ?>
 <geolocation-geocoder-search <?= rex_string::buildAttributes($attr) ?> >
     <?= $searchInput ?>
-    <div style="position: relative; z-index: 1500">
-        <div class="list-group hidden" style="position: absolute; width: 100%"></div>
+    <div class="geolocation-geocoder-search-result">
+        <div class="list-group hidden">
+        </div>
     </div>
 </geolocation-geocoder-search>

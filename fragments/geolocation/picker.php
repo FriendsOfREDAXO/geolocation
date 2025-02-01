@@ -16,28 +16,25 @@
  *
  * Daten im Fragment:
  * 
+ * TODO: muss noch mal überprüft werden, da stimmt noch irgendwas nicht
+ * 
  * Für das Gesamt-Element (Klammer, <geolocation-geopicker>)
  *  - field_id              Optional: HTML-ID der Klammer
  *  - field_class           Optional: HTML-Klasse für die Klammer
  * 
  * Für die Darstellung der Karte an sich
- *  - mapset_id             Optional. ID des Kartensatzes (Geolocation/Mapset bzw. Mapset-Default)
+ *  - mapset_id             Optional. ID des Kartensatzes (Geolocation/Mapset bzw. Mapset-Default)  
  *  - mapset_class          Optional. Falls eine andere Kartengröße (Höhe/Breite etc.) gewünscht ist
  *  - radius            *   Optional. Radius um eine konkrete Position. Def. aus Config «picker_radius»
  *  - void_bounds       *   Optional. Kartenausschnitt wenn es keine gültige Position gibt, Def aus Config «picker_bounds»
- *                          => Box !!!
- *
-    * //kann weg!! Für die Kartenpositionierung beim Aufbau der Karte (wird nicht im Fragment berechnet!)
-    *  - bounds            ?   Optional. Array [[NW],[SE]]. Fallback auf void_bounds
-    *  - marker            ?   Optional. Wenn angegeben den Marker auf diese Position initialisieren.
- *                                       In dem Fall über Radius die Bounds ermitteln
+ *                                    kein Array, ?Box-Object
  *
  * Für die Zuordnung bzw. den Aufbau auf Lat/Lng-Felder
  *  - type                  Optional: externe Felder mit LatLng nutzen ('external'); default: intern
  *  - latlng_id         *   Array [lat=>,lng=>] mit den Feld-IDs der externen LatLng-Felder; bei internen Feldwern optional
  *  - latlng_name           Array [lat=>,lng=>] mit dem name-Attribut für interne Felder. Bei externen Feldern irrelevant.
- *  - latlng_value          Array [lat=>,lng=>] mit dem Value für interne Felder. Bei externen Feldern irrelevant.
- *                          => Point !!!
+ *  - latlng_value          ?Point-Object mit dem Value für interne Felder und die initiale Marker-Positionierung.
+ *  - error             *   Array [lat=>,lng=>] mit Fehlermeldungen, die ggf. an die internen Felder geheftet werden.
  *
  * Für die Suche nach Adressen via Url (nicht anzeigen wenn resolver_url kein String)
  *  - resolver              Optional. Url zur Adressauflösung oder '' für Def-Url aus Config «resolver_url»
@@ -51,39 +48,6 @@
  * Wenn «latlng_value» konkrete Koordinaten hat, müssen sich diese auch in «bounds» und «marker» wiederfinden.
  * Bounds muss zudem 
  */
-
-
-            /**
-             * TODO: Prüfen wohin damit. Kann das Weg oder muss das in das Fragment?
-             * /*
-             * Den Location-Picker als zentralen Feldbestandteil generieren
-             * Für das Gesamt-Element (Klammer, <geolocation-geopicker>)
-             *  - field_id              Optional: HTML-ID der Klammer
-             *  - field_class           Optional: HTML-Klasse für die Klammer.
-             *
-             * Für die Darstellung der Karte an sich
-             *  - mapset_id             Optional. ID des Kartensatzes (Geolocation/Mapset bzw. Mapset-Default)
-             *  - mapset_class          Optional. Falls eine andere Kartengröße (Höhe/Breite etc.) gewünscht ist
-             *  - radius            *   Optional. Radius um eine konkrete Position. Def. aus Config «picker_radius»
-             *  - void_bounds       *   Optional. Kartenausschnitt wenn es keine gültige Position gibt, Def aus Config «picker_bounds»
-             *
-             * //kann weg!! Für die Kartenpositionierung beim Aufbau der Karte (wird nicht im Fragment berechnet!)
-             *  - bounds            ?   Optional. Array [[NW],[SE]]. Fallback auf void_bounds
-             *  - marker            ?   Optional. Wenn angegeben den Marker auf diese Position initialisieren.
-             *
-             * Für die Zuordnung bzw. den Aufbau auf Lat/Lng-Felder
-             *  - type                  Optional: externe Felder mit LatLng nutzen ('external'); default: intern
-             *  - latlng_id         *   Array [lat=>,lng=>] mit den Feld-IDs der externen LatLng-Felder; bei internen Feldwern optional
-             *  - latlng_name           Array [lat=>,lng=>] mit dem name-Attribut für interne Felder. Bei externen Feldern irrelevant.
-             *  - latlng_value          Array [lat=>,lng=>] mit dem Value für interne Felder. Bei externen Feldern irrelevant.
-             *
-             * Für die Suche nach Adressen via Url (nicht anzeigen wenn resolver_url kein String)
-             *  - resolver              Optional. Url zur Adressauflösung oder '' für Def-Url aus Config «resolver_url»
-             *  - resolver_mapping      Optional. Ergebnisdaten in Template-Felder (lat, lng, label) unsetzen. Default aus Config «picker_bounds»
-             *  - address_fields        Optional. ID und Label (Key/Value) von Feldern mit Adress-Teilen
-             */
-
-
 namespace FriendsOfRedaxo\Geolocation;
 
 use FriendsOfRedaxo\Geolocation\Calc\Box;
@@ -100,7 +64,7 @@ use rex_string;
  */
 $fieldId = (string) $this->getVar('field_id', '');
 $fieldClass = (array) $this->getVar('field_class', []);
-$fieldClass = array_merge($fieldClass, ['form_control']);
+$fieldClass = array_merge($fieldClass, ['form-control']);
 $fieldClass = array_unique($fieldClass);
 
 /**
@@ -113,14 +77,6 @@ if (0 === $radius) {
     $radius = (int) rex_config::get('geolocation', 'picker_radius');
 }
 
-
-/*
-$voidBounds = (array) $this->getVar('void_bounds', []);
-if ([] === $voidBounds) {
-    $v = sprintf('[%s]',rex_config::get('geolocation', 'map_bounds'));
-    $voidBounds = json_decode($v ,true);
-}
-*/
 /** @var ?Box $voidBounds */
 $voidBounds = $this->getVar('void_bounds', null);
 if (null === $voidBounds) {
@@ -168,59 +124,63 @@ if ('external' !== $type) {
     $latLngFields = [];
     $error = (array) $this->getVar('error', []);
 
-    $fieldAttributes = [
+    $inputAttributes = [
         'id' => $latLngId['lat'],
         'class' => 'form-control',
         'type' => 'number',
         'step' => 'any',
         'min' => -90,
         'max' => 90,
-        'value' => null === $latLngValue ? '' : $latLngValue->lat(), //$latLngValue['lat'],
+        'value' => null === $latLngValue ? '' : $latLngValue->lat(),
         'name' => $latLngName['lat'],
         'autocomplete' => 'off',
         'placeholder' => rex_i18n::msg('geolocation_picker_lat_placeholder'),
     ];
 
-    $n = [
-        'left' => rex_i18n::msg('geolocation_lat_label'),
-        'field' => '<input' . rex_string::buildAttributes($fieldAttributes) . '/>',
+    $labelAttributes = [
+        'class' => 'control-label',
+        'for' => $inputAttributes['id'],
     ];
-    if( isset($error['lat']) ) {
-        $n['class'] = '" style="border:1px solid red';
-    }
-
-    $fragment = new rex_fragment();
-    $fragment->setVar('elements', [$n], false);
-    $latLngFields[] = $fragment->parse('core/form/input_group.php');
 
     $fieldAttributes = [
+        'class' => 'form-group geolocation-geopicker-lat' . ( isset($error['lat']) ? ' has-error' : ''),
+    ];
+    $latLngFields['lat'] = '
+        <div'.rex_string::buildAttributes($fieldAttributes).'>
+            <label'.rex_string::buildAttributes($labelAttributes).'>'.rex_i18n::msg('geolocation_lat_label').'</label>
+            <input'.rex_string::buildAttributes($inputAttributes).' />
+        </div>';
+
+    $inputAttributes = [
         'id' => $latLngId['lng'],
         'class' => 'form-control',
         'type' => 'number',
         'step' => 'any',
         'min' => -180,
         'max' => 180,
-        'value' => null === $latLngValue ? '' : $latLngValue->lng(), //$latLngValue['lng'],
+        'value' => null === $latLngValue ? '' : $latLngValue->lng(),
         'name' => $latLngName['lng'],
         'autocomplete' => 'off',
         'placeholder' => rex_i18n::msg('geolocation_picker_lng_placeholder'),
     ];
 
-    $n = [
-        'left' => rex_i18n::msg('geolocation_lng_label'),
-        'field' => '<input' . rex_string::buildAttributes($fieldAttributes) . '/>',
+    $labelAttributes = [
+        'class' => 'control-label',
+        'for' => $inputAttributes['id'],
     ];
-    if( isset($error['lng']) ) {
-        $n['class'] = '" style="border:1px solid red';
-    }
 
-    $fragment->setVar('elements', [$n], false);
-    $latLngFields[] = $fragment->parse('core/form/input_group.php');
-    // $latLngInputFields .= \sprintf('<div class="col-lg-6">%s</div></div>', $fragment->parse('core/form/input_group.php'));
+    $fieldAttributes = [
+        'class' => 'form-group geolocation-geopicker-lng' . ( isset($error['lng']) ? ' has-error' : ''),
+    ];
+    $latLngFields['lng'] = '
+        <div'.rex_string::buildAttributes($fieldAttributes).'>
+            <label'.rex_string::buildAttributes($labelAttributes).'>'.rex_i18n::msg('geolocation_lng_label').'</label>
+            <input'.rex_string::buildAttributes($inputAttributes).' />
+        </div>';
 
-    $fragment = new rex_fragment();
-    $fragment->setVar('content', $latLngFields, false);
-    $latLngInputFields = $fragment->parse('core/page/grid.php');
+    $latLngInputFields = implode('',$latLngFields);
+
+    $fieldClass[] = 'geolocation-geopicker-grid';
 }
 
 /**
@@ -281,8 +241,8 @@ if ('' < $fieldId) {
  */
 ?>
 <geolocation-geopicker <?= rex_string::buildAttributes($pickerAttributes) ?>>
-    <?= $geoCoder ?>
     <?= $latLngInputFields ?>
+    <?= $geoCoder ?>
     <?= $map->parse() ?>
 </geolocation-geopicker>
 
