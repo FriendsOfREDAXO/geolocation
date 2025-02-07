@@ -101,6 +101,7 @@ class GeoCoder
         } catch (Exception $e) {
             $geocoder = self::get(self::getDefaultId());
             if (null === $geocoder) {
+                // TODO: Text nach .lang
                 throw new Exception('GeoCoder::take: Oops! Warum gibt es ID 1 nicht?');
             }
         }

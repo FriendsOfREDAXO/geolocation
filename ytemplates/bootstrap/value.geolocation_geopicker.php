@@ -10,7 +10,6 @@ namespace FriendsOfRedaxo\Geolocation;
 
 use FriendsOfRedaxo\Geolocation\Calc\Box;
 use FriendsOfRedaxo\Geolocation\Calc\Point;
-use rex_fragment;
 use rex_i18n;
 use rex_yform_value_geolocation_geopicker;
 
@@ -24,7 +23,7 @@ use rex_yform_value_geolocation_geopicker;
  * @var array{lat: string, lng:string} $latLngName  HTML-Input-Name der LatLng-Felder
  * @var ?Point $latLngValue     aktuelle Koordinate oder nul für leeres Feld
  * @var array<string> addressFields  IDs der Felder mit Adress-Teilen
- * @var string|array $markerStyle   Array oder JSON-String mit Formatierungsinfos (Leaflet-Options für Marker und Circle)
+ * @var array $markerStyle      Array oder JSON-String mit Formatierungsinfos (Leaflet-Options für Marker und Circle)
  * @var ?GeoCoder $geocoder     Die GeoCoder-Informationen bzw. null für "keinen GeoCoder
  *
  * Weitere Daten werden aus dem Value-Object ($this) entnommen
@@ -32,17 +31,17 @@ use rex_yform_value_geolocation_geopicker;
 
 /** @var rex_yform_value_geolocation_geopicker $this */
 
-assert(isset($mapsetId));
-assert(isset($mapsetClass));
-assert(isset($type));
-assert(isset($radius));
-assert(isset($defaultBounds));
-assert(isset($latLngId));
-assert(isset($latLngName));
-assert(isset($latLngValue) || null === $latLngValue);
-assert(isset($addressFields));
-assert(isset($markerStyle));
-assert(isset($geoCoder));
+\assert(isset($mapsetId));
+\assert(isset($mapsetClass));
+\assert(isset($type));
+\assert(isset($radius));
+\assert(isset($defaultBounds));
+\assert(isset($latLngId));
+\assert(isset($latLngName));
+\assert(isset($latLngValue) || null === $latLngValue);
+\assert(isset($addressFields));
+\assert(isset($markerStyle));
+\assert(isset($geoCoder));
 
 /**
  * Die Standardelementen eines Values.
@@ -52,8 +51,8 @@ if ('' !== $this->getElement('notice')) {
     $notice[] = rex_i18n::translate($this->getElement('notice'), false);
 }
 
+// TODO: Das Warning-Thema noch mal beleucheten. Bei internen feldern sollte die Warnung direkt am Lat/Lng-Feld erscheinen
 if (isset($this->params['warning_messages'][$this->getId()]) && !$this->params['hide_field_warning_messages']) {
-    dump($this->params['warning_messages'][$this->getId()]);
     $notice[] = '<span class="text-warning">' . rex_i18n::translate($this->params['warning_messages'][$this->getId()]) . '</span>';
 }
 if (\count($notice) > 0) {
@@ -71,34 +70,54 @@ if ('' < $this->getWarningClass()) {
 $class_label = [];
 $class_label[] = 'control-label';
 
-$fragment = (new rex_fragment())
-    ->setVar('field_id', $this->getFieldId())
-    ->setVar('field_class', $this->getHTMLClass())
-    ->setVar('mapset_id', $mapsetId)
-    ->setVar('mapset_class', $mapsetClass)
-    ->setVar('radius', $radius)
-    ->setVar('void_bounds', $defaultBounds)
-    ->setVar('type', $type)
-    ->setVar('latlng_id', $latLngId)
-    ->setVar('resolver', '')
-    ->setVar('address_fields', $addressFields)
-    ->setVar('latlng_value', $latLngValue)
-    ->setVar('geo_coder', $geoCoder, false)
-    ->setVar('marker_style', $markerStyle, false)
-    ->setVar('error', $error, false);
+/**
+ * GeoPicker für externe oder interne Felder einrichten (Basis-Konfiguration).
+ */
+if ('external' === $type) {
+    $geoPicker = PickerWidget::factoryExternal(
+        $latLngId['lat'],
+        $latLngId['lng'],
+    );
+} else {
+    $geoPicker = PickerWidget::factoryInternal(
+        $latLngName['lat'],
+        $latLngName['lng'],
+        $latLngId['lat'],
+        $latLngId['lng'],
+    );
+}
 
-if ('external' !== $type) {
-    $fragment
-        ->setVar('latlng_name', $latLngName);
+/**
+ * Die weiteren Parameter.
+ */
+// dd(get_defined_vars());
+
+$geoPicker
+    ->setContainer($this->getFieldId(), $this->getHTMLClass())
+    ->setMapset($mapsetId, '', $mapsetClass)
+    ->setBaseBounds($defaultBounds)
+    ->setGeoCoder($geoCoder)
+    ->setLocationMarker($radius, $markerStyle)
+    ->setLocation($latLngValue)
+    ->setAdressFields($addressFields)
+
+//    ->setLocationRange($markerRange)
+;
+
+if (isset($error['lat'])) {
+    $geoPicker->setLatError($error['lat']);
+}
+if (isset($error['lng'])) {
+    $geoPicker->setLngError($error['lng']);
 }
 
 /**
  * Das Value-HTML zusammenbauen.
  */
 ?>
-<div class="<?= implode(' ',$class_group) ?>" id="<?= $this->getHTMLId() ?>">
+<div class="<?= implode(' ', $class_group) ?>" id="<?= $this->getHTMLId() ?>">
     <label class="<?= implode(' ', $class_label) ?>"><?= $this->getElement('label') ?></label>
-    <?= $fragment->parse('geolocation/picker.php') ?>
+    <?= $geoPicker->parse() ?>
     <?= $notice ?>
  </div>
 

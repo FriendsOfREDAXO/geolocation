@@ -137,7 +137,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
             $border = $this->getElement('range');
             try {
                 $border = self::decodeBounds($border);
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 $border = [[-90, -180], [90, 180]];
             }
             $latMessage = self::validateItem($value['lat'], $border[0][0], $border[1][0], $this->notEmpty);
@@ -165,7 +165,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 if ('' < $lngMessage) {
                     $this->error['lng'] = rex_i18n::msg('geolocation_lng_label') . ': ' . $lngMessage;
                 }
-                if( 0 < count($this->error)) {
+                if (0 < count($this->error)) {
                     $msg = implode(' | ', $this->error);
                     $this->setErrorMessage($this, $msg);
                 }
@@ -260,8 +260,8 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 // Verlinkung zu Feldern mit Adress-Teilen
                 'addressFields' => $addressFields,
                 // Formatierung des Markers/Pins (Farbe)
-                'markerStyle' => $this->getElement('params'),
-                'geoCoder' => GeoCoder::take($this->getElement('geocoder')),
+                'markerStyle' => json_decode($this->getElement('params'), true),
+                'geoCoder' => (int) $this->getElement('geocoder'), // GeoCoder::take($this->getElement('geocoder')),
                 // Fehlermeldungen
                 'error' => $this->error,
             ];
@@ -914,7 +914,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
      * - Zahl 2: Dezimalwert für einen Längengrad (±180)
      * - Zahl 3: Ganzzahl für den Suchradius (ab 10m)
      * - leer ist erlaubt: dann keine Suche
-     * 
+     *
      * @api
      * @return int|string|array<numeric>
      */
@@ -994,7 +994,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
      * @param bool $notEmpty    true wenn der Wert nicht leer sein darf
      * @return string           Fehlermeldungs-ID oder '' für ok
      */
-    protected static function validateItem(mixed $value, float $min, float $max, bool $notEmpty = false): string
+    public static function validateItem(mixed $value, float $min, float $max, bool $notEmpty = false): string
     {
         if ('' === $value) {
             if ($notEmpty) {
@@ -1066,8 +1066,8 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
         }
         // [SW,NO]
         return [
-            [min($match['lat1'],$match['lat2']), min($match['lng1'],$match['lng2'])],
-            [max($match['lat1'],$match['lat2']), max($match['lng1'],$match['lng2'])],
+            [min($match['lat1'], $match['lat2']), min($match['lng1'], $match['lng2'])],
+            [max($match['lat1'], $match['lat2']), max($match['lng1'], $match['lng2'])],
         ];
     }
 }

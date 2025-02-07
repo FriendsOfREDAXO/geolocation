@@ -142,9 +142,15 @@ body.rex-theme-dark {
  * Außerdem gibt es die .wide-Klasse. Darüber erhält der Such-Button einen alternativen
  * Text (Lupe), der bei breitem Screen (@media (min-width: 800px, siehe unten)
  * ausgeblendet und durch den vollen Button-Titel ersetzt wird.
+ * // TODO: besser kommentieren
  */
 
 geolocation-geocoder-search {
+
+    display: block;
+    margin-bottom: 15px;
+
+    container-type: inline-size;
 
     > .geolocation-geocoder-search-result {
         position: relative;
@@ -170,96 +176,82 @@ geolocation-geocoder-search {
  * GeoPicker-Widget zur Auswahl eine Kartenposition
  * Repräsentiert durch den Cuatom-Tag <geolocation-geopicker>
  *
- * Die Innen liegenden Elemente werden als Grid positioniert
+ * Die innen liegenden Elemente werden als Grid positioniert
  * und je nach Breite der Darstellung übereinander oder untereinander.
  * Die innen liegenden Eingabefelder für Breite/Länge sind ebenfalls
  * ein Grid, in dem Label und Input ja nach Anzeigebreite über- oder
  * nebeneinander stehen.
+ * // TODO: besser kommentieren
  */
 .geolocation-geopicker-grid {
 
-    display: grid !important;
-    grid-template-areas: 
-        "search"
-        "lat"
-        "lng"
-        "map";
-    grid-gap: 5px;
-    border: 1px solid black;
+    container-type: inline-size;
 
-    geolocation-geocoder-search {
-        grid-area: search;
-    }
-    
-    .geolocation-geopicker-lat {
-        grid-area: lat;
-    }
-    
-    .geolocation-geopicker-lng {
-        grid-area: lng;
-    }
-    
-    rex-map {
-        grid-area: map;
-        width: 100%;
-        min-height:500px;
-        border: 1px solid black;
-        background-color: darkgrey;
-    }
-    
-    .geolocation-geopicker-lat, .geolocation-geopicker-lng {
+    .geolocation-geopicker-gridcontainer {
         display: grid;
-        grid-template-areas: "label" "input";
-        grid-template-columns: 1fr;
-    }
-    
-    .geolocation-geopicker-lat label, .geolocation-geopicker-lng label {
-        grid-area: label;
-    }
-    
-    .geolocation-geopicker-lat input, .geolocation-geopicker-lng input {
-        grid-area: input;
-    }   
-    
-}
-
-@media (min-width: 800px) {
-    .geolocation-geopicker-grid {
         grid-template-areas: 
-            "search search"
-            "lat lng"
-            "map map";
+            "lat"
+            "lng"
+            "map";
+        grid-gap: 5px;
 
+        .geolocation-geopicker-lat {
+            grid-area: lat;
+        }
+        
+        .geolocation-geopicker-lng {
+            grid-area: lng;
+        }
+        
+        rex-map {
+            grid-area: map;
+        }
+        
         .geolocation-geopicker-lat, .geolocation-geopicker-lng {
-            grid-template-areas: "label input";
-            grid-template-columns: 10rem 1fr;
+            display: grid;
+            grid-template-areas: "label" "input";
+            grid-template-columns: 1fr;
+            width: 100%;
+        }
+        
+        .geolocation-geopicker-lat label, .geolocation-geopicker-lng label {
+            grid-area: label;
+        }
+        
+        .geolocation-geopicker-lat input, .geolocation-geopicker-lng input {
+            grid-area: input;
         }
     }
-
-    geolocation-geocoder-search {
-
-        span.wide {
-            display: inline;
-
-            ~i {
-                display: none;
-            }
-        }
-
-    }
-    
-
 }
 
-@media (min-width: 1500px) {
-    .geolocation-geopicker-grid {
-        grid-gap: 10px 5px;
-        grid-template-areas: 
-            "search map"
-            "lat map"
-            "lng map"
-            " . map";
+@container  (min-inline-size: 500px) {
+    .geolocation-geopicker-grid .geolocation-geopicker-gridcontainer {
+        grid-template-areas: "lat lng" "map map";
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@container  (min-inline-size: 700px) {
+    .geolocation-geopicker-grid .geolocation-geopicker-gridcontainer {
+        grid-template-areas: "lat map" "lng map" ". map";
+        grid-template-columns: 1fr 2fr;
+    }
+    geolocation-geocoder-search span.wide {
+        display: inline;
+    }
+    geolocation-geocoder-search span.wide ~ i {
+        display: none;
+    }
+}
+
+@container  (min-inline-size: 900px) {
+    .geolocation-geopicker-grid .geolocation-geopicker-gridcontainer {
         grid-template-columns: 2fr 3fr;
     }
 }
 
+@container  (min-inline-size: 1100px) {
+    .geolocation-geopicker-grid .geolocation-geopicker-gridcontainer {
+        grid-template-columns: 1fr 3fr;
+    }
+}
