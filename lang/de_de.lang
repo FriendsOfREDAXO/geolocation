@@ -192,4 +192,8 @@ geolocation_lng_label = Längengrad
 geolocation_geocoder_placeholder = Adresse suchen .... mit {0}
 geolocation_picker_lng_placeholder = Längengrad eingeben ...
 geolocation_picker_lat_placeholder = Breitengrad eingeben ...
+geolocation_rf_geopicker_lat_err1 = {0}: Angabe des Breitengrades erforderlich als Dezimalzahl zwischen «{1}» und «{2}»
+geolocation_rf_geopicker_lng_err1 = {0}: Angabe des Längengrades erforderlich als Dezimalzahl zwischen «{1}» und «{2}»
+
+
 
