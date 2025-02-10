@@ -103,9 +103,18 @@ Geolocation.Tools.LocationPicker = class extends Geolocation.Tools.Template {
         return this;
     }
 
+    /**
+     * Wird aufgerufen, wenn das Tool auf der Karte angezeigt wird.
+     */
     show(map) {
         super.show(map);
         this.map = map;
+        map.on('locationfound', this.evtMarkerFromLocate.bind(this));
+        map.doubleClickZoom.disable();
+        map.on('dblclick', this.evtMarkerFromDblClick.bind(this));
+        map.getContainer().addEventListener('geolocation:locationpicker.moveto', this.evtMoveTo.bind(this));
+        console.log(map.getContainer())
+
         if (this.status === 0) {
             this.showInvalidPosition();
             return this;
@@ -119,6 +128,11 @@ Geolocation.Tools.LocationPicker = class extends Geolocation.Tools.Template {
     }
 
     remove() {
+        if (this.map) {
+            map.off('locationfound', this.evtMarkerFromLocate.bind(this));
+            map.off('dblclick', this.evtMarkerFromDblClick.bind(this));
+            map.getContainer().removeEventListener('geolocation:locationpicker.moveto', this.evtMoveTo.bind(this));
+        }
         if (this.marker instanceof L.Marker) this.marker.remove();
         if (this.marker instanceof L.Circle) this.circle.remove();
         super.remove();
@@ -136,18 +150,58 @@ Geolocation.Tools.LocationPicker = class extends Geolocation.Tools.Template {
     evtDragend(e) {
         let latlng = e.target.getLatLng();
         this.showValidPosition(latlng);
+        this.sendPosition();
+    }
+
+    /**
+     * EvtHandler:  Wenn der locationfound-Event seitens Leaflet ausgelöst wird,
+     * die Karte also an die aktuelle Position des Devices geschoben wird, wird
+     * auch der Position-Marker dorthin geschoben und über die neue Position informiert
+     */
+    evtMarkerFromLocate(e) {
+        this.showValidPosition(e.latlng);
+        this.sendPosition();
+    }
+
+    /**
+     * Nach Doppelklick auf die Karte wird an der Event-Position der Marker gesetzt und
+     * und über die neue Position informiert
+     */
+    evtMarkerFromDblClick(e) {
+        this.showValidPosition(e.latlng);
+        this.sendPosition();
+    }
+
+    /**
+     * Event von außerhalb, der den Marker an die angegebene Stelle verschieben will.
+     */
+    evtMoveTo(e) {
+        this.showPosition(e.detail.lat, e.detail.lng);
+    }
+
+    /**
+     * Wenn das Tool auf einer validen neuen Position ist, wird
+     * darüber per Event informitert.
+     * Auslöser sind z.B. DragEnd
+     */
+    sendPosition() {
         let event = new CustomEvent(
-            'geolocation:locationpicker.dragend',
+            'geolocation:locationpicker.moved',
             {
                 bubbles: true,
                 cancelable: true,
-                detail: latlng,
+                detail: this.marker.getLatLng(),
             });
         this.map.getContainer().dispatchEvent(event);
     }
 
     /**
      * Zusätzliche Methoden, um den Marker zu positionieren oder auszublenden 
+     * 
+     * showPosition
+     *      wird von außen mit Koordinatenangeben (z.B. aus Eingabefeldern) aufgerufen.
+     *      Hier wierd analysiert, welche Werte-Situation vorlieget und eine der
+     *      Anzeigemethoden aufgerufen.
      * 
      * showVoidPosition
      *      blendet die Objekte marker und circle aus
@@ -163,6 +217,25 @@ Geolocation.Tools.LocationPicker = class extends Geolocation.Tools.Template {
      *      behällt die aktuellen Einstellungen, keine Repositionierung der Karte
      *      blendet die Objekte marker und circle aus
      */
+
+    showPosition(lat, lng) {
+        let hasLat = lat > '' && !isNaN(lat);
+        let hasLng = lng > '' && !isNaN(lng);
+
+        if (!hasLat && !hasLng) {
+            this.showVoidPosition();
+            return;
+        }
+        if (hasLat && hasLng) {
+            let pos = L.latLng(lat, lng);
+            if (pos) {
+                this.showValidPosition(pos);
+                return;
+            }
+        }
+        this.showInvalidPosition();
+    }
+
     showVoidPosition() {
         this.status = -1;
         if (this.map) {
@@ -189,8 +262,10 @@ Geolocation.Tools.LocationPicker = class extends Geolocation.Tools.Template {
 
     showInvalidPosition() {
         this.status = 0;
-        this.marker.remove();
-        this.circle.remove();
+        if (this.map) {
+            this.marker.remove();
+            this.circle.remove();
+        }
     }
 }
 Geolocation.tools.locationpicker = function (...args) { return new Geolocation.Tools.LocationPicker(args); };
@@ -1181,7 +1256,6 @@ customElements.define('geolocation-geopicker',
     {
         geoConfig = null;
         geoMap = null;
-        geoMarker = null;
         geoLatFld = null;
         geoLngFld = null;
 
@@ -1209,7 +1283,7 @@ customElements.define('geolocation-geopicker',
              * inkl. der Tools wartet und dann die weitere Initialisierung durchführt
              */
             this.addEventListener('geolocation:map.ready', this.evtCatchMap.bind(this));
-            this.addEventListener('geolocation:locationpicker.dragend', this.evtMarkerFromDrag.bind(this));
+            this.addEventListener('geolocation:locationpicker.moved', this.evtMarkerFromMove.bind(this));
             this.addEventListener('geolocation:address.selected', this.evtMarkerFromSearch.bind(this));
         }
 
@@ -1221,10 +1295,6 @@ customElements.define('geolocation-geopicker',
          */
         evtCatchMap(e) {
             this.geoMap = e.detail.map;
-            this.geoMarker = e.detail.container.__rmMap.tools.get(this.geoConfig.marker);
-            this.geoMap.on('locationfound', this.evtMarkerFromLocate.bind(this));
-            this.geoMap.doubleClickZoom.disable();
-            this.geoMap.on('dblclick', this.evtMarkerFromDblClick.bind(this));
             super.connectedCallback();
         }
 
@@ -1261,21 +1331,11 @@ customElements.define('geolocation-geopicker',
         }
 
         /**
-         * EvtHandler:  Wenn der locationfound-Event seitens Leaflet ausgelöst wird,
-         * die Karte also an die aktuelle Position des Devices geschoben wird, wird
-         * auch der Position-Marker dorthin geschoben und die LatLng-Felder angepasst
-         */
-        evtMarkerFromLocate(e) {
-            this.geoMarker.showValidPosition(e.latlng);
-            this.geoSetLatLngFields(e.latlng);
-        }
-
-        /**
-         * EvtHandler: Der Marker wurde per Drag verschoben und die Karte
+         * EvtHandler: Der Marker wurde z.B. per Drag verschoben und die Karte
          * automatisch angepasst. Die Information über die neue Position muss
-         * auch an die Eingebefelder gegeben werden.
+         * auch an die Eingabefelder gegeben werden.
          */
-        evtMarkerFromDrag(e) {
+        evtMarkerFromMove(e) {
             this.geoSetLatLngFields(e.detail);
         }
 
@@ -1287,37 +1347,13 @@ customElements.define('geolocation-geopicker',
          *      einen evtl schon vorhandenen Marker einfach ausblenden (showInvalidPosition)
          * - eine gültige Koordinate
          *      den Marker an die Position verschieben (showValidPosition
-         * Marker entsprechend gesetzt.
          * 
+         * Die konkrete Auswertung macht der Marker selbst
          */
         evtMarkerFromInput(e) {
             let lat = this.geoLatFld.value.trim();
             let lng = this.geoLngFld.value.trim();
-            let hasLat = lat > '' && !isNaN(lat);
-            let hasLng = lng > '' && !isNaN(lng);
-
-            if (!hasLat && !hasLng) {
-                this.geoMarker.showVoidPosition();
-                return;
-            }
-            if (hasLat && hasLng) {
-                let pos = L.latLng(lat, lng);
-                if (pos) {
-                    this.geoMarker.showValidPosition(pos);
-                    return;
-                }
-            }
-            this.geoMarker.showInvalidPosition();
-        }
-
-        /**
-         * Nach Doppelklick auf die Karte wird an der Event-Position der Marker gesetzt und die
-         * Koordinaten in die Eingabefelder übertragen
-         */
-        evtMarkerFromDblClick(e) {
-            this.geoMarker.showValidPosition(e.latlng);
-            this.geoSetLatLngFields(e.latlng);
-            return false;
+            this.notify(lat, lng);
         }
 
         /**
@@ -1326,8 +1362,27 @@ customElements.define('geolocation-geopicker',
          */
         evtMarkerFromSearch(e) {
             let pos = L.latLng(e.detail.lat, e.detail.lng);
-            this.geoMarker.showValidPosition(pos);
             this.geoSetLatLngFields(pos)
+            this.notify(e.detail.lat, e.detail.lng);
+        }
+
+        /**
+         * Per Event wird der Marker über die Position informiert.
+         * Falls LatLng ungültige werte sind, reagiert der Marker
+         * selbständig.
+         */
+        notify(lat, lng) {
+            let event = new CustomEvent(
+                'geolocation:locationpicker.moveto',
+                {
+                    bubbles: true,
+                    cancelable: true,
+                    detail: {
+                        lat: lat,
+                        lng: lng,
+                    }
+                });
+            this.geoMap.getContainer().dispatchEvent(event);
         }
 
         /**
