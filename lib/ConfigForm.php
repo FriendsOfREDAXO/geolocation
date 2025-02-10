@@ -7,6 +7,8 @@
 namespace FriendsOfRedaxo\Geolocation;
 
 use FriendsOfRedaxo\Geolocation\AssetPacker\AssetPacker;
+use FriendsOfRedaxo\Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
 use rex;
 use rex_config;
 use rex_config_form;
@@ -62,6 +64,35 @@ class ConfigForm extends rex_config_form
         parent::init();
 
         if (!PROXY_ONLY) {
+            $this->addFieldset('Picker-Test');
+
+
+            /**
+             * Zulässiger Wertebereich für Marker-Positionen: Europa.
+             */
+            $markerRange = Box::byCorner(
+                Point::byLatLng([45.1, 6]),
+                Point::byLatLng([55, 8]),
+            );
+
+            $pfield = $this->addField('', 'link', null, ['internal::fieldClass' => PickerElement::class], true);
+            $pfield->setLabel('Location');
+
+
+            $latField = $field = $this->addTextField('lat');
+            $field->setLabel('Breitengrad');
+
+            $lngField = $field = $this->addTextField('lng');
+            $field->setLabel('Längengrad');
+
+
+            /** @var PickerElement $pickerField */
+            $pickerField = $pfield;
+            $geoPicker = $pickerField->setPickerWidget($latField, $lngField);
+            $geoPicker->setMapset(2);
+            $geoPicker->setGeoCoder(1);
+            $geoPicker->setLocationRange($markerRange);
+
             $this->addFieldset(rex_i18n::msg('geolocation_config_map'));
 
             $field = $this->addSelectField('default_map', $value = null, ['class' => 'form-control']);
@@ -210,11 +241,11 @@ class ConfigForm extends rex_config_form
         // leer geht gar nicht: das muss ein Fehler ein.
         $keyMapset = $constant['FriendsOfRedaxo\\Geolocation\\KEY_MAPSET'] ?? (defined('FriendsOfRedaxo\\Geolocation\\KEY_MAPSET') ? KEY_MAPSET : null);
         if (null === $keyMapset) {
-            throw new Exception('Constant "FriendsOfRedaxo\Geolocation\\KEY_MAPSET" missing. Check your boot.php or config.yml (install)', 1);
+            throw new DeveloperException('Constant "FriendsOfRedaxo\Geolocation\\KEY_MAPSET" missing. Check your boot.php or config.yml (install)', 1);
         }
         $keyTiles = $constant['FriendsOfRedaxo\\Geolocation\\KEY_TILES'] ?? (defined('FriendsOfRedaxo\\Geolocation\\KEY_TILES') ? KEY_TILES : null);
         if (null === $keyTiles) {
-            throw new Exception('Constant "Geolocation\\KEY_TILES" missing. Check your boot.php or config.yml (install)', 1);
+            throw new DeveloperException('Constant "Geolocation\\KEY_TILES" missing. Check your boot.php or config.yml (install)', 1);
         }
 
         // AssetPacker-Instanzen für die Asset-Dateien öffnen

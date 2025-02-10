@@ -42,18 +42,22 @@ use rex_yform_value_geolocation_geopicker;
 \assert(isset($addressFields));
 \assert(isset($markerStyle));
 \assert(isset($geoCoder));
+\assert(\is_array($error));
+\assert(null === $markerRange || isset($markerRange));
 
 /**
  * Die Standardelementen eines Values.
  */
+$localErrorMsg = false;
 $notice = [];
 if ('' !== $this->getElement('notice')) {
     $notice[] = rex_i18n::translate($this->getElement('notice'), false);
 }
 
-// TODO: Das Warning-Thema noch mal beleucheten. Bei internen feldern sollte die Warnung direkt am Lat/Lng-Feld erscheinen
 if (isset($this->params['warning_messages'][$this->getId()]) && !$this->params['hide_field_warning_messages']) {
-    $notice[] = '<span class="text-warning">' . rex_i18n::translate($this->params['warning_messages'][$this->getId()]) . '</span>';
+    // tatsächlich werden die Meldungen gezielt bei den Eingabefeldern angezeigt.
+    // Externe Felder sind hier eh außen vor
+    $localErrorMsg = true;
 }
 if (\count($notice) > 0) {
     $notice = '<p class="help-block small">' . implode('<br />', $notice) . '</p>';
@@ -63,9 +67,6 @@ if (\count($notice) > 0) {
 
 $class_group = [];
 $class_group['form-group'] = 'form-group';
-if ('' < $this->getWarningClass()) {
-    $class_group[$this->getWarningClass()] = $this->getWarningClass();
-}
 
 $class_label = [];
 $class_label[] = 'control-label';
@@ -90,8 +91,6 @@ if ('external' === $type) {
 /**
  * Die weiteren Parameter.
  */
-// dd(get_defined_vars());
-
 $geoPicker
     ->setContainer($this->getFieldId(), $this->getHTMLClass())
     ->setMapset($mapsetId, '', $mapsetClass)
@@ -100,15 +99,16 @@ $geoPicker
     ->setLocationMarker($radius, $markerStyle)
     ->setLocation($latLngValue)
     ->setAdressFields($addressFields)
-
-//    ->setLocationRange($markerRange)
+    ->setLocationRange($markerRange)
 ;
 
-if (isset($error['lat'])) {
-    $geoPicker->setLatError($error['lat']);
-}
-if (isset($error['lng'])) {
-    $geoPicker->setLngError($error['lng']);
+if ('' < $this->getWarningClass()) {
+    if (isset($error['lat'])) {
+        $geoPicker->setLatError($this->getWarningClass(), $localErrorMsg ? $error['lat'] : '');
+    }
+    if (isset($error['lng'])) {
+        $geoPicker->setLngError($this->getWarningClass(), $localErrorMsg ? $error['lng'] : '');
+    }
 }
 
 /**

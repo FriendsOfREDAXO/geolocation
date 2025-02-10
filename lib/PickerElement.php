@@ -85,18 +85,17 @@ class PickerElement extends rex_form_element
 
     public function allowEmptyValue(bool $status = true)
     {
-        if ($this->hasGeoPicker) {
-            // TODO: bessere Exception finden, Text nach .lang oder in Engl. (DX)
-            throw new Exception('Reihenfolgefehler: Erst allowEmpty, dann den Picker hinzufügen');
-        }
         $this->allowEmptyValue = $status;
     }
 
     /**
-     * TODO: besserer Text
-     * 
-     * Zeitverzögertes Hinzufügen der Validatoren, deren Fehlermeldungen erst später hinzugefügte
-     * Informationen benötigen.
+     * Initialisiert das PickerWidget.
+     *
+     * Es müssen entweder die externen Feld-Elemente angegeben sein (beide, Lat und Lng)
+     * oder eben beide nicht (dann interne Felder aufbauen)
+     *
+     * Einige Einstellungen (insb. die Validatoren) können durch weitere Parametrisierungen de PickerWidgets
+     * folgen. Der finale Feldaufbau erfolgt daher verzögert im EP REX_FORM_GET
      */
     public function setPickerWidget(?rex_form_element $latField = null, ?rex_form_element $lngField = null, bool $updateExternalFields = false): PickerWidget
     {
@@ -125,8 +124,7 @@ class PickerElement extends rex_form_element
             return $this->geoPicker;
         }
 
-        // TODO: besseren Event und den Text nach .LANG oder auf Englisch (DX)
-        throw new Exception('Fehler in getPickerWidget');
+        throw new DeveloperException('setPickerWidget expects zero or two different field-elements');
     }
 
     /**
@@ -148,6 +146,10 @@ class PickerElement extends rex_form_element
 
         $range = $this->geoPicker->getLocationMarkerRange();
 
+        // Technisch ohne Auswirkungen, da nie leer, aber die Existenz des Validator führt zur Markierung des Feldes
+        if (!$this->allowEmptyValue) {
+            $this->validator->add('notEmpty', 'xx');
+        }
         $this->validator->add(
             'custom',
             rex_i18n::msg('geolocation_rf_geopicker_lat_err1', $this->getLabel() . ' | ' . rex_i18n::msg('geolocation_lat_label'), $range['minLat'], $range['maxLat']),
@@ -236,7 +238,7 @@ class PickerElement extends rex_form_element
      * Konkret wird als JSON-Array gespeichert.
      *
      * Da mit SetValue ab Start ein Array sichergestellt wird, muss es nicht
-     * hinterfragft werden. (hoffentlich)
+     * hinterfragt werden. (hoffentlich)
      *
      * @return string
      */
@@ -254,7 +256,6 @@ class PickerElement extends rex_form_element
      */
     public function formatElement()
     {
-        dump([__METHOD__ => get_defined_vars()]);
         if ($this->internalValue) {
             $value = $this->getValue();
         } else {
@@ -263,9 +264,6 @@ class PickerElement extends rex_form_element
                 'lng' => $this->lngField->getValue(),
             ];
         }
-
-        $This = $this;
-        dump(get_defined_vars());
 
         try {
             $location = Point::factory($value, 'lat', 'lng');

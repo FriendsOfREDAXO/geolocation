@@ -57,6 +57,8 @@ class PickerWidget extends rex_fragment
     protected array $addressFields = [];
     protected string $latError = '';
     protected string $lngError = '';
+    protected string $latErrorClass = '';
+    protected string $lngErrorClass = '';
 
     // ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
     // ┃   Methoden zum Anlegen der Instanz                                                      ┃
@@ -89,9 +91,7 @@ class PickerWidget extends rex_fragment
     public static function factoryExternal(string $latId, string $lngId, bool $adjustAttributes = false): static
     {
         if ('' === trim($latId) || '' === trim($lngId)) {
-            // TODO: Typ der Exception besser spezifizieren. Evtl gibt es ja schon was.
-            // TODO: Text besser formulieren und nach .lang schieben.
-            throw new Exception('Also bitte: die IDs für lat/lng angeben');
+            throw new DeveloperException('Expected parameters $latId and $lngId must not be empty!');
         }
         $itsMe = new static('external');
         $itsMe->latFieldId = trim($latId);
@@ -117,15 +117,12 @@ class PickerWidget extends rex_fragment
     public static function factoryInternal(string $latName, string $lngName, string $latId = '', string $lngId = ''): static
     {
         if ('' === trim($latName) || '' === trim($lngName)) {
-            // TODO: Typ der Exception besser spezifizieren. Evtl gibt es ja schon was.
-            // TODO: Text besser formulieren und nach .lang schieben.
-            throw new Exception('Also bitte: die Input-Namen für lat/lng angeben');
+            throw new DeveloperException('Expected parameters $latName and $lngName must not be empty!');
         }
         $itsMe = new static('internal');
         $itsMe->latFieldName = trim($latName);
         $itsMe->lngFieldName = trim($lngName);
         $baseId = uniqid('geolocation-picker-');
-        // TODO: kann man auch noch trim-en
         $itsMe->latFieldId = '' === $latId ? sprintf('%s-lat', $baseId) : $latId;
         $itsMe->lngFieldId = '' === $lngId ? sprintf('%s-lng', $baseId) : $lngId;
         return $itsMe;
@@ -233,9 +230,8 @@ class PickerWidget extends rex_fragment
         if ($radius <= 0) {
             $radius = rex_config::get(ADDON, 'picker_radius');
         } elseif (0 < $radius && $radius < 11) {
-            // TODO: Typ der Exception besser spezifizieren. Evtl gibt es ja schon was.
-            // TODO: Text besser formulieren und nach .lang schieben.
-            throw new Exception('radius muss mindestens 10 Meter sein');
+            // TODO: Mindestwert irgendwo zentral hinterlegen
+            throw new DeveloperException('Minimum radius is 10 meter');
         }
         $this->lmRadius = $radius;
         $this->lmStyle = $style;
@@ -265,6 +261,8 @@ class PickerWidget extends rex_fragment
      * umgerechnet werden.
      *
      * Wenn kein GeoCoder angegeben ist, wird die Funktionalität nicht eingebaut.
+     * 0 oder eine andere ungültige ID führen zum Default-GeoCoder.
+     * NULL bedeutet: kein GeoCoder
      *
      * @api
      */
@@ -290,9 +288,7 @@ class PickerWidget extends rex_fragment
     public function setAdressFields(array $addressFields = []): static
     {
         if (count($addressFields) !== count(array_filter($addressFields, is_scalar(...)))) {
-            // TODO: Typ der Exception besser spezifizieren. Evtl gibt es ja schon was.
-            // TODO: Text besser formulieren und nach .lang schieben.
-            throw new Exception('Key/Value bitte');
+            throw new DeveloperException('Parameter $addressFields must have a key/value-structure with scalar values only');
         }
         $this->addressFields = $addressFields;
         return $this;
@@ -300,27 +296,37 @@ class PickerWidget extends rex_fragment
 
     /**
      * Übermittelt eine Fehlermeldung. Bei internen Feldern wird die
-     * Fehlermeldung möglich am Lat-Feld ausgegeben und das Feld optisch
+     * Fehlermeldung möglichst am Lat-Feld ausgegeben und das Feld optisch
      * entsprechend markiert.
+     *
+     * keine ErrorClass: kein Fehler; Text hin oder her
+     * nur ErrorClass: Feld mit der Fehlerklasse auszeichnen; die Meldung ist möglicherweise über dem Formular
+     * Beides angegeben: Fehlerklasse am Feld, Text unter dem Feld
      *
      * @api
      */
-    public function setLatError(string $error): static
+    public function setLatError(string $errorClass, string $error = ''): static
     {
         $this->latError = $error;
+        $this->latErrorClass = $errorClass;
         return $this;
     }
 
     /**
      * Übermittelt eine Fehlermeldung. Bei internen Feldern wird die
-     * Fehlermeldung möglich am Lng-Feld ausgegeben und das Feld optisch
+     * Fehlermeldung möglichst am Lng-Feld ausgegeben und das Feld optisch
      * entsprechend markiert.
+     *
+     * keine ErrorClass: kein Fehler; Text hin oder her
+     * nur ErrorClass: Feld mit der Fehlerklasse auszeichnen; die Meldung ist möglicherweise über dem Formular
+     * Beides angegeben: Fehlerklasse am Feld, Text unter dem Feld
      *
      * @api
      */
-    public function setLngError(string $error): static
+    public function setLngError(string $errorClass, string $error = ''): static
     {
         $this->lngError = $error;
+        $this->lngErrorClass = $errorClass;
         return $this;
     }
 
@@ -331,6 +337,7 @@ class PickerWidget extends rex_fragment
 
     /**
      * Die Information, ob interne Felder gerendert werden müssen oder nicht.
+     *
      * @api
      */
     public function useExternalInput(): bool
@@ -369,7 +376,7 @@ class PickerWidget extends rex_fragment
 
     /**
      * Liefert dem Fragment stets ein valides GeoCoder-Objekt.
-     * Falls die Unterscheidung auf mit oder ohne Geocoder  benötigt
+     * Falls die Unterscheidung auf "mit oder ohne Geocoder" benötigt
      * wird: vorher abfragen mit ->hasGeoCoding().
      *
      * @api
@@ -429,9 +436,7 @@ class PickerWidget extends rex_fragment
                 'lng' => $this->lngFieldId,
             ];
         }
-        // TODO: Typ der Exception besser spezifizieren. Evtl gibt es ja schon was.
-        // TODO: Text besser formulieren und nach .lang schieben.
-        throw new Exception('Ungültiger Key');
+        throw new DeveloperException(sprintf('Invalid key «%s»; ust «lat» or «lng»', $key));
     }
 
     /**
@@ -442,23 +447,23 @@ class PickerWidget extends rex_fragment
      */
     public function getFieldName(string $key = ''): string|array
     {
-        /**
-         * REVIEW: Abfangen, ob der Name beim Typ "external" abgerufen wird, was Quatsch wäre ... ?
-         */
-        switch ($key) {
-            case 'lat': return $this->latFieldName;
-            case 'lng': return $this->lngFieldName;
-            case '': return [
-                'lat' => $this->latFieldName,
-                'lng' => $this->lngFieldName,
-            ];
+        if (!$this->useExternalInput()) {
+            switch ($key) {
+                case 'lat': return $this->latFieldName;
+                case 'lng': return $this->lngFieldName;
+                case '': return [
+                    'lat' => $this->latFieldName,
+                    'lng' => $this->lngFieldName,
+                ];
+            }
+            throw new DeveloperException(sprintf('Invalid key «%s»; ust «lat» or «lng»', $key));
         }
-        // TODO: Typ der Exception besser spezifizieren. Evtl gibt es ja schon was.
-        // TODO: Text besser formulieren und nach .lang schieben.
-        throw new Exception('Ungültiger Key');
+        throw new DeveloperException('Dont use this function in an "external fields" context');
     }
 
     /**
+     * Übermittelt die Koordinaten der Basiskarte. Es ist immer ein gültiger
+     * Kartenauschnitt, ggf. aus dem Fallback auf die Geolocation-Basiskarte.
      * @api
      */
     public function getBaseBounds(): Box
@@ -546,10 +551,8 @@ class PickerWidget extends rex_fragment
      * liefert nur die initiale Koordinate aus der initialLocation
      * bzwl den Wert von $default falls es initialLocation null ist.
      *
-     * REVIEW: Das ist noch nicht ganz ausgegoren ... welche Defaults sind sinnvoll?
-     *
      * @api
-     * @return string|array<mixed>|null
+     * @return string|array<float>|null
      */
     public function getLocationMarkerLatLng(?string $default = null): string|array|null
     {
@@ -560,7 +563,7 @@ class PickerWidget extends rex_fragment
     }
 
     /**
-     * Liefert den Location-Parker als Point-Objekt bzw. null.
+     * Liefert den Location-Marker als Point-Objekt bzw. null.
      *
      * @api
      */
@@ -570,16 +573,51 @@ class PickerWidget extends rex_fragment
     }
 
     /**
-     * TODO: analog zu getFieldName gestalten???
      * @api
-     * @return array<string, string>
      */
-    public function getValidationMessage(): array
+    public function hasLatError(): bool
     {
-        return [
-            'lat' => $this->latError,
-            'lng' => $this->lngError,
-        ];
+        return '' < $this->latErrorClass;
+    }
+
+    /**
+     * @api
+     */
+    public function getLatErrorClass(): string
+    {
+        return $this->latErrorClass;
+    }
+
+    /**
+     * @api
+     */
+    public function getLatErrorMsg(): string
+    {
+        return $this->hasLatError() ? $this->latError : '';
+    }
+
+    /**
+     * @api
+     */
+    public function hasLngError(): bool
+    {
+        return '' < $this->lngErrorClass;
+    }
+
+    /**
+     * @api
+     */
+    public function getLngErrorClass(): string
+    {
+        return $this->lngErrorClass;
+    }
+
+    /**
+     * @api
+     */
+    public function getLngErrorMsg(): string
+    {
+        return $this->hasLngError() ? $this->lngError : '';
     }
 
     // ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -608,8 +646,7 @@ class PickerWidget extends rex_fragment
                 $b = json_decode($v, true);
                 $bounds = Box::byCorner(Point::byLatLng($b[0]), Point::byLatLng($b[1]));
             } catch (Throwable $th) {
-                // TODO: Text nach .lang verschieben, besser formulieren, passendere Exception-Klasse
-                throw new Exception('Entwickler-Fehler. rex_config-Eintrag «' . ADDON . '/map_bounds» muss eigentlich existieren');
+                throw new DeveloperException('Critical Error: rex_config-entry «' . ADDON . ' | map_bounds» expected but missing; call the config-page and save the entry again.');
             }
         }
         return $bounds;

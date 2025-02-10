@@ -14,15 +14,12 @@
 
 namespace FriendsOfRedaxo\Geolocation;
 
-use FriendsOfRedaxo\Geolocation\Calc\Box;
-use FriendsOfRedaxo\Geolocation\Calc\Point;
 use rex_i18n;
 use rex_string;
 
 /** @var PickerWidget $this */
 if (!is_a($this, PickerWidget::class)) {
-    // TODO: Text nach .lang verschieben, besser formulieren, passendere Exception-Klasse
-    throw new Exception('Entwickler-Fehler. Dieses Fragment nur mit PickerWidget statt rex_fragment betreiben!');
+    throw new DeveloperException('This fragment ist designed to work only called by '.PickerWidget::class);
 }
 
 /**
@@ -42,7 +39,6 @@ $voidBounds = $this->getBaseBounds();
 $radius = $this->getLocationMarkerRadius();
 $style = $this->getLocationMarkerStyle();
 $markerBounds = $this->getLocationMarkerRange();
-$markerError = $this->getValidationMessage();
 
 /**
  * Code für den GeoCoder falls erforderlich.
@@ -82,12 +78,18 @@ if (!$this->useExternalInput()) {
     ];
 
     $fieldAttributes = [
-        'class' => 'form-group geolocation-geopicker-lat' . ('' === $markerError['lat'] ? '' : ' has-error'),
+        'class' => trim('form-group geolocation-geopicker-lat ' . $this->getLatErrorClass()),
     ];
+    if ($this->hasLatError()) {
+        $notice = '<p class="help-block small"><span class="text-warning">' . rex_i18n::translate($this->getLatErrorMsg()) . '</span></p>';
+    } else {
+        $notice = '';
+    }
     $latLngInputHtml = '
         <div' . rex_string::buildAttributes($fieldAttributes) . '>
             <label' . rex_string::buildAttributes($labelAttributes) . '>' . rex_i18n::msg('geolocation_lat_label') . '</label>
             <input' . rex_string::buildAttributes($inputAttributes) . ' />
+            '. $notice .'
         </div>';
 
     $inputAttributes = [
@@ -109,28 +111,33 @@ if (!$this->useExternalInput()) {
     ];
 
     $fieldAttributes = [
-        'class' => 'form-group geolocation-geopicker-lng' . ('' === $markerError['lng'] ? '' : ' has-error'),
+        'class' => trim('form-group geolocation-geopicker-lng ' . $this->getLngErrorClass()),
     ];
+    if ($this->hasLngError()) {
+        $notice = '<p class="help-block small"><span class="text-warning">' . rex_i18n::translate($this->getLngErrorMsg()) . '</span></p>';
+    } else {
+        $notice = '';
+    }
     $latLngInputHtml .= '
         <div' . rex_string::buildAttributes($fieldAttributes) . '>
             <label' . rex_string::buildAttributes($labelAttributes) . '>' . rex_i18n::msg('geolocation_lng_label') . '</label>
             <input' . rex_string::buildAttributes($inputAttributes) . ' />
+            '. $notice .'
         </div>';
 }
 
 /**
  * Die Karte mit einem Positionsmarker vorbereiten.
  */
-$dataset = [
+$locationpickerDataset = [
     $this->getLocationMarkerLatLng(null),
     $radius,
     $this->getBaseBounds()->latLng(),
-    // TODO: prüfen, ob man statt null auch [] übergeben könnte
     0 === \count($style) ? null : $style,
 ];
 
 $map = $this->getMapset()
-    ->dataset('locationpicker', $dataset);
+    ->dataset('locationpicker', $locationpickerDataset);
 
 /**
  * Attribute für <gelolocation-geopicker>, mit denen der Picker konfiguriert und

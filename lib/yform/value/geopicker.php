@@ -19,6 +19,7 @@
 use FriendsOfRedaxo\Geolocation\Calc\Box;
 use FriendsOfRedaxo\Geolocation\Calc\InvalidPointParameter;
 use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\DeveloperException;
 use FriendsOfRedaxo\Geolocation\Exception;
 use FriendsOfRedaxo\Geolocation\GeoCoder;
 use FriendsOfRedaxo\Geolocation\Mapset;
@@ -44,6 +45,9 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
 
     protected ?Point $point = null;
 
+    /** @var array<mixed> */
+    protected array $markerRange = [];
+
     /** @var array<string> */
     protected array $error = [];
 
@@ -56,6 +60,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
     {
         $this->useExternalFields = 'external' === $this->getElement('type');
         $this->notEmpty = '1' === $this->getElement('not_required');
+        $this->markerRange = self::decodeBounds($this->getElement('range'));
     }
 
     /**
@@ -70,8 +75,6 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
      */
     public function preValidateAction(): void
     {
-        /* * @var string|array<mixed> $value */
-
         /**
          * Die Instanzen der LatLng-Felder ermitteln falls "extern" aus den beiden Felder
          * entnehmen oder wenn intern dann das Feld zerlegen
@@ -92,8 +95,13 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
 
             // Mindestens ein Feld nicht ermittelbar -> Developer-Fehler
             if (null === $this->latField || null === $this->lngField) {
-                throw new Exception('Error Processing Request', 1);
-            }
+                throw new DeveloperException(sprintf(
+                    'Missing external Lat-/Lng-Field(s): check value configuration about fields «%s» and «%s» of form «%s»',
+                    $this->getElement('lat'),
+                    $this->getElement('lng'),
+                    $this->params['main_table'],
+                ));
+            }            
 
             $value = [
                 'lat' => ($this->latField->getValue() ?? ''),
@@ -134,14 +142,8 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
             /**
              * Validierung der Einzelwerte.
              */
-            $border = $this->getElement('range');
-            try {
-                $border = self::decodeBounds($border);
-            } catch (Throwable $th) {
-                $border = [[-90, -180], [90, 180]];
-            }
-            $latMessage = self::validateItem($value['lat'], $border[0][0], $border[1][0], $this->notEmpty);
-            $lngMessage = self::validateItem($value['lng'], $border[0][1], $border[1][1], $this->notEmpty);
+            $latMessage = self::validateItem($value['lat'], $this->markerRange[0][0], $this->markerRange[1][0], $this->notEmpty);
+            $lngMessage = self::validateItem($value['lng'], $this->markerRange[0][1], $this->markerRange[1][1], $this->notEmpty);
 
             /**
              * Fehlermeldungen an die Felder weitergeben
@@ -191,8 +193,6 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
     public function enterObject(): void
     {
         $value = $this->getValue();
-        $This = $this;
-        dump(['enterObject' => get_defined_vars()]);
 
         if ($this->needsOutput()) {
             /**
@@ -236,6 +236,15 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
             } catch (Exception $e) {
             }
 
+            try {
+                $markerRange = Box::byCorner(
+                    Point::byLatLng($this->markerRange[0]),
+                    Point::byLatLng($this->markerRange[1]),
+                );
+            } catch (Throwable $th) {
+                $markerRange = null;
+            }
+
             $params = [
                 // Id des Geolocation-Mapset
                 'mapsetId' => $this->getElement('mapset'),
@@ -262,6 +271,8 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 // Formatierung des Markers/Pins (Farbe)
                 'markerStyle' => json_decode($this->getElement('params'), true),
                 'geoCoder' => (int) $this->getElement('geocoder'), // GeoCoder::take($this->getElement('geocoder')),
+                // zulässiger Wertebereich oder null für Standard
+                'markerRange' => $markerRange,
                 // Fehlermeldungen
                 'error' => $this->error,
             ];
@@ -477,7 +488,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
     {
         $checkResult = self::verifyDbVersion();
         if (is_string($checkResult)) {
-            throw new Exception($checkResult, 1);
+            throw new DeveloperException($checkResult);
         }
 
         /** @var rex_yform $yform */
@@ -492,7 +503,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
             'notice' => 'Suchbegriff: breitengrad längengrad radius | Bsp: "52.51627 13.377703 500" | Radius in Meter',
         ]);
 
-        // Zur Kommunikation von Custom_Validatore und getSearchFilter
+        // Zur Kommunikation von Custom_Validator und getSearchFilter
         $yform->setValidateField('customfunction', [
             $field->getName(),
             self::validateSearchTerm(...),
@@ -1010,28 +1021,6 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
             return rex_i18n::msg('geolocation_yfv_geopicker_coord_err_3', (string) $min, (string) $max);
         }
         return '';
-    }
-
-    /**
-     * Ermittelt aus einer Zeichenkette mit den Eckkordinaten eines Kartenauschnitts
-     * "[lat,lng],[lat,lng]" die Koordinaten und prüft, ob sie im zulässigen Bereich liegen.
-     *
-     * Wenn die Zeichenkette nicht dem Muster entspricht oder wenn die Koordinaten nicht
-     * innerhalb des zulässigen Wertebereichs liegen, wird eine Exception geworfen
-     *
-     * aber .... Box kann nur Breiten von max. 180° und wirft andernfalls eine Exception.
-     * REVIEW: mal überprüfen, ob wie sich das abfangen lässt.
-     * REVIEW: wird die Methode überhaupt benötigt?
-     *
-     * @api
-     */
-    public static function decodeBoxBounds(string $value, float $latMin = -90, float $latMax = 90, float $lngMin = -180, float $lngMax = 180): Box
-    {
-        $bounds = self::decodeBounds($value, $latMin, $latMax, $lngMin, $lngMax);
-        return Box::byCorner(
-            Point::byLatLng($bounds[0]),
-            Point::byLatLng($bounds[1]),
-        );
     }
 
     /**

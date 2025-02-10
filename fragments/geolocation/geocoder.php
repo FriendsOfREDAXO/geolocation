@@ -29,8 +29,8 @@ use rex_string;
  * @var ?GeoCoder $geoCoder
  */
 $geoCoder = $this->getVar('geo_coder', null);
-if (null === $geoCoder) {
-    $geoCoder = GeoCoder::take();
+if( !is_a($geoCoder,GeoCoder::class) ) {
+    return;
 }
 $addressFields = $this->getVar('address_fields', []);
 
