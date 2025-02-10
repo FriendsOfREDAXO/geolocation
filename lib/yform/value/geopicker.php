@@ -35,9 +35,8 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
     protected ?rex_yform_value_abstract $latField = null;
     protected ?rex_yform_value_abstract $lngField = null;
 
-    // TODO: die Werte aus einer zentralen Konstanten holen?
-    private static int $markerRadius = 250;
-    private static int $minMarkerRadius = 25;
+    private static int $markerRadius = 0;
+    private static int $minMarkerRadius = 0;
 
     protected bool $useExternalFields = false;
 
@@ -61,6 +60,8 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
         $this->useExternalFields = 'external' === $this->getElement('type');
         $this->notEmpty = '1' === $this->getElement('not_required');
         $this->markerRange = self::decodeBounds($this->getElement('range'));
+        $this->markerRadius = (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON,'picker_radius');
+        $this->minMarkerRadius = (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON,'picker_min_radius');
     }
 
     /**
@@ -396,7 +397,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 'size' => [
                     'type' => 'number',
                     'label' => 'translate:geolocation_form_geopicker_radius',
-                    'default' => (int) rex_config::get('geolocation', 'picker_radius', self::$markerRadius),
+                    'default' => (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON, 'picker_radius', self::$markerRadius),
                     'scale' => 0,
                     'widget' => 'input:number',
                     'notice' => rex_i18n::msg('geolocation_form_picker_radius_notice', self::$minMarkerRadius),
@@ -410,7 +411,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                     'type' => 'text',
                     'label' => 'translate:geolocation_yfv_geopicker_bounds',
                     'default' => '',
-                    'placeholder' => rex_config::get('geolocation', 'map_bounds'),
+                    'placeholder' => rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON, 'map_bounds'),
                     'notice' => 'translate:geolocation_yfv_geopicker_bounds_notice',
                 ],
                 'format' => [

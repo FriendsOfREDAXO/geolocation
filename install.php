@@ -209,6 +209,8 @@ try {
     $this->setConfig('cache_ttl', $this->getConfig('ttl', $config['FriendsOfRedaxo\\Geolocation\\TTL_DEF']));
     $this->setConfig('cache_maxfiles', $this->getConfig('maxfiles', $config['FriendsOfRedaxo\\Geolocation\\CFM_DEF']));
     $this->setConfig('compile', $this->getConfig('compile', $config['scope']['compile']));
+    $this->setConfig('picker_radius', $this->getConfig('picker_radius', $config['picker_radius']));
+    $this->setConfig('picker_min_radius', $this->getConfig('picker_min_radius', $config['picker_min_radius']));
 
     // Ausgewählte Vorgabewerte als "define(...)" in die boot.php schreiben
     $defines = PHP_EOL;

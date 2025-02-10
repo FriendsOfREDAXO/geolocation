@@ -22,41 +22,7 @@ use function defined;
 
 class ConfigForm extends rex_config_form
 {
-    /**
-     * Work-around für REDAXO ab 5.12 betreffend validator->notEmpty.
-     *
-     * seit 5.12 wird notEmpty automatisch zu einem "required"-Input mit Client-Validierung
-     * Das mag ich nicht; daher das Required-Attribut wieder per JS abschalten (geht nicht anders)
-     * Die Eingabe wieder per Validator klassisch prüfen.
-     */
-    private function ensureOldNotEmptyBehavoir(rex_form_element $field): void
-    {
-        static $R_5_12 = null;
-
-        // beim ersten Aufruf initialisieren
-        if (null === $R_5_12) {
-            $R_5_12 = rex_version::compare(rex::getVersion(), '5.11.99', '>');
-            if ($R_5_12) {
-                $id = 'rf' . md5(microtime());
-                $this->setFormId($id);
-                $this->addRawField('
-                <script>
-                document.addEventListener("DOMContentLoaded", function(){
-                    let item, form = document.getElementById(\'' . $id . '\');
-                    if( !form ) return;
-                    form.querySelectorAll( \'form input[remove_required="1"]\').forEach( (item) => item.removeAttribute("required") );
-                });
-                </script>
-                ');
-            }
-        }
-        // Feld anpassen
-        if ($R_5_12) {
-            $field->setAttribute('remove_required', 1);
-        }
-    }
-
-    /**
+   /**
      * Initialisiert das Formular selbst.
      */
     public function init(): void
@@ -64,34 +30,6 @@ class ConfigForm extends rex_config_form
         parent::init();
 
         if (!PROXY_ONLY) {
-            $this->addFieldset('Picker-Test');
-
-
-            /**
-             * Zulässiger Wertebereich für Marker-Positionen: Europa.
-             */
-            $markerRange = Box::byCorner(
-                Point::byLatLng([45.1, 6]),
-                Point::byLatLng([55, 8]),
-            );
-
-            $pfield = $this->addField('', 'link', null, ['internal::fieldClass' => PickerElement::class], true);
-            $pfield->setLabel('Location');
-
-
-            $latField = $field = $this->addTextField('lat');
-            $field->setLabel('Breitengrad');
-
-            $lngField = $field = $this->addTextField('lng');
-            $field->setLabel('Längengrad');
-
-
-            /** @var PickerElement $pickerField */
-            $pickerField = $pfield;
-            $geoPicker = $pickerField->setPickerWidget($latField, $lngField);
-            $geoPicker->setMapset(2);
-            $geoPicker->setGeoCoder(1);
-            $geoPicker->setLocationRange($markerRange);
 
             $this->addFieldset(rex_i18n::msg('geolocation_config_map'));
 
@@ -107,7 +45,6 @@ class ConfigForm extends rex_config_form
             $field->getValidator()
                   ->add('notEmpty', $errorMsg)
                   ->add('match', $errorMsg . '#', '/^\s*\[[+-]?\d+(\.\d+)?,\s*[+-]?\d+(\.\d+)?\],\s*[[+-]?\d+(\.\d+)?,\s*[+-]?\d+(\.\d+)?\]\s*$/');
-            $this->ensureOldNotEmptyBehavoir($field);
 
             $field = $this->addTextField('map_zoom');
             $field->setLabel(rex_i18n::msg('geolocation_form_map_zoom'));
@@ -118,7 +55,6 @@ class ConfigForm extends rex_config_form
                   ->add('type', $errorMsg, 'integer')
                   ->add('min', $errorMsg, ZOOM_MIN)
                   ->add('max', $errorMsg, ZOOM_MAX);
-            $this->ensureOldNotEmptyBehavoir($field);
 
             $field = $this->addCheckboxField('map_components');
             $field->setLabel(rex_i18n::msg('geolocation_form_mapoptions'));
@@ -133,7 +69,6 @@ class ConfigForm extends rex_config_form
             $field->getValidator()
                   ->add('notEmpty', $errorMsg)
                   ->add('match', $errorMsg, '/^.*?\.php$/');
-            $this->ensureOldNotEmptyBehavoir($field);
         }
 
         $this->addFieldset(rex_i18n::msg('geolocation_config_geocoder'));
@@ -141,15 +76,13 @@ class ConfigForm extends rex_config_form
         $field = $this->addTextField('geopicker_radius');
         $field->setLabel(rex_i18n::msg('geolocation_form_geopicker_radius'));
         $field->setAttribute('type', 'number');
-        // TODO: den Wert (25) zentral hinterlegen
-        $field->setAttribute('min', 25);
+        $field->setAttribute('min', rex_config::get(ADDON,'picker_min_radius'));
         $field->setNotice(rex_i18n::rawMsg('geolocation_form_geopicker_radius_notice', 25));
         $errorMsg = rex_i18n::msg('geolocation_config_geocoding_radius_error', rex_i18n::msg('geopicker_radius'), 25);
         $field->getValidator()
               ->add('notEmpty', $errorMsg)
               ->add('type', $errorMsg, 'integer')
               ->add('min', $errorMsg, TTL_MIN);
-        $this->ensureOldNotEmptyBehavoir($field);
 
         $this->addFieldset(rex_i18n::msg('geolocation_config_proxycache'));
 
@@ -162,7 +95,6 @@ class ConfigForm extends rex_config_form
               ->add('type', $errorMsg, 'integer')
               ->add('min', $errorMsg, TTL_MIN)
               ->add('max', $errorMsg, TTL_MAX);
-        $this->ensureOldNotEmptyBehavoir($field);
 
         $field = $this->addTextField('cache_maxfiles');
         $field->setLabel(rex_i18n::msg('geolocation_form_proxycache_maxfiles'));
@@ -172,7 +104,6 @@ class ConfigForm extends rex_config_form
               ->add('notEmpty', $errorMsg)
               ->add('type', $errorMsg, 'integer')
               ->add('min', $errorMsg, CFM_MIN);
-        $this->ensureOldNotEmptyBehavoir($field);
     }
 
     /**

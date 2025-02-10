@@ -57,7 +57,7 @@ class GeoCoder
     {
         $this->id = $id;
         $defaultResolver = 'https://nominatim.openstreetmap.org/search?format=json&limit=5&q={value}';
-        $this->url = rex_config::get('geolocation', 'resolver_url', $defaultResolver);
+        $this->url = rex_config::get(ADDON, 'resolver_url', $defaultResolver);
         $this->copyright = 'Nominatim/OSM ©️ <a href="http://openstreetmap.org/copyright">OpenStreetMap contributors</a>';
         $this->name = 'Nominatim / OpenStreetMap';
 
@@ -66,7 +66,7 @@ class GeoCoder
             'lng' => 'lon',
             'label' => 'display_name',
         ];
-        $this->mapping = json_decode(rex_config::get('geolocation', 'resolver_mapping', ''), true) ?? $defaultResolverMapping;
+        $this->mapping = json_decode(rex_config::get(ADDON, 'resolver_mapping', ''), true) ?? $defaultResolverMapping;
     }
 
     /**
@@ -288,7 +288,7 @@ class GeoCoder
         curl_setopt($ch, CURLOPT_REFERER, rex_request::server('HTTP_REFERER', 'string', ''));
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        if (($proxy = rex_addon::get('geolocation')->getConfig('socket_proxy')) !== '') {
+        if (($proxy = rex_addon::get(ADDON)->getConfig('socket_proxy')) !== '') {
             curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }
         $content = (string) curl_exec($ch);

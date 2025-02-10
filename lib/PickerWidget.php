@@ -227,11 +227,11 @@ class PickerWidget extends rex_fragment
      */
     public function setLocationMarker(int $radius = 0, array $style = []): static
     {
+        $minRadius = (int) rex_config::get(ADDON,'picker_min_radius');
         if ($radius <= 0) {
             $radius = rex_config::get(ADDON, 'picker_radius');
-        } elseif (0 < $radius && $radius < 11) {
-            // TODO: Mindestwert irgendwo zentral hinterlegen
-            throw new DeveloperException('Minimum radius is 10 meter');
+        } elseif (0 < $radius && $radius < $minRadius) {
+            throw new DeveloperException(sprintf('Minimum picker-radius is %d meter',$minRadius));
         }
         $this->lmRadius = $radius;
         $this->lmStyle = $style;
