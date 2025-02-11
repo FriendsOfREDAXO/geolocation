@@ -266,7 +266,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 'addressFields' => $addressFields,
                 // Formatierung des Markers/Pins (Farbe)
                 'markerStyle' => json_decode($this->getElement('params'), true),
-                'geoCoder' =>  '' === $this->getElement('geocoder') ? null : (int) $this->getElement('geocoder'),
+                'geoCoder' => '' === $this->getElement('geocoder') ? null : (int) $this->getElement('geocoder'),
                 // zulässiger Wertebereich oder null für Standard
                 'markerRange' => $markerRange,
                 // Fehlermeldungen
@@ -1011,6 +1011,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
      *
      * Alle zugehörigen Parameter müssen hier angegeben werden:
      *
+     * @api
      * @param mixed $value      der Wert sollte '' oder eine Zahl sein
      * @param float $min        Untergrenze. -90 bei Breitengraden und -180 bei Längengraden
      * @param float $max        Obergrenze. 90 bei Breitengraden und 180 bei Längengraden

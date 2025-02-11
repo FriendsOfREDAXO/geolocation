@@ -59,8 +59,6 @@ use function is_string;
 
 class PickerElement extends rex_form_element
 {
-    private $args = [];
-
     protected bool $hasGeoPicker = false;
     protected PickerWidget $geoPicker;
 
@@ -83,7 +81,10 @@ class PickerElement extends rex_form_element
     // ┃   direkt darauf angewandt werden.                                                       ┃
     // ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
-    public function allowEmptyValue(bool $status = true)
+    /**
+     * @api
+     */
+    public function allowEmptyValue(bool $status = true): void
     {
         $this->allowEmptyValue = $status;
     }
@@ -136,6 +137,8 @@ class PickerElement extends rex_form_element
      *
      * Die Validierung erfolgt summarisch und ist mehr oder weniger überflüssig, da das Eingabefeld
      * im Browser schon auf "numerisch" und die Einhaltung der Grenzwerte prüft.
+     * 
+     * @param rex_extension_point<rex_form_base> $ep
      */
     protected function adjustInternalField(rex_extension_point $ep): void
     {
@@ -171,6 +174,8 @@ class PickerElement extends rex_form_element
      *
      * "NotEmpty" kann man nur mit dem internen Validator abprüfen.
      * Custom-Validatoren werden systemseitig nur auf nicht-leere Felder aktiviert.
+     * 
+     * @param rex_extension_point<rex_form_base> $ep
      */
     protected function adjustExternalField(rex_extension_point $ep): void
     {
@@ -290,6 +295,8 @@ class PickerElement extends rex_form_element
      *
      * Auf leer wurde bereits geprüft. Zusätzlich prüfen auf numerisch und den zulässigen Wertebereich
      * Falls leere Werte vorkommen, sind sie also erlaubt; in dem Fall aussteigen ohne weitere Prüfungen
+     * 
+     * @param string $value
      */
     protected function validateLatExternal($value): bool
     {
@@ -316,6 +323,8 @@ class PickerElement extends rex_form_element
      *
      * Auf leer wurde bereits geprüft. Zusätzlich prüfen auf numerisch und den zulässigen Wertebereich
      * Falls leere Werte vorkommen, sind sie also erlaubt; in dem Fall aussteigen ohne weitere Prüfungen
+     * 
+     * @param string $value
      */
     protected function validateLngExternal($value): bool
     {

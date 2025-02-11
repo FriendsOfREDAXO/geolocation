@@ -7,22 +7,17 @@
 namespace FriendsOfRedaxo\Geolocation;
 
 use FriendsOfRedaxo\Geolocation\AssetPacker\AssetPacker;
-use FriendsOfRedaxo\Geolocation\Calc\Box;
-use FriendsOfRedaxo\Geolocation\Calc\Point;
-use rex;
 use rex_config;
 use rex_config_form;
 use rex_file;
-use rex_form_element;
 use rex_i18n;
 use rex_path;
-use rex_version;
 
 use function defined;
 
 class ConfigForm extends rex_config_form
 {
-   /**
+    /**
      * Initialisiert das Formular selbst.
      */
     public function init(): void
@@ -30,7 +25,6 @@ class ConfigForm extends rex_config_form
         parent::init();
 
         if (!PROXY_ONLY) {
-
             $this->addFieldset(rex_i18n::msg('geolocation_config_map'));
 
             $field = $this->addSelectField('default_map', $value = null, ['class' => 'form-control']);
@@ -72,7 +66,7 @@ class ConfigForm extends rex_config_form
 
             $this->addFieldset(rex_i18n::msg('geolocation_config_geopicker'));
 
-            $minRadius = (int) rex_config::get(ADDON,'picker_min_radius');
+            $minRadius = (int) rex_config::get(ADDON, 'picker_min_radius');
             $field = $this->addTextField('picker_radius');
             $field->setLabel(rex_i18n::msg('geolocation_form_geopicker_radius'));
             $field->setAttribute('type', 'number');
@@ -201,8 +195,7 @@ class ConfigForm extends rex_config_form
             ->overwrite()
             ->addFile($addonDir . 'install/tablemanager.js');
 
-
-            // Leaflet und Co wird nur eingebaut, wenn auch angefordert
+        // Leaflet und Co wird nur eingebaut, wenn auch angefordert
         if (0 < rex_config::get(ADDON, 'compile', 2)) {
             // der Leaflet-Core
             $css
