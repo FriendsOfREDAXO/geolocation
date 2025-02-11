@@ -13,6 +13,15 @@
  *      'choice3' => [],                  // Beispiel für alle ausblenden wenn Choice-Value = choice3
  *  ]
  * Beispielanwendung: YForm-Value geolocation_geocode
+ * 
+ *  [
+ *      'self' => '-type'                 // Die ID-Endung des Auswahlfeldes
+ *      'group' => ['-xyz', '-abc'],      // Endungen der Feldnamen in der Gruppe
+ *      '0' => [],                        // Bei Auswahl 0 alle ausblenden
+ *      '1' => [-xyz],                    // Bei Auswahl 1 -xyz einblenden
+ *      '*' => [-abc],                    // in allen anderen Fällen -abc einblenden
+ *  ]
+ * 
  */
 
 /** */
@@ -51,7 +60,10 @@ Geolocation.func.initYTMToggle = function (node) {
     node.addEventListener('change', (e) => {
         let value = e.target.value;
         if (!node.ycv.context[value]) {
-            return;
+            if( !node.ycv.context['*']) {
+                return;
+            }
+            value = '*';
         }
 
         node.ycv.fields.forEach((field) => {
@@ -65,7 +77,14 @@ Geolocation.func.initYTMToggle = function (node) {
     /**
      * Einmalig triggern, um die Werte passend zu bekommen
      */
-    node.dispatchEvent(new Event('change', { 'bubbles': true }));
+    // Select oder Radio?
+    let fld = node.ycv.container.querySelector('[geolocation-yvc-source="'+context.self+'"]');
+    if(!fld || fld.tagName !== 'SELECT') {
+        fld = node.ycv.container.querySelector('[geolocation-yvc-source="'+context.self+'"] input[checked]');   
+    }
+    if( fld) {
+        fld.dispatchEvent(new Event('change', { 'bubbles': true }));
+    }
 }
 
 document.addEventListener('DOMContentLoaded', (e) => {

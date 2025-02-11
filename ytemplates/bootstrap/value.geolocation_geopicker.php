@@ -41,7 +41,7 @@ use rex_yform_value_geolocation_geopicker;
 \assert(isset($latLngValue) || null === $latLngValue);
 \assert(isset($addressFields));
 \assert(isset($markerStyle));
-\assert(isset($geoCoder));
+\assert(null === $geoCoder || isset($geoCoder));
 \assert(\is_array($error));
 \assert(null === $markerRange || isset($markerRange));
 

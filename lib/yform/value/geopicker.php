@@ -266,7 +266,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 'addressFields' => $addressFields,
                 // Formatierung des Markers/Pins (Farbe)
                 'markerStyle' => json_decode($this->getElement('params'), true),
-                'geoCoder' => (int) $this->getElement('geocoder'), // GeoCoder::take($this->getElement('geocoder')),
+                'geoCoder' =>  '' === $this->getElement('geocoder') ? null : (int) $this->getElement('geocoder'),
                 // zulässiger Wertebereich oder null für Standard
                 'markerRange' => $markerRange,
                 // Fehlermeldungen
@@ -347,8 +347,22 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 'geocoder' => [
                     'type' => 'choice',
                     'label' => 'translate:geolocation_yfv_geopicker_geocoder',
-                    'choices' => GeoCoder::getList(true),
+                    'choices' => array_merge(['' => '(kein Geocoding)'], GeoCoder::getList(true)),
                     'default' => 0,
+                    /**
+                     * die beiden folgenden Attribute steuern via JS die Sichtbarkeit des Address-Feldes.
+                     */
+                    'group_attributes' => json_encode([
+                        'geolocation-yvc' => json_encode([
+                            'self' => '-geocoder',
+                            'group' => ['-fields'],
+                            '' => [],
+                            '*' => ['-fields'],
+                        ]),
+                    ]),
+                    'attributes' => json_encode([
+                        'geolocation-yvc-source' => '-geocoder',
+                    ]),
                 ],
                 'fields' => [
                     'type' => 'text',  // "select_names" kann man nicht nehmen, da die Reihenfolge der Feldnamen wichtig ist.
