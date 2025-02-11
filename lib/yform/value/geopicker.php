@@ -56,7 +56,11 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
     {
         $this->useExternalFields = 'external' === $this->getElement('type');
         $this->notEmpty = '1' === $this->getElement('not_required');
-        $this->markerRange = self::decodeBounds($this->getElement('range'));
+        try {
+            $this->markerRange = self::decodeBounds($this->getElement('range'));
+        } catch (\Throwable $th) {
+            $this->markerRange = [[-90, -180],[90,180]];
+        }
     }
 
     /**

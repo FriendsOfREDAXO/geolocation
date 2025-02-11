@@ -30,7 +30,6 @@ use rex_yform_value_geolocation_geopicker;
  */
 
 /** @var rex_yform_value_geolocation_geopicker $this */
-$this = $this;
 
 \assert(isset($mapsetId));
 \assert(isset($mapsetClass));
