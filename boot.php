@@ -6,6 +6,7 @@
 
 namespace FriendsOfRedaxo\Geolocation;
 
+use FriendsOfRedaxo\Geolocation\Picker\PickerMetafield;
 use rex;
 use rex_addon;
 use rex_be_controller;
@@ -98,5 +99,14 @@ if (rex::isBackend()) {
     rex_view::addJsFile($this->getAssetsUrl('geolocation_be.min.js'));
     if ('yform/manager/table_field' === rex_be_controller::getCurrentPage()) {
         rex_view::addJsFile($this->getAssetsUrl('tablemanager.min.js'));
+    }
+
+    /**
+     * Wenn Seiten mit Metafeldern aufgerufen werden, müssen evtl LocationPicker-Felder
+     * gerendert werden.
+     */
+    $page = rex_be_controller::getCurrentPagePart(1);
+    if ('media' === $page || 'content' === $page) {
+        rex_extension::register('METAINFO_CUSTOM_FIELD', PickerMetafield::createMetaField(...));
     }
 }

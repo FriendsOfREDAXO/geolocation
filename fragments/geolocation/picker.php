@@ -14,6 +14,7 @@
 
 namespace FriendsOfRedaxo\Geolocation;
 
+use FriendsOfRedaxo\Geolocation\Picker\PickerWidget;
 use rex_i18n;
 use rex_string;
 

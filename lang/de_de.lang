@@ -124,6 +124,7 @@ geolocation_install_update2_ok = Namespace der Coronjob-Klasse angepasst (ab Ver
 geolocation_install_update3_ok = Zusätzliche Datenfelder initialisiert (ab Version 2.0.0).
 geolocation_install_update4_ok = Namespace angepasst in «data/geolocation/config.yml» (ab Version 2.0.0).
 geolocation_install_data_config_error = Das Namespace-Update auf "FriendsOfRedaxo\Geolocation" in der Datei «redaxo/data/geolocation/config.yml» schlug fehl.
+geolocation_install_metafield = 'Metafeld-Typ angelegt'
 
 # URL-Test (yform-value, api)
 geolocation_yfv_url_description = Geolocation-Addon: URL mit Testbild-Abruf

@@ -235,7 +235,7 @@ ist die Umkreissuche nicht verfügbar.
 Die GeoCoder-Klasse bietet statische Methoden an, die möglicherweise auch in eigenen Anwendungen hilffeich sind bim Aufbau von Umkreissuchen:
 
 ```php
-use FriendsOfRedaxo\Feolocation\GeoCoder;
+use FriendsOfRedaxo\Geolocation\GeoCoder;
 
 // Die YOrm-Query
 $query = MyDatasetClass:.query();
@@ -268,7 +268,7 @@ $query->whereRaw($where);
 ## als RexForm-Element
 
 RexForm-Formulare können um eigene Feldtypen ("Elemente") erweitert werden, auch wenn es etwas kompliziert erscheint.
-Die Klasse `PickerElement' stellt ein solches Formular-Element zur Verfügung, dass ähnlich wie das [YForm-Value](#yform)
+Die Klasse `PickerElement` stellt ein solches Formular-Element zur Verfügung, dass ähnlich wie das [YForm-Value](#yform)
 ausgestaltet ist:
 
 - Speicherung der Koordinate intern als Array `['lat'=>...,'lng' => ...]`
@@ -281,7 +281,7 @@ Methode `$field->setPickerWidget()` aktiviert. Je nach Parametrisierung entsteht
 **Beispiel: Interne Speicherung im eigenen Feld als Array**
 
 ```php
-use FriendsOfRedaxo\Geolocation\PickerElement;
+use FriendsOfRedaxo\Geolocation\Picker\PickerElement;
 
 // Feld "koordinate" als Picker-Element anlegen
 $pickerField = $this->addField('', 'koordinate', null, ['internal::fieldClass' => PickerElement::class], true);
@@ -300,13 +300,13 @@ $geoPicker->setBaseBounds($baseBounds);
 
 Die Instanzen der beiden Felder werden mit `SetPickerWidget` an das Picker-Feld übergeben.
 Daraus leitet der Picker die intern nötigen Daten (z.B. die ID) ab bzw. entnimmt den Wert
-für die initialisierung der Karte. 
+für die Initialisierung der Karte. 
 
 Optional werden die Felder ähnlich wie die internen Eingabefelder konfiguriert
 (`type="number"`, `min="..."`, `max="..."` usw.).
 
 ```php
-use FriendsOfRedaxo\Geolocation\PickerElement;
+use FriendsOfRedaxo\Geolocation\Picker\PickerElement;
 
 // Eingabefelder für Breiten- und Längengrad
 $latField = $field = $this->addTextField('lat');
@@ -319,7 +319,8 @@ $field->setLabel('Längengrad');
 $pickerField = $this->addField('', 'koordinate', null, ['internal::fieldClass' => PickerElement::class], true);
 $pickerField->setLabel('Location');
 
-// PickerWidget für die interne Speicherung aktivieren
+// PickerWidget für die externe Speicherung aktivieren
+// True für $latField und $lngField konfigurieren (type, min, max, required, ...)
 $geoPicker = $pickerField->setPickerWidget($latField, $lngField, true);
 
 // Picker-Widget konfigurieren
@@ -331,7 +332,71 @@ $geoPicker->setBaseBounds($baseBounds);
 <a name="modul"></a>
 ## In Modulen
 
+skip the bla
 
-<<<<< draft >>>>>
+<a name="meta"></a>
+## Als Metafeld
 
+Bei der Installation wird ein Meta-Feldtyp **"LocationPicker (Geolocation)"** angelegt. Dazu können individuelle
+MetaFelder kreiert werden. Ein solches Metafeld verfügt über ein PickerWidget in der Grundausstattung:
+- Default-Mapset
+- ohne GeoCoding
+- Standard-Kartenausschnitt
+- Standard-Markerformatierung
 
+Weitere individuelle Formatierungen lassen sich über einen Callback hinzufügen. Die Funktion wird im Feld Params eingegeben und
+erhält als einzigen Parameter das aktuelle PickerWidget, das im Callback angepasst werden kann.
+
+Der Name der Callback-Methode wie hier mit einem Namespace ist nur ein Beispiel.
+
+![Metafeld](/assets/picker_meta01.jpg)
+
+Die entsprechende Methode der Datei `project/lib/MyGeoTools.php` sieht so aus:
+
+```PHP
+namespace MyName\MyRepo\Project;
+
+use FriendsOfRedaxo\Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Picker\PickerWidget;
+
+class MyGeoTools
+{
+    public static function metaFieldConfig(PickerWidget $picker): void
+    {
+        /**
+         * Den Pin optisch umgestalten sowie den Umkreis.
+         */
+        $markerStyle = [
+            'pin' => [
+                'color' => 'OrangeRed',
+            ],
+            'circle' => [
+                'color' => 'OrangeRed',
+                'weight' => 1,
+                'fillOpacity' => 0.1,
+            ],
+        ];
+        $picker->setLocationMarker(250, $markerStyle);
+
+        /**
+         * Der Basiskartenausschnitt ist "Berlin".
+         */
+        $baseBounds = Box::byCorner(
+            Point::byLatLng([52.32282, 13.05804]),
+            Point::byLatLng([52.69235, 13.79644]),
+        );
+        $picker->setBaseBounds($baseBounds);
+
+        /**
+         *  GeoCoding mit dem Standard-GeoCoder aktivieren.
+         */
+        $picker->setGeoCoder(0);
+    }
+}
+
+```
+
+Und das ist das Resultat:
+
+![Mit MetaFeld](assets/picker_meta.jpg)

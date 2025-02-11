@@ -12,10 +12,13 @@
  * durchgeführt noch noch auf Default/Fallback umgeschaltet werden
  */
 
-namespace FriendsOfRedaxo\Geolocation;
+namespace FriendsOfRedaxo\Geolocation\Picker;
 
 use FriendsOfRedaxo\Geolocation\Calc\Box;
 use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\DeveloperException;
+use FriendsOfRedaxo\Geolocation\GeoCoder;
+use FriendsOfRedaxo\Geolocation\Mapset;
 use rex_config;
 use rex_fragment;
 use Throwable;
@@ -24,6 +27,7 @@ use function count;
 use function is_string;
 use function sprintf;
 
+use const FriendsOfRedaxo\Geolocation\ADDON;
 use const PREG_SPLIT_NO_EMPTY;
 
 class PickerWidget extends rex_fragment
