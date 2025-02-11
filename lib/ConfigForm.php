@@ -69,20 +69,21 @@ class ConfigForm extends rex_config_form
             $field->getValidator()
                   ->add('notEmpty', $errorMsg)
                   ->add('match', $errorMsg, '/^.*?\.php$/');
+
+            $this->addFieldset(rex_i18n::msg('geolocation_config_geopicker'));
+
+            $minRadius = (int) rex_config::get(ADDON,'picker_min_radius');
+            $field = $this->addTextField('picker_radius');
+            $field->setLabel(rex_i18n::msg('geolocation_form_geopicker_radius'));
+            $field->setAttribute('type', 'number');
+            $field->setAttribute('min', $minRadius);
+            $field->setNotice(rex_i18n::rawMsg('geolocation_form_geopicker_radius_notice', $minRadius));
+            $errorMsg = rex_i18n::msg('geolocation_config_geocoding_radius_error', rex_i18n::msg('geopicker_radius'), $minRadius);
+            $field->getValidator()
+                ->add('notEmpty', $errorMsg)
+                ->add('type', $errorMsg, 'integer')
+                ->add('min', $errorMsg, $minRadius);
         }
-
-        $this->addFieldset(rex_i18n::msg('geolocation_config_geocoder'));
-
-        $field = $this->addTextField('geopicker_radius');
-        $field->setLabel(rex_i18n::msg('geolocation_form_geopicker_radius'));
-        $field->setAttribute('type', 'number');
-        $field->setAttribute('min', rex_config::get(ADDON,'picker_min_radius'));
-        $field->setNotice(rex_i18n::rawMsg('geolocation_form_geopicker_radius_notice', 25));
-        $errorMsg = rex_i18n::msg('geolocation_config_geocoding_radius_error', rex_i18n::msg('geopicker_radius'), 25);
-        $field->getValidator()
-              ->add('notEmpty', $errorMsg)
-              ->add('type', $errorMsg, 'integer')
-              ->add('min', $errorMsg, TTL_MIN);
 
         $this->addFieldset(rex_i18n::msg('geolocation_config_proxycache'));
 

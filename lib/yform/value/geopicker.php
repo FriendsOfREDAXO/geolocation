@@ -35,9 +35,6 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
     protected ?rex_yform_value_abstract $latField = null;
     protected ?rex_yform_value_abstract $lngField = null;
 
-    private static int $markerRadius = 0;
-    private static int $minMarkerRadius = 0;
-
     protected bool $useExternalFields = false;
 
     protected bool $notEmpty = false;
@@ -60,8 +57,6 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
         $this->useExternalFields = 'external' === $this->getElement('type');
         $this->notEmpty = '1' === $this->getElement('not_required');
         $this->markerRange = self::decodeBounds($this->getElement('range'));
-        $this->markerRadius = (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON,'picker_radius');
-        $this->minMarkerRadius = (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON,'picker_min_radius');
     }
 
     /**
@@ -102,7 +97,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                     $this->getElement('lng'),
                     $this->params['main_table'],
                 ));
-            }            
+            }
 
             $value = [
                 'lat' => ($this->latField->getValue() ?? ''),
@@ -254,7 +249,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 // Externe oder interne LatLng-Felder
                 'type' => $this->getElement('type'),
                 // Radius in Meter um die Position (sorgt für den Zoom)
-                'radius' => self::$markerRadius,
+                'radius' => (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON, 'picker_radius'),
                 // initiale Kartenansicht wenn es keine Werte gibt
                 'defaultBounds' => $defaultBounds,
                 // Koordinaten-Felder
@@ -397,10 +392,10 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 'size' => [
                     'type' => 'number',
                     'label' => 'translate:geolocation_form_geopicker_radius',
-                    'default' => (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON, 'picker_radius', self::$markerRadius),
+                    'default' => (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON, 'picker_radius'),
                     'scale' => 0,
                     'widget' => 'input:number',
-                    'notice' => rex_i18n::msg('geolocation_form_picker_radius_notice', self::$minMarkerRadius),
+                    'notice' => rex_i18n::msg('geolocation_form_picker_radius_notice', (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON, 'picker_min_radius')),
                 ],
                 'params' => [
                     'type' => 'text',
@@ -770,13 +765,14 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
             return false;
         }
 
+        $minRadius = (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON, 'picker_min_radius');
         if (!is_numeric($value)) {
-            return self::setValidatorMsg($self, 'geolocation_config_geocoding_radius_error', $fields[$field_name]->getLabel(), self::$minMarkerRadius);
+            return self::setValidatorMsg($self, 'geolocation_config_geocoding_radius_error', $fields[$field_name]->getLabel(), $minRadius);
         }
 
         $val = (int) $value;
-        if ($val < self::$minMarkerRadius) {
-            return self::setValidatorMsg($self, 'geolocation_config_geocoding_radius_error', $fields[$field_name]->getLabel(), self::$minMarkerRadius);
+        if ($val < $minRadius) {
+            return self::setValidatorMsg($self, 'geolocation_config_geocoding_radius_error', $fields[$field_name]->getLabel(), $minRadius);
         }
         return false;
     }
@@ -964,8 +960,9 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
         $pattern = '@^\d+?$@';
         $ok = preg_match($pattern, $parts[2], $matches);
         $parts[2] = str_replace(',', '.', $parts[2]);
-        if (0 === $ok || (int) $parts[2] < self::$minMarkerRadius) {
-            return rex_i18n::msg('geolocation_yfv_geopicker_search_err_4', self::$minMarkerRadius);
+        $minRadius = (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON, 'picker_min_radius');
+        if (0 === $ok || (int) $parts[2] < $minRadius) {
+            return rex_i18n::msg('geolocation_yfv_geopicker_search_err_4', $minRadius);
         }
 
         return $parts;

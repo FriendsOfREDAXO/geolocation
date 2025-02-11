@@ -19,7 +19,7 @@ use rex_string;
 
 /** @var PickerWidget $this */
 if (!is_a($this, PickerWidget::class)) {
-    throw new DeveloperException('This fragment ist designed to work only called by '.PickerWidget::class);
+    throw new DeveloperException('This fragment ist designed to work only called by ' . PickerWidget::class);
 }
 
 /**
@@ -71,6 +71,9 @@ if (!$this->useExternalInput()) {
         'autocomplete' => 'off',
         'placeholder' => rex_i18n::msg('geolocation_picker_lat_placeholder'),
     ];
+    if ($this->isInputRequired()) {
+        $inputAttributes['required'] = 'required';
+    }
 
     $labelAttributes = [
         'class' => 'control-label',
@@ -89,7 +92,7 @@ if (!$this->useExternalInput()) {
         <div' . rex_string::buildAttributes($fieldAttributes) . '>
             <label' . rex_string::buildAttributes($labelAttributes) . '>' . rex_i18n::msg('geolocation_lat_label') . '</label>
             <input' . rex_string::buildAttributes($inputAttributes) . ' />
-            '. $notice .'
+            ' . $notice . '
         </div>';
 
     $inputAttributes = [
@@ -104,6 +107,9 @@ if (!$this->useExternalInput()) {
         'autocomplete' => 'off',
         'placeholder' => rex_i18n::msg('geolocation_picker_lng_placeholder'),
     ];
+    if ($this->isInputRequired()) {
+        $inputAttributes['required'] = 'required';
+    }
 
     $labelAttributes = [
         'class' => 'control-label',
@@ -122,7 +128,7 @@ if (!$this->useExternalInput()) {
         <div' . rex_string::buildAttributes($fieldAttributes) . '>
             <label' . rex_string::buildAttributes($labelAttributes) . '>' . rex_i18n::msg('geolocation_lng_label') . '</label>
             <input' . rex_string::buildAttributes($inputAttributes) . ' />
-            '. $notice .'
+            ' . $notice . '
         </div>';
 }
 

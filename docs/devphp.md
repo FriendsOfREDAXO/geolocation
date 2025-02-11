@@ -5,7 +5,8 @@
 > - [Karten/Layer verwalten](layer.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
 > - Für Entwickler
->   - __PHP_
+>   - __PHP Basis__
+>   - [PHP LocationPicker](devphp1.md)
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
@@ -23,9 +24,12 @@ die Klassen und globalen Konstanten. Hier die wichtigsten:
 | --- | --- |
 | FriendsOfRedaxo\Geolocation\Layer.php | YOrm-Dataset-Klasse für die einzelnen Karten-URLs |
 | FriendsOfRedaxo\Geolocation\Mapset.php | YOrm-Dataset-Klasse für die Kartensätze aus mehreren Karten-URLs |
+| FriendsOfRedaxo\Geolocation\GeoCoder.php | (Pseudo-)YOrm-Dataset-Klasse für die Geocoding-Services (z. Zt. nur Nominatim)|
 | FriendsOfRedaxo\Geolocation\Cache.php | Klasse mit Methoden zur Verwaltung des Karten-Cache |
 | FriendsOfRedaxo\Geolocation\ConfigForm.php | rex_form-Klasse für das Formular "[Einstellungen](settings.md#config)" |
 | FriendsOfRedaxo\Geolocation\Cronjob.php |rex_cronjob-Klasse für Cronjobs zum Cache-Hauskeeping |
+| FriendsOfRedaxo\Geolocation\PickerElement.php |rex_form_element für einen Feldtyp "Koordinaten-Picker" in RexForm-Formularen |
+| FriendsOfRedaxo\Geolocation\PickerWidget.php |rex_fragment-Klasse als spezialiserte Schnittstelle für den Koordinaten-Picker |
 | FriendsOfRedaxo\Geolocation\Tools.php | Diverse statische Methoden, die immer mal wieder hilfreich sind.|
 | FriendsOfRedaxo\Geolocation\Exception.php | Exception-Klasse für von **Geolocation** ausgelöste \RuntimeException  |
 | FriendsOfRedaxo\Geolocation\Calc\point.php | Rechnen mit Koordinaten: repräsentiert einen Punkt  |
@@ -40,6 +44,7 @@ die Klassen und globalen Konstanten. Hier die wichtigsten:
 | FriendsOfRedaxo\Geolocation\CFM_MAX | Maximale Anzahl Dateien im Cache: Obergrenze-Wert |
 | FriendsOfRedaxo\Geolocation\KEY_TILES | Name im der URL für Kachelabrufe |
 | FriendsOfRedaxo\Geolocation\KEY_MAPSET | Name im der URL für Kartensatzabrufe |
+| FriendsOfRedaxo\Geolocation\KEY_GEOCODER | Name im der URL für GeoCoding-Abrufe |
 | FriendsOfRedaxo\Geolocation\OUT | Name des Default-Ausgabefragments |
 | FriendsOfRedaxo\Geolocation\LOAD | FALSE: Die Assets `geolocation.min.js|css` werden nicht geladen |
 

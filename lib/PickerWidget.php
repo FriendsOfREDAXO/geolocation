@@ -51,6 +51,7 @@ class PickerWidget extends rex_fragment
     /** @var array<string, mixed> */
     protected array $lmStyle = [];
     protected ?Box $markerRange = null;
+    protected bool $markerRequired = false;
     protected Box $voidBounds;
     protected ?int $geoCoder = null;
     /** @var array<string,string> */
@@ -111,8 +112,6 @@ class PickerWidget extends rex_fragment
      *
      * Der aktuelle Wert wird aber nicht aus den Feldern ausgelesen. Er muss zusätzlich mit
      * setLocation(...) übermittelt werden (siehe dort)
-     *
-     * @api
      */
     public static function factoryInternal(string $latName, string $lngName, string $latId = '', string $lngId = ''): static
     {
@@ -227,11 +226,11 @@ class PickerWidget extends rex_fragment
      */
     public function setLocationMarker(int $radius = 0, array $style = []): static
     {
-        $minRadius = (int) rex_config::get(ADDON,'picker_min_radius');
+        $minRadius = (int) rex_config::get(ADDON, 'picker_min_radius');
         if ($radius <= 0) {
             $radius = rex_config::get(ADDON, 'picker_radius');
         } elseif (0 < $radius && $radius < $minRadius) {
-            throw new DeveloperException(sprintf('Minimum picker-radius is %d meter',$minRadius));
+            throw new DeveloperException(sprintf('Minimum picker-radius is %d meter', $minRadius));
         }
         $this->lmRadius = $radius;
         $this->lmStyle = $style;
@@ -250,9 +249,10 @@ class PickerWidget extends rex_fragment
      *
      * @api
      */
-    public function setLocationRange(?Box $range = null): static
+    public function setLocationRange(?Box $range = null, bool $required = false): static
     {
         $this->markerRange = $range;
+        $this->markerRequired = $required;
         return $this;
     }
 
@@ -508,6 +508,16 @@ class PickerWidget extends rex_fragment
             'minLng' => $this->markerRange->west(),
             'maxLng' => $this->markerRange->east(),
         ];
+    }
+
+    /**
+     * Liefert true wenn eine Eingabe erforderlich ist.
+     *
+     * @api
+     */
+    public function isInputRequired(): bool
+    {
+        return $this->markerRequired;
     }
 
     /**

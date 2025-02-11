@@ -6,7 +6,8 @@
 > - [Karten/Layer verwalten](layer.md)
 > - [Karten-Proxy und -Cache](proxy_cache.md)
 > - [Für Entwickler](devphp.md)
->   - [PHP](devphp.md)
+>   - [PHP Basis](devphp.md)
+>   - [PHP LocationPicker](devphp1.md)
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
@@ -132,6 +133,7 @@ FriendsOfRedaxo\Geolocation\CFM_MAX: 100000
 # URL-Name für API-Abrufe
 FriendsOfRedaxo\Geolocation\KEY_TILES: 'geolayer'
 FriendsOfRedaxo\Geolocation\KEY_MAPSET: 'geomapset'
+FriendsOfRedaxo\Geolocation\KEY_GEOCODER: 'geocode'
 
 # Fragment zur Kartenausgabe
 FriendsOfRedaxo\Geolocation\OUT: 'geolocation_rex_map.php'
@@ -142,6 +144,10 @@ mapoptions: true
 
 # Anzuzeigender Default-Kartenausschnitt = Europa (für Tool "bounds")
 bounds: '[35,-9],[60,25]'
+
+# Für LocationPicker der Tool-Radius (Meter)
+picker_radius: 250
+picker_min_radius: 25
 
 # Standard-Zoom
 zoom: 15

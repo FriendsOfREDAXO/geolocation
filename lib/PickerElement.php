@@ -206,6 +206,10 @@ class PickerElement extends rex_form_element
             $this->lngField->setAttribute('step', 'any');
             $this->lngField->setAttribute('autocomplete', 'off');
             $this->lngField->setAttribute('placeholder', rex_i18n::msg('geolocation_picker_lng_placeholder'));
+            if ($this->geoPicker->isInputRequired()) {
+                $this->latField->setAttribute('required', 'required');
+                $this->lngField->setAttribute('required', 'required');
+            }
         }
     }
 

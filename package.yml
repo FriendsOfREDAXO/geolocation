@@ -50,6 +50,9 @@ page:
                         devphp:
                             title: translate:geolocation_manpage_devphp
                             subpath:  pages/manual.php
+                        devphp1:
+                            title: translate:geolocation_manpage_devphp1
+                            subpath:  pages/manual.php
                         devjs:
                             title: translate:geolocation_manpage_devjs
                             subpath:  pages/manual.php

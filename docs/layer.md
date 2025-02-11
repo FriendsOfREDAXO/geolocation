@@ -6,7 +6,8 @@
 > - __Karten/Layer verwalten__
 > - [Karten-Proxy und -Cache](proxy_cache.md)
 > - [Für Entwickler](devphp.md)
->   - [PHP](devphp.md)
+>   - [PHP Basis](devphp.md)
+>   - [PHP LocationPicker](devphp1.md)
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
