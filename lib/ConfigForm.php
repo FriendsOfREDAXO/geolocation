@@ -196,7 +196,13 @@ class ConfigForm extends rex_config_form
             ->overwrite()
             ->addFile($addonDir . 'install/geolocation_be.js');
 
-        // Leaflet und Co wird nur eingebaut, wenn auch angefordert
+        // JS für den YForm-Tablemanager (Feldkonfiguration)
+        $be_js_tablemanager = AssetPacker::target($assetDir . 'tablemanager.min.js')
+            ->overwrite()
+            ->addFile($addonDir . 'install/tablemanager.js');
+
+
+            // Leaflet und Co wird nur eingebaut, wenn auch angefordert
         if (0 < rex_config::get(ADDON, 'compile', 2)) {
             // der Leaflet-Core
             $css
@@ -252,5 +258,6 @@ class ConfigForm extends rex_config_form
         $css->create();
         $be_css->create();
         $be_js->create();
+        $be_js_tablemanager->create();
     }
 }
