@@ -238,10 +238,10 @@ try {
 
     // Den Metafeldtyp für den LocationPicker eintragen
     $result = rex_metainfo_add_field_type('LocationPicker (Geolocation)', 'varchar', 50);
-    if (is_string($result)) {
-        $msg[] = $result;
-    } else {
+    if (is_numeric($result)) {
         $msg[] = $this->i18n('install_metafield');
+    } else {
+        $msg[] = $result;
     }
 
     // Die JS/CSS-Dateien neu kompilieren, um Instanz-eigene Erweiterungen und Parameter

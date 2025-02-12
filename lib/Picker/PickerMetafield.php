@@ -9,6 +9,7 @@ namespace FriendsOfRedaxo\Geolocation\Picker;
 use FriendsOfRedaxo\Geolocation\Calc\Point;
 use rex_extension_point;
 use rex_fragment;
+use rex_sql;
 use Throwable;
 
 use function call_user_func;
@@ -16,11 +17,13 @@ use function is_callable;
 
 class PickerMetafield
 {
+    /** @api */
     public const META_FIELD_TYPE = 'LocationPicker (Geolocation)';
 
     /**
      * Baut im EP METAINFO_CUSTOM_FIELD den Formularcode für einen Location-Picker ein.
      *
+     * @api
      * @param rex_extension_point<array<mixed>> $ep
      */
     public static function createMetaField(rex_extension_point $ep): void

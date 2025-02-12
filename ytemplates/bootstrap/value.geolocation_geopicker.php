@@ -10,6 +10,7 @@ namespace FriendsOfRedaxo\Geolocation;
 
 use FriendsOfRedaxo\Geolocation\Calc\Box;
 use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Picker\PickerWidget;
 use rex_i18n;
 use rex_yform_value_geolocation_geopicker;
 

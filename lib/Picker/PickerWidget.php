@@ -116,6 +116,8 @@ class PickerWidget extends rex_fragment
      *
      * Der aktuelle Wert wird aber nicht aus den Feldern ausgelesen. Er muss zusätzlich mit
      * setLocation(...) übermittelt werden (siehe dort)
+     * 
+     * @api
      */
     public static function factoryInternal(string $latName, string $lngName, string $latId = '', string $lngId = ''): static
     {

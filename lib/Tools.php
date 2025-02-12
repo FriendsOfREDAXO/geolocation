@@ -121,6 +121,7 @@ class Tools
      * schickt ein JSON-Objekt an den Client.
      *
      * @api
+     * @param array<mixed> $data
      * @return never
      */
     public static function sendJson(array $data, int $timestamp, int $ttl): void
