@@ -10,9 +10,9 @@ use FriendsOfRedaxo\Geolocation\Calc\Point;
 use rex_extension_point;
 use rex_fragment;
 use rex_sql;
-use Throwable;
 
 use function call_user_func;
+use function count;
 use function is_callable;
 
 class PickerMetafield
@@ -34,13 +34,14 @@ class PickerMetafield
         }
 
         /**
-         * Die aktuelle Koordinate abrufen und aus gültigen Werten
-         * einen Point erzeugen.
+         * Die aktuelle Koordinate abrufen; es muss ein Array aus
+         * zwei Werten sein.
+         * In den anderen Fällen wird ein Fallback-Array aus zwei Leerstrings erzeugt.
+         * @var array<string> $value
          */
-        try {
-            $location = Point::byLatLng($subject['values']);
-        } catch (Throwable $th) {
-            $location = null;
+        $value = $subject['values'];
+        if (2 !== count($value)) {
+            $value = ['', ''];
         }
 
         /**
@@ -50,7 +51,7 @@ class PickerMetafield
          */
         $baseName = str_replace('rex-metainfo-', '', $subject[3]);
         $picker = PickerWidget::factoryInternal($baseName . '[lat]', $baseName . '[lng]')
-            ->setLocation($location);
+            ->setValue($value[0], $value[1]);
 
         /**
          * Wenn Params gefüllt ist, muss es ein Callback sein, der das Picker-Widget formatiert.
@@ -75,7 +76,6 @@ class PickerMetafield
         $fragment->setVar('elements', $elements, false);
         $subject[0] = $fragment->parse('core/form/form.php');
 
-        dump(get_defined_vars());
         $ep->setSubject($subject);
     }
 }

@@ -22,7 +22,8 @@ use rex_yform_value_geolocation_geopicker;
  * @var ?Box $defaultBounds     Koordinaten für die Default-Karte wenn es keinen gültigen Punkt gibt
  * @var array{lat: string, lng:string} $latLngId    feld-ID für die Lat/Lng-Felder
  * @var array{lat: string, lng:string} $latLngName  HTML-Input-Name der LatLng-Felder
- * @var ?Point $latLngValue     aktuelle Koordinate oder nul für leeres Feld
+ * @var ?Point $latLngPoint     aktuelle Koordinate oder nul für leeres Feld
+ * @var array<string> $latLngValue   aktuelle Feldwerte für die internen Eingabefelder
  * @var array<string> addressFields  IDs der Felder mit Adress-Teilen
  * @var array $markerStyle      Array oder JSON-String mit Formatierungsinfos (Leaflet-Options für Marker und Circle)
  * @var ?GeoCoder $geocoder     Die GeoCoder-Informationen bzw. null für "keinen GeoCoder
@@ -39,12 +40,13 @@ use rex_yform_value_geolocation_geopicker;
 \assert(isset($defaultBounds));
 \assert(isset($latLngId));
 \assert(isset($latLngName));
-\assert(isset($latLngValue) || null === $latLngValue);
+\assert(isset($latLngPoint) || null === $latLngPoint);
+\assert(isset($latLngValue));
 \assert(isset($addressFields));
 \assert(isset($markerStyle));
 \assert(null === $geoCoder || isset($geoCoder));
 \assert(\is_array($error));
-\assert(null === $markerRange || isset($markerRange));
+\assert(isset($markerRange) || null === $markerRange);
 
 /**
  * Die Standardelementen eines Values.
@@ -75,11 +77,14 @@ $class_label[] = 'control-label';
 /**
  * GeoPicker für externe oder interne Felder einrichten (Basis-Konfiguration).
  */
+dump(get_defined_vars());
+
 if ('external' === $type) {
     $geoPicker = PickerWidget::factoryExternal(
         $latLngId['lat'],
         $latLngId['lng'],
     );
+    $geoPicker->setLocation($latLngPoint);
 } else {
     $geoPicker = PickerWidget::factoryInternal(
         $latLngName['lat'],
@@ -87,6 +92,7 @@ if ('external' === $type) {
         $latLngId['lat'],
         $latLngId['lng'],
     );
+    $geoPicker->setValue($latLngValue['lat'], $latLngValue['lng']);
 }
 
 /**
@@ -98,7 +104,6 @@ $geoPicker
     ->setBaseBounds($defaultBounds)
     ->setGeoCoder($geoCoder)
     ->setLocationMarker($radius, $markerStyle)
-    ->setLocation($latLngValue)
     ->setAdressFields($addressFields)
     ->setLocationRange($markerRange)
 ;

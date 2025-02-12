@@ -58,8 +58,8 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
         $this->notEmpty = '1' === $this->getElement('not_required');
         try {
             $this->markerRange = self::decodeBounds($this->getElement('range'));
-        } catch (\Throwable $th) {
-            $this->markerRange = [[-90, -180],[90,180]];
+        } catch (Throwable $th) {
+            $this->markerRange = [[-90, -180], [90, 180]];
         }
     }
 
@@ -265,7 +265,8 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                     'lat' => $this->useExternalFields ? $this->latField->getFieldName() : $this->getFieldName('lat'),
                     'lng' => $this->useExternalFields ? $this->lngField->getFieldName() : $this->getFieldName('lng'),
                 ],
-                'latLngValue' => $point,
+                'latLngPoint' => $point,
+                'latLngValue' => $value,
                 // Verlinkung zu Feldern mit Adress-Teilen
                 'addressFields' => $addressFields,
                 // Formatierung des Markers/Pins (Farbe)

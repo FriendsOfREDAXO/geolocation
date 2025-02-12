@@ -266,23 +266,24 @@ class PickerElement extends rex_form_element
      */
     public function formatElement()
     {
+        $geoPicker = $this->setPickerWidget();
+
         if ($this->internalValue) {
             $value = $this->getValue();
+            $geoPicker->setValue($value['lat'], $value['lng']);
         } else {
             $value = [
                 'lat' => $this->latField->getValue(),
                 'lng' => $this->lngField->getValue(),
             ];
-        }
 
-        try {
-            $location = Point::factory($value, 'lat', 'lng');
-        } catch (Throwable $th) {
-            $location = null;
+            try {
+                $location = Point::factory($value, 'lat', 'lng');
+            } catch (Throwable $th) {
+                $location = null;
+            }
+            $geoPicker->setLocation($location);
         }
-
-        $geoPicker = $this->setPickerWidget();
-        $geoPicker->setLocation($location);
 
         return $geoPicker->parse();
     }
@@ -365,8 +366,6 @@ class PickerElement extends rex_form_element
      */
     protected function validateLatInternal($value): bool
     {
-        dump([__METHOD__ => get_defined_vars()]);
-
         $val = $this->getValue();
 
         // Leer akzeptieren?

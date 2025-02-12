@@ -115,10 +115,23 @@ echo $geoPicker->parse();
 
 Über weitere Methoden kann das Widget angepasst werden:
 
-- `setLocation(?Point $location = null)` (dringend empfohlen)
+- `setValue(float|int|string $lat, float|int|string $lng)`
 
-   Setzt die initiale Position der Karte. Wenn es bereits eine gespeicherte Koordinate gibt,
-   wird sie hierrüber und **nicht** über den Inhalt der Eingabefelder an das Widget gegeben.
+   Setzt den Wert für Breiten- und Längengrad. Dieser Wert wird in die internen Eingabefelder übertragen.
+   Das ist insofern wichtig wenn die Überprüfung der Eingaben (z.B. in Value-Konstruktionen mit Validierung)
+   zwar ergibt, dass keine valide Koordinate vorliegt, aber denoch die Eingabe wieder zur Korrektur angezeigt
+   werden soll.
+
+   > Die Feldwerte werden **nicht** über den Inhalt der Eingabefelder an das Widget gegeben.
+
+   Wenn bisher noch keine valide initiale Koordinate gesetzt wurde (`setLocation($point)`), wird versucht, aus den
+   Angaben auch die Koordinate zu ermitteln. `setLocation`muss dan nicht zusätzlich aufgerufen werden.
+
+- `setLocation(?Point $location = null)`
+
+   Setzt die initiale Position der Karte unabhängig von der Variante interne vs. externe Eingabefelder.
+   Da im Falle externer Eingebefelder deren Inhalt nicht vom Widget geändert wird, greift `setValue(..)` nicht.
+   Stattb dessen wird die Kartenposition mit `setLocation(..)` übermittelt. 
    
 - `setContainer(string $id = '', array|string $class = [])`
 
@@ -351,7 +364,7 @@ Der Name der Callback-Methode wie hier mit einem Namespace ist nur ein Beispiel.
 
 ![Metafeld](/assets/picker_meta01.jpg)
 
-Die entsprechende Methode der Datei `project/lib/MyGeoTools.php` sieht so aus:
+Die Beispiel-Methode der Datei `project/lib/MyGeoTools.php` sieht so aus:
 
 ```PHP
 namespace MyName\MyRepo\Project;

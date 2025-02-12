@@ -41,6 +41,8 @@ class PickerWidget extends rex_fragment
     protected bool $adjustAttributes = false;
 
     protected ?Point $initialLocation = null;
+    protected string $latValue = '';
+    protected string $lngValue = '';
 
     /** @var array<string> */
     protected array $containerClass = [];
@@ -116,7 +118,7 @@ class PickerWidget extends rex_fragment
      *
      * Der aktuelle Wert wird aber nicht aus den Feldern ausgelesen. Er muss zusätzlich mit
      * setLocation(...) übermittelt werden (siehe dort)
-     * 
+     *
      * @api
      */
     public static function factoryInternal(string $latName, string $lngName, string $latId = '', string $lngId = ''): static
@@ -148,6 +150,25 @@ class PickerWidget extends rex_fragment
     public function setLocation(?Point $location = null): static
     {
         $this->initialLocation = $location;
+        return $this;
+    }
+
+    /**
+     * Unterschied zu setLocation: der hier angegebene Wert wird in die internen
+     * Lat/Lng-Eingabefelder übertragen. Wenn es noch keinen $this->initialLocation
+     * gibt, wird zudem versucht, aus den Parametern die Pisirion zu ermitteln.
+     */
+    public function setValue(float|int|string $lat, float|int|string $lng): static
+    {
+        $this->latValue = (string) $lat;
+        $this->lngValue = (string) $lng;
+        if (!$this->hasLocationMarkerPosition()) {
+            try {
+                $this->initialLocation = Point::byLatLng([$lat, $lng]);
+            } catch (Throwable $th) {
+                $this->initialLocation = null;
+            }
+        }
         return $this;
     }
 
@@ -524,6 +545,38 @@ class PickerWidget extends rex_fragment
     public function isInputRequired(): bool
     {
         return $this->markerRequired;
+    }
+
+    /**
+     * Liefert den initialen Wert (value-Attribut) für die internen Eingabefelder.
+     * Dabei wird auf $this->latValue zurückgegriffen. Wenn latValue leer ist ('')
+     * wird auf einen evtl in $this->initialLocation existierenden Wert zurück-
+     * gegriffen.
+     *
+     * @api
+     */
+    public function getLatValueAttr(?string $default = ''): string
+    {
+        if ('' < $this->latValue) {
+            return $this->latValue;
+        }
+        return $this->getLocationMarkerLat($default);
+    }
+
+    /**
+     * Liefert den initialen Wert (value-Attribut) für die internen Eingabefelder.
+     * Dabei wird auf $this->lngValue zurückgegriffen. Wenn lngValue leer ist ('')
+     * wird auf einen evtl in $this->initialLocation existierenden Wert zurück-
+     * gegriffen.
+     *
+     * @api
+     */
+    public function getLngValueAttr(?string $default = ''): string
+    {
+        if ('' < $this->lngValue) {
+            return $this->lngValue;
+        }
+        return $this->getLocationMarkerLng($default);
     }
 
     /**
