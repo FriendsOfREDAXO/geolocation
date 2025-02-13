@@ -345,7 +345,289 @@ $geoPicker->setBaseBounds($baseBounds);
 <a name="modul"></a>
 ## In Modulen
 
-skip the bla
+In Modulen ist es relativ schwierig, ähnlich wie in YForm-Values und RexForm-Elementen Formulare mit Validierung zu implementieren.
+Grundsätzlich besteht die Möglichkeit, mit Modul-Aktionen (konkret `preSave`) eine Nachbearbeitung zu machen. Mann kann sich vereinfachend
+auf die formularinterne HTML-Validierung im Input-Tag einlassen, die bei den internen Eingabefeldern stets eingebaut wird.
+
+Die Unterscheidung auf externe oder interne Felder macht im Modul-Kontext ergibt wenig Sinn.
+
+### Beispiel: Nur eine Kordinate erfassen
+
+Breitengrad und Längengrad werden getrennt in den Values 1 und 2 gespeichert. Für die Karte wird das GeoCoding aktiviert. 
+
+#### Modul-Input
+
+```php
+<?php
+
+use FriendsOfRedaxo\Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Picker\PickerWidget;
+
+/** @var rex_article_content_editor $this */
+
+/**
+ * Der PIN soll Orange sein, der Umkreis um den Pin
+ * transparent Orange und mit einem dünnen Rand.
+ */
+$markerStyle = [
+    'pin' => [
+        'color' => 'OrangeRed',
+    ],
+    'circle' => [
+        'color' => 'OrangeRed',
+        'weight' => 1,
+        'fillOpacity' => 0.1,
+    ],
+];
+
+/**
+ * Die Basiskarte zeigt Berlin.
+ */
+$baseBounds = Box::byCorner(
+    Point::byLatLng([52.69235,13.05804]),
+    Point::byLatLng([52.32282,13.79644])
+);
+
+/**
+ * Das GeoPicker-Fragment konfigurieren
+ * - Eingabefeld-Namen für VAlue 1 und 2 setzen
+ * - Basis-Kartensuschnitt für Berlin
+ * - LocationMaker anders einfärben; Radius ist Standard
+ * - Standard-GeoCoder
+ * - Default-Mapset (muss daher nicht angegeben werden)
+ */
+$geoPicker = PickerWidget::factoryInternal('REX_INPUT_VALUE[1]', 'REX_INPUT_VALUE[2]')
+
+    ->setBaseBounds($baseBounds)
+    ->setGeoCoder(0)
+    ->setLocationMarker(style: $markerStyle)
+    ->setValue('REX_VALUE[1]', 'REX_VALUE[2]')
+;
+
+echo $geoPicker->parse();
+```
+
+#### Modul-Output
+
+Die Ausgabe erfolgt wiederum mit dem Standard-Kartensatz und einem mindestens
+sichtbaren Bereich von 1000 Meter Radius um die Koordinate. 
+
+Wenn keine gültige Koordinate angegeben ist, wird im BE ein Hinweis angezeigt.
+
+```php
+<?php
+
+use FriendsOfRedaxo\Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Mapset;
+
+/**
+ * Feldwerte abrufen
+ */
+$lat = 'REX_VALUE[1]';
+$lng = 'REX_VALUE[2]';
+$radius = 1000;
+$mapsetId = 0;
+
+/**
+ * Aktuelle Position aus $lat und $lng berechnen.
+ * Wenn die Werte keine gültige Koordinate ergeben, wirft Point eine Exception.
+ */
+try {
+    $location = Point::byLatLng([$lat, $lng$]);
+} catch (Throwable $th) {
+    if (rex::isBackend()) { 
+        $msg = sprintf(
+            'Aus den Werten (Breitengrad: «%s», Längengrad: «%s») kann keine gültige Koordinate gebildet werden.',
+            $lat,
+            $lng);
+        echo rex_view::error($msg);
+        echo   rex_view::info('Die Karte wird nicht angezeigt; Bitte die Koordinaten korrigieren');
+    }
+    return;
+}
+
+/**
+ * Auf Basis der gültigen Koordinate die Karte zeichnen
+ * - Koordinate im Mittelpunkt
+ * - Kartenausschnitt auf einen Umkreis im gegebenen Radius einstellen
+ * - Kartenausschnitt im BE zur Kontrolle sichtbar machen.
+ */
+$bounds = Box::byInnerCircle($location, $radius);
+
+if (rex::isBackend()) {
+    echo '<script type="text/javascript">
+    Geolocation.default.boundsRect={color:"OrangeRed",weight:1,fillOpacity: 0.1};
+    </script>';
+}
+
+echo Mapset::take($mapsetId)
+    ->dataset('position', $location->latLng())
+    ->dataset('bounds', $bounds->latLng())
+    ->parse();
+```
+
+### Beispiel: Koordinate und Zusatzdaten erfassen
+
+Zusätzlich zur reinen Koordinatenauswahl werden hier Adress-Informationen erfasst und auf ddie Adresssuche / Geocoding 
+ermöglicht.
+
+#### Modul-Input
+
+```php
+<?php
+use FriendsOfRedaxo\Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Picker\PickerWidget;
+
+/** @var rex_article_content_editor $this */
+
+/**
+ * Der PIN soll Orange sein, der Umkreis um den Pin
+ * transparent Orange und mit einem dünnen Rand.
+ */
+$markerStyle = [
+    'pin' => [
+        'color' => 'OrangeRed',
+    ],
+    'circle' => [
+        'color' => 'OrangeRed',
+        'weight' => 1,
+        'fillOpacity' => 0.1,
+    ],
+];
+
+/**
+ * Die Basiskarte zeigt Berlin.
+ */
+$baseBounds = Box::byCorner(
+    Point::byLatLng([52.69235,13.05804]),
+    Point::byLatLng([52.32282,13.79644])
+);
+
+/**
+ * Für die Verknüpfung der Adressfelder zum Geocoding
+ */
+$adr = [
+    'input-street' => 'Strasse',
+    'input-town' => 'PLZ und Ort',
+];
+    
+/**
+ * Das GeoPicker-Fragment konfigurieren
+ * - Eingabefeld-Namen für Value 5 und 6 setzen
+ * - Basis-Kartensuschnitt für Berlin
+ * - LocationMaker anders einfärben; Radius ist Standard
+ * - Standard-GeoCoder
+ * - Default-Mapset (muss daher nicht angegeben werden)
+ */
+$geoPicker = PickerWidget::factoryInternal('REX_INPUT_VALUE[5]', 'REX_INPUT_VALUE[6]')
+
+    ->setContainer('input-pos')
+    ->setBaseBounds($baseBounds)
+    ->setGeoCoder(0)
+    ->setAdressFields($adr)
+    ->setLocationMarker(style: $markerStyle)
+    ->setValue('REX_VALUE[5]', 'REX_VALUE[6]')
+;
+
+?>
+<div class="form-group">
+    <label class="control-label" for="input-name">Name/Bezeichnung</label>
+    <input class="form-control" id="input-name" type="text" name="REX_INPUT_VALUE[1]" value="REX_VALUE[1]">
+</div>
+
+<div class="form-group">
+    <label class="control-label" for="input-street"><?= $adr['input-street'] ?></label>
+    <input class="form-control" id="input-street" type="text" name="REX_INPUT_VALUE[2]" value="REX_VALUE[2]">
+</div>
+
+<div class="form-group">
+    <label class="control-label" for="input-town"><?= $adr['input-town'] ?></label>
+    <input class="form-control" od="input-town" type="text" name="REX_INPUT_VALUE[3]" value="REX_VALUE[3]">
+</div>
+
+<div class="form-group">
+    <label class="control-label" for="input-radius">Radius um die Koordinate (Meter) </label>
+    <input class="form-control" id="input-radius" type="number" min="100" name="REX_INPUT_VALUE[4]" value="REX_VALUE[4]">
+</div>
+
+<div class="form-group">
+    <label class="ccontrol-label" for="input-pos">Koordinate</label>
+    <?= $geoPicker->parse() ?>
+</div>
+```
+#### Modul-Output
+
+```php
+<?php
+
+use FriendsOfRedaxo\Geolocation\Calc\Box;
+use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Mapset;
+
+/**
+ * Feldwerte abrufen
+ */
+$name = 'REX_VALUE[1]';
+$street = 'REX_VALUE[2]';
+$town = 'REX_VALUE[3]';
+$radius = (int) 'REX_VALUE[4]';
+$lat = 'REX_VALUE[5]';
+$lng = 'REX_VALUE[6]';
+
+$radius = max ($radius, (int) rex::getConfig('geolocation','picker_radius',500));
+$mapsetId = 0;
+
+?>
+<dl>
+    <dt>Name:</dt>
+    <dd><?= $name ?></dd>
+    <dt>Straße:</dt>
+    <dd><?= $street ?></dd>
+    <dt>Ort:</dt>
+    <dd><?= $town ?></dd>
+</dl>
+
+<?php
+/**
+ * Aktuelle Position aus $lat und $lng berechnen.
+ * Wenn die Werte keine gültige Koordinate ergeben, wirft Point eine Exception.
+ */
+try {
+    $location = Point::byLatLng([$lat,$lng]);
+} catch (Throwable $th) {
+    if(rex::isBackend()) {
+        $msg = sprintf(
+            'Aus den Werten (Breitengrad: «%s», Längengrad: «%s») kann keine gültige Koordinate gebildet werden.',
+            $lat,
+            $lng);
+        echo rex_view::error($msg);
+        echo rex_view::info('Die Karte wird nicht angezeigt; Bitte die Koordinaten korrigieren');
+    }
+    return;
+}
+
+/**
+ * Auf Basis der gültigen Koordinate die Karte zeichnen
+ * - Koordinate im Mittelpunkt
+ * - Kartenausschnitt auf einen Umkreis im vorgegebenen Radius einstellen
+ * - Kartenausschnitt im BE zur Kontrolle sichtbar machen.
+ */
+$bounds = Box::byInnerCircle($location, $radius);
+
+if (rex::isBackend()) {
+    echo '<script type="text/javascript">
+    Geolocation.default.boundsRect={color:"OrangeRed",weight:1,fillOpacity: 0.1};
+    </script>';
+}
+
+echo Mapset::take($mapsetId)
+    ->dataset('position', $location->latLng())
+    ->dataset('bounds', $bounds->latLng())
+    ->parse();
+```
 
 <a name="meta"></a>
 ## Als Metafeld

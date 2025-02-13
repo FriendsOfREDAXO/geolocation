@@ -2,8 +2,26 @@
 
 ## xx-xx-2025 2.5.0
 
-- Neu: YForm-Value "geolocation_picker" (in Arbeit)
-- Geopicker in Modulen (geplant)
+- Neue Funktionen
+  Implementierung eines Location-Picker zur interaktiven Auswahl einer Position
+  - Basis ist ein rex_fragment `PickerWidget`
+    - Flexibel einsetzbar mit Geolocation-Mapsets
+    - Optional Geocoding via Nominatim/OSM
+    - Konfigurierbar über dedizierte Methoden statt `setVar(...)`.
+  - als YForm-Value `rex_yform_value_geolocation_geopicker`
+    - mit integrierter Validierung
+    - Speichern intern im Feld oder in zwei externen Feldern für Längen- und Breitengrad
+    - Verschiedene Listenformatierungen der Koordinaten
+    - Listenfilterung mit Umkreissuche
+  - als RexForm-Element `PickerElement`
+    - mit integrierter Validierung
+    - Speichern intern im Feld oder in zwei externen Feldern für Längen- und Breitengrad
+  - als Metafeld `PickerMetafield`
+  - in Modulen mit `PickerWidget`
+  - Erweiterte Dokumentation (insb. "Für Entwickler | PHP: LocationPicker")
+  Geocoding via Nominatim/OSM im Picker integriert
+  - Keine direkten Nominatim-Abfragen (Proxy)
+
 - Update: Vendor mjaschen/phpgeo (geplant)
 - RexStan: alles noch mal prüfen mit der aktuellen Version von Rexstan (geplant)
 
