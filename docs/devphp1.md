@@ -128,30 +128,30 @@ echo $geoPicker->parse();
    > Die Feldwerte werden **nicht** über den Inhalt der Eingabefelder an das Widget gegeben.
 
    Wenn bisher noch keine valide initiale Koordinate gesetzt wurde (`setLocation($point)`), wird versucht, aus den
-   Angaben auch die Koordinate zu ermitteln. `setLocation`muss dan nicht zusätzlich aufgerufen werden.
+   Angaben auch die Koordinate zu ermitteln. Der zusätzliche Aufruf von `setLocation` kann dann entfallen.
 
 - `setLocation(?Point $location = null)`
 
    Setzt die initiale Position der Karte unabhängig von der Variante interne vs. externe Eingabefelder.
    Da im Falle externer Eingebefelder deren Inhalt nicht vom Widget geändert wird, greift `setValue(..)` nicht.
-   Stattb dessen wird die Kartenposition mit `setLocation(..)` übermittelt. 
+   Statt dessen wird die Kartenposition mit `setLocation(..)` übermittelt. 
    
 - `setContainer(string $id = '', array|string $class = [])`
 
-   Gibt dem  Widget-Container (Custom-HTML-Tag `<geolocation-geopicker>`) eine ID und eine Klasse zuweisen
+   Gibt dem  Widget-Container (Custom-HTML-Tag `<geolocation-geopicker>`) eine ID und eine Klasse mit
 
 - `setMapset(int $mapset = 0, string $id = '', array|string $class = [])`
 
-   Hier wird die ID des Geolocation-Kartensatzes erwartet und ggf um eigene Kartenformatierungen (meist Höhe/Breite/Rand)
-   eine Klasse. I.d.m. Fällen kann man auf den Default setzen.
+   Hier wird die Datensatz-Id des Geolocation-Kartensatzes erwartet und ggf. um eigene Kartenformatierungen (meist Höhe/Breite/Rand)
+   eine HTML-Id und eine Klasse. I.d.m. Fällen kann man auf den Default setzen.
 
 - `setBaseBounds(?Box $voidBounds = null)`
 
-   Setzt den initialen Kartenausschnitt
+   Setzt den initialen Kartenausschnitt.
 
 - `setLocationMarker(int $radius = 0, array $style = [])`
 
-   Gibt dem Marker alternative Optionen mit, siehe Beispiel oben. Der Radius von 0 bedeutet "Standard"
+   Gibt dem Marker alternative Optionen mit, siehe Beispiel oben. Der Radius von 0 bedeutet "Standard".
 
 - `setLocationRange(?Box $range = null, bool $required=false)`
 
@@ -162,6 +162,8 @@ echo $geoPicker->parse();
 - `setGeoCoder(?int $geoCoder = null)`
 
    Wenn die ID eines GeoCoders angegeben (egal ob existent oder nicht), wird die Funktion für das GeoCoding aktiviert.
+   Mit `null` oder ohne Angabe wird bzw. bleibt das GeoCoding deaktiviert. `0` bietet sich an für "aktivieren mit dem
+   Standard-Geocoder". Initial ist das GeoCoding deaktiviert.
 
 - `setAdressFields(array $addressFields = [])`
 
@@ -175,7 +177,7 @@ echo $geoPicker->parse();
 
 - `setLngError(string $errorClass, string $error = '')`
 
-   siehe setLatError, aber für Längengrad-Fehler
+   siehe setLatError, aber für Längengrad-Fehler.
 
 Und hier ein Beispiel:
 
@@ -184,12 +186,12 @@ use FriendsOfRedaxo\Geolocation\PickerWidget;
 
 $geoPicker = PickerWidget
     ::factoryInternal ('koordinate[lat]', 'koordinate[lng]')
-    ->setLocation($goldElse)
-    ->setMapset(2)
-    ->setBaseBounds($baseBounds)
-    ->setLocationMarker(250,$markerStyle)
-    ->setGeoCoder(0)
-    ->setAdressFields(['field-01' => 'Straße', 'field-02' => 'Ort'])
+    ->setValue ($goldElse->lat(), $goldelse->lng())
+    ->setMapset (2)
+    ->setBaseBounds ($baseBounds)
+    ->setLocationMarker (250, $markerStyle)
+    ->setGeoCoder (0)
+    ->setAdressFields (['field-01' => 'Straße', 'field-02' => 'Ort'])
     ;
 
 echo $geoPicker->parse();
@@ -198,13 +200,13 @@ echo $geoPicker->parse();
 
 
 <a name="yform"></a>
-## als YForm-Value `rex_yform_value_geolocation_geopicker`
+## YForm-Value `rex_yform_value_geolocation_geopicker`
 
 ### Konfiguration und Features
 
 Das YForm-Value wird prinzipiell wie die beschrieben mittels des PickerWidget aufgebaut. Die auf der
 Konfigurationsseite eingegebenen Parameter werden entweder direkt an das PickerWidget gegeben oder
-den YForm-Kontext berücksichtigend Feld- und Formulardaten abgeleitet.
+daraus den YForm-Kontext berücksichtigend Feld- und Formulardaten abgeleitet.
 
 Z.B. werden die IDs externer Breitengrad/Längengrad-Felder nicht direkt eingegeben, sondern die Felder
 aus der Feldliste ausgewählt. Die tatsächliche ID ermittelt das Value selbst
@@ -218,9 +220,11 @@ Die Daten können auf drei Arten gespeichert werden:
   mit dem Breitengrad.
 - in zwei externen Feldern; jeweils eines für den Längengrad und eines für den Breitengrad.
 
-Die Validierung erfolgt für interne wie externe Felder innerhalb des YForm-Values. Weder das Picker-Value noch die
+Die Validierung erfolgt für interne wie externe Felder innerhalb des YForm-Values. Weder das Picker-Feld noch die
 externen Koordinaten-Felder sollten daher mit weitern Validatoren versehen werden! Fehler bezgl. externer Felder
 werden dem jeweiligen externen Feld zugeordnet, bei internen Feldern wird das jeweilige interne Feld markiert.
+
+![Konfiguration](assets/picker_yf_conf.jpg)
 
 ### Listen
 
@@ -232,7 +236,8 @@ externer Felder sollten diese für die Liste deaktiviert werden.
 
 ### Suche
 
-Im YForm-Suchfenster kann ein einfaches Eingabefeld für die Umkreissuche eingeblendet werden. Als Eingabe werden drei Werte erwartet:
+Im YForm-Suchfenster kann ein einfaches Eingabefeld für die Umkreissuche eingeblendet werden.
+Als Eingabe werden drei Werte erwartet:
 
 - Breitengrad (als Dezimalwert)
 - Längengrad (als Dezimalwert)
@@ -240,15 +245,18 @@ Im YForm-Suchfenster kann ein einfaches Eingabefeld für die Umkreissuche eingeb
 
 Beispiel: `52.514516 13.350110 1000`
 
-Anstelle eines Dezimalpunktes (PHP-internes Firmat) kann man auch ein Komma setzen (`52,514516 13,350110 1000`).
+Anstelle eines Dezimalpunktes (PHP-internes Dezimalformat) kann man auch ein Komma setzen (`52,514516 13,350110 1000`).
 
 Auch hier übernimmt das Value die Suche in den externen Feldern.
 
-> **Hinweis**: Die Suche nutzt die seit einnigen Jahren in Datenbankabfragen verfügbaren Spatial-Funktionen in [Mysql](https://dev.mysql.com/doc/refman/8.4/en/spatial-types.html)
-(Version 5.7 seit 10/2015) und [MariaDB](https://mariadb.com/kb/en/geographic-geometric-features/) (Version 10.5.10 seit 12/2019). Bei älteren Versionen
-ist die Umkreissuche nicht verfügbar.
+> **Hinweis**: Die Suche nutzt die seit einnigen Jahren in Datenbankabfragen verfügbaren Spatial-Funktionen in
+[Mysql](https://dev.mysql.com/doc/refman/8.4/en/spatial-types.html) (Version 5.7 seit 10/2015) bzw.
+[MariaDB](https://mariadb.com/kb/en/geographic-geometric-features/) (Version 10.5.10 seit 12/2019).
+In Redaxo-Installationen mit Datenbankservern älterer Versionen ist die Umkreissuche nicht verfügbar.
 
-Die GeoCoder-Klasse bietet statische Methoden an, die möglicherweise auch in eigenen Anwendungen hilffeich sind bim Aufbau von Umkreissuchen:
+Die GeoCoder-Klasse bietet statische Methoden an, die möglicherweise auch in eigenen Anwendungen hilffeich
+sind bim Aufbau von Umkreissuchen. Das Beispiel zeigt eine YOrm-Query; die Where-Klausel können auch
+mit rex_sql-Abfragen genutzt werden.
 
 ```php
 use FriendsOfRedaxo\Geolocation\GeoCoder;
@@ -281,7 +289,7 @@ $query->whereRaw($where);
 ```
 
 <a name="rexform"></a>
-## als RexForm-Element
+## RexForm-Element
 
 RexForm-Formulare können um eigene Feldtypen ("Elemente") erweitert werden, auch wenn es etwas kompliziert erscheint.
 Die Klasse `PickerElement` stellt ein solches Formular-Element zur Verfügung, dass ähnlich wie das [YForm-Value](#yform)
@@ -291,7 +299,7 @@ ausgestaltet ist:
 - Speicherung der Koordinate extern in zwei Einzelfeldern
 - Validierung inklusive (Bereich, nicht Leer)
 
-Die Konfiguration des PickerWidget erfolgt im Kapitel zum [Fragment](#fragment) beschrieben. Der Picker wird über die
+Die Konfiguration des PickerWidget erfolgt wie im Kapitel zum [Fragment](#fragment) beschrieben. Der Picker wird über die
 Methode `$field->setPickerWidget()` aktiviert. Je nach Parametrisierung entsteht ein Widget mit interner oder externer Speicherung.
 
 **Beispiel: Interne Speicherung im eigenen Feld als Array**
@@ -303,7 +311,7 @@ use FriendsOfRedaxo\Geolocation\Picker\PickerElement;
 $pickerField = $this->addField('', 'koordinate', null, ['internal::fieldClass' => PickerElement::class], true);
 $pickerField->setLabel('Location');
 
-// PickerWidget für die interne Speiicherung aktivieren
+// PickerWidget für die interne Speicherung aktivieren
 $geoPicker = $pickerField->setPickerWidget();
 
 // Picker-Widget konfogurieren
@@ -346,11 +354,12 @@ $geoPicker->setBaseBounds($baseBounds);
 ```
 
 <a name="modul"></a>
-## In Modulen
+## Module
 
-In Modulen ist es relativ schwierig, ähnlich wie in YForm-Values und RexForm-Elementen Formulare mit Validierung zu implementieren.
-Grundsätzlich besteht die Möglichkeit, mit Modul-Aktionen (konkret `preSave`) eine Nachbearbeitung zu machen. Mann kann sich vereinfachend
-auf die formularinterne HTML-Validierung im Input-Tag einlassen, die bei den internen Eingabefeldern stets eingebaut wird.
+In Modulen ist es relativ schwierig, ähnlich wie in YForm-Values und RexForm-Elementen Formulare mit Validierung
+zu implementieren. Grundsätzlich besteht die Möglichkeit, mit Modul-Aktionen (konkret `preSave`) eine
+Nachbearbeitung durchzuführen. Mann kann sich vereinfachend auf die formularinterne HTML-Validierung im
+Input-Tag einlassen, die bei den internen Eingabefeldern stets eingebaut wird.
 
 Die Unterscheidung auf externe oder interne Felder macht im Modul-Kontext ergibt wenig Sinn.
 
@@ -373,29 +382,17 @@ use FriendsOfRedaxo\Geolocation\Picker\PickerWidget;
  * Der PIN soll Orange sein, der Umkreis um den Pin
  * transparent Orange und mit einem dünnen Rand.
  */
-$markerStyle = [
-    'pin' => [
-        'color' => 'OrangeRed',
-    ],
-    'circle' => [
-        'color' => 'OrangeRed',
-        'weight' => 1,
-        'fillOpacity' => 0.1,
-    ],
-];
+$markerStyle = ... siehe oben
 
 /**
  * Die Basiskarte zeigt Berlin.
  */
-$baseBounds = Box::byCorner(
-    Point::byLatLng([52.69235,13.05804]),
-    Point::byLatLng([52.32282,13.79644])
-);
+$baseBounds = ... siehe oben
 
 /**
  * Das GeoPicker-Fragment konfigurieren
- * - Eingabefeld-Namen für VAlue 1 und 2 setzen
- * - Basis-Kartensuschnitt für Berlin
+ * - Eingabefeld-Namen für Value 1 und 2 setzen
+ * - Basis-Kartenausschnitt für Berlin
  * - LocationMaker anders einfärben; Radius ist Standard
  * - Standard-GeoCoder
  * - Default-Mapset (muss daher nicht angegeben werden)
@@ -426,7 +423,7 @@ use FriendsOfRedaxo\Geolocation\Calc\Point;
 use FriendsOfRedaxo\Geolocation\Mapset;
 
 /**
- * Feldwerte abrufen
+ * Feldwerte abrufen, Vorbelegungen
  */
 $lat = 'REX_VALUE[1]';
 $lng = 'REX_VALUE[2]';
@@ -473,8 +470,8 @@ echo Mapset::take($mapsetId)
 
 ### Beispiel: Koordinate und Zusatzdaten erfassen
 
-Zusätzlich zur reinen Koordinatenauswahl werden hier Adress-Informationen erfasst und auf ddie Adresssuche / Geocoding 
-ermöglicht.
+Zusätzlich zur reinen Koordinatenauswahl werden hier in zusätzlichen Feldern Adress-Informationen
+erfasst und darauf die Adresssuche im Geocoding ermöglicht.
 
 #### Modul-Input
 
@@ -490,24 +487,12 @@ use FriendsOfRedaxo\Geolocation\Picker\PickerWidget;
  * Der PIN soll Orange sein, der Umkreis um den Pin
  * transparent Orange und mit einem dünnen Rand.
  */
-$markerStyle = [
-    'pin' => [
-        'color' => 'OrangeRed',
-    ],
-    'circle' => [
-        'color' => 'OrangeRed',
-        'weight' => 1,
-        'fillOpacity' => 0.1,
-    ],
-];
+$markerStyle = ... siehe opben
 
 /**
  * Die Basiskarte zeigt Berlin.
  */
-$baseBounds = Box::byCorner(
-    Point::byLatLng([52.69235,13.05804]),
-    Point::byLatLng([52.32282,13.79644])
-);
+$baseBounds = ... siehe oben
 
 /**
  * Für die Verknüpfung der Adressfelder zum Geocoding
@@ -520,7 +505,7 @@ $adr = [
 /**
  * Das GeoPicker-Fragment konfigurieren
  * - Eingabefeld-Namen für Value 5 und 6 setzen
- * - Basis-Kartensuschnitt für Berlin
+ * - Basis-Kartenausschnitt für Berlin
  * - LocationMaker anders einfärben; Radius ist Standard
  * - Standard-GeoCoder
  * - Default-Mapset (muss daher nicht angegeben werden)
@@ -571,7 +556,7 @@ use FriendsOfRedaxo\Geolocation\Calc\Point;
 use FriendsOfRedaxo\Geolocation\Mapset;
 
 /**
- * Feldwerte abrufen
+ * Feldwerte abrufen, Vorbelegungen
  */
 $name = 'REX_VALUE[1]';
 $street = 'REX_VALUE[2]';
@@ -633,7 +618,7 @@ echo Mapset::take($mapsetId)
 ```
 
 <a name="meta"></a>
-## Als Metafeld
+## Metafelder
 
 Bei der Installation wird ein Meta-Feldtyp **"LocationPicker (Geolocation)"** angelegt. Dazu können individuelle
 MetaFelder kreiert werden. Ein solches Metafeld verfügt über ein PickerWidget in der Grundausstattung:

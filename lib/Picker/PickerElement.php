@@ -266,11 +266,16 @@ class PickerElement extends rex_form_element
      */
     public function formatElement()
     {
-        $geoPicker = $this->setPickerWidget();
-
+        if (!$this->hasGeoPicker) {
+            throw new DeveloperException(sprintf(
+                'PickerElement "%s": Picker not initialized (invoke «$field->setPickerWidget(..)»)',
+                $this->getFieldName()
+            ));
+        }
+ 
         if ($this->internalValue) {
             $value = $this->getValue();
-            $geoPicker->setValue($value['lat'], $value['lng']);
+            $this->geoPicker->setValue($value['lat'], $value['lng']);
         } else {
             $value = [
                 'lat' => $this->latField->getValue(),
@@ -282,10 +287,10 @@ class PickerElement extends rex_form_element
             } catch (Throwable $th) {
                 $location = null;
             }
-            $geoPicker->setLocation($location);
+            $this->geoPicker->setLocation($location);
         }
 
-        return $geoPicker->parse();
+        return $this->geoPicker->parse();
     }
 
     // ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
