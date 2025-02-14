@@ -14,11 +14,14 @@
 
 # Für Entwickler &dash; PHP LocationPicker
 
-Diese ausführliche Bescgreibung gilt einem Wisget, dass in verschiedenen Zusammenhängen als Eingabeelement
+Diese ausführliche Beschreibung gilt einem Wisget, dass in verschiedenen Zusammenhängen als Eingabeelement
 bzw. Auswahlelement für Koordinaten dient. Grundlage ist ein klassisches Redaxo-Fragment (Datei
 `.../fragment/geolocation/picker.php`). Dazu gehört eine Klasse `PickerWidget`, die auf `rex_fragment`
 basiert und zahlreiche Get- und Set-Methoden zur sicheren Eingabe der Parameter und adäquatem Fallback
 auf Standardwerte bereithält.
+
+> Stand heute ist der LocationPicker in allen Varianten nur für die Nutzung im Backend vorgesehen. Das notwendige
+CSS und JS steht in den Asset-Dateien `geolocation_be.min.css` und `geolocation_be.min.js`.
 
 Das Widget bietet
 - Marker auf die aktuelle GPS-Position setzen (sofern im Browser freigegeben)

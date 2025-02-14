@@ -1,5 +1,6 @@
 /* Geolocation Backend-JS */
 
+
 /**
  * Tool "locationpicker"
  * 
@@ -113,7 +114,6 @@ Geolocation.Tools.LocationPicker = class extends Geolocation.Tools.Template {
         map.doubleClickZoom.disable();
         map.on('dblclick', this.evtMarkerFromDblClick.bind(this));
         map.getContainer().addEventListener('geolocation:locationpicker.moveto', this.evtMoveTo.bind(this));
-        console.log(map.getContainer())
 
         if (this.status === 0) {
             this.showInvalidPosition();
@@ -1211,18 +1211,16 @@ customElements.define('geolocation-geocoder-search',
                 this.geoListVisibility(false);
                 return;
             }
-            // TODO: Testausgaben löschen
-            // TODO: Fehlerbehandlung verbessern 
             fetch(this.geoUrl.replace(/\{value\}/, encodeURIComponent(value)), {
                 method: 'get',
             })
                 .then(function (response) {
-                    console.log(response)
+                    if (!response.ok) {
+                        throw new Error(response.statusText);
+                    }
                     return response.json();
                 })
                 .then((data) => {
-                    // TODO: Testausgaben löschen
-                    console.log(data)
                     this.geoSelect.innerHTML = '';
                     data.forEach(item => {
                         let entry = this.geoTemplate.replace(/\{ *([\w_-]+) *\}/g, function (t, key) { return item[key] || '{' + key + '}'; });
@@ -1231,11 +1229,8 @@ customElements.define('geolocation-geocoder-search',
                     });
                     this.geoListVisibility(true);
                 })
-                .catch((function (e) {
-                    // TODO: Das muss präzieser werden, z.B. NotFound = leere Liste, 
-                    // Fehlermeldungen sprachabhängig
-                    console.log(e)
-                    this.geoSelect.innerHTML = '<p class="list-group-item">Sorry, Übertragungsfehler';
+                .catch((function (msg) {
+                    this.geoSelect.innerHTML = '<p class="list-group-item text-danger">'+msg+'</p>';
                     this.geoListVisibility(true);
                 }).bind(this));
         }
