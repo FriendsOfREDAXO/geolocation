@@ -3,7 +3,7 @@
 >   - [Einstellungen](settings.md)
 > - [Kartensätze verwalten](mapset.md)
 > - [Karten/Layer verwalten](layer.md)
-> - [Karten-Proxy und -Cache](proxy_cache.md)
+> - [Proxy und -Cache](proxy_cache.md)
 > - Für Entwickler
 >   - [PHP Basis](devphp.md)
 >   - __PHP LocationPicker__

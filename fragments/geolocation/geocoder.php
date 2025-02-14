@@ -98,6 +98,7 @@ $attr = [
     'addresslink' => json_encode(array_keys($addressFields)),
     'class' => 'form-group',
 ];
+dump(get_defined_vars());
 
 ?>
 <geolocation-geocoder-search <?= rex_string::buildAttributes($attr) ?> >

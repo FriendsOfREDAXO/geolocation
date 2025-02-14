@@ -21,6 +21,7 @@
   - Erweiterte Dokumentation (insb. "Für Entwickler | PHP: LocationPicker")
   Geocoding via Nominatim/OSM im Picker integriert
   - Keine direkten Nominatim-Abfragen (Proxy)
+  - Proxy-Url erzeugen mit `GeoCoder::take($id)->getRequestUrl()`
 
 - Update: Vendor mjaschen/phpgeo (geplant)
 - RexStan: alles noch mal prüfen mit der aktuellen Version von Rexstan (geplant)
