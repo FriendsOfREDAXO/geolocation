@@ -114,6 +114,7 @@ Geolocation.Tools.LocationPicker = class extends Geolocation.Tools.Template {
         map.doubleClickZoom.disable();
         map.on('dblclick', this.evtMarkerFromDblClick.bind(this));
         map.getContainer().addEventListener('geolocation:locationpicker.moveto', this.evtMoveTo.bind(this));
+        map.getContainer().addEventListener('doubletap', this.evtMarkerFromDoubleTap.bind(this));
 
         if (this.status === 0) {
             this.showInvalidPosition();
@@ -169,6 +170,18 @@ Geolocation.Tools.LocationPicker = class extends Geolocation.Tools.Template {
      */
     evtMarkerFromDblClick(e) {
         this.showValidPosition(e.latlng);
+        this.sendPosition();
+    }
+
+    /**
+     * Nach DoppelTap bei Mobilgeräten auf die Karte wird an der Event-Position der Marker gesetzt und
+     * und über die neue Position informiert
+     * Technisch bedingt kommt hier ein Mouse-event an, aus dem sich die Map die Koordinate
+     * errrechnen kann.
+     */
+    evtMarkerFromDoubleTap(e) {
+        let latlng = this.map.mouseEventToLatLng(e.detail);
+        this.showValidPosition(latlng);
         this.sendPosition();
     }
 
