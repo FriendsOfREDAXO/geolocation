@@ -27,20 +27,29 @@ Verwaltung von und Rechnen mit Koordinaten (`Coordinate`), Rechtecken (`Bounds`)
 `Location` zur Verfügung. **Geolocation** baut darauf auf und stellt drei eigene Klassen bereit,
 die erweiterte Funktionen im Namespace `FriendsOfRedaxo\Geolocation` bereitstellen.
 
-- `class Point`: Verwaltet einen geografischen Punkt
+- `class Point`: Auf phpGeo aufbauend; verwaltet einen geografischen Punkt
     - Factory-Methoden für verschiedene Quelldaten-Formate inkl. Zeichenketten
     - Ausgabe in verschiedenen Zielformaten
     - Rechenoperatinen (Distanz/Richtung/Ziel)
-- `class Box`: Verwaltet einen rechteckigen Bereich
+- `class Box`: Auf phpGeo aufbauend; Verwaltet einen rechteckigen Bereich
     - Anlegen aus zwei gegenüberliegenden Eckpunkten (Point)
     - Abfrage diverser Daten (Eckpunkte, Nord/Süd/Ost/West)
     - Rechenoperationen (Außenkreis, Innenkreis, Zentrum, Contains, ExtendBy)
-- `class Math`: Auf phpGeo aufbauend eine Schnittstelle zu gängigen Rechenoperationen
+- `class Math`: Auf phpGeo aufbauend; eine Schnittstelle zu gängigen Rechenoperationen
     - Richtung und Distanz zwischen zwei Punkten
     - Formatumwandlung
+- `class SqlSupport`: Hilfsfunktionen zur Nutzung der SQL-Spatial-Funktionen
+    - Umkreissuche
+    - Distanz berechnen
+    - Support für eigene Anwendungen
 
 <a name="caveat"></a>
 ## Hinweise
+
+Üblicherweise sind die mit Leaflet dargestellten Karten im System [WGS84 (EPSG:4326)](https://de.wikipedia.org/wiki/World_Geodetic_System_1984)
+berechnet. Auch die im Addon verfügbaren Rechenoperationen mit Koordinaten haben WGS-84 als Voreinstellung.
+Auch wenn sich bei Karten in einem Nahbereich von wenigen Kilometern keine signifkanten Ergebnisabweichungen
+entstehen würden, sollte die klare Zuodnung nicht geändert werden. 
 
 Leaflet selbst als Tool für die Darstellung hat Einschränkungen in Bezug auf die
 [Datumslinie](https://de.wikipedia.org/wiki/Datumsgrenze) oder präziser, dem dortigen Meridian
@@ -1811,4 +1820,192 @@ dump([
     "-90°" => 270,0
     "450°" => 90,0
 ]
+```
+
+<a name="sql"></a>
+## class **SqlSupport**
+
+Die Klasse generiert Teile von Sql-Abfragen, in denen die Spatial-Funktionen genutzt
+werden, die seit geraumer Zeit in MySQL und MariaDB implementiert sind. Leider ist
+die Nutzung nicht ganz trivial, so dass über SqlSupport statische Methoden bereit stehen,
+die Abfrageteile generieren. Insgesamt arbeiten die Spatial-Funktionen wenig Fehlertolerant.
+Wenn die angesprochenen felder keine gültigen Daten beinhalten (z.B. leer sind),
+Kann die Suche mit einer Exception abbrechen. Die Methoden zur Umkreissuche bauen
+Sicherheitsabfragen mit ein. 
+
+In allen Abfragen wird das Berechnungsverfahren WGS84/EPSG:4326 benutzt.
+
+### circleSearch()
+
+> static function circleSearch(Point $point, string $latField, string $lngField, string $alias = ''): string
+
+Die Methde erzeugt eine SQL-Where-Klausel, die eine vorgegebene Koordinate (`$point`) mit einer
+zweiten, aus den Datenbankfeldern (`$latField` = Breitengrad, `$lngField` = Längengrad) je Datensatz
+on the fly errechnet wird. Die Angabe das Datenbank-Alias ist optional.
+
+```php
+use FriendsOfRedaxo\Geolocation\Calc\SqlSupport;
+
+$point = Point::byLatLng([52.514516, 13.350110]);
+$radius = 1000;
+$latField = 'lat';
+$lngField = 'lng';
+
+$where = SqlSupport::circleSearch($point, $radius, $latField, $lngField);
+```
+```
+(lat > "" && lng > "" && ST_Distance(ST_GeomFromText("POINT(52.514516 13.35011)", 4326),ST_PointFromWKB(ST_AsBinary(POINT(lat lng)), 4326)) <= 1000)
+```
+
+### circleSearchLatLng()
+
+> static function circleSearchLatLng(Point $point, string $field, string $alias = ''): string
+
+Die Methde erzeugt eine SQL-Where-Klausel, die eine vorgegebene Koordinate (`$point`) mit einer
+zweiten, aus dem Datenbankfeld `$field` je Datensatz on the fly errechnet wird. Die Angabe das 
+Datenbank-Alias ist optional.
+
+Das Datenbankfeld enthält beide Koordianten-Bestandteile, getrennt durch ein Komma, in der Reihenfolge
+`breitengrad,längengrad`.
+
+```php
+use FriendsOfRedaxo\Geolocation\Calc\SqlSupport;
+
+$point = Point::byLatLng([52.514516, 13.350110]);
+$radius = 1000;
+$latLngField = 'location';
+
+$where = SqlSupport::circleSearchLatLng($point, $radius, $latLngField);
+```
+```
+(location > "" && ST_Distance(ST_GeomFromText("POINT(52.514516 13.35011)", 4326),ST_GeomFromText(CONCAT("POINT(",REPLACE(location,","," "),")"), 4326)) <= 1000)
+```
+
+### circleSearchLngLat()
+
+> static function circleSearchLngLat(Point $point, string $field, string $alias = ''): string
+
+Die Methde erzeugt eine SQL-Where-Klausel, die eine vorgegebene Koordinate (`$point`) mit einer
+zweiten, aus dem Datenbankfeld `$field` je Datensatz on the fly errechnet wird. Die Angabe das 
+Datenbank-Alias ist optional.
+
+Das Datenbankfeld enthält beide Koordianten-Bestandteile, getrennt durch ein Komma, in der Reihenfolge
+`längengrad,breitengrad`.
+
+```php
+use FriendsOfRedaxo\Geolocation\Calc\SqlSupport;
+
+$point = Point::byLatLng([52.514516, 13.350110]);
+$radius = 1000;
+$latLngField = 'location';
+
+$where = SqlSupport::circleSearchLngLat($point, $radius, $latLngField);
+```
+```
+(location > "" && ST_Distance(ST_GeomFromText("POINT(52.514516 13.35011)", 4326),ST_GeomFromText(CONCAT("POINT(",SUBSTRING_INDEX(location,",",-1)," ",SUBSTRING_INDEX(location,",",1),")"), 4326)) <= 1000)
+```
+
+### spDistance()
+
+> static function spDistance(string $pointA, string $pointB): string
+
+Die Methode baue zwei Punkt-Funktionen in einer Distanzberechnung ein. Der generierte
+SQL-Teil errechnet die Distanz zwischen den beiden Punkten. Die Methode wird auch von den
+Methoden zur Umkreissuche benutzt.
+
+In anderen Zusammenhängen kann darüber ein virtuelles Feld zur Distanzanzeige bauen.
+
+```php
+use FriendsOfRedaxo\Geolocation\Calc\SqlSupport;
+
+$point = Point::byLatLng([52.514516, 13.350110]);
+$latField = 'lat';
+$lngField = 'lng';
+
+$distance = SqlSupport::spDistance(
+    SqlSupport::spPointFromValue($point),
+    SqlSupport::spPointFromLatAndLng($latField, $lngField),
+);
+
+// $query->selectRaw($distance, 'distanz');
+```
+```
+ST_Distance(ST_GeomFromText("POINT(52.514516 13.35011)", 4326),ST_PointFromWKB(ST_AsBinary(POINT(lat lng)), 4326))
+```
+
+### spPointFromValue()
+
+> static function spPointFromValue(Point $point): string
+
+Aus einem Koordinatenpunkt wird ein Referenzwert in der SQL-Notation.
+
+```php
+use FriendsOfRedaxo\Geolocation\Calc\SqlSupport;
+
+$point = Point::byLatLng([52.514516, 13.350110]);
+
+$sqlPoint = SqlSupport::spPointFromValue($point);
+```
+```
+ST_GeomFromText("POINT(52.514516 13.35011)", 4326)
+```
+
+### spPointFromLatAndLng()
+
+> static function spPointFromLatAndLng(string $latField, string $lngField, string $alias = ''): string
+
+Aus einem Koordinatenpunkt wird in der SQL-Notation ein Punkwert aus den Feldern für Breitengrad und Längengrad errechnet.
+
+```php
+use FriendsOfRedaxo\Geolocation\Calc\SqlSupport;
+
+$latField = 'lat';
+$lngField = 'lng';
+
+$sqlPoint = SqlSupport::spPointFromLatAndLng($latField, $lngField),
+```
+```
+ST_PointFromWKB(ST_AsBinary(POINT(lat lng)), 4326)
+```
+
+### spPointFromLatLng()
+
+> static function spPointFromLatLng(string $field, string $alias = ''): string
+
+Aus einem Koordinatenpunkt wird in der SQL-Notation ein Punkwert aus einem Kombifeld
+für Breitengrad und Längengrad errechnet. Das Datenbankfeld enthält beide Koordianten-Bestandteile,
+getrennt durch ein Komma, in der Reihenfolge `breitengrad,längengrad`.
+
+Für das SQL muss das Komma gegen eine Leerstelle getauscht werden.
+
+```php
+use FriendsOfRedaxo\Geolocation\Calc\SqlSupport;
+
+$field = 'location';
+
+$sqlPoint = SqlSupport::spPointFromLatLng($field),
+```
+```
+ST_GeomFromText(CONCAT("POINT(",REPLACE(location,","," "),")"), 4326)
+```
+
+### spPointFromLngLat()
+
+> static function spPointFromLngLat(string $field, string $alias = ''): string
+
+Aus einem Koordinatenpunkt wird in der SQL-Notation ein Punkwert aus einem Kombifeld
+für Breitengrad und Längengrad errechnet. Das Datenbankfeld enthält beide Koordianten-Bestandteile,
+getrennt durch ein Komma, in der Reihenfolge `längengrad,breitengrad`.
+
+Für das SQL müssen die beiden Teile vor und nach dem Komma isoliert extrahiert werden.
+
+```php
+use FriendsOfRedaxo\Geolocation\Calc\SqlSupport;
+
+$field = 'location';
+
+$sqlPoint = SqlSupport::spPointFromLngLat($field),
+```
+```
+ST_GeomFromText(CONCAT("POINT(",SUBSTRING_INDEX(location,",",-1)," ",SUBSTRING_INDEX(location,",",1),")"), 4326)
 ```

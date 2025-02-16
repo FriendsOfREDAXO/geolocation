@@ -318,42 +318,4 @@ class GeoCoder
         $ttl = (int) round((strtotime('today midnight') - time()) / 60, 0);
         Tools::sendJson(json_decode($content, true) ?? [], time(), $ttl);
     }
-
-    /**
-     * Where-Filter für die Umkreissuche.
-     *
-     * - Filter basierend auf zwei Feldern (lat und lng getrennt abgelegt)
-     * - Filter basierend auf einem Feld (lat,lng)
-     * - Filter basierend auf einem Feld (lng,lat)
-     *
-     * offensichtlich unsinnige Werte (z.B. negativer Radius) werden hier nicht rausgefiltert.
-     * leere Felder werden als "außerhalb des Kreises" gewertet.
-     *
-     * @api
-     */
-    public static function circleSearch(float $lat, float $lng, int $radius, string $latField, string $lngField, string $alias = ''): string
-    {
-        $alias = '' === $alias ? $alias : ($alias . '.');
-        $referencePoint = sprintf('point(%s,%s)', $lat, $lng);
-        $point = sprintf('point(%s%s,%s%s)', $alias, $latField, $alias, $lngField);
-        return sprintf('(%s > \'\' && %s > \'\' && ST_Distance_Sphere(%s,%s) <= %d)', $latField, $lngField, $referencePoint, $point, $radius);
-    }
-
-    /** @api */
-    public static function circleSearchLatLng(float $lat, float $lng, int $radius, string $field, string $alias = ''): string
-    {
-        $field = '' === $alias ? $field : ($alias . '.' . $field);
-        $referencePoint = sprintf('point(%s,%s)', $lat, $lng);
-        $point = sprintf('point(SUBSTRING_INDEX(%s,\',\',1),SUBSTRING_INDEX(%s,\',\',-1))', $field, $field);
-        return sprintf('(%s > \'\' && ST_Distance_Sphere(%s,%s) <= %d)', $field, $referencePoint, $point, $radius);
-    }
-
-    /** @api */
-    public static function circleSearchLngLat(float $lat, float $lng, int $radius, string $field, string $alias = ''): string
-    {
-        $field = '' === $alias ? $field : ($alias . '.' . $field);
-        $referencePoint = sprintf('point(%s,%s)', $lat, $lng);
-        $point = sprintf('point(SUBSTRING_INDEX(%s,\',\',-1),SUBSTRING_INDEX(%s,\',\',1))', $field, $field);
-        return sprintf('(%s > \'\' && ST_Distance_Sphere(%s,%s) <= %d)', $field, $referencePoint, $point, $radius);
-    }
 }

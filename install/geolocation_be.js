@@ -133,6 +133,7 @@ Geolocation.Tools.LocationPicker = class extends Geolocation.Tools.Template {
             map.off('locationfound', this.evtMarkerFromLocate.bind(this));
             map.off('dblclick', this.evtMarkerFromDblClick.bind(this));
             map.getContainer().removeEventListener('geolocation:locationpicker.moveto', this.evtMoveTo.bind(this));
+            map.getContainer().removeEventListener('doubletap', this.evtMarkerFromDoubleTap.bind(this));
         }
         if (this.marker instanceof L.Marker) this.marker.remove();
         if (this.marker instanceof L.Circle) this.circle.remove();

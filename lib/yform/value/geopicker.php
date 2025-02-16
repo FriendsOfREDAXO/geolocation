@@ -19,6 +19,7 @@
 use FriendsOfRedaxo\Geolocation\Calc\Box;
 use FriendsOfRedaxo\Geolocation\Calc\InvalidPointParameter;
 use FriendsOfRedaxo\Geolocation\Calc\Point;
+use FriendsOfRedaxo\Geolocation\Calc\SqlSupport;
 use FriendsOfRedaxo\Geolocation\DeveloperException;
 use FriendsOfRedaxo\Geolocation\Exception;
 use FriendsOfRedaxo\Geolocation\GeoCoder;
@@ -29,8 +30,8 @@ use function sprintf;
 
 class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
 {
-    private const MIN_MYSQL = '5.7';
-    private const MIN_MARIADB = '10.5.10';
+    private const MIN_MYSQL = '5.6.3';
+    private const MIN_MARIADB = '5.3.3';
 
     protected ?rex_yform_value_abstract $latField = null;
     protected ?rex_yform_value_abstract $lngField = null;
@@ -312,12 +313,11 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
     }
 
     /**
-     * TODO: 1) richtig machen und 2) prüfen ob überhaput nötig. (Stichwort "nur BE").
      * @api
      */
     public function getDescription(): string
     {
-        return 'geolocation_geopicker|osmgeocode|Bezeichnung|format[latlng|lnglat|extern]|lat|lng|strasse,plz,ort|height|class|[mapbox_token]|[no_db]';
+        return 'geolocation_geopicker|geocode|Bezeichnung|mapset_id|geocoder_id|adressfields|type[latlng,lnglat,external]|lat_field|lng_field|radius|marker_style|base_map|list_format[dd,dd1,dm,dm1,dms]|required|marker-bounds|notice|';
     }
 
     /**
@@ -474,7 +474,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 ['customfunction' => ['name' => 'range', 'function' => $this->validateBox(...)]],
                 ['customfunction' => ['name' => 'search', 'function' => $this->validateSearch(...)]],
             ],
-            'description' => 'translate:geolocation_yfv_geopicker_description',
+            'description' => rex_i18n::msg('geolocation_yfv_geopicker_description'),
             'db_type' => ['varchar(50)'],
             'formbuilder' => false,
             'multi_edit' => false,
@@ -485,9 +485,9 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
      * Suche nach Lokationen per Umkreissuche.
      *
      * Der Suchfilter initiiert eine Umkreissuche. Das wird konkret mit den Spatial-Funktionen erledigt, die
-     * aber erst ab MySQL 5.7 (Redaxo: ab 5.6) bzw. MariaDB 10.5.10 (Redaxo: ab 10.1) vorhanden sind.
+     * aber erst ab MySQL/MariaDB x.y.z. vorhanden sind.
      * Die Version wird in der Feldkonfogration beim Freischalten der Suche abgefragt.
-     * Sicherheitshalber machen wir das hier noch einmal und gehen mit einer Exception raus.
+     * Sicherheitshalber machen wir das hier noch einmal und gehen ggf. mit einer Exception raus.
      *
      * Bis auf weiters erfolgt die Aingabe als String aus drei Elementen, getrennt durch ; oder Leerstellen
      * - Breitengrad (bis ±90)
@@ -530,10 +530,10 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
 
     /**
      * Der Suchfilter initiiert eine Umkreissuche. Das wird konkret mit den Spatial-Funktionen erledigt, die
-     * aber erst ab MySQL 5.7 (Redaxo: ab 5.6) bzw. MariaDB $field->getElement('lat').
+     * aber erst ab MySQL/MariaDB x.y.z. verfügbar sind.
      *
      * mit verifySearchTerm wird der Suchbegriff aufbereitet und zugleich verifiziert.
-     * eigentlich sollte das bereits durch den Custom-Validator der Eingebe erledigt sein.
+     * eigentlich sollte das bereits durch den Custom-Validator der Eingabe erledigt sein.
      * Leider werden aktuell desen Ergebnisse vor dem Aufruf dieser Methode nicht berücksichtigt.
      * Daher doppelte Abfrage.
      * siehe https://github.com/yakamara/yform/pull/1549
@@ -554,6 +554,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
          * Objekte etc. handlich bereitstellen.
          */
         [$lat, $lng, $radius] = $parts;
+        $point = Point::byLatLng([$lat,$lng]);
 
         /** @var rex_yform_manager_field $field */
         $field = $params['field'];
@@ -568,11 +569,11 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
         $type = (string) $field->getElement('type');
         switch ($type) {
             case 'latlng':
-                return $query->whereRaw(GeoCoder::circleSearchLatLng($lat, $lng, $radius, $field->getName(), $alias));
+                return $query->whereRaw(SqlSupport::circleSearchLatLng($point, $radius, $field->getName(), $alias));
             case 'lnglat':
-                return $query->whereRaw(GeoCoder::circleSearchLngLat($lat, $lng, $radius, $field->getName(), $alias));
+                return $query->whereRaw(SqlSupport::circleSearchLngLat($point, $radius, $field->getName(), $alias));
             case 'external':
-                return $query->whereRaw(GeoCoder::circleSearch($lat, $lng, $radius, $field->getElement('lat'), $field->getElement('lng'), $alias));
+                return $query->whereRaw(SqlSupport::circleSearch($point, $radius, $field->getElement('lat'), $field->getElement('lng'), $alias));
             default:
                 return $query;
         }

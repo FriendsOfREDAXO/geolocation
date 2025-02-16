@@ -31,7 +31,7 @@ Das Widget bietet
 - Per Geocoding-Service Koordinaten zu Adressen suchen lassen (optional)
 - Adressen für die Suche aus Adressfelern im Formular auslesen (optional)
 
-Wie die Speicherung der Daten erfolgt, wie die Validierung und vieles mehr varriert je nach
+Wie die Speicherung der Daten erfolgt, wie die Validierung und vieles mehr variiert je nach
 Verwendungszweck und wird in den nachfolgenden Kapiteln beschrieben.
 
 ## Beispieldaten
@@ -249,20 +249,21 @@ Anstelle eines Dezimalpunktes (PHP-internes Dezimalformat) kann man auch ein Kom
 
 Auch hier übernimmt das Value die Suche in den externen Feldern.
 
-> **Hinweis**: Die Suche nutzt die seit einnigen Jahren in Datenbankabfragen verfügbaren Spatial-Funktionen in
-[Mysql](https://dev.mysql.com/doc/refman/8.4/en/spatial-types.html) (Version 5.7 seit 10/2015) bzw.
-[MariaDB](https://mariadb.com/kb/en/geographic-geometric-features/) (Version 10.5.10 seit 12/2019).
+> **Hinweis**: Die Suche nutzt die seit vielen Jahren für Datenbankabfragen verfügbaren Spatial-Funktionen in
+[Mysql](https://dev.mysql.com/doc/refman/8.4/en/spatial-types.html) (Version 5.6.3 seit 04/2011) bzw.
+[MariaDB](https://mariadb.com/kb/en/geographic-geometric-features/) (Version 5.3.3 seit 12/2011).
 In Redaxo-Installationen mit Datenbankservern älterer Versionen ist die Umkreissuche nicht verfügbar.
 
-Die GeoCoder-Klasse bietet statische Methoden an, die möglicherweise auch in eigenen Anwendungen hilffeich
-sind bim Aufbau von Umkreissuchen. Das Beispiel zeigt eine YOrm-Query; die Where-Klausel können auch
-mit rex_sql-Abfragen genutzt werden.
+
+Die [SqlSupport-Klasse](devmath.md) bietet statische Methoden an, die möglicherweise auch in eigenen Anwendungen hilffeich
+sind bim Aufbau von Umkreissuchen. Das Beispiel zeigt eine YOrm-Query; die Elemente können
+in ähnlicher Weise mit rex_sql-Abfragen genutzt werden.
 
 ```php
-use FriendsOfRedaxo\Geolocation\GeoCoder;
+use FriendsOfRedaxo\Geolocation\Calc\SqlSupport;
 
 // Die YOrm-Query
-$query = MyDatasetClass:.query();
+$query = MyDatasetClass::query();
 $tableAlias = $query->getTableAlias();
 
 // Die Suchdaten
@@ -272,20 +273,32 @@ $radius = 1000;
 
 // Tabellenfeld mit der Koordinate im Format «breitengrad,längengrad»
 $latLngField = 'location';
-$where = GeoCoder::circleSearchLatLng($lat, $lng, $radius, $latLngField, $tableAlias);
+$where = SqlSupport::circleSearchLatLng($lat, $lng, $radius, $latLngField, $tableAlias);
+$distance = SqlSupport::spDistance(
+    SqlSupport::spPointFromValue($lat,$lng),
+    SqlSupport::spPointFromLatLng($latLngField),
+);
 
 // Alternativ: Tabellenfeld mit der Koordinate im Format «längengrad,breitengrad»
 $lngLatField = 'location';
-$where = GeoCoder::circleSearchLngLat($lat, $lng, $radius, $lngLatField, $tableAlias);
+$where = SqlSupport::circleSearchLngLat($lat, $lng, $radius, $lngLatField, $tableAlias);
+$distance = SqlSupport::spDistance(
+    SqlSupport::spPointFromValue($lat, $lng),
+    SqlSupport::spPointFromLngLat($latLngField),
+);
 
 // Alternativ: Getrennte Tabellenfelder für Breiten- und Längengrad
 $latField = 'latitude';
 $lngField = 'longitude';
-$where = GeoCoder::circleSearch($lat, $lng, $radius, $latField, $lngField, $tableAlias);
+$where = SqlSupport::circleSearch($lat, $lng, $radius, $latField, $lngField, $tableAlias);
+$distance = SqlSupport::spDistance(
+    SqlSupport::spPointFromValue($lat,$lng),
+    SqlSupport::spPointFromLatAndLng($latField, $lngField),
+);
 
 // Umkreissuche zur Query hinzufügen
 $query->whereRaw($where);
-
+$query->selectRaw($distance, 'distanz');
 ```
 
 <a name="rexform"></a>
