@@ -246,6 +246,12 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 $markerRange = null;
             }
 
+            if( is_numeric($this->getElement('size'))) {
+                $radius = (int) $this->getElement('size');
+            } else {
+                $radius = (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON, 'picker_radius');
+            }
+
             $params = [
                 // Id des Geolocation-Mapset
                 'mapsetId' => $this->getElement('mapset'),
@@ -254,7 +260,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 // Externe oder interne LatLng-Felder
                 'type' => $this->getElement('type'),
                 // Radius in Meter um die Position (sorgt für den Zoom)
-                'radius' => (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON, 'picker_radius'),
+                'radius' => $radius,
                 // initiale Kartenansicht wenn es keine Werte gibt
                 'defaultBounds' => $defaultBounds,
                 // Koordinaten-Felder
