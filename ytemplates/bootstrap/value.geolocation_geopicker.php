@@ -120,7 +120,7 @@ if ('' < $this->getWarningClass()) {
  */
 ?>
 <div class="<?= implode(' ', $class_group) ?>" id="<?= $this->getHTMLId() ?>">
-    <label class="<?= implode(' ', $class_label) ?>"><?= $this->getElement('label') ?></label>
+    <label class="<?= implode(' ', $class_label) ?>"><?= rex_i18n::translate($this->getElement('label')) ?></label>
     <?= $geoPicker->parse() ?>
     <?= $notice ?>
  </div>
