@@ -271,7 +271,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 // Verlinkung zu Feldern mit Adress-Teilen
                 'addressFields' => $addressFields,
                 // Formatierung des Markers/Pins (Farbe)
-                'markerStyle' => json_decode($this->getElement('params'), true),
+                'markerStyle' => json_decode($this->getElement('params'), true) ?? [],
                 'geoCoder' => '' === $this->getElement('geocoder') ? null : (int) $this->getElement('geocoder'),
                 // zulässiger Wertebereich oder null für Standard
                 'markerRange' => $markerRange,

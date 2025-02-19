@@ -37,7 +37,7 @@ use rex_yform_value_geolocation_geopicker;
 \assert(isset($mapsetClass));
 \assert(isset($type));
 \assert(isset($radius));
-\assert(isset($defaultBounds));
+\assert(null === $defaultBounds || isset($defaultBounds));
 \assert(isset($latLngId));
 \assert(isset($latLngName));
 \assert(isset($latLngPoint) || null === $latLngPoint);
@@ -77,8 +77,6 @@ $class_label[] = 'control-label';
 /**
  * GeoPicker für externe oder interne Felder einrichten (Basis-Konfiguration).
  */
-dump(get_defined_vars());
-
 if ('external' === $type) {
     $geoPicker = PickerWidget::factoryExternal(
         $latLngId['lat'],
