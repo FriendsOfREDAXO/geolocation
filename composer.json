@@ -1,5 +1,5 @@
 {
     "require": {
-        "mjaschen/phpgeo": "^4.0"
+        "mjaschen/phpgeo": "^6.0"
     }
 }
