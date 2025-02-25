@@ -4,19 +4,20 @@
 >   - [Einstellungen](settings.md)
 > - [Kartensätze verwalten](mapset.md)
 > - [Karten/Layer verwalten](layer.md)
-> - __Karten-Proxy und -Cache::
+> - __Proxy und -Cache::
 > - [Für Entwickler](devphp.md)
->   - [PHP](devphp.md)
+>   - [PHP Basis](devphp.md)
+>   - [PHP LocationPicker](devphp1.md)
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
 >   - [Rechnen (PHP) (PHP)](devmath.md)
 
-# Karten-Proxy und -Cache
+# Proxy und -Cache
 
 ## Inhalte
 
-In einer Redaxo-Instanz fungiert **Geolocation** als Abruf-Proxy-Srver für Kartenausschnitte vom
+In einer Redaxo-Instanz fungiert **Geolocation** als Abruf-Proxy-Server für Kartenausschnitte vom
 Server des Anbieters mit gleichzeitiger Möglichkeit, die abgerufenen Kartenausschnitte (Kacheln)
 zwischenzuspeichern (Cache).
 
@@ -25,6 +26,11 @@ zwischenzuspeichern (Cache).
 - [Der Proxy-Server](#proxy)
 - [Caching](#cache)
 - [Cache-Cronjob](#cron)
+
+Zusätzlich kann Geocoding (Koordinaten über eine Adresse suchen) über die Proxy-Funktion der
+REDAXO-Instanz durchgeführt werden:
+
+- [GeoCoding-Proxy](#geoproxy)
 
 
 <a name="intro"></a>
@@ -38,6 +44,7 @@ In der REDAXO-Instanz fungiert **Geolocation** als
 
 - **Proxy**-Server:
     - Abruf von Kartenkacheln eines Anbieters indirekt über den Server der REDAXO-Instanz
+    - Geocoding; Koordinaten über eine Adresse suchen
 
 - **Cache**-Server:
     - Zwischenspeichern von Kartenkacheln im Cache-Verzeichnis der REDAXO-Instanz
@@ -96,6 +103,26 @@ Die REDAXO-Instanz fungiert als Proxy-Server zwischen dem Client und dem Server 
 5. Die Rückgabe vom Tile-Server wird bearbeitet:
     - Fehler: schicke Fehlercode und Fehlermeldung an den Client
     - Erfolg: schicke die Kachel an den Client.
+
+<a name="geoproxy"></a>
+## Geocoding-Proxy
+
+Aktuell ist nur ein GeoCoding-Server (Nominatim/OSM) hinterlegt. Das GeoCoding ist optionaler
+Bestandteil des Location-Pickers. In eigenen Anwendugen kann der GeoCoding-Proxy ebenfalls benutzt
+werden. Die dafür nötige URL kann einfach über die GeoCoder-Klasse erzeugt werden.
+
+```php
+use FriendsOfRedaxo\Geolocation\GeoCoder;
+
+$geoCoderUrl = GeoCoder::take()->getRequestUrl();
+```
+
+Die Url (`index.php?geocoder=1&amp;v=%7Bvalue%7D` bzw. `index.php?geocoder=1&v={value}`) ist immer 
+eine Frontend-Url; bei Backend-Seiten beginnt die Url mit `..\`.
+
+Die Url enthält einen Platzhalter `'{value}'`, der im JS gegen den HTML-encodierten
+Suchstring ausgetauscht werden muss (`url.replace(/\{value\}/, encodeURIComponent(value))`).
+
 
 <a name="cache"></a>
 ## Caching

@@ -1,5 +1,34 @@
 # Changelog
 
+## xx-xx-2025 2.5.0
+
+- Neue Funktionen
+  - Implementierung eines Location-Picker zur interaktiven Auswahl einer Position
+    - Basis ist ein rex_fragment `PickerWidget`
+      - Flexibel einsetzbar mit Geolocation-Mapsets
+      - Optional Geocoding via Nominatim/OSM
+      - Konfigurierbar über dedizierte Methoden statt `setVar(...)`.
+    - als YForm-Value `rex_yform_value_geolocation_geopicker`
+      - mit integrierter Validierung
+      - Speichern intern im Feld oder in zwei externen Feldern für Längen- und Breitengrad
+      - Verschiedene Listenformatierungen der Koordinaten
+      - Listenfilterung mit Umkreissuche
+    - als RexForm-Element `PickerElement`
+      - mit integrierter Validierung
+      - Speichern intern im Feld oder in zwei externen Feldern für Längen- und Breitengrad
+    - als Metafeld `PickerMetafield`
+    - in Modulen via `PickerWidget`
+    - Erweiterte Dokumentation (insb. "Für Entwickler | PHP: LocationPicker")
+    Geocoding via Nominatim/OSM im Picker integriert
+    - Keine direkten Nominatim-Abfragen (Proxy)
+    - Proxy-Url erzeugen mit `GeoCoder::take($id)->getRequestUrl()`
+  - Klasse `SqlTools`: 
+    - liefert Bausteine für SQL-Abfragen z.B. zur Umkreissuche
+    - einfachere Implementierung der Spatial-Funktionen in SQL-Abfragen
+
+- Update: Vendor mjaschen/phpgeo (geplant)
+- RexStan: alles noch mal prüfen mit der aktuellen Version von Rexstan (geplant)
+
 ## 07-12-2024 2.4.0
 
 - kleinere interne Modifikationen
@@ -16,7 +45,6 @@
   - Update-Aktionen in _install.php_ wueden nicht korrekt Versions-abhängig angesteuert. Umgestellt auf "immer prüfen und ggf. ausführen"
   - Typo korrigiert (Democode in _devmath.md_)
   - _AssetPacker.php_: Handhabung der Pfadnamen korrigiert (#tyrant88)
-
 
 ## 25-07-2024 2.3.1
 

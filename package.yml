@@ -1,5 +1,5 @@
 package: geolocation
-version: '2.4.0'
+version: '2.5.0-dev011'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/geolocation
 
@@ -49,6 +49,9 @@ page:
                     subpages:
                         devphp:
                             title: translate:geolocation_manpage_devphp
+                            subpath:  pages/manual.php
+                        devphp1:
+                            title: translate:geolocation_manpage_devphp1
                             subpath:  pages/manual.php
                         devjs:
                             title: translate:geolocation_manpage_devjs
