@@ -2,23 +2,39 @@
 
 ## Requirements
 
-_phpgeo_ requires at least PHP 7.3. _phpgeo_ fully supports PHP 8.
+Minimum required PHP version is 8.1. *phpgeo* is tested up to PHP 8.3.
 
-The 3.x releases require PHP >= 7.2 but don't get feature updates any longer. Bugfixes will be backported.
+New features will only go into the main branch and won't be backported.
 
-The 2.x releases require PHP >= 7.0 but don't get feature updates any longer. Bugfixes won't be backported.
+It's possible to install previous versions of *phpgeo* for older PHP versions.
+Please refer to the following table for the compatibility matrix:
 
-The 1.x release line has support for PHP >= 5.4. Bugfixes won't be backported.
+### Compatibility Matrix
+
+| PHP Version | phpgeo Version |   Support Status   | Composer Install                        |
+| :---------: | :------------: | :----------------: | --------------------------------------- |
+|     8.3     |      5.x       |     ✅ active      | `composer require mjaschen/phpgeo`      |
+|     8.2     |      5.x       |     ✅ active      | `composer require mjaschen/phpgeo`      |
+|     8.1     |      5.x       |     ✅ active      | `composer require mjaschen/phpgeo`      |
+|     8.0     |      4.x       | ⚠️ security only | `composer require mjaschen/phpgeo:^4.0` |
+|     7.4     |      4.x       | ⚠️ security only | `composer require mjaschen/phpgeo:^4.0` |
+|     7.3     |      4.x       | ⚠️ security only | `composer require mjaschen/phpgeo:^4.0` |
+|     7.2     |      3.x       |   ❌ end of life   | `composer require mjaschen/phpgeo:^3.0` |
+|     7.1     |      2.x       |   ❌ end of life   | `composer require mjaschen/phpgeo:^2.0` |
+|     7.0     |      2.x       |   ❌ end of life   | `composer require mjaschen/phpgeo:^2.0` |
+|     5.6     |      1.x       |   ❌ end of life   | `composer require mjaschen/phpgeo:^1.0` |
+|     5.5     |      1.x       |   ❌ end of life   | `composer require mjaschen/phpgeo:^1.0` |
+|     5.4     |      1.x       |   ❌ end of life   | `composer require mjaschen/phpgeo:^1.0` |
 
 ## Installation
 
-_phpgeo_ is best be installed using Composer. Please visit the
-[Composer website](https://getcomposer.org/) website for more information.
+*phpgeo* is best be installed using Composer. Please visit the
+[Composer website](https://getcomposer.org/) for more information.
 
-To install _phpgeo,_ simply “require” it using Composer:
+To install *phpgeo,* simply “require” it using Composer:
 
 ``` shell
 composer require mjaschen/phpgeo
 ```
 
-_phpgeo_ is now ready to be used in your project!
+*phpgeo* is now ready to be used in your project!

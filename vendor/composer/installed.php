@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => 'af2b3116d6c42e6b1c282f0bdaa2606e573a1c37',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '29bb0a574ca5ea017c549bf75bdaf589333af6db',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,18 +11,18 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => 'af2b3116d6c42e6b1c282f0bdaa2606e573a1c37',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '29bb0a574ca5ea017c549bf75bdaf589333af6db',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'mjaschen/phpgeo' => array(
-            'pretty_version' => '4.2.0',
-            'version' => '4.2.0.0',
-            'reference' => 'b2e593cf1e9aceea36510158ddb80c7395a80d5a',
+            'pretty_version' => '6.0.0',
+            'version' => '6.0.0.0',
+            'reference' => '71074ce618dbaa4f048c8ee6b4e0c2d0e51a0931',
             'type' => 'library',
             'install_path' => __DIR__ . '/../mjaschen/phpgeo',
             'aliases' => array(),
