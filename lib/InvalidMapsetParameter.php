@@ -2,6 +2,4 @@
 
 namespace FriendsOfRedaxo\Geolocation;
 
-class InvalidMapsetParameter extends InvalidParameter
-{
-}
+class InvalidMapsetParameter extends InvalidParameter {}

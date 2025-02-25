@@ -192,12 +192,12 @@ class GeoCoder
      *
      * @api
      */
-    public function getRequestUrl(bool $escape=true): string
+    public function getRequestUrl(bool $escape = true): string
     {
         return rex_url::frontendController([
             KEY_GEOCODER => $this->id,
             self::VALUE_PARAM => self::VALUE_PLACEHOLDER,
-        ],$escape);
+        ], $escape);
     }
 
     /**

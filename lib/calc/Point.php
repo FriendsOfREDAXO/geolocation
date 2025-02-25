@@ -1,4 +1,5 @@
 <?php
+
 /**
  * baut auf phpGeo auf.
  * @see https://github.com/mjaschen/phpgeo
@@ -19,6 +20,8 @@ use Location\Formatter\Coordinate\DecimalMinutes;
 
 use function strlen;
 
+use const LC_NUMERIC;
+
 class Point
 {
     /**
@@ -37,7 +40,7 @@ class Point
     /**
      * Hier wird die \Location-Koordinate abgelegt, die durch Point gekapselt ist.
      * Es ist leider notwendig, dass die Koordinate zugänglich ist; egal ob so oder per getter
-     * Sie ist nur für interne Zwecke in FriendsOfRedaxo\Geolocation\Calc
+     * Sie ist nur für interne Zwecke in FriendsOfRedaxo\Geolocation\Calc.
      */
     protected Coordinate $coord;
 
@@ -253,7 +256,7 @@ class Point
         setlocale(LC_NUMERIC, 'en_US.UTF-8');
 
         if (self::DM === $formatter) {
-            $precision = $precision ?? max(
+            $precision ??= max(
                 strlen((string) abs($this->lat() - (int) $this->lat())) - 2,
                 strlen((string) abs($this->lng() - (int) $this->lng())) - 2,
             );

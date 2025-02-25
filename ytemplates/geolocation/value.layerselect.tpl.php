@@ -24,7 +24,7 @@
 use FriendsOfRedaxo\Geolocation\Layer;
 
 $notices = [];
-if ('' != $this->getElement('notice')) {
+if ('' !== $this->getElement('notice')) {
     $notices[] = rex_i18n::translate($this->getElement('notice'), false);
 }
 if (isset($this->params['warning_messages'][$this->getId()]) && !$this->params['hide_field_warning_messages']) {
@@ -38,7 +38,7 @@ if (count($notices) > 0) {
 
 $class = $this->getElement('required') ? 'form-is-required ' : '';
 
-if ('' != trim($this->getLabel())) {
+if ('' !== trim($this->getLabel())) {
     $labelAttributes = [
         'class' => 'control-label',
         'for' => $this->getFieldId(),
@@ -76,7 +76,7 @@ $template = <<<HTML
  */
 $layerEntries = '';
 foreach ($options as $id => $option) {
-    $checked = in_array($id, $selected) ? 'checked' : '';
+    $checked = in_array($id, $selected, true) ? 'checked' : '';
     $layerEntries .= str_replace(['{value}', '{label}', '{checked}'], [$id, $option, $checked], $template);
 }
 
@@ -98,11 +98,11 @@ $bmrId = $linkParams['rex_yform_manager_opener[id]'];
 
 /**
  * ID-String für den Select abhängig von der YForm-Version
- * ab YForm 4.2.0 ist es: yform-dataset-view-
- * 
+ * ab YForm 4.2.0 ist es: yform-dataset-view-.
+ *
  * NOTICE: kann entfallen wenn irgendwann die Yform-Mindestversion ab 4.2 ist
  */
-$selectId = rex_version::compare(rex_addon::get('yform')->getVersion(),'4.2.0','<')
+$selectId = rex_version::compare(rex_addon::get('yform')->getVersion(), '4.2.0', '<')
     ? 'YFORM_DATASETLIST_SELECT_'
     : 'yform-dataset-view-';
 
@@ -125,6 +125,6 @@ $selectId = rex_version::compare(rex_addon::get('yform')->getVersion(),'4.2.0','
 
 echo $notice;
 
-if ('' != trim($this->getLabel())) {
+if ('' !== trim($this->getLabel())) {
     echo '</div>';
 }

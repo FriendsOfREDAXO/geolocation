@@ -1,4 +1,5 @@
 <?php
+
 /**
  * YForm-Eingabefeld für Layer-Sets im Geolocation-Addon.
  *
@@ -26,6 +27,7 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
     /**
      * Das eigene value-Feld der DB ist eine Komma-Liste mit Layer-IDs
      * wird hier für interne Zwecke als Array geführt.
+     * @api
      * @var array<int>
      */
     public array $layer;
@@ -33,6 +35,7 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
     /**
      * Das SubFeld in der DB ist eine Komma-Liste mit Layer-IDs
      * wird hier für interne Zwecke als Array geführt.
+     * @api
      * @var array<int>
      */
     public array $activeLayer;
@@ -129,7 +132,7 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
         ]);
     }
 
-    public function enterObject()
+    public function enterObject(): void
     {
         /**
          * Formularausgabe.
@@ -163,7 +166,7 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
         $this->params['value_pool']['email'][$this->getName()] = implode(',', $this->layer);
         $this->params['value_pool']['email'][$this->subField] = implode(',', $this->activeLayer);
 
-        if ($this->saveInDb()) {
+        if ($this->saveInDB()) {
             $this->params['value_pool']['sql'][$this->getName()] = implode(',', $this->layer);
             $this->params['value_pool']['sql'][$this->subField] = implode(',', $this->activeLayer);
         }
@@ -254,6 +257,7 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
     /**
      * Aus den gegebenen Layer-IDs ein Array id => label zusammenbauen.
      *
+     * @api
      * @param array<int> $list
      * @return array<string>
      */
@@ -273,6 +277,7 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
     /**
      * Aus den gegebenen Layer-IDs die zugehörige Datensatz-Liste abrufen.
      *
+     * @api
      * @param array<int> $list
      * @return array<Layer>
      */
@@ -300,6 +305,7 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
     }
 
     /**
+     * @api
      * @param mixed $params
      */
     public static function getListValue($params): string
@@ -325,18 +331,23 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
      * Baut die Suchfelder auf
      * In Anlehnung an be_manager_relation.
      *
+     * @api
      * @param mixed $params
      * @return void
      */
     public static function getSearchField($params)
     {
-        $params['searchForm']->setValueField('be_manager_relation', [
-            'name' => $params['field']->getName(),
-            'label' => $params['field']->getLabel(),
+        /** @var rex_yform $searchForm */
+        $searchForm = $params['searchForm'];
+        /** @var rex_yform_manager_field $field */
+        $field = $params['field'];
+        $searchForm->setValueField('be_manager_relation', [
+            'name' => $field->getName(),
+            'label' => $field->getLabel(),
             'empty_option' => true,
             'table' => Layer::table()->getTableName(),
             'field' => 'name',
-            'filter' => 'layertype = ' . $params['field']->getElement('filter'),
+            'filter' => 'layertype = ' . $field->getElement('filter'),
             'type' => 2,
         ]);
     }
@@ -346,6 +357,7 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
      * Hier kann komplett auf den Code aus be_manager_relation zurückgegriffen
      * werden.
      *
+     * @api
      * @param mixed $params
      * @return rex_yform_manager_query
      */

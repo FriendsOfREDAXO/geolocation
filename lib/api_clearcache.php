@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ruft die Cachebereinigung auf.
  * Wenn in der URL layer_id=.. auf einen Kartenlayer verweist, wird dessen Cache gelöscht.
@@ -16,7 +17,7 @@ use rex;
 use rex_api_exception;
 use rex_api_result;
 
-class rex_api_geolocation_clearcache extends \rex_api_function
+class rex_api_geolocation_clearcache extends rex_api_function
 {
     /**
      * @throws rex_api_exception
@@ -48,6 +49,6 @@ class rex_api_geolocation_clearcache extends \rex_api_function
             $c = Cache::clearCache();
         }
 
-        return new rex_api_result(true, \rex_i18n::msg('geolocation_cache_files_removed', $c));
+        return new rex_api_result(true, rex_i18n::msg('geolocation_cache_files_removed', $c));
     }
 }

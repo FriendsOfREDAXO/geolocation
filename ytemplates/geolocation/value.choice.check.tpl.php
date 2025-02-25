@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Vorgeschaltetes YTemplate für Geolocation
  *  -  der erste Auswahlpunkt (preferredChoices) stellt die Auswahl auf  "default" und damit den
@@ -23,6 +24,7 @@ namespace FriendsOfRedaxo\Geolocation;
 
 use rex_config;
 use rex_path;
+use rex_yform;
 use rex_yform_choice_list_view;
 use rex_yform_choice_view;
 use rex_yform_value_choice;
@@ -38,7 +40,7 @@ if ('mapoptions' === $this->name) {
     // baue die OnChange-Funktion ein.
     $default = $choiceListView->preferredChoices[0];
     $attributes = [
-        'onchange' => 'let t=document.getElementById("'.$this->getHTMLId().'");if(t)Array.from(t.querySelectorAll(".checkbox input[subchoice]")).forEach(x=>{x.disabled=this.checked});',
+        'onchange' => 'let t=document.getElementById("' . $this->getHTMLId() . '");if(t)Array.from(t.querySelectorAll(".checkbox input[subchoice]")).forEach(x=>{x.disabled=this.checked});',
     ];
     $attributes = array_merge($attributes, $default->getAttributes());
     /**
@@ -53,7 +55,8 @@ if ('mapoptions' === $this->name) {
     $disabled = false !== array_search('default', $this->value, true);
     $options = rex_config::get(ADDON, 'map_components');
     $options = explode('|', $options);
-    $options = array_filter($options, 'strlen');
+    $options = array_filter($options, strlen(...));
+    /** @var rex_yform_choice_view $v */
     foreach ($choiceListView->choices as &$v) {
         $value = $v->getValue();
         $attributes = $v->getAttributes();
@@ -75,7 +78,9 @@ $previousTemplate = '';
 if (false !== $geoPos) {
     unset($ytemplates[$geoPos]);
     $this->params['form_ytemplate'] = implode(',', $ytemplates);
-    $previousTemplate = $this->params['this']->getTemplatePath($template);
+    /** @var rex_yform $yform */
+    $yform = $this->params['this'];
+    $previousTemplate = $yform->getTemplatePath($template);
 }
 if ('' === $previousTemplate) {
     $previousTemplate = rex_path::addon('yform', 'ytemplates/bootstrap/value.choice.check.tpl.php');

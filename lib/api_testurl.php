@@ -64,7 +64,7 @@ class rex_api_geolocation_testurl extends rex_api_function
             case self::TILE_URL:
                 $this->ensurePermission('geolocation[layer]');
                 $this->testTileUrl();
-                //break;
+                // break;
         }
 
         /**
@@ -142,7 +142,7 @@ class rex_api_geolocation_testurl extends rex_api_function
             $this->sendResponseAndExit(
                 $result['rc'],
                 rex_i18n::msg($i18n, self::$tileTestData['{s}'], $subDomain),
-                '<img src="data:'.$result['type'].';base64,'.base64_encode($result['content']).'" />',
+                '<img src="data:' . $result['type'] . ';base64,' . base64_encode($result['content']) . '" />',
             );
         } else {
             $this->sendResponseAndExit(
@@ -159,7 +159,7 @@ class rex_api_geolocation_testurl extends rex_api_function
      * Aktions-Typen unterscheiden.
      *
      * @api
-     * @return string[]
+     * @return array<string>
      */
     public static function getApiParams(string $action): array
     {
@@ -194,8 +194,8 @@ class rex_api_geolocation_testurl extends rex_api_function
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        if(($proxy = rex_addon::get('geolocation')->getConfig('socket_proxy')) !== '') {
-             curl_setopt($ch, CURLOPT_PROXY, $proxy);
+        if (($proxy = rex_addon::get('geolocation')->getConfig('socket_proxy')) !== '') {
+            curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }
         $content = (string) curl_exec($ch);
         $returnCode = (string) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
@@ -221,9 +221,9 @@ class rex_api_geolocation_testurl extends rex_api_function
         $hasPerm = false;
         try {
             $hasPerm = rex::requireUser()->hasPerm($permission);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
         }
-        if( !$hasPerm) {
+        if (!$hasPerm) {
             rex_response::cleanOutputBuffers();
             rex_response::setStatus(rex_response::HTTP_FORBIDDEN);
             rex_response::sendContent(rex_response::HTTP_FORBIDDEN);
@@ -241,7 +241,7 @@ class rex_api_geolocation_testurl extends rex_api_function
     protected function sendResponseAndExit(string $http_response, string $message, string $content = ''): void
     {
         $html = '<p>';
-        $html .= '<strong>'.$http_response.'</strong>';
+        $html .= '<strong>' . $http_response . '</strong>';
         if ('' < $message) {
             $html .= ': ' . $message;
         }

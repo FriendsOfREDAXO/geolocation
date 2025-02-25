@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Ruft Seiten des YForm-Tablemanagers als native Addon-Seiten auf.
  *
@@ -61,7 +62,9 @@ if (!$show_title) {
     rex_extension::register(
         'YFORM_MANAGER_DATA_PAGE_HEADER',
         static function (rex_extension_point $ep) {
-            if ($ep->getParam('yform')->table->getTableName() === $ep->getParam('table_name')) {
+            /** @var rex_yform_manager $manager */
+            $manager = $ep->getParam('yform');
+            if ($manager->table->getTableName() === $ep->getParam('table_name')) {
                 return '';
             }
         },

@@ -29,7 +29,7 @@ use rex_string;
  * @var ?GeoCoder $geoCoder
  */
 $geoCoder = $this->getVar('geo_coder', null);
-if( !is_a($geoCoder,GeoCoder::class) ) {
+if (!is_a($geoCoder, GeoCoder::class)) {
     return;
 }
 $addressFields = $this->getVar('address_fields', []);
@@ -43,11 +43,11 @@ if (0 === \count($addressFields)) {
 } else {
     $i18nId = 1 === \count($addressFields) ? 'geolocation_geocoder_adress_btn' : 'geolocation_geocoder_adresses_btn';
     $button = [
-        'label' => sprintf('<span class="wide">%s</span><i class="rex-icon rex-icon-search"></i>',rex_i18n::msg($i18nId,'')),
+        'label' => \sprintf('<span class="wide">%s</span><i class="rex-icon rex-icon-search"></i>', rex_i18n::msg($i18nId, '')),
         'attributes' => [
             'class' => ['btn btn-primary'],
             'type' => 'button',
-            'title' => rex_i18n::msg('geolocation_geocoder_adr_title',implode(', ', $addressFields)),
+            'title' => rex_i18n::msg('geolocation_geocoder_adr_title', implode(', ', $addressFields)),
         ],
     ];
 
@@ -63,12 +63,12 @@ $searchAttributes = [
     'class' => 'form-control',
     'type' => 'text',
     'value' => '',
-    'placeholder' => rex_i18n::rawMsg('geolocation_geocoder_placeholder',strip_tags($geoCoder->getCopyright())),
+    'placeholder' => rex_i18n::rawMsg('geolocation_geocoder_placeholder', strip_tags($geoCoder->getCopyright())),
     'autocomplete' => 'off',
 ];
 
 /**
- * Aus den obigen Informationen die Input-Group mit dem Suchfeld unf ggf. Buttons zusammenschrauben
+ * Aus den obigen Informationen die Input-Group mit dem Suchfeld unf ggf. Buttons zusammenschrauben.
  */
 $fragment = new rex_fragment();
 $n = [

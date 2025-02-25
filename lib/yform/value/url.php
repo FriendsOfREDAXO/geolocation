@@ -1,4 +1,5 @@
 <?php
+
 /**
  * YForm-Eingabefeld zum Testen von Urls im Geolocation-Addon.
  *
@@ -45,6 +46,7 @@ class rex_yform_value_geolocation_url extends rex_yform_value_text
          * Die ID des Subdomain-Feldes ermitteln und in die Attribute eintragen.
          */
         $subdomainField = $this->getElement('field');
+        /** @var array<rex_yform_value_abstract> $valueFields */
         $valueFields = $this->getParam('values');
         foreach ($valueFields as $field) {
             if ($subdomainField === $field->getName()) {
