@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Geolocation|mapset ist eine erweiterte yform-dataset-Klasse für Kartensätze
  * aus einem oder mehreren Kartenlayern.
@@ -36,7 +37,7 @@
  *     attributes            sammelt die sonstigen HTML-Attribute ein
  *     dataset               sammelt die Karteninhalte ein (siehe Geolocation.js -> Tools)
  *     parse                 erzeugt Karten-HTML gem. vorgegebenem Fragment
-*/
+ */
 
 namespace FriendsOfRedaxo\Geolocation;
 
@@ -53,11 +54,16 @@ use rex_request;
 use rex_response;
 use rex_url;
 use rex_yform;
+use rex_yform_list;
 use rex_yform_manager_dataset;
+use rex_yform_manager_table;
 
 use function count;
 use function in_array;
 use function is_array;
+use function strlen;
+
+use const PREG_OFFSET_CAPTURE;
 
 /**
  * Mittels parent::__get bereitgestellte Daten.
@@ -76,6 +82,7 @@ use function is_array;
 class Mapset extends rex_yform_manager_dataset
 {
     /**
+     * @api
      * @var array<string,string>
      */
     public static array $mapoptions = [
@@ -84,14 +91,10 @@ class Mapset extends rex_yform_manager_dataset
         'locateControl' => 'translate:geolocation_form_mapoptions_location',
     ];
 
-    /**
-     * @var array<string,mixed>
-     */
+    /** @var array<string,mixed> */
     protected array $mapDataset = [];
 
-    /**
-     * @var array<string,mixed>
-     */
+    /** @var array<string,mixed> */
     protected array $mapAttributes = [];
 
     // dataset-spezifisch
@@ -100,7 +103,7 @@ class Mapset extends rex_yform_manager_dataset
      * Die Annahme, dass 'protected array $mapXxxxx = [];' in jeder neuen Instanz ein
      * leeres Array initialisiert, ist falsch. Daher expliziet [] zuweisen.
      *
-     * @return null|static
+     * @return static|null
      */
     public static function get(int $id, ?string $table = null): ?self
     {
@@ -170,7 +173,7 @@ class Mapset extends rex_yform_manager_dataset
         $delete = rex_extension::registerPoint(new rex_extension_point(
             'GEOLOCATION_MAPSET_DELETE',
             true,
-            ['id' => $this->getId(), 'mapset' => $this]
+            ['id' => $this->getId(), 'mapset' => $this],
         ));
 
         return $delete && parent::delete();
@@ -184,7 +187,7 @@ class Mapset extends rex_yform_manager_dataset
      * - stellt aktuelle Konfig-Daten als Vorbelegung in ein Add-Formular
      * - Für choice.check wird ein modifiziertes Fragment (nur hier) aktiviert.
      */
-    public function executeForm(rex_yform $yform, callable $afterFieldsExecuted = null): string
+    public function executeForm(rex_yform $yform, ?callable $afterFieldsExecuted = null): string
     {
         // setzt bei leeren Formularen (add) ein paar Default-Werte
         rex_extension::register('YFORM_DATA_ADD', function (rex_extension_point $ep) {
@@ -192,7 +195,9 @@ class Mapset extends rex_yform_manager_dataset
             if ($this !== $ep->getParam('data')) {
                 return;
             }
-            $objparams = &$ep->getSubject()->objparams;
+            /** @var rex_yform $yform just to male rexstan happy */
+            $yform = $ep->getSubject();
+            $objparams = $yform->objparams;
 
             // Bug im Ablauf der EPs: YFORM_DATA_ADD wird nach dem Absenden des neuen Formulars
             // noch mal vor dem Speichern ausgeführt und dadurch werden die Eingaben wieder mit
@@ -230,7 +235,9 @@ class Mapset extends rex_yform_manager_dataset
     public static function epYformDataListActionButtons(rex_extension_point $ep)
     {
         // nur wenn diese Tabelle im Scope ist
-        $table_name = $ep->getParam('table')->getTableName();
+        /** @var rex_yform_manager_table $table just to male rexstan happy */
+        $table = $ep->getParam('table');
+        $table_name = $table->getTableName();
         if (self::class !== self::getModelClass($table_name)) {
             return;
         }
@@ -242,15 +249,16 @@ class Mapset extends rex_yform_manager_dataset
             rex_extension::register(
                 'YFORM_DATA_LIST',
                 static function (rex_extension_point $ep) {
-
+                    /** @var rex_yform_manager_table $table just to male rexstan happy */
+                    $table = $ep->getParam('table');
                     // nur für diese Tabelle
-                    if ($ep->getParam('table_name') !== $ep->getParam('table')->getTableName()) {
+                    if ($ep->getParam('table_name') !== $table->getTableName()) {
                         return;
                     }
 
                     // Daten zusammensuchen
-                    $columnName = rex_i18n::msg('yform_function').' ';
-                    /** @var rex_yform_list $list */
+                    $columnName = rex_i18n::msg('yform_function') . ' ';
+                    /** @var rex_yform_list $list just to male rexstan happy */
                     $list = $ep->getSubject();
                     $default = self::getDefaultId();
 
@@ -267,13 +275,15 @@ class Mapset extends rex_yform_manager_dataset
                     // Die einzelne Aktion ist nicht besser identifizierbar als über hoffentlich eindeutige
                     // Zeichenketten.
                     $list->setColumnFormat(
-                        rex_i18n::msg('yform_function').' ',
+                        rex_i18n::msg('yform_function') . ' ',
                         'custom',
                         static function ($params) use ($default, $customCallback, $customParams) {
                             if (null !== $customCallback) {
                                 $params['value'] = $customCallback(array_merge($params, ['params' => $customParams]));
                             }
-                            if ($params['list']->getValue('id') === $default) {
+                            /** @var rex_yform_list $list */
+                            $list = $params['list'];
+                            if ($list->getValue('id') === $default) {
                                 preg_match_all('<a.*?/a>', $params['value'], $match, PREG_OFFSET_CAPTURE);
                                 foreach ($match[0] as $item) {
                                     if (str_contains($item[0], 'func=delete')) {
@@ -315,23 +325,24 @@ class Mapset extends rex_yform_manager_dataset
                     'url' => $href,
                     'content' => $label,
                     'attributes' => [
-                        'onclick' => 'return confirm(\''.$confirm.'\')',
+                        'onclick' => 'return confirm(\'' . $confirm . '\')',
                     ],
                 ];
             } else {
-                $buttons['geolocationClearCache'] = '<a onclick="return confirm(\''.$confirm.'\')" href="'.$href.'">'.$label.'</a>';
+                $buttons['geolocationClearCache'] = '<a onclick="return confirm(\'' . $confirm . '\')" href="' . $href . '">' . $label . '</a>';
             }
             $ep->setSubject($buttons);
         }
-
     }
 
     /**
      * @deprecated 3.0.0 Aufrufe auf "Mapset::epYformDataListActionButtons" geändert
-     * @param rex_extension_point<array<string,string>> $ep
-     * @return array<string,string>|void
+     * @api
+     * @param rex_extension_point<array<string,mixed>> $ep
+     * @return array<string,mixed>|void
      */
-    public static function YFORM_DATA_LIST_ACTION_BUTTONS(rex_extension_point $ep) { 
+    public static function YFORM_DATA_LIST_ACTION_BUTTONS(rex_extension_point $ep)
+    {
         return self::epYformDataListActionButtons($ep);
     }
 
@@ -376,8 +387,8 @@ class Mapset extends rex_yform_manager_dataset
     public function getValue(string $key)
     {
         if ('layerset' === $key) {
-            $layer = explode(',', $this->layer.','.$this->overlay);
-            $layer = array_filter($layer, 'trim');
+            $layer = explode(',', $this->layer . ',' . $this->overlay);
+            $layer = array_filter($layer, trim(...));
             $layer = array_unique($layer);
             $layer = array_map('intval', $layer);
             /** @var list<int> $layer */
@@ -404,8 +415,8 @@ class Mapset extends rex_yform_manager_dataset
      *
      * @api
      * NOTE: das muss doch einfacher gehen als immer diese Definition (siehe Layer::getLayerConfigSet) abzuschreiben
-     * @return array{layer:int,label:string,type:string,attribution:string,active?:bool}[]
-     */ 
+     * @return array<array{layer:int,label:string,type:string,attribution:string,active?:bool}>
+     */
     // TODO: Warum hab ich hier keine Sprachauswahl optional vorgesehen?
     // Später angehen, keine Eile.
     public function getLayerset(): array
@@ -496,6 +507,7 @@ class Mapset extends rex_yform_manager_dataset
      *
      * Achtung: REX-Fragment (addon/fragments/xyz) nicht ytemplate!
      *
+     * @api
      * @return string      Name der Fragment-Datei (xyz.php)
      */
     public static function getDefaultOutFragment()
@@ -564,7 +576,6 @@ class Mapset extends rex_yform_manager_dataset
      *
      * @api
      * @param string|array<string,mixed> $name
-     * @param mixed $data
      */
     public function dataset(string|array $name, mixed $data = null): self
     {

@@ -2,6 +2,4 @@
 
 namespace FriendsOfRedaxo\Geolocation;
 
-class DeveloperException extends Exception
-{
-}
+class DeveloperException extends Exception {}

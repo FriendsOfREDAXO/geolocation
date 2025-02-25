@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cache-Verwaltung.
  */
@@ -15,6 +16,8 @@ use rex_response;
 use function count;
 use function is_array;
 use function is_bool;
+
+use const GLOB_NOSORT;
 
 class Cache
 {
@@ -46,7 +49,7 @@ class Cache
         $time2elapse = $timestamp + ($ttl * 60);
 
         rex_response::cleanOutputBuffers();
-        rex_response::setHeader('Expires', gmdate('D, d M Y H:i:s', $time2elapse) .' GMT');
+        rex_response::setHeader('Expires', gmdate('D, d M Y H:i:s', $time2elapse) . ' GMT');
         rex_response::sendCacheControl('public, max-age=' . $ttl * 60);
         rex_response::sendFile($filePath, $contentType);
         exit;
@@ -93,7 +96,7 @@ class Cache
         if (0 < $layer) {
             $targetDir = rex_path::addonCache(ADDON, (string) $layer);
             if (is_dir($targetDir)) {
-                $files = glob($targetDir.'/*', GLOB_NOSORT);
+                $files = glob($targetDir . '/*', GLOB_NOSORT);
                 if (is_array($files)) {
                     $deletedFiles = count($files);
                     $deletedFiles = rex_dir::delete($targetDir, true) ? $deletedFiles : 0;
@@ -124,7 +127,7 @@ class Cache
             $layerCaches = preg_grep('/\d+/', $layerCaches);
             if (is_array($layerCaches)) {
                 foreach ($layerCaches as $layer) {
-                    $liste = scandir($targetDir.$layer);
+                    $liste = scandir($targetDir . $layer);
                     if (is_array($liste)) {
                         $deletedFiles += (count($liste) - 2); // ohne . und ..
                     }
@@ -198,7 +201,7 @@ class Cache
         $threshold = max($threshold, CFM_MIN);
         $ttl = max($ttl, TTL_MIN);
 
-        $targetDir = rex_path::addonCache(ADDON, $layer.'/');
+        $targetDir = rex_path::addonCache(ADDON, $layer . '/');
         $targetTime = time() - ($ttl * 60);
         $timeString = date('Y-m-d G-H-s', $targetTime);
 

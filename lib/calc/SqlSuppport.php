@@ -104,7 +104,7 @@ class SqlSupport
     }
 
     /**
-     * 
+     * @api
      */
     public static function spDistance(string $pointA, string $pointB): string
     {
@@ -115,6 +115,9 @@ class SqlSupport
         );
     }
 
+    /**
+     * @api
+     */
     public static function spPointFromValue(Point $point): string
     {
         return sprintf(
@@ -125,6 +128,11 @@ class SqlSupport
         );
     }
 
+    /**
+     * Liefert das SQL zum Erzeugen eines geometrischen Objektes für einen
+     * Punkt aus zwei Einzelfeldern für "breitengrad" und "längengrad".
+     * @api
+     */
     public static function spPointFromLatAndLng(string $latField, string $lngField, string $alias = ''): string
     {
         $alias = '' === $alias ? $alias : ($alias . '.');
@@ -136,6 +144,11 @@ class SqlSupport
         );
     }
 
+    /**
+     * Liefert das SQL zum Erzeugen eines geometrischen Objektes für einen
+     * Punkt aus einem Kombi-Feld "breitengrad,längengrad".
+     * @api
+     */
     public static function spPointFromLatLng(string $field, string $alias = ''): string
     {
         $alias = '' === $alias ? $alias : ($alias . '.');
@@ -146,6 +159,11 @@ class SqlSupport
         );
     }
 
+    /**
+     * Liefert das SQL zum Erzeugen eines geometrischen Objektes für einen
+     * Punkt aus einem Kombi-Feld "längengrad,breitengrad".
+     * @api
+     */
     public static function spPointFromLngLat(string $field, string $alias = ''): string
     {
         $alias = '' === $alias ? $alias : ($alias . '.');

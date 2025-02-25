@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Allgemeine Addon-Einstiegsseite (page-Rahmen).
  */
@@ -17,9 +18,7 @@ use rex_view;
 use function assert;
 use function define;
 
-/**
- *  @var rex_addon $this
- */
+/** @var rex_addon $this */
 
 /**
  * Die im Backend relevanten Konfigurationen (Instanz und allgemein) werden eingelesen und daraus

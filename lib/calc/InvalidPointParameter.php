@@ -4,6 +4,4 @@ namespace FriendsOfRedaxo\Geolocation\Calc;
 
 use FriendsOfRedaxo\Geolocation\InvalidParameter;
 
-class InvalidPointParameter extends InvalidParameter
-{
-}
+class InvalidPointParameter extends InvalidParameter {}

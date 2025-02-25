@@ -37,7 +37,7 @@ use rex_yform_value_geolocation_geopicker;
 \assert(isset($mapsetClass));
 \assert(isset($type));
 \assert(isset($radius));
-\assert(null === $defaultBounds || isset($defaultBounds));
+\assert(null === $defaultBounds || is_a($defaultBounds, Box::class));
 \assert(isset($latLngId));
 \assert(isset($latLngName));
 \assert(isset($latLngPoint) || null === $latLngPoint);

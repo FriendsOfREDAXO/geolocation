@@ -44,7 +44,7 @@ if (isset($this->class)) {
         $classes = array_merge($classes, $class);
     }
 }
-$classes = array_filter($classes, 'trim');
+$classes = array_filter($classes, trim(...));
 if (0 < \count($classes)) {
     $attributes['class'] = array_unique($classes);
 }

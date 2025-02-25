@@ -57,6 +57,7 @@ use rex_i18n;
 use Throwable;
 
 use function is_string;
+use function sprintf;
 
 class PickerElement extends rex_form_element
 {
@@ -269,10 +270,10 @@ class PickerElement extends rex_form_element
         if (!$this->hasGeoPicker) {
             throw new DeveloperException(sprintf(
                 'PickerElement "%s": Picker not initialized (invoke «$field->setPickerWidget(..)»)',
-                $this->getFieldName()
+                $this->getFieldName(),
             ));
         }
- 
+
         if ($this->internalValue) {
             $value = $this->getValue();
             $this->geoPicker->setValue($value['lat'], $value['lng']);

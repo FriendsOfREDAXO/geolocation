@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Sammelt alle Exceptions wegen ungültiger Funktions-Parameter
  * an einer Stelle.
@@ -8,7 +9,7 @@ namespace FriendsOfRedaxo\Geolocation;
 
 use Throwable;
 
-class InvalidParameter extends \FriendsOfRedaxo\Geolocation\Exception
+class InvalidParameter extends Exception
 {
     /** @api */
     public const KEY_LAT_LNG = 1;
@@ -51,9 +52,7 @@ class InvalidParameter extends \FriendsOfRedaxo\Geolocation\Exception
     /** @api */
     public const NOT_A_POINT = 20;
 
-    /**
-     * @var array<int,string>
-     */
+    /** @var array<int,string> */
     private array $msg = [
         self::KEY_LAT_LNG => 'Key-Error! Latitude/longitude-Key missing or equal. Given $lat="%s" and $lng="%s"',
         self::LAT_MISSING => 'Latitude value ($point[%s]) missing',

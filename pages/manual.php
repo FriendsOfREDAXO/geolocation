@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Das Handbuch anzeigen ...
  *
@@ -10,8 +11,10 @@
 
 namespace FriendsOfRedaxo\Geolocation;
 
+use Closure;
 use rex_addon;
 use rex_be_controller;
+use rex_be_page;
 use rex_context;
 use rex_file;
 use rex_fragment;
@@ -87,7 +90,7 @@ $document = preg_replace_callback('/(```.*?```|`.*?`)/s', static function ($matc
  * Für die Link-Korrektur wird eine Zuordnungsliste "page => MD-Datei"
  * benötigt. Die wird aus der Handbuchstruktur ermittelt.
  */
-$treeBuilderFunc = static function ($page, $key, $xref, $callback) {
+$treeBuilderFunc = static function (rex_be_page $page, string $key, array $xref, Closure $callback) {
     $key = $key . '/' . $page->getKey();
     if (0 === count($page->getSubpages())) {
         $xref[$key] = $page->getKey() . '.md';
@@ -130,7 +133,7 @@ $document = preg_replace_callback(
          *  interne Seitenlinks in eine BE-Url umwandeln.
          */
         $name = explode('#', $matches[4]);
-        $pageKey = array_search($name[0], $manual);
+        $pageKey = array_search($name[0], $manual, true);
         if (is_string($pageKey)) {
             return $matches[1] . rex_url::backendPage($pageKey) . substr($matches[4], strlen($name[0])) . $matches[6];
         }

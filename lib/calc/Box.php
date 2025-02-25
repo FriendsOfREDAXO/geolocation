@@ -1,4 +1,5 @@
 <?php
+
 /**
  * baut auf phpGeo auf.
  * @see https://github.com/mjaschen/phpgeo
@@ -70,6 +71,11 @@ class Box
         $lat = [];
         $lng = [];
         foreach ($points as $point) {
+            /**
+             * STAN: 'Instanceof between FriendsOfRedaxo\Geolocation\Calc\Point and FriendsOfRedaxo\Geolocation\Calc\Point will always evaluate to true.'
+             * Ja, sicherheitshalber dennoch überprüfen
+             * $@phpstan-ignore-next-line.
+             */
             if (!($point instanceof Point)) {
                 throw new InvalidBoxParameter(InvalidBoxParameter::NOT_A_POINT, [gettype($point)]);
             }
@@ -145,8 +151,8 @@ class Box
      */
     public static function bySize(Point $center, int|float $width, int|float $height): ?self
     {
-        $width = $width / 2;
-        $height = $height / 2;
+        $width /= 2;
+        $height /= 2;
 
         // In Pole-Nähe gibt es sehr seltsame Ergebnisse; erst mal prüfen
         // Abbruch wenn ab Center der Radius über die Pole reicht.
@@ -464,6 +470,11 @@ class Box
         $south = $north = $west = $east = [];
 
         foreach ($data as $point) {
+            /**
+             * STAN: 'Instanceof between FriendsOfRedaxo\Geolocation\Calc\Point and FriendsOfRedaxo\Geolocation\Calc\Point will always evaluate to true.'
+             * Ja, sicherheitshalber dennoch überprüfen
+             * $@phpstan-ignore-next-line.
+             */
             if (!($point instanceof Point)) {
                 throw new InvalidBoxParameter(InvalidBoxParameter::BOXEXTEND);
             }
@@ -502,7 +513,7 @@ class Box
      *
      * @api
      * @param float       $factorLat  Umrechnungsfaktor für Höhe (und ggf. Länge)
-     * @param null|float  $factorLng  Umrechnungsfaktor für Breite (oder null für Übernahme Höhenfaktor)
+     * @param float|null  $factorLng  Umrechnungsfaktor für Breite (oder null für Übernahme Höhenfaktor)
      * @param int         $reference  Referenzpunkt (Box::HOOK_CE, .._NE, .._SE, .._SW, ..NW)
      */
     public function resizeBy(float $factorLat, ?float $factorLng = null, int $reference = self::HOOK_CE): self
@@ -555,7 +566,7 @@ class Box
                 break;
             case self::HOOK_CE:
                 $deltaLat = $deltaLat / 2;
-                $deltaLng = $deltaLng / 2;
+                $deltaLng /= 2;
                 $center = $this->center();
                 $south = $center->lat() - $deltaLat;
                 $north = $center->lat() + $deltaLat;

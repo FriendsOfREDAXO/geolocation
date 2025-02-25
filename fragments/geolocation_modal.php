@@ -3,50 +3,41 @@
  * Fragment zum Aufbau eines modalen Fensters (Bootstrap 3.4).
  *
  * Wird benötigt für das YForm-Value "geolocation_url"
- * 
+ *
  * Es finden nur formale Prüfungen statt. Fehlende Werte werden nicht durch Defaults ersetzt.
  * Hier wird aus Eingangsdaten HTML gebaut, mehr nicht.
- * 
+ *
  * $this->id        optional; ID für das Modal an sich
  * $this->title     optional: Titel für das Modal
  * $this->content   optional: Inhalt
- *  
  */
 
 namespace FriendsOfRedaxo\Geolocation;
 
 use rex_fragment;
 
-/**
- * @var rex_fragment $this
- */
+/** @var rex_fragment $this */
 
-/**
- * @var string $id
- */
+/** @var string $id */
 $id = $this->id ?? '';
 if ('' === $id) {
     $modalIdAttr = '';
     $modalLabelId = md5(microtime());
 } else {
-    $modalIdAttr = ' id="'.$id.'"';
-    $modalLabelId = $id.'-label'; 
+    $modalIdAttr = ' id="' . $id . '"';
+    $modalLabelId = $id . '-label';
 }
 
-/**
- * @var string $content
- */
+/** @var string $content */
 $content = $this->content ?? '';
-$content = '<div class="modal-body" style="font-size:15px;">'.$content.'</div>';
+$content = '<div class="modal-body" style="font-size:15px;">' . $content . '</div>';
 
-/**
- * @var string $title
- */
+/** @var string $title */
 $title = $this->title ?? '';
 if ('' === $title) {
     $title = '';
 } else {
-    $title = '<h4 class="modal-title" id="' . $modalLabelId.'">'.$title.'</h4>';
+    $title = '<h4 class="modal-title" id="' . $modalLabelId . '">' . $title . '</h4>';
 }
 
 ?>

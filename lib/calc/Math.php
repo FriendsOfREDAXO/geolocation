@@ -64,7 +64,7 @@ class Math
 
     /**
      * ruft das aktulle Default-"Distanz"-Interface für Berechnungen von Distanzen ab.
-     * Fehlt ein Interface, wird das Interface Vincenty angelegt
+     * Fehlt ein Interface, wird das Interface Vincenty angelegt.
      *
      * @api
      */

@@ -246,7 +246,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
                 $markerRange = null;
             }
 
-            if( is_numeric($this->getElement('size'))) {
+            if (is_numeric($this->getElement('size'))) {
                 $radius = (int) $this->getElement('size');
             } else {
                 $radius = (int) rex_config::get(\FriendsOfRedaxo\Geolocation\ADDON, 'picker_radius');
@@ -560,7 +560,7 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
          * Objekte etc. handlich bereitstellen.
          */
         [$lat, $lng, $radius] = $parts;
-        $point = Point::byLatLng([$lat,$lng]);
+        $point = Point::byLatLng([$lat, $lng]);
 
         /** @var rex_yform_manager_field $field */
         $field = $params['field'];
@@ -686,8 +686,10 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
 
         /**
          * Der eigene Feldname darf nicht in der Liste vorkommen.
+         * @var rex_yform_value_abstract $valueObj
          */
-        $valueName = $self->getValueObject('name')->getValue();
+        $valueObj = $self->getValueObject('name');
+        $valueName = $valueObj->getValue();
         if (in_array($valueName, $address_field_names, true)) {
             return self::setValidatorMsg($self, 'geolocation_yfv_geopicker_error_self', $fields[$field_name]->getLabel(), $valueName);
         }
@@ -732,20 +734,28 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
      */
     protected function validateLatLng(string $field_name, string $value, bool $return, rex_yform_validate_customfunction $self, array $fields): bool
     {
-        // Nur relevant wenn "externe" Felder
-        if ('external' !== $self->getValueObject('type')->getValue()) {
+        /**
+         * Nur relevant wenn "externe" Felder.
+         * @var rex_yform_value_abstract $valueObj
+         */
+        $valueObj = $self->getValueObject('type');
+        if ('external' !== $valueObj->getValue()) {
             return false;
         }
 
         // nicht der eigene Feldname ausgewählt
-        $valueName = $self->getValueObject('name')->getValue();
+        /** @var rex_yform_value_abstract $valueObj */
+        $valueObj = $self->getValueObject('name');
+        $valueName = $valueObj->getValue();
         if ($valueName === $value) {
             return self::setValidatorMsg($self, 'geolocation_yfv_geopicker_error_self', $fields[$field_name]->getLabel(), $valueName);
         }
 
         // Adressfeld ausgewählt?
         // keines der Address-Felder darf als Lat/Lng ausgewählt sein.
-        $reference = $self->getValueObject('fields')->getValue();
+        /** @var rex_yform_value_abstract $valueObj */
+        $valueObj = $self->getValueObject('fields');
+        $reference = $valueObj->getValue();
         $addressList = preg_split('@[\s,]+@', $reference, flags: PREG_SPLIT_NO_EMPTY);
         if (in_array($value, $addressList, true)) {
             return self::setValidatorMsg($self, 'geolocation_yfv_geopicker_latlng_err_1', $fields[$field_name]->getLabel(), $reference);
@@ -766,7 +776,9 @@ class rex_yform_value_geolocation_geopicker extends rex_yform_value_abstract
     protected function validateLatLngFields(array $field_name, array $value, bool $return, rex_yform_validate_customfunction $self, array $fields): bool
     {
         // Nur relevant wenn "externe" Felder
-        if ('external' !== $self->getValueObject('type')->getValue()) {
+        /** @var rex_yform_value_abstract $valueObj */
+        $valueObj = $self->getValueObject('type');
+        if ('external' !== $valueObj->getValue()) {
             return false;
         }
 
