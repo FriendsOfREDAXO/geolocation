@@ -1,6 +1,6 @@
 # Changelog
 
-## xx-xx-2025 2.5.0
+## 25-02-2025 2.5.0-beta1
 
 - Neue Funktionen
   - Implementierung eines Location-Picker zur interaktiven Auswahl einer Position
@@ -26,8 +26,8 @@
     - liefert Bausteine für SQL-Abfragen z.B. zur Umkreissuche
     - einfachere Implementierung der Spatial-Funktionen in SQL-Abfragen
 
-- Update: Vendor mjaschen/phpgeo (geplant)
-- RexStan: alles noch mal prüfen mit der aktuellen Version von Rexstan (geplant)
+- kleinere interne Modifikationen
+  - Vendor-Update für "mjaschen/phpgeo" aus Version 6.0.0
 
 ## 07-12-2024 2.4.0
 
