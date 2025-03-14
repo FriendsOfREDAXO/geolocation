@@ -1,5 +1,10 @@
 # Changelog
 
+## 25-xx-xx 2.5.0-beta2
+
+- Neue Funktionen
+  - Dino-Logo hinzugefügt: README.MD und BE-Seite. (Dino by @skerbis)
+
 ## 25-02-2025 2.5.0-beta1
 
 - Neue Funktionen

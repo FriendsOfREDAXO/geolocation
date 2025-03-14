@@ -63,7 +63,38 @@ if (null !== $page) {
 }
 
 // Title und Submenü erzeugen/ausgeben
-echo rex_view::title($this->i18n('geolocation_title'));
+// Dino-Logo einfügen bei hinreichend breiten Seiten
+//../assets/addons/geolocation/dino.png
+?>
+<style>
+    @media (min-width: 768px) {
+
+        .logoimgage:before {
+            position:absolute;
+            background-image: url("<?= rex_url::addonAssets(ADDON,'dino.png') ?>");
+            background-size: 110px;
+            background-repeat: no-repeat;
+            left:0px;
+            height: 110px;
+            width: 110px;
+            content: "";
+        }
+        .logoimgage {
+            position: relative;
+            padding-left: 125px;
+        }
+    }
+
+</style> 
+<?php
+
+echo str_replace(
+    '<header class="rex-page-header">', 
+    '<header class="rex-page-header logoimgage">', 
+    rex_view::title(rex_be_controller::getPageObject('geolocation')->getTitle())
+);
+
+$page = rex_be_controller::getCurrentPageObject();
 
 // ggf. vorhandene API Messages ausgeben
 echo rex_api_function::getMessage();
@@ -78,4 +109,6 @@ rex_extension::register('YFORM_DATA_LIST_ACTION_BUTTONS', Layer::epYformDataList
 rex_extension::register('YFORM_DATA_LIST_QUERY', Layer::epYformDataListQuery(...));
 
 // Und nun die aktuelle Seite anzeigen
-rex_be_controller::includeCurrentPageSubPath();
+if (null !== $page) {
+    include $page->getSubPath();
+}
