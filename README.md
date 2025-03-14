@@ -1,4 +1,4 @@
-<img align="right" width="200" src="assets/GeoLogo.png" />
+<img align="right" width="200" src="https://github.com/FriendsOfREDAXO/geolocation/blob/main/assets/dino.png?raw=true" />
 
 # Geo- und Karten-Unterstützung für [REDAXO](https://redaxo.org) 5.14+
 
