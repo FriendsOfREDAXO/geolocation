@@ -1,6 +1,7 @@
-<img style="width: 150px; float:right;" src="assets/GeoLogo.png" />
+<img align="right" width="150" src="assets/GeoLogo.png" />
 
 # Geo- und Karten-Unterstützung für [REDAXO](https://redaxo.org) 5.14+
+
 
 Das Addon bündelt Funktionen für den Umgang mit Geo-Koordinaten: Tile-Proxy, Tile-Cache, Rechnen mit
 Koordinaten auf PHP-Ebene, Karten mit Leaflet anzeigen.
