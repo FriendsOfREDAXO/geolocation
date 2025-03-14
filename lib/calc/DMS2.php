@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Die Klasse implementiert einen modifizierten DMS-Formatter.
  * - Dezimalpunkt änderbar
@@ -14,6 +15,8 @@ namespace FriendsOfRedaxo\Geolocation\Calc;
 use FriendsOfRedaxo\Geolocation\InvalidParameter;
 use Location\Coordinate;
 use Location\Formatter\Coordinate\DMS;
+
+use function sprintf;
 
 /**
  * Coordinate Formatter "DMS".
@@ -37,7 +40,7 @@ class DMS2 extends DMS
      */
     public function setDigits(?int $digits = null): self
     {
-        $digits = $digits ?? $this->defDigits;
+        $digits ??= $this->defDigits;
         if (0 > $digits) {
             throw new InvalidParameter(InvalidParameter::DMS_DIGITS, [$digits]);
         }
@@ -54,7 +57,7 @@ class DMS2 extends DMS
      */
     public function setDecimalPoint(?string $decimalPoint = null): self
     {
-        $decimalPoint = $decimalPoint ?? $this->defDecimalPoint;
+        $decimalPoint ??= $this->defDecimalPoint;
         $decimalPoint = trim($decimalPoint);
 
         if ('' === $decimalPoint) {
@@ -76,7 +79,7 @@ class DMS2 extends DMS
         $dmsLng = Math::dd2dms($coordinate->getLng(), $this->digits);
 
         if (0 < $this->digits) {
-            $pattern = '%s%02d%s %02d%s %02.'.$this->digits.'f%s%s%s%s%03d%s %02d%s %02.'.$this->digits.'f%s%s';
+            $pattern = '%s%02d%s %02d%s %02.' . $this->digits . 'f%s%s%s%s%03d%s %02d%s %02.' . $this->digits . 'f%s%s';
         } else {
             $pattern = '%s%02d%s %02d%s %02d%s%s%s%s%03d%s %02d%s %02d%s%s';
         }
@@ -99,7 +102,7 @@ class DMS2 extends DMS
             $this->units[$this->unitType]['min'],
             $dmsLng['second'],
             $this->units[$this->unitType]['sec'],
-            $this->getLngSuffix($dmsLng['degree'])
+            $this->getLngSuffix($dmsLng['degree']),
         );
     }
 }

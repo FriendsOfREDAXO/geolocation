@@ -2,6 +2,4 @@
 
 namespace FriendsOfRedaxo\Geolocation;
 
-class InstallException extends Exception
-{
-}
+class InstallException extends Exception {}

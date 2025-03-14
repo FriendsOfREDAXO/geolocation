@@ -1,23 +1,25 @@
 <?php
+
 /**
- * API-Aprufe, Voreinstellungen.
+ * API-Abrufe, Voreinstellungen.
  */
 
 namespace FriendsOfRedaxo\Geolocation;
 
+use FriendsOfRedaxo\Geolocation\Picker\PickerMetafield;
 use rex;
 use rex_addon;
+use rex_be_controller;
 use rex_cronjob_manager;
 use rex_extension;
 use rex_extension_point;
 use rex_view;
+use rex_yform;
 use rex_yform_manager_dataset;
 
 use function define;
 
-/**
- * @var rex_addon $this
- */
+/** @var rex_addon $this */
 
 define('FriendsOfRedaxo\\Geolocation\\ADDON', $this->getName());
 define('FriendsOfRedaxo\\Geolocation\\TTL_MIN', 0);
@@ -31,6 +33,7 @@ define('FriendsOfRedaxo\\Geolocation\\CFM_MIN', 50);
 define('FriendsOfRedaxo\\Geolocation\\CFM_MAX', 100000);
 define('FriendsOfRedaxo\\Geolocation\\KEY_TILES', 'geolayer');
 define('FriendsOfRedaxo\\Geolocation\\KEY_MAPSET', 'geomapset');
+define('FriendsOfRedaxo\\Geolocation\\KEY_GEOCODER', 'geocoder');
 define('FriendsOfRedaxo\\Geolocation\\OUT', 'geolocation_rex_map.php');
 define('FriendsOfRedaxo\\Geolocation\\LOAD', true);
 // ##end
@@ -39,6 +42,7 @@ define('FriendsOfRedaxo\\Geolocation\\LOAD', true);
 
 rex_yform_manager_dataset::setModelClass('rex_geolocation_mapset', Mapset::class);
 rex_yform_manager_dataset::setModelClass('rex_geolocation_layer', Layer::class);
+rex_yform::addTemplatePath($this->getPath('ytemplates'));
 
 // proxy-request "geolayer" ???
 //
@@ -54,10 +58,18 @@ if (null !== $tileLayer) {
 //
 // if URL contains geomapset=«mapId» the request is supposed to be a mapset-request
 // worked on by Geolocation\Mapset::sendMapset
-
 $mapset = rex_request(KEY_MAPSET, 'integer', null);
 if (null !== $mapset) {
     Mapset::sendMapset($mapset);
+}
+
+// proxy-request "geocoder"
+//
+// if URL contains geocoder=«geoCoderId» the request is supposed to be a geocoder-request
+// worked on by Geolocation\GeoCoder::sendResponse
+$geocoder = rex_request(KEY_GEOCODER, 'integer', null);
+if (null !== $geocoder) {
+    GeoCoder::sendResponse($geocoder);
 }
 
 // Start of Cronjob
@@ -78,11 +90,23 @@ if (rex::isBackend()) {
                     $colNames = $list->getColumnNames();
                     $list->removeColumn($colNames[0]);
                 }
-            }
+            },
         );
     }
 
     Tools::echoAssetTags();
     rex_view::addCssFile($this->getAssetsUrl('geolocation_be.min.css'));
     rex_view::addJsFile($this->getAssetsUrl('geolocation_be.min.js'));
+    if ('yform/manager/table_field' === rex_be_controller::getCurrentPage()) {
+        rex_view::addJsFile($this->getAssetsUrl('tablemanager.min.js'));
+    }
+
+    /**
+     * Wenn Seiten mit Metafeldern aufgerufen werden, müssen evtl LocationPicker-Felder
+     * gerendert werden.
+     */
+    $page = rex_be_controller::getCurrentPagePart(1);
+    if ('media' === $page || 'content' === $page) {
+        rex_extension::register('METAINFO_CUSTOM_FIELD', PickerMetafield::createMetaField(...));
+    }
 }

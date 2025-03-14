@@ -3,21 +3,54 @@
 All notable changes to `mjaschen/phpgeo` will be documented in this file.
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
-## Unreleased/Upcoming
+## [6.0.0]
+
+**Warning: Backwards-compatibility-breaking changes** (see README for upgrade details)
 
 ### Added
 
-- `GeometryInterface` provides two new methods: `getBounds()` and `getSegments()`
+- Support for PHP 8.4
+- `GeometryLinesInterface` for geometries containing lines (`Line`, `Polyline`, `Polygon`)
+- `getBounds()` method to `GeometryInterface`
 
 ### Removed
 
-- Support for PHP 7.3
-- `setPoint1()` and `setPoint2()` methods from `Line`
-- `setSeparator()`, `useCardinalLetters()` and `setUnits()` methods from `DMS`
+- Support for PHP 8.1
 
-## [4.2.0] - Current Version, 2022-07-25
+### Changed
 
-## Changed
+- Replaced Psalm with PHPStan for static code analysis
+
+## [5.0.0]
+
+**Warning: Backwards-compatibility-breaking changes**
+
+### Removed
+
+- Support for PHP 7.3, 7.4 and 8.0
+- deprecated methods `setPoint1()` and `setPoint2()` from `Line`
+
+### Changed
+
+- `master` is now renamed to `main`
+- `GeometryFactoryInterface::fromString()` now has `GeometryInterface` as return type
+
+### Deprecated
+
+- deprecated methods `getDestination()` and `getBearingFinal()` from `DirectVincentyBearing`
+- deprecated methods `getDistance()`, `getBearingInitial()` and `getBearingFinal()` from `InverseVincentyBearing`
+- deprecated methods `getX()`, `getY()` and `getZ()` from `Cartesian`
+- deprecated methods `getPoint1()` and `getPoint2()` from `Line`
+
+## [4.2.1] - 2023-12-03
+
+### Changed
+
+- use proper variable as index for array access
+
+## [4.2.0] - 2022-07-25
+
+### Changed
 
 - point-to-line distance is calculated iteratively now, fixes #92
 - improved intersection checking for polygon/polygon

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Geolocation|Layer ist eine erweiterte yform-dataset-Klasse für Kartenlayer.
  *
@@ -57,12 +58,14 @@ use rex_view;
 use rex_yform;
 use rex_yform_manager_dataset;
 use rex_yform_manager_query;
+use rex_yform_manager_table;
 use rex_yform_validate_customfunction;
 use rex_yform_value_abstract;
 
 use function count;
 use function is_bool;
 use function is_string;
+use function sprintf;
 use function strlen;
 
 use const CURLINFO_CONTENT_TYPE;
@@ -261,6 +264,7 @@ class Layer extends rex_yform_manager_dataset
      *  - Instanz der aktiven Validator-Klasse
      *  - Array mit den Instanzen der Felder ('url', 'subdomain')
      *
+     * @api
      * @param list<string> $fields
      * @param array<string,string> $values
      * @param string $return
@@ -289,6 +293,7 @@ class Layer extends rex_yform_manager_dataset
      *  - Instanz der aktiven Validator-Klasse
      *  - Array mit einem Element: Instanz des Feldes 'url'
      *
+     * @api
      * @param string $field
      * @param string $value
      * @param string $return
@@ -317,6 +322,7 @@ class Layer extends rex_yform_manager_dataset
      *  - Instanz der aktiven Validator-Klasse
      *  - Array mit einem Element: Instanz des Feldes 'lang'
      *
+     * @api
      * @param string $field
      * @param string|array<array<string,string>>|null $value
      * @param string $return
@@ -326,7 +332,7 @@ class Layer extends rex_yform_manager_dataset
     public static function verifyLang($field, $value, $return, $self, $elements): bool
     {
         // wenn keine Sprachen angegeben sind kann auch null kommen.
-        $value = $value ?? '';
+        $value ??= '';
 
         /**
          * Kompatibilität zu YForm < 4.2.0
@@ -356,13 +362,16 @@ class Layer extends rex_yform_manager_dataset
      * nur für Admins und User mit Permission "geolocation[clearcache]"
      * Rückgabe ist das erweiterte Array aus getSubject
      *
+     * @api
      * @param rex_extension_point<array<string,string>> $ep
      * @return array<string,string>|void
      */
     public static function epYformDataListActionButtons(rex_extension_point $ep)
     {
         // nur wenn diese Tabelle im Scope ist
-        $table_name = $ep->getParam('table')->getTableName();
+        /** @var rex_yform_manager_table $table just to male rexstan happy */
+        $table = $ep->getParam('table');
+        $table_name = $table->getTableName();
         if (self::class !== self::getModelClass($table_name)) {
             return;
         }
@@ -406,10 +415,12 @@ class Layer extends rex_yform_manager_dataset
 
     /**
      * @deprecated 3.0.0 Aufrufe auf "Layer::epYformDataListActionButtons" geändert
+     * @api
      * @param rex_extension_point<array<string,string>> $ep
      * @return array<string,string>|void
      */
-    public static function YFORM_DATA_LIST_ACTION_BUTTONS(rex_extension_point $ep) { 
+    public static function YFORM_DATA_LIST_ACTION_BUTTONS(rex_extension_point $ep)
+    {
         return self::epYformDataListActionButtons($ep);
     }
 
@@ -420,15 +431,16 @@ class Layer extends rex_yform_manager_dataset
      * individuelle Sortierung gibt: das wird hier hilfsweise geprüft über
      * \rex_request('sort') als Indikator.
      *
+     * @api
      * @param rex_extension_point<rex_yform_manager_query<rex_yform_manager_dataset>> $ep
      * @return void|rex_yform_manager_query<rex_yform_manager_dataset>
      */
     public static function epYformDataListQuery(rex_extension_point $ep)
     {
-        if($ep->getSubject()->getTableName() !== self::table()->getTableName()) {
+        if ($ep->getSubject()->getTableName() !== self::table()->getTableName()) {
             return;
         }
-        
+
         // nichts tun wenn es schon einen Sort gibt
         if ('' === rex_request::request('sort', 'string', '')) {
             return;
@@ -447,10 +459,12 @@ class Layer extends rex_yform_manager_dataset
 
     /**
      * @deprecated 3.0.0 Aufrufe auf "Layer::epYformDataListQuery" geändert
+     * @api
      * @param rex_extension_point<rex_yform_manager_query<rex_yform_manager_dataset>> $ep
      * @return void|rex_yform_manager_query<rex_yform_manager_dataset>
      */
-    public static function YFORM_DATA_LIST_QUERY(rex_extension_point $ep) { 
+    public static function YFORM_DATA_LIST_QUERY(rex_extension_point $ep)
+    {
         return self::epYformDataListQuery($ep);
     }
 

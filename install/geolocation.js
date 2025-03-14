@@ -197,6 +197,8 @@ Geolocation.Classes.Map = class {
             if( true === Geolocation.default.mapOptions.locateControl ) {
                 this.locationTool = Geolocation.tools._currentlocation();
             }
+            // Ermöglicht auf mobilen Devices einen DoubleTap.
+            document.addEventListener('pointerup', this.detectDoubleTap(500));
             container.dispatchEvent(new CustomEvent('geolocation:map.ready', { detail:{'container':container, 'map':this.map},bubbles:true }));
         }, this);
 
@@ -310,6 +312,38 @@ Geolocation.Classes.Map = class {
         this.map.fitBounds( bounds );
         return bounds;
     }
+
+    /**
+     * Based on ethanny2 solution: https://gist.github.com/ethanny2/44d5ad69970596e96e0b48139b89154b
+     * 
+     * Nachdem die Karte geladen ist, wird mit dieser Funktion ein Listener eingebaut, der
+     * seinerseits DoubleTaps identifiziert und dann einen Custom-Event auslöst.
+     * 
+     * Im Handler für Map-Loaded weiter oben steht dazu
+     *      document.addEventListener('pointerup', this.detectDoubleTap(500));
+     * 
+     * Abgefragt wid der DoubleTap-Event wenn benötigt mit
+     *     mapContainer.addEventListener('doubletap', ...)
+     */
+    detectDoubleTap(doubleTapMs) {
+      let timeout, lastTap = 0
+      return function detectDoubleTap(event) {
+        const currentTime = new Date().getTime()
+        const tapLength = currentTime - lastTap
+        if (0 < tapLength && tapLength < doubleTapMs) {
+          event.preventDefault()
+          const doubleTap = new CustomEvent("doubletap", {
+            bubbles: true,
+            detail: event
+          })
+          event.target.dispatchEvent(doubleTap)
+        } else {
+          timeout = setTimeout(() => clearTimeout(timeout), doubleTapMs)
+        }
+        lastTap = currentTime
+      }
+    }
+    
 }
 
 // Factory-Funktion für Geolocation.Classes.Map;

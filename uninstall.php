@@ -1,6 +1,7 @@
 <?php
+
 /**
- *  De-Installations-Script
+ *  De-Installations-Script.
  *
  *  @package geolocation
  *
@@ -16,27 +17,31 @@
  *  @var rex_addon $this
  */
 
-try {
+use FriendsOfRedaxo\Geolocation\Picker\PickerMetafield;
 
+try {
     $tables = [
-        \rex::getTable('geolocation_layer'),
-        \rex::getTable('geolocation_mapset')
+        rex::getTable('geolocation_layer'),
+        rex::getTable('geolocation_mapset'),
     ];
 
     // Tabellen löschen
-    foreach ( $tables as $table ){
-        \rex_yform_manager_table_api::removeTable($table);
-        \rex_sql_table::get( $table )->drop();
+    foreach ($tables as $table) {
+        rex_yform_manager_table_api::removeTable($table);
+        rex_sql_table::get($table)->drop();
     }
 
     // Cronjobs löschen
-    $sql = \rex_sql::factory();
-    $sql->setTable( \rex::getTable( 'cronjob') );
-    $sql->setWhere( 'type=:type', [':type'=>'FriendsOfRedaxo\\Geolocation\\Cronjob'] );
+    $sql = rex_sql::factory();
+    $sql->setTable(rex::getTable('cronjob'));
+    $sql->setWhere('type=:type', [':type' => 'FriendsOfRedaxo\\Geolocation\\Cronjob']);
     $sql->delete();
 
-} catch (\RuntimeException $e) {
-
-    $this->setProperty('installmsg', $e->getMessage() );
-
+    // Meta-Feldtyp löschen
+    // Falls es Metafelder mit diesem Typ gibt .... die hängen dann im luftleeren Raum.
+    $sql->setTable(rex::getTable('metainfo_type'));
+    $sql->setWhere(['label' => PickerMetafield::META_FIELD_TYPE]);
+    $sql->delete();
+} catch (RuntimeException $e) {
+    $this->setProperty('installmsg', $e->getMessage());
 }

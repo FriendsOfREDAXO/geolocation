@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Cronjob-Klasse; ruft die Bereinigungs-Methode in Geolocation\Cache auf.
  */
@@ -8,8 +9,11 @@ namespace FriendsOfRedaxo\Geolocation;
 use rex_cronjob;
 use rex_i18n;
 
+use const PHP_EOL;
+
 class Cronjob extends rex_cronjob
 {
+    /** @api */
     public const LABEL = 'Geolocation: Cleanup Cache';
 
     /**
@@ -19,9 +23,7 @@ class Cronjob extends rex_cronjob
      */
     public function execute(): bool
     {
-        /**
-         * @var null|list<string> $msg
-         */
+        /** @var list<string> $msg */
         $msg = Cache::cleanupCache();
         $this->setMessage(implode(PHP_EOL, $msg));
         return true;

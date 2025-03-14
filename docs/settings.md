@@ -4,9 +4,10 @@
 >   - __Einstellungen__
 > - [Kartensätze verwalten](mapset.md)
 > - [Karten/Layer verwalten](layer.md)
-> - [Karten-Proxy und -Cache](proxy_cache.md)
+> - [Proxy und -Cache](proxy_cache.md)
 > - [Für Entwickler](devphp.md)
->   - [PHP](devphp.md)
+>   - [PHP Basis](devphp.md)
+>   - [PHP LocationPicker](devphp1.md)
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
@@ -131,6 +132,19 @@ Die Einstellungen sind Vorbelegungen bzw. Parameter für die Darstellung von Kar
     // als Konstante
     $fragment = \FriendsOfRedaxo\Geolocation\OUT;
     ```
+
+<a name="location-picker"></a>
+## Location-Picker
+
+**Hinweis:** Wenn das Addon als reines [Proxy-Addon](install.md#proxy) konfiguriert ist, sind
+Eingabefelder für den Location-Pickerg ausgelblendet
+
+- **Marker-Radius**
+    In Eingabefeldern zur interaktiven Auswahl einer Koordinate bzw. Position wird der
+    Positions-Marker durch einen klassichen Pin und einen umgebenden Kreis dargestellt.
+    In diesem Feld kann der Kreis-Radius vorbelgt werden. Sofern den Eingabefeldern 
+    kein anderer Radius zugewiesen wird, gilt dieser Wert als Default bzw. Fallback.
+    Initialwert ist 250 Meter.
 
 <a name="cache"></a>
 ## Cache

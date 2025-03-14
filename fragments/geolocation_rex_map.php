@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Fragment zum Aufbau des rex-map-HTML.
  *
@@ -17,9 +18,7 @@ use function count;
 use function is_array;
 use function is_string;
 
-/**
- * @var rex_fragment $this
- */
+/** @var rex_fragment $this */
 
 $classes = [];
 $attributes = [];
@@ -49,7 +48,7 @@ if (isset($this->class)) {
         $classes = array_merge($classes, $class);
     }
 }
-$classes = array_filter($classes, 'trim');
+$classes = array_filter($classes, trim(...));
 if (0 < count($classes)) {
     $attributes['class'] = array_unique($classes);
 }
@@ -59,7 +58,7 @@ if (0 < count($classes)) {
 if (isset($this->attributes) && is_array($this->attributes) && 0 < count($this->attributes)) {
     $attributes = array_merge(
         $attributes,
-        array_diff_key($this->attributes, ['mapset' => null, 'dataset' => null, 'map' => null, 'class' => null])
+        array_diff_key($this->attributes, ['mapset' => null, 'dataset' => null, 'map' => null, 'class' => null]),
     );
 }
 
