@@ -1,13 +1,9 @@
 # Changelog
 
-## 25-xx-xx 2.5.0-beta2
+## 26-06-2025 2.5.0
 
 - Neue Funktionen
   - Dino-Logo hinzugefügt: README.MD und BE-Seite. (Dino by @skerbis)
-
-## 25-02-2025 2.5.0-beta1
-
-- Neue Funktionen
   - Implementierung eines Location-Picker zur interaktiven Auswahl einer Position
     - Basis ist ein rex_fragment `PickerWidget`
       - Flexibel einsetzbar mit Geolocation-Mapsets
@@ -33,6 +29,8 @@
 
 - kleinere interne Modifikationen
   - Vendor-Update für "mjaschen/phpgeo" aus Version 6.0.0
+
+Mindestversion von YForm angehoben auf 4.1 (vom 16.03.2023)
 
 ## 07-12-2024 2.4.0
 

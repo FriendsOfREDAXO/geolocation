@@ -390,26 +390,8 @@ class Layer extends rex_yform_manager_dataset
         $label = '<i class="rex-icon rex-icon-delete"></i> ' . rex_i18n::msg('geolocation_clear_cache');
 
         $buttons = $ep->getSubject();
+        $buttons['geolocationClearCache'] = '<a onclick="return confirm(\'' . $confirm . '\')" href="' . $href . '">' . $label . '</a>';
 
-        /**
-         * bis YForm 4.0.4 waren die Action-Buttons einfach HTML-Strings.
-         * Post-4.0.4. sind es Arrays, die in einem List-Fragment verwertet werden.
-         * Hier die beiden Fälle unterscheiden.
-         * Note:
-         * Stand 07.03.2023 gibt es nur das GH-Repo und keine neue Versionsnummer.
-         * Daher auf das neue Fragment als Unterscheidungsmerkmal setzen.
-         */
-        if (is_file(rex_path::plugin('yform', 'manager', 'fragments/yform/manager/page/list.php'))) {
-            $buttons['geolocationClearCache'] = [
-                'url' => $href,
-                'content' => $label,
-                'attributes' => [
-                    'onclick' => 'return confirm(\'' . $confirm . '\')',
-                ],
-            ];
-        } else {
-            $buttons['geolocationClearCache'] = '<a onclick="return confirm(\'' . $confirm . '\')" href="' . $href . '">' . $label . '</a>';
-        }
         $ep->setSubject($buttons);
     }
 
