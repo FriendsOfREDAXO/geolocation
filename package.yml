@@ -104,7 +104,7 @@ requires:
     redaxo: '^5.14.0'
     packages:
         cronjob: '^2.8.0'
-        yform: '^4.0.0'
+        yform: '>=4.0.0'
 
 installer_ignore:
     - .github
