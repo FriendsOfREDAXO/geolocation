@@ -1,7 +1,6 @@
 package: geolocation
-version: '2.5.0'
+version: '2.5.0-beta2'
 author: Friends Of REDAXO
-license: MIT
 supportpage: https://github.com/FriendsOfREDAXO/geolocation
 
 page:
@@ -104,7 +103,7 @@ requires:
     redaxo: '^5.14.0'
     packages:
         cronjob: '^2.8.0'
-        yform: '^4.1.0'
+        yform: '^4.0.0'
 
 installer_ignore:
     - .github
