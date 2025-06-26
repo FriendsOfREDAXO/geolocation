@@ -76,7 +76,11 @@ if ('' !== $wrapper_class) {
     echo '<div class="',$wrapper_class,'">';
 }
 
-include rex_path::plugin('yform', 'manager', 'pages/data_edit.php');
+if(is_file(rex_path::addon('yform', 'pages/manager.data_edit.php'))) {
+    include rex_path::addon('yform', 'pages/manager.data_edit.php');
+} else {
+    include rex_path::plugin('yform', 'manager', 'pages/data_edit.php');
+}
 
 if ('' !== $wrapper_class) {
     echo '</div>';

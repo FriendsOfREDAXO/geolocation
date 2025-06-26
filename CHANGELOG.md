@@ -1,11 +1,6 @@
 # Changelog
 
-## 25-xx-xx 2.5.0-beta2
-
-- Neue Funktionen
-  - Dino-Logo hinzugefügt: README.MD und BE-Seite. (Dino by @skerbis)
-
-## 25-02-2025 2.5.0-beta1
+## 26.06.2025 2.5.0
 
 - Neue Funktionen
   - Implementierung eines Location-Picker zur interaktiven Auswahl einer Position
@@ -30,9 +25,11 @@
   - Klasse `SqlTools`: 
     - liefert Bausteine für SQL-Abfragen z.B. zur Umkreissuche
     - einfachere Implementierung der Spatial-Funktionen in SQL-Abfragen
+  - Dino-Logo hinzugefügt: README.MD und BE-Seite. (Dino by @skerbis)
 
 - kleinere interne Modifikationen
   - Vendor-Update für "mjaschen/phpgeo" aus Version 6.0.0
+  - Kompatibilität zu YForm 5 hergestellt wg. Wegfall der Plugins
 
 ## 07-12-2024 2.4.0
 
