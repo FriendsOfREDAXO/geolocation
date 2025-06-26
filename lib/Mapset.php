@@ -320,7 +320,9 @@ class Mapset extends rex_yform_manager_dataset
              * Stand 07.03.2023 gibt es nur das GH-Repo und keine neue Versionsnummer.
              * Daher auf das neue Fragment als Unterscheidungsmerkmal setzen.
              */
-            if (is_file(rex_path::plugin('yform', 'manager', 'fragments/yform/manager/page/list.php'))) {
+            if(is_file(rex_path::addon('yform', 'pages/manager.data_edit.php'))) {
+                $buttons['geolocationClearCache'] = '<a onclick="return confirm(\'' . $confirm . '\')" href="' . $href . '">' . $label . '</a>';
+            } else {
                 $buttons['geolocationClearCache'] = [
                     'url' => $href,
                     'content' => $label,
@@ -328,8 +330,6 @@ class Mapset extends rex_yform_manager_dataset
                         'onclick' => 'return confirm(\'' . $confirm . '\')',
                     ],
                 ];
-            } else {
-                $buttons['geolocationClearCache'] = '<a onclick="return confirm(\'' . $confirm . '\')" href="' . $href . '">' . $label . '</a>';
             }
             $ep->setSubject($buttons);
         }
