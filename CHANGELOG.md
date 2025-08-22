@@ -1,5 +1,10 @@
 # Changelog
 
+## 22.08.2025 2.5.1
+
+- Bugfix
+  - **update.php** leitet nun korrekt auf **install.php** im temporären Update-Verzeichnis um (#183).
+
 ## 26.06.2025 2.5.0
 
 - Neue Funktionen
