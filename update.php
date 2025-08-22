@@ -10,4 +10,5 @@ use rex_addon;
 
 /** @var rex_addon $this */
 
-$this->includeFile('install.php');
+//damit wir die aktuelle install.php im temp. Update-Verzeichnis erwischen
+$this->includeFile(__DIR__ . '/install.php');
