@@ -1,5 +1,10 @@
 # Changelog
 
+## 24.08.2025 2.5.2
+
+- Bugfix
+  - **uninstall.php** löscht zusätzlich Einträge in `rex_yform_field`, die durch den regulären Löschvorgang nicht entfernt wurden (#184).
+
 ## 22.08.2025 2.5.1
 
 - Bugfix
