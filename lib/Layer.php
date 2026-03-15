@@ -560,7 +560,6 @@ class Layer extends rex_yform_manager_dataset
         $content = (string) curl_exec($ch);
         $returnCode = (string) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        curl_close($ch);
 
         // no reply at all, abort completely
         if ('0' === $returnCode) {
