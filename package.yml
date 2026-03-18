@@ -1,5 +1,5 @@
 package: geolocation
-version: '2.5.2'
+version: '2.6.0'
 license: 'MIT'
 author: Friends Of REDAXO
 supportpage: https://github.com/FriendsOfREDAXO/geolocation
@@ -10,6 +10,14 @@ page:
     icon: rex-icon fa-globe
     perm: geolocation[]
     subpages:
+        dashboard:
+            title: translate:geolocation_dashboard
+            icon: fa fa-tachometer
+            subPath: pages/dashboard.php
+        demo:
+            title: translate:geolocation_demo
+            icon: fa fa-flask
+            subPath: pages/demo.php
         mapset:
             title: translate:geolocation_mapset
             perm: 'geolocation[mapset]'

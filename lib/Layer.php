@@ -102,6 +102,37 @@ class Layer extends rex_yform_manager_dataset
      */
     public const FILE_PATTERN = '{x}-{y}-{z}-{r}.{suffix}';
 
+    /**
+     * Mapping von Dateiendungen auf MIME-Typen für gecachte Tiles.
+     * Deckt Raster- und Vektor-Tile-Formate ab.
+     *
+     * @var array<string, string>
+     */
+    private const MIME_TYPES = [
+        'png'                    => 'image/png',
+        'jpg'                    => 'image/jpeg',
+        'jpeg'                   => 'image/jpeg',
+        'webp'                   => 'image/webp',
+        'gif'                    => 'image/gif',
+        'pbf'                    => 'application/x-protobuf',
+        'mvt'                    => 'application/vnd.mapbox-vector-tile',
+        'x-protobuf'             => 'application/x-protobuf',
+        'vnd.mapbox-vector-tile' => 'application/vnd.mapbox-vector-tile',
+        'octet-stream'           => 'application/octet-stream',
+    ];
+
+    /**
+     * Erkannte URL-Muster für Vector Tiles (Regex-Fragmente).
+     *
+     * @var list<string>
+     */
+    private const VECTOR_URL_PATTERNS = [
+        '/\.pbf/',
+        '/\.mvt/',
+        '/protobuf/',
+        '/vector-tile/',
+    ];
+
     // dataset-spezifisch
 
     /**
@@ -533,7 +564,8 @@ class Layer extends rex_yform_manager_dataset
 
             // Tile-File exists; send to the requestor
             if (null !== $cacheFileName) {
-                $contentType = 'image/' . pathinfo($cacheFileName, PATHINFO_EXTENSION);
+                $ext = pathinfo($cacheFileName, PATHINFO_EXTENSION);
+                $contentType = self::MIME_TYPES[$ext] ?? 'image/' . $ext;
                 $cache->sendCacheFile($cacheFileName, $contentType, $ttl);
             }
         }
@@ -560,7 +592,6 @@ class Layer extends rex_yform_manager_dataset
         $content = (string) curl_exec($ch);
         $returnCode = (string) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        curl_close($ch);
 
         // no reply at all, abort completely
         if ('0' === $returnCode) {
@@ -632,11 +663,29 @@ class Layer extends rex_yform_manager_dataset
     public function getLayerConfig(?string $clang): array
     {
         return [
-            'layer' => $this->getId(),
-            'label' => $this->getLabel($clang),
-            'type' => $this->layertype,
+            'layer'       => $this->getId(),
+            'label'       => $this->getLabel($clang),
+            'type'        => $this->layertype,
             'attribution' => $this->attribution,
+            'source_type' => $this->detectSourceType(),
         ];
+    }
+
+    /**
+     * Erkennt automatisch ob der Layer Raster- oder Vektor-Tiles liefert.
+     * Basis ist das URL-Muster; ohne explizites DB-Feld (rückwärtskompatibel).
+     *
+     * @return 'raster'|'vector'
+     */
+    public function detectSourceType(): string
+    {
+        $url = $this->url;
+        foreach (self::VECTOR_URL_PATTERNS as $pattern) {
+            if (1 === preg_match($pattern, $url)) {
+                return 'vector';
+            }
+        }
+        return 'raster';
     }
 
     /**

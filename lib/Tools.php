@@ -57,7 +57,20 @@ class Tools
     {
         $HTTP_REFERER = rex_request::server('HTTP_REFERER', 'string', '');
         $HTTP_HOST = rex_request::server('HTTP_HOST', 'string', '');
-        if (parse_url($HTTP_REFERER, PHP_URL_HOST) !== $HTTP_HOST) {
+
+        // Bei fehlendem Referer nicht hart blockieren (z.B. strikte Referrer-Policies).
+        if ('' === $HTTP_REFERER) {
+            return;
+        }
+
+        $refererHost = strtolower((string) parse_url($HTTP_REFERER, PHP_URL_HOST));
+        $requestHost = strtolower((string) parse_url('http://' . $HTTP_HOST, PHP_URL_HOST));
+
+        if ('' === $requestHost) {
+            $requestHost = strtolower((string) preg_replace('/:\\d+$/', '', $HTTP_HOST));
+        }
+
+        if ($refererHost !== $requestHost) {
             rex_response::cleanOutputBuffers();
             rex_response::setStatus(rex_response::HTTP_SERVICE_UNAVAILABLE);
             rex_response::sendContent(rex_response::HTTP_SERVICE_UNAVAILABLE);
