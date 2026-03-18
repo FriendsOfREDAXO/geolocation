@@ -18,6 +18,7 @@
     - PHP-Minimalbeispiele fuer `Mapset::take(...)->parse()`
 
 - Verbesserungen
+  - Der interne Geolocation-Proxy unterstuetzt nun offiziell auch Vector-Tiles (.pbf, .mvt).
   - Demo-Raster-Layer verwenden bevorzugt freie Provider ohne API-Key (mit OSM-Fallback).
   - OpenLayers-Demos fuer Version 10 angepasst (`ol.control.defaults.defaults()`).
   - OpenLayers-WMS-Demo stabilisiert (CORS/Request-Parameter und robustere Resize-Updates).

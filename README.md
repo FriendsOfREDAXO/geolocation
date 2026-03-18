@@ -21,6 +21,7 @@ Kontakt: [Thomas Skerbis](https://github.com/skerbis)
 - MapLibre-Vector-Demo mit Marker/Popups und automatischem `fitBounds()`.
 - Freie Raster-Provider ohne API-Key in den Demos bevorzugt (OSM-Fallback).
 - Verbessertes WMS/OpenLayers-Handling und robustere Demo-Tabs.
+- Der interne Geolocation-Proxy unterstuetzt nun offiziell auch Vector-Tiles (.pbf, .mvt).
 - Frontend-Integrationshinweise direkt in der Demo-Seite (Assets + Minimalbeispiele).
 
 
