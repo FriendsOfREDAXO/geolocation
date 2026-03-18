@@ -59,7 +59,7 @@ $layers = $sql->getArray();
 $apiMessage = rex_api_function::getMessage();
 
 // Proxy-Base-URL
-$proxyBase = rex_url::frontendController(['rex-api-call' => 'geolocation_tiles'], false);
+$proxyBase = rex_url::frontendController([], false);
 
 // Bekannte Presets: [name, url, subdomain, attribution, lang, layertype]
 $presets = PresetManager::getPresets();
@@ -211,11 +211,11 @@ $existingUrls = array_column($sql->getArray(), 'url');
                             </td>
                             <td>
                                 <code class="geo-proxy-url" style="font-size:11px;word-break:break-all">
-                                    <?= rex_escape($proxyBase) ?>&amp;layer=<?= (int) $layer['id'] ?>&amp;z={z}&amp;x={x}&amp;y={y}
+                                    <?= rex_escape($proxyBase) ?>?geolayer=<?= (int) $layer['id'] ?>&amp;z={z}&amp;x={x}&amp;y={y}
                                 </code>
                             </td>
                             <td>
-                                <button class="btn btn-xs btn-default geo-copy-btn" data-url="<?= rex_escape($proxyBase) ?>&layer=<?= (int) $layer['id'] ?>&z={z}&x={x}&y={y}">
+                                <button class="btn btn-xs btn-default geo-copy-btn" data-url="<?= rex_escape($proxyBase) ?>?geolayer=<?= (int) $layer['id'] ?>&z={z}&x={x}&y={y}">
                                     <i class="fa fa-copy"></i>
                                 </button>
                             </td>
@@ -381,4 +381,3 @@ body.rex-theme-dark .geo-code-block {
     }
 }
 </style>
-<script src="<?= rex_url::addonAssets(ADDON, 'dashboard.js') ?>"></script>

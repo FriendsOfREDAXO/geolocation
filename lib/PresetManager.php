@@ -163,7 +163,7 @@ class PresetManager
             if ('' === trim($apiKey)) {
                 return ['ok' => false, 'message' => 'API-Key fehlt für Preset "' . $preset['title'] . '"'];
             }
-            $url = str_replace('{apikey}', trim($apiKey), $url);
+            $url = str_replace('{apikey}', rawurlencode(trim($apiKey)), $url);
         }
 
         // Prüfen ob URL schon vorhanden

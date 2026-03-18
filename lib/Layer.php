@@ -127,10 +127,10 @@ class Layer extends rex_yform_manager_dataset
      * @var list<string>
      */
     private const VECTOR_URL_PATTERNS = [
-        '/\.pbf/',
-        '/\.mvt/',
-        '/protobuf/',
-        '/vector-tile/',
+        '/\.pbf/i',
+        '/\.mvt/i',
+        '/protobuf/i',
+        '/vector-tile/i',
     ];
 
     // dataset-spezifisch
@@ -593,10 +593,15 @@ class Layer extends rex_yform_manager_dataset
         $returnCode = (string) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 
-        // no reply at all, abort completely
         if ('0' === $returnCode) {
             $msg = sprintf('Geolocation: Tile-Request failed (cUrl Error %d / %s)', curl_errno($ch), curl_error($ch));
             rex_logger::logError(E_WARNING, $msg, __FILE__, __LINE__ - 8, rex_context::fromGet()->getUrl([], false) . ' ➜ ' . $url);
+        }
+
+        curl_close($ch);
+
+        // no reply at all, abort completely
+        if ('0' === $returnCode) {
             Tools::sendInternalError();
         }
 
@@ -658,7 +663,7 @@ class Layer extends rex_yform_manager_dataset
      * (de, ... oder null = deault)
      *
      * @api
-     * @return array{layer:int,label:string,type:string,attribution:string}
+     * @return array{layer:int,label:string,type:string,attribution:string,source_type:string}
      */
     public function getLayerConfig(?string $clang): array
     {

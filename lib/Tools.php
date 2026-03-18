@@ -57,6 +57,22 @@ class Tools
     {
         $HTTP_REFERER = rex_request::server('HTTP_REFERER', 'string', '');
         $HTTP_HOST = rex_request::server('HTTP_HOST', 'string', '');
+        $HTTP_ORIGIN = rex_request::server('HTTP_ORIGIN', 'string', '');
+        $SEC_FETCH_SITE = rex_request::server('HTTP_SEC_FETCH_SITE', 'string', '');
+
+        if ('' !== $SEC_FETCH_SITE) {
+            if ('cross-site' === $SEC_FETCH_SITE) {
+                rex_response::cleanOutputBuffers();
+                rex_response::setStatus(rex_response::HTTP_SERVICE_UNAVAILABLE);
+                rex_response::sendContent(rex_response::HTTP_SERVICE_UNAVAILABLE);
+                exit;
+            }
+            return;
+        }
+
+        if ('' === $HTTP_REFERER && '' !== $HTTP_ORIGIN) {
+            $HTTP_REFERER = $HTTP_ORIGIN;
+        }
 
         // Bei fehlendem Referer nicht hart blockieren (z.B. strikte Referrer-Policies).
         if ('' === $HTTP_REFERER) {

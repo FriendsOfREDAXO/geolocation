@@ -544,6 +544,8 @@
                     icon.className = 'fa fa-check';
                     setTimeout(function () { icon.className = 'fa fa-copy'; }, 1500);
                 }
+            }).catch(function (err) {
+                console.error('Copy failed', err);
             });
         });
     }

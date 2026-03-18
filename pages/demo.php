@@ -81,11 +81,13 @@ $demoConfig = [
 
 // Proxy-URL für Beispielcode (ersten Raster-Layer nehmen, Fallback OSM)
 $exampleLayer = $rasterLayers[0] ?? null;
-$exampleProxyUrl = $exampleLayer
+$hasConfiguredLayers = ($exampleLayer['id'] ?? 0) > 0;
+$exampleProxyUrl = $hasConfiguredLayers
     ? $proxyBase . '?geolayer=' . $exampleLayer['id'] . '&z={z}&x={x}&y={y}'
     : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-$exampleAttribution = $exampleLayer['attribution'] ?? '© OpenStreetMap contributors';
-$useProxy = $exampleLayer !== null;
+
+$exampleAttribution = $exampleLayer['attribution'] ?? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+$useProxy = $hasConfiguredLayers;
 ?>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
@@ -103,7 +105,7 @@ $useProxy = $exampleLayer !== null;
 <div class="alert alert-info" style="margin-bottom:24px">
     <strong><i class="fa fa-flask"></i> <?= rex_i18n::msg('geolocation_demo_info_title') ?></strong>
     <?= rex_i18n::msg('geolocation_demo_info_text') ?>
-    <?php if (!$exampleLayer): ?>
+    <?php if (!$hasConfiguredLayers): ?>
     <br><strong class="text-warning"><i class="fa fa-warning"></i> <?= rex_i18n::msg('geolocation_demo_no_layers') ?></strong>
     <a href="<?= rex_url::backendPage('geolocation/dashboard') ?>" class="btn btn-xs btn-default" style="margin-left:8px"><?= rex_i18n::msg('geolocation_demo_add_layers') ?></a>
     <?php endif; ?>
@@ -339,7 +341,6 @@ const layers = {
 <?php endforeach; ?>
 };
 
-<?php $first = array_key_first($rasterLayers ?? array_keys($rasterLayers)); ?>
 // Erste Layer als Standard
 layers[Object.keys(layers)[0]].addTo(map);
 

@@ -101,10 +101,10 @@ if (rex::isBackend()) {
     $currentPage = rex_be_controller::getCurrentPage();
     $currentSubPage = rex_be_controller::getCurrentPagePart(1);
 
-    if ('geolocation/dashboard' === $currentPage || 'dashboard' === $currentSubPage) {
+    if (str_starts_with($currentPage, 'geolocation/dashboard')) {
         rex_view::addJsFile($this->getAssetsUrl('dashboard.js'));
     }
-    if ('geolocation/demo' === $currentPage || 'demo' === $currentSubPage) {
+    if (str_starts_with($currentPage, 'geolocation/demo')) {
         rex_view::addJsFile($this->getAssetsUrl('demo.js'));
     }
     if ('yform/manager/table_field' === $currentPage) {
