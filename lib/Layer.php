@@ -598,8 +598,6 @@ class Layer extends rex_yform_manager_dataset
             rex_logger::logError(E_WARNING, $msg, __FILE__, __LINE__ - 8, rex_context::fromGet()->getUrl([], false) . ' ➜ ' . $url);
         }
 
-        curl_close($ch);
-
         // no reply at all, abort completely
         if ('0' === $returnCode) {
             Tools::sendInternalError();
