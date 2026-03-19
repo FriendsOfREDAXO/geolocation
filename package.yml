@@ -32,11 +32,6 @@ page:
             title: translate:geolocation_manpage
             icon: fa fa-book
             subpages: 
-                demo:
-                    title: translate:geolocation_demo
-                    icon: fa fa-flask
-                    subPath: pages/demo.php
-
                 mapset:
                     title: translate:geolocation_manpage_mapset
                     icon: fa fa-earth-europe
@@ -52,6 +47,10 @@ page:
                     icon: fa fa-route
                     perm: 'admin[]'
                     subpath:  pages/manual.php
+                demo:
+                    title: translate:geolocation_demo
+                    icon: fa fa-flask
+                    subPath: pages/demo.php
                 developer:
                     title: translate:geolocation_manpage_developer
                     icon: fa fa-user-gear
