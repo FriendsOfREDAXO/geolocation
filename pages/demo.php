@@ -89,6 +89,12 @@ $exampleProxyUrl = $hasConfiguredLayers
     ? $proxyBase . '?geolayer=' . $exampleLayer['id'] . '&z={z}&x={x}&y={y}'
     : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
+$exampleVectorLayer = $vectorLayers[0] ?? null;
+$hasVectorLayers = ($exampleVectorLayer['id'] ?? 0) > 0;
+$exampleVectorProxyUrl = $hasVectorLayers
+    ? $proxyBase . '?geolayer=' . $exampleVectorLayer['id'] . '&z={z}&x={x}&y={y}'
+    : $proxyBase . '?geolayer=VECTOR_LAYER_ID&z={z}&x={x}&y={y}';
+
 $exampleAttribution = $exampleLayer['attribution'] ?? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 $useProxy = $hasConfiguredLayers;
 ?>
@@ -359,44 +365,23 @@ locations.forEach(([lat, lng, label]) => {
             </div>
             <div class="col-md-6">
                 <ul class="nav nav-tabs" role="tablist">
-                    <li class="active"><a href="#geo-v1-ofm" data-toggle="tab">OpenFreeMap (direkt)</a></li>
-                    <?php if (!empty($vectorLayers)): ?>
-                    <li><a href="#geo-v1-proxy" data-toggle="tab">Proxy (eigener Layer)</a></li>
-                    <?php endif; ?>
+                    <li class="active"><a href="#geo-v1-proxy" data-toggle="tab">Vector via Proxy</a></li>
+                    <li><a href="#geo-v1-ofm" data-toggle="tab">OpenFreeMap (direkt)</a></li>
                 </ul>
                 <p class="text-muted" style="margin:8px 0 0 0;font-size:12px">
                     Die WebGL-Vector-Ausgabe mit MapLibre erfordert manuelles JavaScript, da Geolocation standardmäßig auf Leaflet (Raster-Tiles) basiert.
                 </p>
                 <div class="tab-content geo-demo-code-tabs">
-                    <div class="tab-pane active" id="geo-v1-ofm">
-<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
-
-&lt;script&gt;
-// MapLibre GL JS – OpenFreeMap Liberty (mit 3D-Gebäuden)
-// Kein API-Key, kein Limit, kostenlos
-
-const map = new maplibregl.Map({
-    container: 'map',
-    style: 'https://tiles.openfreemap.org/styles/liberty',
-    center: [11.576, 48.137],
-    zoom: 12,
-    pitch: 45,    // 3D-Gebäude sichtbar machen
-    bearing: -10  // leichte Rotation für Tiefenwirkung
-});
-
-// Navigation inkl. Pitch-Wheel für 3D-Steuerung
-map.addControl(
-    new maplibregl.NavigationControl({ visualizePitch: true })
-);
-&lt;/script&gt;</code></pre>
-                    </div>
-                    <?php if (!empty($vectorLayers)): ?>
-                    <div class="tab-pane" id="geo-v1-proxy">
+                    <div class="tab-pane active" id="geo-v1-proxy">
 <pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
 
 &lt;script&gt;
 // Vector Tiles via Geolocation-Proxy
-// Layer-ID: <?= $vectorLayers[0]['id'] ?> (<?= rex_escape($vectorLayers[0]['name']) ?>)
+<?php if ($hasVectorLayers): ?>
+// Layer-ID: <?= $exampleVectorLayer['id'] ?> (<?= rex_escape($exampleVectorLayer['name']) ?>)
+<?php else: ?>
+// Hinweis: Bitte im Backend einen Vector-Layer (z.B. OpenFreeMap) anlegen!
+<?php endif; ?>
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -408,7 +393,7 @@ const map = new maplibregl.Map({
             'vector-proxy': {
                 type: 'vector',
                 tiles: [
-                    '<?= rex_escape($vectorLayers[0]['proxyUrl']) ?>'
+                    '<?= rex_escape($exampleVectorProxyUrl) ?>'
                 ],
                 maxzoom: 14
             }
@@ -428,7 +413,23 @@ const map = new maplibregl.Map({
 });
 &lt;/script&gt;</code></pre>
                     </div>
-                    <?php endif; ?>
+                    <div class="tab-pane" id="geo-v1-ofm">
+<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// Alternative: Komplettes Style-JSON direkt einbinden (ohne Proxy)
+const map = new maplibregl.Map({
+    container: 'map',
+    style: 'https://tiles.openfreemap.org/styles/liberty',
+    center: [11.576, 48.137],
+    zoom: 12,
+    pitch: 45,
+    bearing: -10
+});
+
+map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
+&lt;/script&gt;</code></pre>
+                    </div>
                 </div>
             </div>
         </div>
@@ -513,20 +514,19 @@ const map = new ol.Map({
                     <div class="col-md-6">
 <pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
 
-&lt;!-- Wichtig: zusaetzlich ol-mapbox-style noetig --&gt;
-&lt;script src="https://cdn.jsdelivr.net/npm/ol-mapbox-style@12.3.4/dist/olms.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-// Stil aus MapLibre/Mapbox Style JSON übernehmen:
-const layer = new ol.layer.VectorTile({});
-olms.applyStyle(
-    layer,
-    'https://tiles.openfreemap.org/styles/liberty',
-    { resolutions: view.getResolutions() }
-);
-
+// Vector Tiles via Geolocation-Proxy in OpenLayers laden
 const map = new ol.Map({
     target: 'map',
-    layers: [layer],
+    layers: [
+        new ol.layer.VectorTile({
+            source: new ol.source.VectorTile({
+                format: new ol.format.MVT(),
+                url: '<?= rex_escape($exampleVectorProxyUrl) ?>',
+                maxZoom: 14
+            })
+        })
+    ],
     view: new ol.View({
         center: ol.proj.fromLonLat([11.576, 48.137]),
         zoom: 12
