@@ -15,6 +15,7 @@
 
 namespace FriendsOfRedaxo\Geolocation;
 
+use rex;
 use rex_addon;
 use rex_config;
 use rex_context;
@@ -25,15 +26,19 @@ use rex_response;
 use rex_url;
 
 use function is_bool;
+use function is_array;
 use function sprintf;
 
 use const CURLINFO_CONTENT_TYPE;
 use const CURLINFO_RESPONSE_CODE;
 use const CURLOPT_FOLLOWLOCATION;
 use const CURLOPT_HEADER;
+use const CURLOPT_CONNECTTIMEOUT;
 use const CURLOPT_PROXY;
 use const CURLOPT_REFERER;
 use const CURLOPT_RETURNTRANSFER;
+use const CURLOPT_TIMEOUT;
+use const CURLOPT_USERAGENT;
 use const E_WARNING;
 
 class GeoCoder
@@ -288,17 +293,21 @@ class GeoCoder
         curl_setopt($ch, CURLOPT_REFERER, rex_request::server('HTTP_REFERER', 'string', ''));
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'REDAXO Geolocation/' . rex_addon::get(ADDON)->getVersion() . ' (' . rex::getServer() . ')');
         if (($proxy = rex_addon::get(ADDON)->getConfig('socket_proxy')) !== '') {
             curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }
         $content = (string) curl_exec($ch);
         $returnCode = (string) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-        $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        curl_close($ch);
+        $contentType = trim((string) strtok((string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE), ';'));
+        $curlErrorNo = curl_errno($ch);
+        $curlError = curl_error($ch);
 
         // keine verwertbare Antwort ...
         if ('0' === $returnCode) {
-            $msg = sprintf('Geolocation: GeoCoder failed (cUrl Error %d / %s)', curl_errno($ch), curl_error($ch));
+            $msg = sprintf('Geolocation: GeoCoder failed (cUrl Error %d / %s)', $curlErrorNo, $curlError);
             rex_logger::logError(E_WARNING, $msg, __FILE__, __LINE__ - 8, rex_context::fromGet()->getUrl([], false) . ' ➜ ' . $url);
             Tools::sendInternalError();
         }
@@ -316,6 +325,12 @@ class GeoCoder
          * eingestellt (Angabe in Minuten).
          */
         $ttl = (int) round((strtotime('today midnight') - time()) / 60, 0);
-        Tools::sendJson(json_decode($content, true) ?? [], time(), $ttl);
+        $data = json_decode($content, true);
+        if (!is_array($data)) {
+            $msg = sprintf('Geolocation: GeoCoder returned invalid JSON (Content-Type %s)', $contentType);
+            rex_logger::logError(E_WARNING, $msg, __FILE__, __LINE__ - 3, rex_context::fromGet()->getUrl([], false) . ' ➜ ' . $url);
+            $data = [];
+        }
+        Tools::sendJson($data, time(), $ttl);
     }
 }

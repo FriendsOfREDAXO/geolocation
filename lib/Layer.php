@@ -597,7 +597,6 @@ class Layer extends rex_yform_manager_dataset
         $contentType = trim((string) strtok((string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE), ';'));
         $curlErrorNo = curl_errno($ch);
         $curlError = curl_error($ch);
-        curl_close($ch);
 
         if ('0' === $returnCode) {
             $msg = sprintf('Geolocation: Tile-Request failed (cUrl Error %d / %s)', $curlErrorNo, $curlError);
