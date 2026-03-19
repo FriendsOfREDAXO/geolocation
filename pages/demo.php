@@ -277,51 +277,6 @@ locations.forEach(([lat, lng, label]) => {
 </div>
 
 <!-- ===================================================================== -->
-<!-- SECTION 3: MEHRERE LAYER / LAYER-SWITCHER -->
-<!-- ===================================================================== -->
-<?php if (count($rasterLayers) > 1): ?>
-<div class="panel panel-default geo-demo-section">
-    <div class="panel-heading">
-        <h3 class="panel-title">
-            <i class="fa fa-layers text-success"></i>
-            <?= rex_i18n::msg('geolocation_demo_multi_title') ?>
-        </h3>
-    </div>
-    <div class="panel-body">
-        <p class="text-muted"><?= rex_i18n::msg('geolocation_demo_multi_desc') ?></p>
-        <div class="row">
-            <div class="col-md-6">
-                <div id="geo-demo-multi" class="geo-demo-map" data-type="raster-multi"></div>
-                <p class="text-muted geo-demo-map-hint">
-                    <?= count($rasterLayers) ?> Layer konfiguriert – Umschalten oben rechts
-                </p>
-            </div>
-            <div class="col-md-6">
-<pre class="geo-demo-code"><code class="language-javascript">// Mehrere Layer mit Layer-Control
-const map = L.map('map', { gestureHandling: true }).setView([48.137, 11.576], 12);
-
-const layers = {
-<?php foreach ($rasterLayers as $i => $l): ?>
-    '<?= rex_escape($l['name']) ?>': L.tileLayer(
-        '<?= rex_escape($proxyBase) ?>?geolayer=<?= $l['id'] ?>&z={z}&x={x}&y={y}',
-        { attribution: '<?= rex_escape($l['attribution']) ?>' }
-    )<?= ($i < count($rasterLayers) - 1 ? ',' : '') ?>
-
-<?php endforeach; ?>
-};
-
-// Erste Layer als Standard
-layers[Object.keys(layers)[0]].addTo(map);
-
-// Layer-Control
-L.control.layers(layers).addTo(map);</code></pre>
-            </div>
-        </div>
-    </div>
-</div>
-<?php endif; ?>
-
-<!-- ===================================================================== -->
 <!-- SECTION 4: VECTOR TILES (MapLibre) -->
 <!-- ===================================================================== -->
 <div class="panel panel-default geo-demo-section">
@@ -400,7 +355,6 @@ L.control.layers(layers).addTo(map);</code></pre>
                     <?php if (!empty($vectorLayers)): ?>
                     <li><a href="#geo-v1-proxy" data-toggle="tab">Proxy (eigener Layer)</a></li>
                     <?php endif; ?>
-                    <li><a href="#geo-v1-maptiler" data-toggle="tab">MapTiler</a></li>
                 </ul>
                 <p class="text-muted" style="margin:8px 0 0 0;font-size:12px">
                     Die WebGL-Vector-Ausgabe mit MapLibre erfordert manuelles JavaScript, da Geolocation standardmäßig auf Leaflet (Raster-Tiles) basiert.
@@ -461,21 +415,6 @@ const map = new maplibregl.Map({
 });</code></pre>
                     </div>
                     <?php endif; ?>
-                    <div class="tab-pane" id="geo-v1-maptiler">
-<pre class="geo-demo-code"><code class="language-javascript">// MapLibre GL JS – MapTiler Cloud
-// Erst API-Key anlegen: https://cloud.maptiler.com
-import maplibregl from 'maplibre-gl';
-import { config } from '@maptiler/sdk';
-
-config.apiKey = 'IHR_API_KEY';
-
-const map = new maplibregl.Map({
-    container: 'map',
-    style: 'https://api.maptiler.com/maps/streets/style.json?key=IHR_API_KEY',
-    center: [11.576, 48.137],
-    zoom: 12
-});</code></pre>
-                    </div>
                 </div>
             </div>
         </div>

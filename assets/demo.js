@@ -167,31 +167,6 @@
     }
 
     // ----------------------------------------------------------------
-    // DEMO 3: Raster – Mehrere Layer / Layer Switcher
-    // ----------------------------------------------------------------
-    function initRasterMulti() {
-        var el = document.getElementById('geo-demo-multi');
-        if (!el) return;
-        if (typeof L === 'undefined') {
-            showNoLayerWarning(el, 'Leaflet konnte nicht geladen werden.', 'CDN/CSP oder Internetverbindung pruefen');
-            return;
-        }
-        if (rasterLayers.length < 2) return;
-
-        var map = L.map(el).setView(center, defaultZoom);
-        var baseLayers = {};
-
-        rasterLayers.forEach(function (layer, i) {
-            var tileLayer = buildLeafletTileLayer(layer, L);
-            baseLayers[layer.name] = tileLayer;
-            if (i === 0) tileLayer.addTo(map);
-        });
-
-        L.control.layers(baseLayers).addTo(map);
-        markLoaded(el);
-    }
-
-    // ----------------------------------------------------------------
     // DEMO 4: Vector – MapLibre GL JS (OpenFreeMap)
     // ----------------------------------------------------------------
     var STYLES = {
@@ -563,7 +538,6 @@
 
         safeRun(initRasterBasic, 'geo-demo-raster-basic');
         safeRun(initRasterMarker, 'geo-demo-marker');
-        safeRun(initRasterMulti, 'geo-demo-multi');
         safeRun(initVectorMap, 'geo-demo-vector');
         safeRun(initStyleSwitcher, 'geo-demo-vector');
         safeRun(initOlLazy, 'geo-demo-ol-raster');
