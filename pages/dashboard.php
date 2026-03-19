@@ -55,9 +55,6 @@ $cacheSizeHuman = $cacheSize > 1048576
 $sql->setQuery('SELECT id, name, online FROM ' . rex::getTablePrefix() . 'geolocation_layer ORDER BY online DESC, name ASC');
 $layers = $sql->getArray();
 
-// API-Ergebnis anzeigen (nach Preset-Add)
-$apiMessage = rex_api_function::getMessage();
-
 // Proxy-Base-URL aus der Frontend-Server-URL als root-relative URL ableiten.
 $proxyBase = rtrim((string) parse_url(rex::getServer(), PHP_URL_PATH), '/') . '/index.php';
 
@@ -68,8 +65,6 @@ $presets = PresetManager::getPresets();
 $sql->setQuery('SELECT url FROM ' . rex::getTablePrefix() . 'geolocation_layer');
 $existingUrls = array_column($sql->getArray(), 'url');
 ?>
-
-<?php if ($apiMessage) { echo $apiMessage; } ?>
 
 <div class="geolocation-dashboard">
 
@@ -109,7 +104,7 @@ $existingUrls = array_column($sql->getArray(), 'url');
                     <div class="geo-stat-icon"><i class="fa fa-hdd-o fa-2x text-warning"></i></div>
                     <div class="geo-stat-number"><?= $cacheSizeHuman ?></div>
                     <div class="geo-stat-label"><?= rex_i18n::msg('geolocation_dashboard_stat_cache') ?> (<?= $cacheFiles ?> <?= rex_i18n::msg('geolocation_dashboard_stat_files') ?>)</div>
-                    <a href="<?= rex_url::backendController(['page' => 'geolocation/clear_cache', 'rex-api-call' => 'geolocation_clearcache'], false) ?>" class="btn btn-xs btn-delete" style="margin-top:8px">
+                    <a href="<?= rex_url::backendController(['page' => 'geolocation/dashboard', 'rex-api-call' => 'geolocation_clearcache'], false) ?>" class="btn btn-xs btn-delete" style="margin-top:8px">
                         <?= rex_i18n::msg('geolocation_clear_cache') ?>
                     </a>
                 </div>
