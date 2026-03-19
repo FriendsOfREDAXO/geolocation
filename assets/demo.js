@@ -474,70 +474,6 @@
         markLoaded(el);
         refreshOlMap(olMaps.wms);
 
-    // OVERLAY: Click to enable map interactions
-    window.setTimeout(function() {
-        document.querySelectorAll('.geo-demo-map').forEach(function(el) {
-            // Leaflet map? It uses its own proper gesture handling!
-            if(el.id && el.id.indexOf('leaflet') > -1) {
-                // we'll just reinject the gestureHandling on L.map instances here:
-                if(el._leaflet_id && window.L && window.L.Map) {
-                    var m = window.L.Map._instances[el._leaflet_id];
-                }
-                return;
-            }
-
-            var origHeight = el.style.height || '400px';
-            var wrapper = document.createElement('div');
-            wrapper.className = 'geo-demo-map-wrap';
-            wrapper.style.position = 'relative';
-            wrapper.style.height = origHeight;
-            wrapper.style.marginBottom = '24px';
-            
-            el.parentNode.insertBefore(wrapper, el);
-            wrapper.appendChild(el);
-            
-            el.style.height = '100%';
-            el.style.marginBottom = '0';
-
-            var overlay = document.createElement('div');
-            overlay.className = 'geo-demo-map-overlay';
-            overlay.style.position = 'absolute';
-            overlay.style.top = '0';
-            overlay.style.left = '0';
-            overlay.style.width = '100%';
-            overlay.style.height = '100%';
-            overlay.style.background = 'rgba(0,0,0,0.1)';
-            overlay.style.cursor = 'pointer';
-            overlay.style.zIndex = '1000';
-            overlay.style.display = 'flex';
-            overlay.style.alignItems = 'center';
-            overlay.style.justifyContent = 'center';
-            
-            var text = document.createElement('div');
-            text.innerHTML = 'Klicken zum Aktivieren';
-            text.style.background = 'rgba(0,0,0,0.6)';
-            text.style.color = '#fff';
-            text.style.padding = '8px 16px';
-            text.style.borderRadius = '4px';
-            text.style.fontFamily = 'sans-serif';
-            text.style.opacity = '0';
-            text.style.transition = 'opacity 0.3s';
-            overlay.appendChild(text);
-
-            wrapper.appendChild(overlay);
-
-            wrapper.addEventListener('mouseenter', function() { text.style.opacity = '1'; });
-            wrapper.addEventListener('mouseleave', function() { 
-                text.style.opacity = '0'; 
-                overlay.style.pointerEvents = 'auto'; // enable overlay back
-            });
-            overlay.addEventListener('click', function(e) {
-                overlay.style.pointerEvents = 'none'; // pass through
-                text.style.opacity = '0';
-            });
-        });
-    }, 500); // init slightly after
-
     }
 
     // OpenLayers-Tabs: erst beim Tab-Klick initialisieren (Lazy)
@@ -633,65 +569,15 @@
         safeRun(initOlLazy, 'geo-demo-ol-raster');
         safeRun(initCopyButtons, 'geo-demo-root');
 
-        // OVERLAY: Click to enable map interactions
+        // Scroll-Overlay (Click to activate) - ausschliesslich fuer Non-Leaflet Karten
         window.setTimeout(function() {
-            document.querySelectorAll('.geo-demo-map').forEach(function(el) {
-                // Leaflet map? It uses its own proper gesture handling!
-                if(el.id && el.id.indexOf('leaflet') > -1) {
-                    return;
-                }
-
-                var origHeight = el.style.height || '400px';
-                var wrapper = document.createElement('div');
-                wrapper.className = 'geo-demo-map-wrap';
-                wrapper.style.position = 'relative';
-                wrapper.style.height = origHeight;
-                wrapper.style.marginBottom = '24px';
-                
-                el.parentNode.insertBefore(wrapper, el);
-                wrapper.appendChild(el);
-                
-                el.style.height = '100%';
-                el.style.marginBottom = '0';
-
-                var overlay = document.createElement('div');
-                overlay.className = 'geo-demo-map-overlay';
-                overlay.style.position = 'absolute';
-                overlay.style.top = '0';
-                overlay.style.left = '0';
-                overlay.style.width = '100%';
-                overlay.style.height = '100%';
-                overlay.style.background = 'rgba(0,0,0,0.1)';
-                overlay.style.cursor = 'pointer';
-                overlay.style.zIndex = '1000';
-                overlay.style.display = 'flex';
-                overlay.style.alignItems = 'center';
-                overlay.style.justifyContent = 'center';
-                
-                var text = document.createElement('div');
-                var label = (cfg.i18n && cfg.i18n.clickToActivate) ? cfg.i18n.clickToActivate : 'Klicken zum Aktivieren';
-                text.innerHTML = label;
-                text.style.background = 'rgba(0,0,0,0.6)';
-                text.style.color = '#fff';
-                text.style.padding = '8px 16px';
-                text.style.borderRadius = '4px';
-                text.style.fontFamily = 'sans-serif';
-                text.style.opacity = '0';
-                text.style.transition = 'opacity 0.3s';
-                overlay.appendChild(text);
-
-                wrapper.appendChild(overlay);
-
-                wrapper.addEventListener('mouseenter', function() { text.style.opacity = '1'; });
-                wrapper.addEventListener('mouseleave', function() { 
-                    text.style.opacity = '0'; 
-                    overlay.style.pointerEvents = 'auto'; // enable overlay back
+            var msg = cfg.i18n && cfg.i18n.clickToActivate ? cfg.i18n.clickToActivate : 'Klicken zum Aktivieren';
+            if (typeof Geolocation !== 'undefined' && typeof Geolocation.initScrollOverlay === 'function') {
+                ['geo-demo-vector', 'geo-demo-ol-raster', 'geo-demo-ol-vector', 'geo-demo-ol-wms'].forEach(function(id) {
+                    var mapEl = document.getElementById(id);
+                    if(mapEl) Geolocation.initScrollOverlay(mapEl, msg);
                 });
-                overlay.addEventListener('click', function(e) {
-                    overlay.style.pointerEvents = 'none'; // pass through
-                    text.style.opacity = '0';
-                });
-            });
+            }
         }, 500);
     }
 
