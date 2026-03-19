@@ -157,23 +157,12 @@ MapLibre GL JS: https://github.com/maplibre/maplibre-gl-js
 OpenLayers: https://github.com/openlayers/openlayers</code></pre>
             </div>
             <div class="col-md-6">
-<pre class="geo-demo-code"><code class="language-php">&lt;?php
-use FriendsOfRedaxo\Geolocation\Mapset;
-
-// Minimal (ohne eigenes JS):
-echo Mapset::take('osm')
-    ->attributes('style', 'height:400px')
-    ->parse();
-
-// Mit Marker-Daten aus PHP:
-echo Mapset::take('osm')
-    ->attributes('style', 'height:400px')
-    ->dataset('map', ['center' =&gt; [48.137, 11.576], 'zoom' =&gt; 12])
-    ->dataset('marker', [
-        [48.1374, 11.5755, 'Marienplatz'],
-        [48.1530, 11.5880, 'Englischer Garten'],
-    ])
-    ->parse();</code></pre>
+                <div class="alert alert-info" style="margin-top:0;">
+                    <p><b>Hinweis zu den Code-Beispielen:</b></p>
+                    <p>Geolocation verwendet von Haus aus <b>Leaflet</b>. Karten (Mapsets) können im Handumdrehen im Backend konfiguriert und nahtlos per PHP (z.B. <code>Mapset::take($id)->parse();</code>) ausgegeben werden.</p>
+                    <p style="margin-top:8px;">Da Mapsets in dieser Demo nicht garantiert verfügbar sind, zeigen die folgenden Code-Snippets jeweils die manuelle Implementierung des eingebauten <b>Tile-Proxies</b> verschiedener JavaScript-Bibliotheken (Leaflet, MapLibre, OpenLayers) – ideal als Basis für eigene Custom-Lösungen.</p>
+                    <p style="margin-top:8px;">Den kürzeren, REDAXO-spezifischen Weg finden Sie ausführlich beschrieben im <a href="<?= rex_url::backendPage('geolocation/manual/developer/devphp') ?>">Handbuch</a>.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -208,31 +197,21 @@ echo Mapset::take('osm')
             <!-- Code -->
             <div class="col-md-6">
                 <ul class="nav nav-tabs" role="tablist">
-                    <li class="active"><a href="#geo-r1-php" data-toggle="tab">PHP (REDAXO)</a></li>
+                    <li class="active"><a href="#geo-r1-leaflet" data-toggle="tab">Leaflet JS</a></li>
                     <li><a href="#geo-r1-html" data-toggle="tab">HTML Tag</a></li>
-                    <li><a href="#geo-r1-leaflet" data-toggle="tab">Leaflet JS</a></li>
                 </ul>
                 <div class="tab-content geo-demo-code-tabs">
-                    <div class="tab-pane active" id="geo-r1-php">
-<pre class="geo-demo-code"><code class="language-php">&lt;?php
-use FriendsOfRedaxo\Geolocation\Mapset;
-
-// Kartensatz per Name ausgeben
-echo Mapset::take('osm')
-    ->attributes('style', 'height:400px')
-    ->parse();</code></pre>
-                    </div>
                     <div class="tab-pane" id="geo-r1-html">
     <pre class="geo-demo-code"><code class="language-html">&lt;!-- Assets im Template einbinden:
         /assets/addons/geolocation/geolocation.min.css
         /assets/addons/geolocation/geolocation.min.js --&gt;
 
 &lt;rex-map
-    mapset="<?= $exampleLayer ? $exampleLayer['id'] : 'ID' ?>"
+    mapset="Ihre_Mapset_ID"
     style="height:400px"&gt;
 &lt;/rex-map&gt;</code></pre>
                     </div>
-                    <div class="tab-pane" id="geo-r1-leaflet">
+                    <div class="tab-pane active" id="geo-r1-leaflet">
 <pre class="geo-demo-code"><code class="language-javascript">// Leaflet direkt mit Geolocation-Proxy
 const map = L.map('map', { gestureHandling: true }).setView([48.137, 11.576], 12);
 
@@ -268,29 +247,10 @@ L.tileLayer(
             </div>
             <div class="col-md-6">
                 <ul class="nav nav-tabs" role="tablist">
-                    <li class="active"><a href="#geo-r2-php" data-toggle="tab">PHP (REDAXO)</a></li>
-                    <li><a href="#geo-r2-js" data-toggle="tab">Leaflet JS</a></li>
+                    <li class="active"><a href="#geo-r2-js" data-toggle="tab">Leaflet JS</a></li>
                 </ul>
                 <div class="tab-content geo-demo-code-tabs">
-                    <div class="tab-pane active" id="geo-r2-php">
-<pre class="geo-demo-code"><code class="language-php">&lt;?php
-use FriendsOfRedaxo\Geolocation\Mapset;
-
-echo Mapset::take('osm')
-    ->attributes('style', 'height:400px')
-    ->dataset('map', [
-        'center' => [48.137, 11.576],
-        'zoom'   => 12,
-    ])
-    ->dataset('marker', [
-        // [lat, lng, 'Popup-Text']
-        [48.1374, 11.5755, 'Marienplatz'],
-        [48.1530, 11.5880, 'Englischer Garten'],
-        [48.1200, 11.5600, 'Deutsches Museum'],
-    ])
-    ->parse();</code></pre>
-                    </div>
-                    <div class="tab-pane" id="geo-r2-js">
+                    <div class="tab-pane active" id="geo-r2-js">
 <pre class="geo-demo-code"><code class="language-javascript">const map = L.map('map', { gestureHandling: true }).setView([48.137, 11.576], 12);
 
 // Tile-Layer via Proxy
@@ -443,9 +403,7 @@ L.control.layers(layers).addTo(map);</code></pre>
                     <li><a href="#geo-v1-maptiler" data-toggle="tab">MapTiler</a></li>
                 </ul>
                 <p class="text-muted" style="margin:8px 0 0 0;font-size:12px">
-                    Einfachste REDAXO-Variante (ohne eigenes JS) bleibt aktuell:
-                    <code>Mapset::take('osm')->parse()</code>.
-                    Die WebGL-Vector-Demo mit MapLibre benötigt weiterhin JavaScript.
+                    Die WebGL-Vector-Ausgabe mit MapLibre erfordert manuelles JavaScript, da Geolocation standardmäßig auf Leaflet (Raster-Tiles) basiert.
                 </p>
                 <div class="tab-content geo-demo-code-tabs">
                     <div class="tab-pane active" id="geo-v1-ofm">
