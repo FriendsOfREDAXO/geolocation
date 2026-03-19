@@ -703,5 +703,6 @@ const map = new ol.Map({
     </div>
 </div>
 
-</div><!-- #geo-demo-root -->
 
+
+</div><!-- #geo-demo-root -->

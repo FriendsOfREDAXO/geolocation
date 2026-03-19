@@ -18,6 +18,7 @@
     - PHP-Minimalbeispiele fuer `Mapset::take(...)->parse()`
 
 - Verbesserungen
+  - HERE Maps Aktualisierung: Veraltete v2-Provider-URLs werden beim Update auf v3 migriert (API-Keys bleiben erhalten).
   - Der interne Geolocation-Proxy unterstuetzt nun offiziell auch Vector-Tiles (.pbf, .mvt).
   - Demo-Raster-Layer verwenden bevorzugt freie Provider ohne API-Key (mit OSM-Fallback).
   - OpenLayers-Demos fuer Version 10 angepasst (`ol.control.defaults.defaults()`).

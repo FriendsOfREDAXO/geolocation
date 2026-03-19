@@ -1,0 +1,107 @@
+<!-- ===================================================================== -->
+<!-- SECTION 6: PHP DEVELOPER TOOLS -->
+<!-- ===================================================================== -->
+<div class="panel panel-default geo-demo-section">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <i class="fa fa-code text-info"></i>
+            PHP Backend-Tools &amp; Berechnungen
+        </h3>
+    </div>
+    <div class="panel-body">
+        <p class="text-muted" style="margin-bottom: 20px;">
+            Das Geolocation-AddOn bringt nicht nur Frontend-Komponenten mit, sondern liefert auch praktische PHP-Klassen zur Entfernungsberechnung, Umkreissuche per SQL, Geocoding und f&uuml;r das Mapset-Routing. Hier sind einige Beispiele aus der Praxis (Startpunkt: M&uuml;nchen).
+        </p>
+
+        <div class="row">
+            <!-- Entfernungsberechnung -->
+            <div class="col-md-6" style="margin-bottom: 20px;">
+                <h4><i class="fa fa-arrows-h"></i> Entfernungsberechnung</h4>
+                <p>Berechnet die geometrische Distanz in Metern zwischen zwei Koordinaten. Perfekt f&uuml;r Store-Locators.</p>
+                <div class="geo-code-wrapper" style="position: relative;">
+                    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+                    <pre class="geo-code-block"><code class="language-php">&lt;?php
+use FriendsOfRedaxo\Geolocation\Calc\Math;
+
+// Marienplatz
+$p1 = [48.1374, 11.5755];
+// Englischer Garten
+$p2 = [48.1530, 11.5880];
+
+// Distanz in Metern berechnen
+$distance = Math::distance($p1, $p2); // ca. 1976 
+
+echo 'Distanz: ' . round($distance / 1000, 2) . ' km';
+?&gt;</code></pre>
+                </div>
+            </div>
+
+            <!-- SQL Umkreissuche -->
+            <div class="col-md-6" style="margin-bottom: 20px;">
+                <h4><i class="fa fa-database"></i> SQL Umkreissuche </h4>
+                <p>Erzeugt performante <code>WHERE</code>-Bedingungen. Nutzt automatisch Vorfilterung &uuml;ber ein Rechteck (Bounding Box).</p>
+                <div class="geo-code-wrapper" style="position: relative;">
+                    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+                    <pre class="geo-code-block"><code class="language-php">&lt;?php
+use FriendsOfRedaxo\Geolocation\Calc\SqlSupport;
+
+// Suche im 5km Umkreis von M&uuml;nchen
+$where = SqlSupport::circleSearch('lat_col', 'lng_col', 48.1374, 11.5755, 5000);
+
+$sql = rex_sql::factory();
+$sql-&gt;setQuery('SELECT * FROM my_locations WHERE ' . $where);
+
+foreach ($sql as $row) {
+    // ...
+}
+?&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Geocoder -->
+            <div class="col-md-6" style="margin-bottom: 20px;">
+                <h4><i class="fa fa-search"></i> Geocoder (OSM Nominatim)</h4>
+                <p>Erm&ouml;glicht das Abfragen von Koordinaten zu einer Adresse (Forward-Geocoding) und Autocomplete via API.</p>
+                <div class="geo-code-wrapper" style="position: relative;">
+                    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+                    <pre class="geo-code-block"><code class="language-php">&lt;?php
+use FriendsOfRedaxo\Geolocation\GeoCoder;
+
+// Suche nach Adresse
+$results = GeoCoder::factory()-&gt;geocode('Marienplatz, M&uuml;nchen');
+
+if (!empty($results)) {
+    $first = $results[0]; // z.B. Lat: 48.1374, Lng: 11.5755
+}
+?&gt;</code></pre>
+                </div>
+            </div>
+
+            <!-- Mapset Helper -->
+            <div class="col-md-6" style="margin-bottom: 20px;">
+                <h4><i class="fa fa-cogs"></i> Mapset Configuration</h4>
+                <p>Gibt Arrays mit Mapset-Einstellungen zur&uuml;ck, um eigene Templates oder Map-Komponenten bequem aufzubauen.</p>
+                <div class="geo-code-wrapper" style="position: relative;">
+                    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+                    <pre class="geo-code-block"><code class="language-php">&lt;?php
+use FriendsOfRedaxo\Geolocation\Mapset;
+
+// Mapset Instanz laden 
+$mapset = Mapset::take(1); 
+
+// Layer-Daten abrufen
+$layers = $mapset-&gt;getLayerset();
+
+// rex-map (HTML/Leaflet) Template generieren
+echo $mapset-&gt;parse();
+?&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</div><!-- .geolocation-dashboard -->

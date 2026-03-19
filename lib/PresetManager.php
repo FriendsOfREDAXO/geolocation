@@ -102,21 +102,6 @@ class PresetManager
                 'ttl'          => 43200,
                 'cfmax'        => 5000,
             ],
-            'maptiler_streets' => [
-                'title'        => 'MapTiler: Streets',
-                'description'  => 'Hochwertige Vektorkarten. Kostenloser Free-Tier (API-Key erforderlich).',
-                'free'         => false,
-                'requires_key' => true,
-                'key_url'      => 'https://cloud.maptiler.com/account/keys/',
-                'url'          => 'https://api.maptiler.com/tiles/v3/{z}/{x}/{y}.pbf?key={apikey}',
-                'retinaurl'    => '',
-                'subdomain'    => '',
-                'attribution'  => '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                'lang'         => '[["de","Karte"],["en","Map"]]',
-                'layertype'    => 'b',
-                'ttl'          => 43200,
-                'cfmax'        => 5000,
-            ],
             'opentopomap' => [
                 'title'        => 'OpenTopoMap',
                 'description'  => 'Topografische Karte auf OSM-Basis. Kostenlos.',
@@ -211,6 +196,20 @@ class PresetManager
             $sql->addGlobalCreateFields();
         }
         $sql->insert();
+        $layerId = (int) $sql->getLastId();
+
+        // YForm und Geolocation Cache aktualisieren / leeren
+        if (class_exists(\rex_yform_manager_table::class)) {
+            \rex_yform_manager_table::deleteCache();
+        }
+        $layerData = \rex_yform_manager_dataset::get($layerId, 'rex_geolocation_layer');
+        if ($layerData) {
+            \rex_extension::registerPoint(new \rex_extension_point('YFORM_DATA_ADDED', $layerData, [
+                'table' => \rex_yform_manager_table::get('rex_geolocation_layer'),
+                'data_id' => $layerId,
+                'data' => $layerData,
+            ]));
+        }
 
         return ['ok' => true, 'message' => 'Layer "' . $name . '" wurde hinzugefügt.'];
     }

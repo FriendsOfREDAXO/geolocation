@@ -120,12 +120,22 @@ $existingUrls = array_column($sql->getArray(), 'url');
         </div>
         <div class="panel-body">
             <p class="text-muted"><?= rex_i18n::msg('geolocation_dashboard_presets_info') ?></p>
-            <div class="row">
+            
+            <div class="row geo-flex-row">
                 <?php foreach ($presets as $presetKey => $preset): ?>
-                <?php $alreadyExists = in_array($preset['url'], $existingUrls, true); ?>
+                <?php 
+                $alreadyExists = false;
+                $pUrlBase = str_replace('{apikey}', '', $preset['url']);
+                foreach ($existingUrls as $eu) {
+                    if (str_starts_with($eu, $pUrlBase)) {
+                        $alreadyExists = true;
+                        break;
+                    }
+                }
+                ?>
                 <div class="col-sm-6 col-md-4" style="margin-bottom:16px">
                     <div class="panel panel-<?= $alreadyExists ? 'success' : 'default' ?>" style="margin:0;height:100%">
-                        <div class="panel-body">
+                        <div class="panel-body geo-preset-body">
                             <h4 style="margin-top:0">
                                 <?php if ($preset['free']): ?>
                                     <span class="label label-success" style="font-size:10px;vertical-align:middle">FREE</span>
@@ -135,6 +145,7 @@ $existingUrls = array_column($sql->getArray(), 'url');
                                 <?= rex_escape($preset['title']) ?>
                             </h4>
                             <p class="text-muted" style="font-size:12px;min-height:36px"><?= rex_escape($preset['description']) ?></p>
+                            <div class="geo-preset-action">
                             <?php if ($alreadyExists): ?>
                                 <span class="text-success"><i class="fa fa-check"></i> <?= rex_i18n::msg('geolocation_dashboard_preset_exists') ?></span>
                             <?php elseif ($preset['requires_key']): ?>
@@ -149,6 +160,9 @@ $existingUrls = array_column($sql->getArray(), 'url');
                                             </button>
                                         </span>
                                     </div>
+                                    <div style="font-size:11px;color:#777;margin-bottom:8px;">
+                                        <i class="fa fa-info-circle"></i> Kommerzieller Dienst, es können ggf. Kosten anfallen.
+                                    </div>
                                 </form>
                                 <a href="<?= rex_escape($preset['key_url'] ?? '#') ?>" target="_blank" rel="noopener" class="text-muted" style="font-size:11px">
                                     <i class="fa fa-external-link"></i> <?= rex_i18n::msg('geolocation_dashboard_get_apikey') ?>
@@ -162,20 +176,23 @@ $existingUrls = array_column($sql->getArray(), 'url');
                                     </button>
                                 </form>
                             <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <?php endforeach; ?>
-            </div>
-        </div>
-    </div>
 
-    <!-- ============================================================ -->
+<!-- ============================================================ -->
     <!-- TILE PROXY NUTZEN -->
     <!-- ============================================================ -->
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title"><i class="fa fa-route"></i> <?= rex_i18n::msg('geolocation_dashboard_proxy_title') ?></h3>
+            <h3 class="panel-title">
+                <i class="fa fa-route"></i> <?= rex_i18n::msg('geolocation_dashboard_proxy_title') ?>
+                <a href="<?= rex_url::backendPage('geolocation/demo') ?>" class="btn btn-xs btn-primary pull-right">
+                    <i class="fa fa-play-circle"></i> Demo ansehen
+                </a>
+            </h3>
         </div>
         <div class="panel-body">
             <p><?= rex_i18n::msg('geolocation_dashboard_proxy_info') ?></p>
@@ -232,87 +249,6 @@ $existingUrls = array_column($sql->getArray(), 'url');
     </div>
 
     <!-- ============================================================ -->
-    <!-- KARTE EINBINDEN (Code-Snippets) -->
-    <!-- ============================================================ -->
-    <?php if (!PROXY_ONLY && $mapsetCount > 0): ?>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title"><i class="fa fa-code"></i> <?= rex_i18n::msg('geolocation_dashboard_embed_title') ?></h3>
-        </div>
-        <div class="panel-body">
-            <p><?= rex_i18n::msg('geolocation_dashboard_embed_info') ?></p>
-
-            <?php
-            // Lade Mapsets für Beispiel
-            $mapsets = [];
-            $sql->setQuery('SELECT id, name, title FROM ' . rex::getTablePrefix() . 'geolocation_mapset WHERE id > 0 ORDER BY id ASC LIMIT 3');
-            $mapsets = $sql->getArray();
-            $exampleMapset = $mapsets[0] ?? ['id' => 1, 'name' => 'osm', 'title' => 'OSM'];
-            ?>
-
-            <ul class="nav nav-tabs" role="tablist" id="geo-embed-tabs">
-                <li role="presentation" class="active"><a href="#geo-tab-php" role="tab" data-toggle="tab">PHP</a></li>
-                <li role="presentation"><a href="#geo-tab-html" role="tab" data-toggle="tab">HTML</a></li>
-                <li role="presentation"><a href="#geo-tab-marker" role="tab" data-toggle="tab">PHP + Marker</a></li>
-            </ul>
-            <div class="tab-content geo-tab-content">
-                <div role="tabpanel" class="tab-pane active" id="geo-tab-php">
-<pre class="geo-code-block"><code>&lt;?php
-use FriendsOfRedaxo\Geolocation\Mapset;
-
-// Einfachste Variante – Kartensatz per Name
-echo \FriendsOfRedaxo\Geolocation\Mapset::take('<?= rex_escape($exampleMapset['name']) ?>')->parse();
-
-// Mit Mittelpunkt und Zoom
-echo \FriendsOfRedaxo\Geolocation\Mapset::take('<?= rex_escape($exampleMapset['name']) ?>')
-    ->attributes('style', 'height:400px')
-    ->dataset('lat', 48.137)
-    ->dataset('lng', 11.576)
-    ->dataset('zoom', 12)
-    ->parse();</code></pre>
-                </div>
-                <div role="tabpanel" class="tab-pane" id="geo-tab-html">
-<pre class="geo-code-block"><code>&lt;!-- Karte via HTML-Tag (nach asset-Einbindung) --&gt;
-&lt;rex-map 
-    mapset="<?= (int) $exampleMapset['id'] ?>"
-    style="height:400px"
-    data-lat="48.137"
-    data-lng="11.576"
-    data-zoom="12"&gt;
-&lt;/rex-map&gt;</code></pre>
-                </div>
-                <div role="tabpanel" class="tab-pane" id="geo-tab-marker">
-<pre class="geo-code-block"><code>&lt;?php
-use FriendsOfRedaxo\Geolocation\Mapset;
-
-echo \FriendsOfRedaxo\Geolocation\Mapset::take('<?= rex_escape($exampleMapset['name']) ?>')
-    ->attributes('style', 'height:400px')
-    ->dataset('map', [
-        'center' => [48.137, 11.576],
-        'zoom'   => 12,
-    ])
-    ->dataset('marker', [
-        [48.137, 11.576, 'München Marienplatz'],
-    ])
-    ->parse();</code></pre>
-                </div>
-            </div>
-
-            <?php if (!empty($mapsets)): ?>
-            <div style="margin-top:12px">
-                <strong><?= rex_i18n::msg('geolocation_dashboard_available_mapsets') ?>:</strong>
-                <?php foreach ($mapsets as $ms): ?>
-                    <a href="<?= rex_url::backendPage('geolocation/mapset', ['data_id' => $ms['id'], 'func' => 'edit']) ?>" class="label label-default" style="margin-left:4px">
-                        <?= rex_escape($ms['name']) ?> (ID <?= (int) $ms['id'] ?>)
-                    </a>
-                <?php endforeach; ?>
-            </div>
-            <?php endif; ?>
-        </div>
-    </div>
-    <?php endif; ?>
-
-    <!-- ============================================================ -->
     <!-- SCHNELLLINKS -->
     <!-- ============================================================ -->
     <div class="row">
@@ -320,11 +256,16 @@ echo \FriendsOfRedaxo\Geolocation\Mapset::take('<?= rex_escape($exampleMapset['n
             <div class="panel panel-default">
                 <div class="panel-heading"><h4 class="panel-title"><i class="fa fa-bolt"></i> <?= rex_i18n::msg('geolocation_dashboard_quicklinks') ?></h4></div>
                 <div class="list-group" style="border-radius:0 0 4px 4px">
-                    <a href="<?= rex_url::backendPage('geolocation/layer', ['func' => 'add']) ?>" class="list-group-item">
+                    <?php
+                    $csrfLayer = rex_csrf_token::factory(\rex_yform_manager_table::get(rex::getTable('geolocation_layer'))->getCSRFKey())->getUrlParams();
+                    ?>
+                    <a href="<?= rex_url::backendPage('geolocation/layer', array_merge(['func' => 'add'], $csrfLayer)) ?>" class="list-group-item">
                         <i class="fa fa-plus text-primary"></i> <?= rex_i18n::msg('geolocation_dashboard_add_layer') ?>
                     </a>
-                    <?php if (!PROXY_ONLY): ?>
-                    <a href="<?= rex_url::backendPage('geolocation/mapset', ['func' => 'add']) ?>" class="list-group-item">
+                    <?php if (!PROXY_ONLY): 
+                        $csrfMapset = rex_csrf_token::factory(\rex_yform_manager_table::get(rex::getTable('geolocation_mapset'))->getCSRFKey())->getUrlParams();
+                    ?>
+                    <a href="<?= rex_url::backendPage('geolocation/mapset', array_merge(['func' => 'add'], $csrfMapset)) ?>" class="list-group-item">
                         <i class="fa fa-plus text-success"></i> <?= rex_i18n::msg('geolocation_dashboard_add_mapset') ?>
                     </a>
                     <?php endif; ?>
@@ -333,6 +274,15 @@ echo \FriendsOfRedaxo\Geolocation\Mapset::take('<?= rex_escape($exampleMapset['n
                     </a>
                     <a href="<?= rex_url::backendPage('geolocation/manual') ?>" class="list-group-item">
                         <i class="fa fa-book text-muted"></i> <?= rex_i18n::msg('geolocation_manpage') ?>
+                    </a>
+                    <a href="<?= rex_url::backendPage('geolocation/manual', ['subpage' => 'devphp']) ?>" class="list-group-item" style="padding-left: 40px; font-size: 13px;">
+                        <i class="fa fa-angle-right text-muted"></i> PHP: Karte einbinden
+                    </a>
+                    <a href="<?= rex_url::backendPage('geolocation/manual', ['subpage' => 'devmath']) ?>" class="list-group-item" style="padding-left: 40px; font-size: 13px;">
+                        <i class="fa fa-angle-right text-muted"></i> PHP: Rechnen mit Koordinaten
+                    </a>
+                    <a href="<?= rex_url::backendPage('geolocation/manual', ['subpage' => 'devtools']) ?>" class="list-group-item" style="padding-left: 40px; font-size: 13px;">
+                        <i class="fa fa-angle-right text-muted"></i> JS: Kartentools & Frontend
                     </a>
                 </div>
             </div>
@@ -357,6 +307,13 @@ echo \FriendsOfRedaxo\Geolocation\Mapset::take('<?= rex_escape($exampleMapset['n
 </div><!-- .geolocation-dashboard -->
 
 <style>
+.geo-flex-row::before, .geo-flex-row::after { display: none; }
+.geo-flex-row { display: flex; flex-wrap: wrap; }
+.geo-flex-row > [class*="col-"] { display: flex; flex-direction: column; float: none; }
+.geo-flex-row .panel { flex: 1; display: flex; flex-direction: column; margin-bottom: 0; }
+.geo-flex-row .geo-preset-body { flex: 1; display: flex; flex-direction: column; }
+.geo-flex-row .geo-preset-action { margin-top: auto; }
+
 .geo-stat-card .panel-body { padding: 20px 10px; }
 .geo-stat-icon { margin-bottom: 8px; }
 .geo-stat-number { font-size: 2em; font-weight: bold; line-height: 1; }

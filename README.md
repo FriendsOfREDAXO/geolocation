@@ -95,9 +95,7 @@ Ideen gibt es, Hilfe ist willkommen.
 In das Verzeichnis `redaxo/src/addons/geolocation` entpacken und in der Addon-Verwaltung die
 Installation durchführen.
 
-Dabei werden Demo-Daten (Links zu Tile-Servern und zwei Kartensätze installiert). Die Here-Kartenlinks
-sind ohne die nötige "appId", die nach Registrierung bei [HERE](https://developer.here.com/) erzeugt
-werden kann. Die vorgesehene Stelle in der URL ist mit `..........` markiert.
+Weitere empfohlene Kartenanbieter oder kostenpflichtige Dienste (wie z.B. HERE Maps) können bequem mit API-Keys direkt über das Dashboard als Layer hinzugefügt werden.
 
 Der Cronjob für die Cache-Bereinigung hat die Einstellungen
 - Einmal am Tag (04:30)
