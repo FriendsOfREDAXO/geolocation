@@ -124,7 +124,7 @@
         }
 
         var layer = rasterLayers[0];
-        var map = L.map(el, { scrollWheelZoom: false }).setView(center, defaultZoom);
+        var map = L.map(el, { gestureHandling: true }).setView(center, defaultZoom);
         buildLeafletTileLayer(layer, L).addTo(map);
         markLoaded(el);
     }
@@ -140,7 +140,7 @@
             return;
         }
 
-        var map = L.map(el, { scrollWheelZoom: false }).setView(center, defaultZoom);
+        var map = L.map(el, { gestureHandling: true }).setView(center, defaultZoom);
 
         if (rasterLayers.length > 0) {
             buildLeafletTileLayer(rasterLayers[0], L).addTo(map);
@@ -178,7 +178,7 @@
         }
         if (rasterLayers.length < 2) return;
 
-        var map = L.map(el, { scrollWheelZoom: false }).setView(center, defaultZoom);
+        var map = L.map(el, { gestureHandling: true }).setView(center, defaultZoom);
         var baseLayers = {};
 
         rasterLayers.forEach(function (layer, i) {

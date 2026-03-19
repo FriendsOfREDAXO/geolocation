@@ -231,7 +231,7 @@ echo Mapset::take('osm')
                     </div>
                     <div class="tab-pane" id="geo-r1-leaflet">
 <pre class="geo-demo-code"><code class="language-javascript">// Leaflet direkt mit Geolocation-Proxy
-const map = L.map('map').setView([48.137, 11.576], 12);
+const map = L.map('map', { gestureHandling: true }).setView([48.137, 11.576], 12);
 
 L.tileLayer(
     '<?= rex_escape($exampleProxyUrl) ?>',
@@ -288,7 +288,7 @@ echo Mapset::take('osm')
     ->parse();</code></pre>
                     </div>
                     <div class="tab-pane" id="geo-r2-js">
-<pre class="geo-demo-code"><code class="language-javascript">const map = L.map('map').setView([48.137, 11.576], 12);
+<pre class="geo-demo-code"><code class="language-javascript">const map = L.map('map', { gestureHandling: true }).setView([48.137, 11.576], 12);
 
 // Tile-Layer via Proxy
 L.tileLayer('<?= rex_escape($exampleProxyUrl) ?>', {
@@ -335,7 +335,7 @@ locations.forEach(([lat, lng, label]) => {
             </div>
             <div class="col-md-6">
 <pre class="geo-demo-code"><code class="language-javascript">// Mehrere Layer mit Layer-Control
-const map = L.map('map').setView([48.137, 11.576], 12);
+const map = L.map('map', { gestureHandling: true }).setView([48.137, 11.576], 12);
 
 const layers = {
 <?php foreach ($rasterLayers as $i => $l): ?>
