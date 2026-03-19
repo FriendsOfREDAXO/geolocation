@@ -127,6 +127,22 @@ class Tools
     }
 
     /**
+     * schickt HTTP_BAD_REQUEST.
+     *
+     * ... und bricht dann mit HTTP_BAD_REQUEST hart ab.
+     *
+     * @api
+     * @return never
+     */
+    public static function sendBadRequest(): void
+    {
+        rex_response::cleanOutputBuffers();
+        rex_response::setStatus(rex_response::HTTP_BAD_REQUEST);
+        rex_response::sendContent(rex_response::HTTP_BAD_REQUEST);
+        exit;
+    }
+
+    /**
      * schickt eine Kartenkachel Tile an den Client.
      *
      * aus $timestamp und $ttl wird deren Header-Daten (Expires, Cache-Control)
@@ -136,12 +152,12 @@ class Tools
      * @api
      * @return never
      */
-    public static function sendTile(string $tileFileName, string $contentType, int $timestamp, int $ttl): void
+    public static function sendTile(string $tileFileName, string $contentType, int $timestamp, int $ttlSeconds): void
     {
-        $time2elapse = $timestamp + ($ttl * 60);
+        $time2elapse = $timestamp + $ttlSeconds;
         rex_response::cleanOutputBuffers();
         rex_response::setHeader('Expires', gmdate('D, d M Y H:i:s', $time2elapse) . ' GMT');
-        rex_response::sendCacheControl('public, max-age=' . $ttl * 60);
+        rex_response::sendCacheControl('public, max-age=' . $ttlSeconds);
         rex_response::sendContent($tileFileName, $contentType, $timestamp);
         exit;
     }
