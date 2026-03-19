@@ -106,6 +106,7 @@ if (rex::isBackend()) {
     }
     if (str_starts_with($currentPage, 'geolocation/demo') || str_starts_with($currentPage, 'geolocation/manual/demo')) {
         rex_view::addJsFile($this->getAssetsUrl('demo.js'));
+        rex_view::addCssFile($this->getAssetsUrl('demo.css'));
     }
     if ('yform/manager/table_field' === $currentPage) {
         rex_view::addJsFile($this->getAssetsUrl('tablemanager.min.js'));
