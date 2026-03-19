@@ -18,8 +18,8 @@ $sql = rex_sql::factory();
 $sql->setQuery('SELECT id, name, url, layertype, subdomain, attribution, online FROM ' . rex::getTablePrefix() . 'geolocation_layer ORDER BY layertype, name ASC');
 $allLayers = $sql->getArray();
 
-// Proxy-URL-Basis (Frontend-Controller)
-$proxyBase = rex_url::frontendController([], false);
+// Proxy-Base-URL aus der Frontend-Server-URL als root-relative URL ableiten.
+$proxyBase = rtrim((string) parse_url(rex::getServer(), PHP_URL_PATH), '/') . '/index.php';
 
 // Layer-Configs für JS aufbereiten
 $rasterLayers = [];
@@ -129,6 +129,14 @@ $useProxy = $hasConfiguredLayers;
             <li>Nur fuer MapLibre-Demos: MapLibre CSS/JS</li>
             <li>Nur fuer OpenLayers-Demos: OpenLayers CSS/JS</li>
         </ul>
+        <div class="alert alert-info" style="margin-bottom:14px">
+            <strong>Alternative zu CDN:</strong>
+            Die verwendeten Bibliotheken sind auch direkt ueber GitHub verfuegbar:
+            <a href="https://github.com/Leaflet/Leaflet" target="_blank" rel="noopener">Leaflet</a>,
+            <a href="https://github.com/maplibre/maplibre-gl-js" target="_blank" rel="noopener">MapLibre GL JS</a>
+            und
+            <a href="https://github.com/openlayers/openlayers" target="_blank" rel="noopener">OpenLayers</a>.
+        </div>
         <div class="row">
             <div class="col-md-6">
 <pre class="geo-demo-code"><code class="language-html">&lt;!-- 1) Geolocation-Basis (Pflicht) --&gt;
@@ -146,6 +154,10 @@ $useProxy = $hasConfiguredLayers;
 &lt;!-- 4) OpenLayers (nur fuer OL-Beispiele) --&gt;
 &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10.3.1/ol.css"&gt;
 &lt;script src="https://cdn.jsdelivr.net/npm/ol@10.3.1/dist/ol.js"&gt;&lt;/script&gt;</code></pre>
+<pre class="geo-demo-code" style="margin-top:12px"><code class="language-text">GitHub-Alternativen:
+Leaflet: https://github.com/Leaflet/Leaflet
+MapLibre GL JS: https://github.com/maplibre/maplibre-gl-js
+OpenLayers: https://github.com/openlayers/openlayers</code></pre>
             </div>
             <div class="col-md-6">
 <pre class="geo-demo-code"><code class="language-php">&lt;?php

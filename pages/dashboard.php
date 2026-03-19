@@ -58,8 +58,8 @@ $layers = $sql->getArray();
 // API-Ergebnis anzeigen (nach Preset-Add)
 $apiMessage = rex_api_function::getMessage();
 
-// Proxy-Base-URL
-$proxyBase = rex_url::frontendController([], false);
+// Proxy-Base-URL aus der Frontend-Server-URL als root-relative URL ableiten.
+$proxyBase = rtrim((string) parse_url(rex::getServer(), PHP_URL_PATH), '/') . '/index.php';
 
 // Bekannte Presets: [name, url, subdomain, attribution, lang, layertype]
 $presets = PresetManager::getPresets();
@@ -231,7 +231,7 @@ $existingUrls = array_column($sql->getArray(), 'url');
                 <br>
                 <code>https://tile.example.org/{z}/{x}/{y}.png</code>
                 &rarr;
-                <code><?= rex_escape($proxyBase) ?>&amp;layer=<strong>ID</strong>&amp;z={z}&amp;x={x}&amp;y={y}</code>
+                <code><?= rex_escape($proxyBase) ?>&amp;geolayer=<strong>ID</strong>&amp;z={z}&amp;x={x}&amp;y={y}</code>
             </div>
             <?php endif; ?>
         </div>
