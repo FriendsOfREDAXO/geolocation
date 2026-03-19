@@ -90,10 +90,8 @@ $exampleAttribution = $exampleLayer['attribution'] ?? '&copy; <a href="https://w
 $useProxy = $hasConfiguredLayers;
 ?>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10.3.1/ol.css">
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ol@10.3.1/dist/ol.js"></script>
 
@@ -124,8 +122,8 @@ $useProxy = $hasConfiguredLayers;
             Fuer <code>&lt;rex-map&gt;</code> reicht Geolocation. Fuer die JS-Beispiele (Leaflet/MapLibre/OpenLayers) kommen die Bibliotheken dazu.
         </p>
         <ul style="margin:0 0 14px 18px;padding:0">
-            <li>Pflicht fuer alle Geolocation-Maps: <code>/assets/addons/geolocation/geolocation.min.css</code> und <code>/assets/addons/geolocation/geolocation.min.js</code></li>
-            <li>Nur fuer Leaflet-Demos: Leaflet CSS/JS</li>
+            <li>Pflicht fuer alle Maps (inkl. Leaflet): <code>/assets/addons/geolocation/geolocation.min.css</code> und <code>/assets/addons/geolocation/geolocation.min.js</code></li>
+            
             <li>Nur fuer MapLibre-Demos: MapLibre CSS/JS</li>
             <li>Nur fuer OpenLayers-Demos: OpenLayers CSS/JS</li>
         </ul>
@@ -139,23 +137,19 @@ $useProxy = $hasConfiguredLayers;
         </div>
         <div class="row">
             <div class="col-md-6">
-<pre class="geo-demo-code"><code class="language-html">&lt;!-- 1) Geolocation-Basis (Pflicht) --&gt;
+<pre class="geo-demo-code"><code class="language-html">&lt;!-- 1) Geolocation-Basis (Pflicht, beinhaltet Leaflet) --&gt;
 &lt;link rel="stylesheet" href="/assets/addons/geolocation/geolocation.min.css"&gt;
 &lt;script src="/assets/addons/geolocation/geolocation.min.js"&gt;&lt;/script&gt;
 
-&lt;!-- 2) Leaflet (nur wenn Leaflet-Code verwendet wird) --&gt;
-&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css"&gt;
-&lt;script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"&gt;&lt;/script&gt;
-
-&lt;!-- 3) MapLibre (nur fuer Vector/WebGL-Beispiele) --&gt;
+&lt;!-- 2) MapLibre (nur fuer Vector/WebGL-Beispiele) --&gt;
 &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css"&gt;
 &lt;script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"&gt;&lt;/script&gt;
 
-&lt;!-- 4) OpenLayers (nur fuer OL-Beispiele) --&gt;
+&lt;!-- 3) OpenLayers (nur fuer OL-Beispiele) --&gt;
 &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10.3.1/ol.css"&gt;
 &lt;script src="https://cdn.jsdelivr.net/npm/ol@10.3.1/dist/ol.js"&gt;&lt;/script&gt;</code></pre>
 <pre class="geo-demo-code" style="margin-top:12px"><code class="language-text">GitHub-Alternativen:
-Leaflet: https://github.com/Leaflet/Leaflet
+
 MapLibre GL JS: https://github.com/maplibre/maplibre-gl-js
 OpenLayers: https://github.com/openlayers/openlayers</code></pre>
             </div>
@@ -845,7 +839,56 @@ body.rex-theme-dark .geo-demo-map::before { color: #444; }
 body.rex-theme-dark .geo-flow-browser { background: #1a2833; }
 body.rex-theme-dark .geo-flow-redaxo { background: #2b1a1a; }
 body.rex-theme-dark .geo-flow-tileserver { background: #1a2b1a; }
+
+body.rex-theme-dark .geo-demo-code-tabs {
+    border-color: #333;
+}
+body.rex-theme-dark #geo-demo-root .nav-tabs {
+    border-bottom-color: #333;
+}
+body.rex-theme-dark #geo-demo-root .nav-tabs > li.active > a,
+body.rex-theme-dark #geo-demo-root .nav-tabs > li.active > a:focus,
+body.rex-theme-dark #geo-demo-root .nav-tabs > li.active > a:hover {
+    background-color: #2b2b2b;
+    border-color: #333 #333 transparent;
+    color: #fff;
+}
+body.rex-theme-dark #geo-demo-root .nav-tabs > li > a:not(.active):hover {
+    border-color: #333;
+    background-color: #202020;
+    color: #fff;
+}
+body.rex-theme-dark #geo-demo-root .nav-tabs > li > a {
+    color: #999;
+}
+
 @media (prefers-color-scheme: dark) {
+    body.rex-has-theme:not(.rex-theme-light) .geo-demo-map { background: #1a1a1a; border-color: #444; }
     body.rex-has-theme:not(.rex-theme-light) .geo-demo-map::before { color: #444; }
+    body.rex-has-theme:not(.rex-theme-light) .geo-flow-browser { background: #1a2833; }
+    body.rex-has-theme:not(.rex-theme-light) .geo-flow-redaxo { background: #2b1a1a; }
+    body.rex-has-theme:not(.rex-theme-light) .geo-flow-tileserver { background: #1a2b1a; }
+
+    body.rex-has-theme:not(.rex-theme-light) .geo-demo-code-tabs {
+        border-color: #333;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs {
+        border-bottom-color: #333;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs > li.active > a,
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs > li.active > a:focus,
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs > li.active > a:hover {
+        background-color: #2b2b2b;
+        border-color: #333 #333 transparent;
+        color: #fff;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs > li > a:not(.active):hover {
+        border-color: #333;
+        background-color: #202020;
+        color: #fff;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs > li > a {
+        color: #999;
+    }
 }
 </style>
