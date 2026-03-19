@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10.3.1/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol@10.3.1/dist/ol.js"></script>
+    <style>.map { height: 400px; width: 100%; }</style>
+</head>
+<body>
+    <div id="map" class="map"></div>
+    <script>
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([11.576, 48.137]),
+                zoom: 12
+            })
+        });
+        
+        map.getInteractions().forEach(function(i){ 
+            if(i instanceof ol.interaction.MouseWheelZoom) {
+                i.setActive(false); 
+                console.log("disabled wheel");
+            }
+        });
+    </script>
+</body>
+</html>
