@@ -507,18 +507,28 @@
         document.addEventListener('click', function (e) {
             var btn = e.target.closest('.geo-copy-btn');
             if (!btn) return;
-            var text = btn.getAttribute('data-url') || '';
-            if (!text) {
-                var td = btn.closest('td');
-                var urlEl = td ? td.querySelector('.geo-proxy-url') : null;
-                text = urlEl ? urlEl.textContent : '';
+
+            var text = '';
+            var blockWrapper = btn.closest('.geo-code-wrapper');
+            if (blockWrapper) {
+                var codeEl = blockWrapper.querySelector('code');
+                text = codeEl ? codeEl.textContent : '';
+            } else {
+                text = btn.getAttribute('data-url') || '';
+                if (!text) {
+                    var td = btn.closest('td');
+                    var urlEl = td ? td.querySelector('.geo-proxy-url') : null;
+                    text = urlEl ? urlEl.textContent : '';
+                }
             }
+
             if (!text) return;
             navigator.clipboard.writeText(text.trim()).then(function () {
                 var icon = btn.querySelector('i');
                 if (icon) {
-                    icon.className = 'fa fa-check';
-                    setTimeout(function () { icon.className = 'fa fa-copy'; }, 1500);
+                    var oldClass = icon.className;
+                    icon.className = 'fa fa-check text-success';
+                    setTimeout(function () { icon.className = oldClass; }, 1500);
                 }
             }).catch(function (err) {
                 console.error('Copy failed', err);

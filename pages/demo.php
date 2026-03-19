@@ -146,7 +146,9 @@ $useProxy = $hasConfiguredLayers;
         </div>
         <div class="row">
             <div class="col-md-6">
-<pre class="geo-demo-code"><code class="language-html">&lt;!-- 1) Geolocation-Basis (Pflicht, beinhaltet Leaflet) --&gt;
+<div class="geo-code-wrapper" style="position: relative;">
+    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+    <pre class="geo-demo-code"><code class="language-html">&lt;!-- 1) Geolocation-Basis (Pflicht, beinhaltet Leaflet) --&gt;
 &lt;link rel="stylesheet" href="/assets/addons/geolocation/geolocation.min.css"&gt;
 &lt;script src="/assets/addons/geolocation/geolocation.min.js"&gt;&lt;/script&gt;
 
@@ -157,10 +159,14 @@ $useProxy = $hasConfiguredLayers;
 &lt;!-- 3) OpenLayers (nur fuer OL-Beispiele) --&gt;
 &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10.3.1/ol.css"&gt;
 &lt;script src="https://cdn.jsdelivr.net/npm/ol@10.3.1/dist/ol.js"&gt;&lt;/script&gt;</code></pre>
-<pre class="geo-demo-code" style="margin-top:12px"><code class="language-text">GitHub-Alternativen:
+</div>
+<div class="geo-code-wrapper" style="position: relative;">
+    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+    <pre class="geo-demo-code" style="margin-top:12px"><code class="language-text">GitHub-Alternativen:
 
 MapLibre GL JS: https://github.com/maplibre/maplibre-gl-js
 OpenLayers: https://github.com/openlayers/openlayers</code></pre>
+</div>
             </div>
             <div class="col-md-6">
                 <div class="alert alert-info" style="margin-top:0;">
@@ -208,6 +214,8 @@ OpenLayers: https://github.com/openlayers/openlayers</code></pre>
                 </ul>
                 <div class="tab-content geo-demo-code-tabs">
                     <div class="tab-pane" id="geo-r1-html">
+    <div class="geo-code-wrapper" style="position: relative;">
+    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
     <pre class="geo-demo-code"><code class="language-html">&lt;!-- Assets im Template einbinden:
         /assets/addons/geolocation/geolocation.min.css
         /assets/addons/geolocation/geolocation.min.js --&gt;
@@ -216,9 +224,12 @@ OpenLayers: https://github.com/openlayers/openlayers</code></pre>
     mapset="Ihre_Mapset_ID"
     style="height:400px"&gt;
 &lt;/rex-map&gt;</code></pre>
+</div>
                     </div>
                     <div class="tab-pane active" id="geo-r1-leaflet">
-<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+<div class="geo-code-wrapper" style="position: relative;">
+    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+    <pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
 
 &lt;script&gt;
 // Leaflet direkt mit Geolocation-Proxy
@@ -232,6 +243,7 @@ L.tileLayer(
     }
 ).addTo(map);
 &lt;/script&gt;</code></pre>
+</div>
                     </div>
                 </div>
             </div>
@@ -261,7 +273,9 @@ L.tileLayer(
                 </ul>
                 <div class="tab-content geo-demo-code-tabs">
                     <div class="tab-pane active" id="geo-r2-js">
-<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+<div class="geo-code-wrapper" style="position: relative;">
+    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+    <pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
 
 &lt;script&gt;
 const map = L.map('map', { gestureHandling: true }).setView([48.137, 11.576], 12);
@@ -283,6 +297,7 @@ locations.forEach(([lat, lng, label]) => {
      .bindPopup(label);
 });
 &lt;/script&gt;</code></pre>
+</div>
                     </div>
                 </div>
             </div>
@@ -373,7 +388,9 @@ locations.forEach(([lat, lng, label]) => {
                 </p>
                 <div class="tab-content geo-demo-code-tabs">
                     <div class="tab-pane active" id="geo-v1-proxy">
-<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+<div class="geo-code-wrapper" style="position: relative;">
+    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+    <pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
 
 &lt;script&gt;
 // Vector Tiles via Geolocation-Proxy
@@ -412,9 +429,12 @@ const map = new maplibregl.Map({
     }
 });
 &lt;/script&gt;</code></pre>
+</div>
                     </div>
                     <div class="tab-pane" id="geo-v1-ofm">
-<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+<div class="geo-code-wrapper" style="position: relative;">
+    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+    <pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
 
 &lt;script&gt;
 // Alternative: Komplettes Style-JSON direkt einbinden (ohne Proxy)
@@ -429,6 +449,7 @@ const map = new maplibregl.Map({
 
 map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
 &lt;/script&gt;</code></pre>
+</div>
                     </div>
                 </div>
             </div>
@@ -478,7 +499,9 @@ map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
                         </p>
                     </div>
                     <div class="col-md-6">
-<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+<div class="geo-code-wrapper" style="position: relative;">
+    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+    <pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
 
 &lt;script&gt;
 // Die globalen ol.* Klassen sind via CDN verfuegbar
@@ -498,6 +521,7 @@ const map = new ol.Map({
     })
 });
 &lt;/script&gt;</code></pre>
+</div>
                     </div>
                 </div>
             </div>
@@ -512,7 +536,9 @@ const map = new ol.Map({
                         </p>
                     </div>
                     <div class="col-md-6">
-<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+<div class="geo-code-wrapper" style="position: relative;">
+    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+    <pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
 
 &lt;script&gt;
 // Vector Tiles via Geolocation-Proxy in OpenLayers laden
@@ -533,6 +559,7 @@ const map = new ol.Map({
     })
 });
 &lt;/script&gt;</code></pre>
+</div>
                     </div>
                 </div>
             </div>
@@ -547,7 +574,9 @@ const map = new ol.Map({
                         </p>
                     </div>
                     <div class="col-md-6">
-<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+<div class="geo-code-wrapper" style="position: relative;">
+    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+    <pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
 
 &lt;script&gt;
 // WMS-Layer (z.B. GeoServer, QGIS Server, GeoPortal)
@@ -573,6 +602,7 @@ const map = new ol.Map({
     })
 });
 &lt;/script&gt;</code></pre>
+</div>
                     </div>
                 </div>
             </div>
@@ -650,7 +680,9 @@ const map = new ol.Map({
             </div>
             <div class="col-md-6">
                 <h4>URL-Schema</h4>
-<pre class="geo-demo-code" style="font-size:12px"><code><?= rex_escape($proxyBase) ?>?geolayer=<strong>LAYER_ID</strong>&amp;z={z}&amp;x={x}&amp;y={y}
+<div class="geo-code-wrapper" style="position: relative;">
+    <button class="btn btn-default btn-xs geo-copy-btn" style="position: absolute; top: 8px; right: 8px; opacity: 0.7; z-index: 10;" title="Code kopieren"><i class="fa fa-copy"></i></button>
+    <pre class="geo-demo-code" style="font-size:12px"><code><?= rex_escape($proxyBase) ?>?geolayer=<strong>LAYER_ID</strong>&amp;z={z}&amp;x={x}&amp;y={y}
 
 ├── LAYER_ID  ID des Layers aus "Karte"-Tab
 ├── z         Zoom-Level
@@ -665,6 +697,7 @@ const map = new ol.Map({
 <?php if (empty($rasterLayers) && empty($vectorLayers)): ?>
 # → Zuerst Layer anlegen (Dashboard → Schnellstart)
 <?php endif; ?></code></pre>
+</div>
             </div>
         </div>
     </div>
