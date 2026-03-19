@@ -123,6 +123,12 @@ Zusaetzlich bei Bedarf:
 - MapLibre-Demos: MapLibre CSS/JS
 - OpenLayers-Demos: OpenLayers CSS/JS
 
+GitHub-Alternativen zu den CDN-Links:
+
+- Leaflet: https://github.com/Leaflet/Leaflet
+- MapLibre GL JS: https://github.com/maplibre/maplibre-gl-js
+- OpenLayers: https://github.com/openlayers/openlayers
+
 Die konkrete Einbindung ist in der Backend-Demo (`geolocation/demo`) und in der
 [Installationsanleitung](https://github.com/FriendsOfREDAXO/geolocation/blob/main/docs/install.md)
 als Snippet dokumentiert.

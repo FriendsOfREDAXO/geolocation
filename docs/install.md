@@ -93,6 +93,12 @@ Diese beiden Dateien sind die Basis fuer `<rex-map>` und Geolocation-JavaScript 
 
 Die Zusatz-Bibliotheken nur laden, wenn das jeweilige Beispiel tatsaechlich genutzt wird.
 
+Alternativ zu den CDN-Links koennen die Bibliotheken auch direkt ueber GitHub bezogen werden:
+
+- Leaflet: https://github.com/Leaflet/Leaflet
+- MapLibre GL JS: https://github.com/maplibre/maplibre-gl-js
+- OpenLayers: https://github.com/openlayers/openlayers
+
 ### Minimalbeispiel ohne eigenes JS
 
 ```php
