@@ -124,7 +124,7 @@
         }
 
         var layer = rasterLayers[0];
-        var map = L.map(el).setView(center, defaultZoom);
+        var map = L.map(el, { scrollWheelZoom: false }).setView(center, defaultZoom);
         buildLeafletTileLayer(layer, L).addTo(map);
         markLoaded(el);
     }
@@ -140,7 +140,7 @@
             return;
         }
 
-        var map = L.map(el).setView(center, defaultZoom);
+        var map = L.map(el, { scrollWheelZoom: false }).setView(center, defaultZoom);
 
         if (rasterLayers.length > 0) {
             buildLeafletTileLayer(rasterLayers[0], L).addTo(map);
@@ -178,7 +178,7 @@
         }
         if (rasterLayers.length < 2) return;
 
-        var map = L.map(el).setView(center, defaultZoom);
+        var map = L.map(el, { scrollWheelZoom: false }).setView(center, defaultZoom);
         var baseLayers = {};
 
         rasterLayers.forEach(function (layer, i) {
@@ -230,6 +230,7 @@
             bearing: -10,   // leichte Rotation für Tiefenwirkung
             attributionControl: true,
         });
+        vectorMapInstance.scrollZoom.disable();
 
         vectorMapInstance.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
         vectorMapInstance.addControl(new maplibregl.ScaleControl());
@@ -356,6 +357,7 @@
             }),
             controls: ol.control.defaults.defaults(),
         });
+        olMaps.raster.getInteractions().forEach(function(i){ if(i instanceof ol.interaction.MouseWheelZoom) i.setActive(false); });
 
         markLoaded(el);
         refreshOlMap(olMaps.raster);
@@ -433,6 +435,7 @@
             }),
             controls: ol.control.defaults.defaults(),
         });
+        olMaps.vector.getInteractions().forEach(function(i){ if(i instanceof ol.interaction.MouseWheelZoom) i.setActive(false); });
 
         markLoaded(el);
         refreshOlMap(olMaps.vector);
@@ -470,6 +473,7 @@
             }),
             controls: ol.control.defaults.defaults(),
         });
+        olMaps.wms.getInteractions().forEach(function(i){ if(i instanceof ol.interaction.MouseWheelZoom) i.setActive(false); });
 
         markLoaded(el);
         refreshOlMap(olMaps.wms);
