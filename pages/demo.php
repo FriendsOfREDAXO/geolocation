@@ -212,7 +212,10 @@ OpenLayers: https://github.com/openlayers/openlayers</code></pre>
 &lt;/rex-map&gt;</code></pre>
                     </div>
                     <div class="tab-pane active" id="geo-r1-leaflet">
-<pre class="geo-demo-code"><code class="language-javascript">// Leaflet direkt mit Geolocation-Proxy
+<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// Leaflet direkt mit Geolocation-Proxy
 const map = L.map('map', { gestureHandling: true }).setView([48.137, 11.576], 12);
 
 L.tileLayer(
@@ -221,7 +224,8 @@ L.tileLayer(
         attribution: '<?= rex_escape($exampleAttribution) ?>',
         maxZoom: 19
     }
-).addTo(map);</code></pre>
+).addTo(map);
+&lt;/script&gt;</code></pre>
                     </div>
                 </div>
             </div>
@@ -251,7 +255,10 @@ L.tileLayer(
                 </ul>
                 <div class="tab-content geo-demo-code-tabs">
                     <div class="tab-pane active" id="geo-r2-js">
-<pre class="geo-demo-code"><code class="language-javascript">const map = L.map('map', { gestureHandling: true }).setView([48.137, 11.576], 12);
+<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+const map = L.map('map', { gestureHandling: true }).setView([48.137, 11.576], 12);
 
 // Tile-Layer via Proxy
 L.tileLayer('<?= rex_escape($exampleProxyUrl) ?>', {
@@ -268,7 +275,8 @@ locations.forEach(([lat, lng, label]) => {
     L.marker([lat, lng])
      .addTo(map)
      .bindPopup(label);
-});</code></pre>
+});
+&lt;/script&gt;</code></pre>
                     </div>
                 </div>
             </div>
@@ -361,10 +369,11 @@ locations.forEach(([lat, lng, label]) => {
                 </p>
                 <div class="tab-content geo-demo-code-tabs">
                     <div class="tab-pane active" id="geo-v1-ofm">
-<pre class="geo-demo-code"><code class="language-javascript">// MapLibre GL JS – OpenFreeMap Liberty (mit 3D-Gebäuden)
+<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// MapLibre GL JS – OpenFreeMap Liberty (mit 3D-Gebäuden)
 // Kein API-Key, kein Limit, kostenlos
-import maplibregl from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
 
 const map = new maplibregl.Map({
     container: 'map',
@@ -378,11 +387,15 @@ const map = new maplibregl.Map({
 // Navigation inkl. Pitch-Wheel für 3D-Steuerung
 map.addControl(
     new maplibregl.NavigationControl({ visualizePitch: true })
-);</code></pre>
+);
+&lt;/script&gt;</code></pre>
                     </div>
                     <?php if (!empty($vectorLayers)): ?>
                     <div class="tab-pane" id="geo-v1-proxy">
-<pre class="geo-demo-code"><code class="language-javascript">// Vector Tiles via Geolocation-Proxy
+<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// Vector Tiles via Geolocation-Proxy
 // Layer-ID: <?= $vectorLayers[0]['id'] ?> (<?= rex_escape($vectorLayers[0]['name']) ?>)
 
 const map = new maplibregl.Map({
@@ -412,7 +425,8 @@ const map = new maplibregl.Map({
             paint: { 'line-color': '#aaa', 'line-width': 1 }
         }]
     }
-});</code></pre>
+});
+&lt;/script&gt;</code></pre>
                     </div>
                     <?php endif; ?>
                 </div>
@@ -463,12 +477,10 @@ const map = new maplibregl.Map({
                         </p>
                     </div>
                     <div class="col-md-6">
-<pre class="geo-demo-code"><code class="language-javascript">import Map from 'ol/Map';
-import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
-import XYZ from 'ol/source/XYZ';
-import { fromLonLat } from 'ol/proj';
+<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
 
+&lt;script&gt;
+// Die globalen ol.* Klassen sind via CDN verfuegbar
 const map = new ol.Map({
     target: 'map',
     layers: [
@@ -483,7 +495,8 @@ const map = new ol.Map({
         center: ol.proj.fromLonLat([11.576, 48.137]),
         zoom: 12
     })
-});</code></pre>
+});
+&lt;/script&gt;</code></pre>
                     </div>
                 </div>
             </div>
@@ -498,15 +511,14 @@ const map = new ol.Map({
                         </p>
                     </div>
                     <div class="col-md-6">
-<pre class="geo-demo-code"><code class="language-javascript">import Map from 'ol/Map';
-import VectorTileLayer from 'ol/layer/VectorTile';
-import VectorTileSource from 'ol/source/VectorTile';
-import MVT from 'ol/format/MVT';
-import { applyStyle } from 'ol-mapbox-style';
+<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
 
+&lt;!-- Wichtig: zusaetzlich ol-mapbox-style noetig --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/ol-mapbox-style@12.3.4/dist/olms.js"&gt;&lt;/script&gt;
+&lt;script&gt;
 // Stil aus MapLibre/Mapbox Style JSON übernehmen:
 const layer = new ol.layer.VectorTile({});
-applyStyle(
+olms.applyStyle(
     layer,
     'https://tiles.openfreemap.org/styles/liberty',
     { resolutions: view.getResolutions() }
@@ -519,7 +531,8 @@ const map = new ol.Map({
         center: ol.proj.fromLonLat([11.576, 48.137]),
         zoom: 12
     })
-});</code></pre>
+});
+&lt;/script&gt;</code></pre>
                     </div>
                 </div>
             </div>
@@ -534,7 +547,10 @@ const map = new ol.Map({
                         </p>
                     </div>
                     <div class="col-md-6">
-<pre class="geo-demo-code"><code class="language-javascript">// WMS-Layer (z.B. GeoServer, QGIS Server, GeoPortal)
+<pre class="geo-demo-code"><code class="language-html">&lt;div id="map" style="height: 400px;"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// WMS-Layer (z.B. GeoServer, QGIS Server, GeoPortal)
 const map = new ol.Map({
     target: 'map',
     layers: [
@@ -555,7 +571,8 @@ const map = new ol.Map({
         center: ol.proj.fromLonLat([11.576, 48.137]),
         zoom: 12
     })
-});</code></pre>
+});
+&lt;/script&gt;</code></pre>
                     </div>
                 </div>
             </div>
