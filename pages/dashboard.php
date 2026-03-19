@@ -111,77 +111,6 @@ $existingUrls = array_column($sql->getArray(), 'url');
         </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- SCHNELLSTART: LAYER-PRESETS -->
-    <!-- ============================================================ -->
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title"><i class="fa fa-bolt"></i> <?= rex_i18n::msg('geolocation_dashboard_presets_title') ?></h3>
-        </div>
-        <div class="panel-body">
-            <p class="text-muted"><?= rex_i18n::msg('geolocation_dashboard_presets_info') ?></p>
-            
-            <div class="row geo-flex-row">
-                <?php foreach ($presets as $presetKey => $preset): ?>
-                <?php 
-                $alreadyExists = false;
-                $pUrlBase = str_replace('{apikey}', '', $preset['url']);
-                foreach ($existingUrls as $eu) {
-                    if (str_starts_with($eu, $pUrlBase)) {
-                        $alreadyExists = true;
-                        break;
-                    }
-                }
-                ?>
-                <div class="col-sm-6 col-md-4" style="margin-bottom:16px">
-                    <div class="panel panel-<?= $alreadyExists ? 'success' : 'default' ?>" style="margin:0;height:100%">
-                        <div class="panel-body geo-preset-body">
-                            <h4 style="margin-top:0">
-                                <?php if ($preset['free']): ?>
-                                    <span class="label label-success" style="font-size:10px;vertical-align:middle">FREE</span>
-                                <?php else: ?>
-                                    <span class="label label-warning" style="font-size:10px;vertical-align:middle">API-KEY</span>
-                                <?php endif; ?>
-                                <?= rex_escape($preset['title']) ?>
-                            </h4>
-                            <p class="text-muted" style="font-size:12px;min-height:36px"><?= rex_escape($preset['description']) ?></p>
-                            <div class="geo-preset-action">
-                            <?php if ($alreadyExists): ?>
-                                <span class="text-success"><i class="fa fa-check"></i> <?= rex_i18n::msg('geolocation_dashboard_preset_exists') ?></span>
-                            <?php elseif ($preset['requires_key']): ?>
-                                <form method="post" action="<?= rex_url::backendController(['page' => 'geolocation/dashboard', 'rex-api-call' => 'geolocation_add_preset']) ?>">
-                                    <?= rex_csrf_token::factory('geolocation_add_preset')->getHiddenField() ?>
-                                    <input type="hidden" name="preset" value="<?= rex_escape($presetKey) ?>">
-                                    <div class="input-group input-group-sm" style="margin-bottom:4px">
-                                        <input type="text" name="api_key" class="form-control" placeholder="<?= rex_i18n::msg('geolocation_dashboard_enter_apikey') ?>">
-                                        <span class="input-group-btn">
-                                            <button type="submit" class="btn btn-primary btn-sm">
-                                                <i class="fa fa-plus"></i> <?= rex_i18n::msg('geolocation_dashboard_preset_add') ?>
-                                            </button>
-                                        </span>
-                                    </div>
-                                    <div style="font-size:11px;color:#777;margin-bottom:8px;">
-                                        <i class="fa fa-info-circle"></i> Kommerzieller Dienst, es können ggf. Kosten anfallen.
-                                    </div>
-                                </form>
-                                <a href="<?= rex_escape($preset['key_url'] ?? '#') ?>" target="_blank" rel="noopener" class="text-muted" style="font-size:11px">
-                                    <i class="fa fa-external-link"></i> <?= rex_i18n::msg('geolocation_dashboard_get_apikey') ?>
-                                </a>
-                            <?php else: ?>
-                                <form method="post" action="<?= rex_url::backendController(['page' => 'geolocation/dashboard', 'rex-api-call' => 'geolocation_add_preset']) ?>">
-                                    <?= rex_csrf_token::factory('geolocation_add_preset')->getHiddenField() ?>
-                                    <input type="hidden" name="preset" value="<?= rex_escape($presetKey) ?>">
-                                    <button type="submit" class="btn btn-primary btn-sm">
-                                        <i class="fa fa-plus"></i> <?= rex_i18n::msg('geolocation_dashboard_preset_add') ?>
-                                    </button>
-                                </form>
-                            <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <?php endforeach; ?>
-
 <!-- ============================================================ -->
     <!-- TILE PROXY NUTZEN -->
     <!-- ============================================================ -->
@@ -189,7 +118,7 @@ $existingUrls = array_column($sql->getArray(), 'url');
         <div class="panel-heading">
             <h3 class="panel-title">
                 <i class="fa fa-route"></i> <?= rex_i18n::msg('geolocation_dashboard_proxy_title') ?>
-                <a href="<?= rex_url::backendPage('geolocation/demo') ?>" class="btn btn-xs btn-primary pull-right">
+                <a href="<?= rex_url::backendPage('geolocation/manual/demo') ?>" class="btn btn-xs btn-primary pull-right">
                     <i class="fa fa-play-circle"></i> Demo ansehen
                 </a>
             </h3>
@@ -248,11 +177,91 @@ $existingUrls = array_column($sql->getArray(), 'url');
         </div>
     </div>
 
+
+<div class="row">
+    <div class="col-md-7">
+    <!-- ============================================================ -->
+    <!-- SCHNELLSTART: LAYER-PRESETS -->
+    <!-- ============================================================ -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-bolt"></i> <?= rex_i18n::msg('geolocation_dashboard_presets_title') ?></h3>
+        </div>
+        <div class="panel-body">
+            <p class="text-muted"><?= rex_i18n::msg('geolocation_dashboard_presets_info') ?></p>
+            
+            <div class="row geo-flex-row">
+                <?php foreach ($presets as $presetKey => $preset): ?>
+                <?php 
+                $alreadyExists = false;
+                $pUrlBase = str_replace('{apikey}', '', $preset['url']);
+                foreach ($existingUrls as $eu) {
+                    if (str_starts_with($eu, $pUrlBase)) {
+                        $alreadyExists = true;
+                        break;
+                    }
+                }
+                ?>
+                <div class="col-sm-6 col-md-6" style="margin-bottom:16px">
+                    <div class="panel panel-<?= $alreadyExists ? 'success' : 'default' ?>" style="margin:0;height:100%">
+                        <div class="panel-body geo-preset-body">
+                            <h4 style="margin-top:0">
+                                <?php if ($preset['free']): ?>
+                                    <span class="label label-success" style="font-size:10px;vertical-align:middle">FREE</span>
+                                <?php else: ?>
+                                    <span class="label label-warning" style="font-size:10px;vertical-align:middle">API-KEY</span>
+                                <?php endif; ?>
+                                <?= rex_escape($preset['title']) ?>
+                            </h4>
+                            <p class="text-muted" style="font-size:12px;min-height:36px"><?= rex_escape($preset['description']) ?></p>
+                            <div class="geo-preset-action">
+                            <?php if ($alreadyExists): ?>
+                                <span class="text-success"><i class="fa fa-check"></i> <?= rex_i18n::msg('geolocation_dashboard_preset_exists') ?></span>
+                            <?php elseif ($preset['requires_key']): ?>
+                                <form method="post" action="<?= rex_url::backendController(['page' => 'geolocation/dashboard', 'rex-api-call' => 'geolocation_add_preset']) ?>">
+                                    <?= rex_csrf_token::factory('geolocation_add_preset')->getHiddenField() ?>
+                                    <input type="hidden" name="preset" value="<?= rex_escape($presetKey) ?>">
+                                    <div class="input-group input-group-sm" style="margin-bottom:4px">
+                                        <input type="text" name="api_key" class="form-control" placeholder="<?= rex_i18n::msg('geolocation_dashboard_enter_apikey') ?>">
+                                        <span class="input-group-btn">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="fa fa-plus"></i> <?= rex_i18n::msg('geolocation_dashboard_preset_add') ?>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    <div style="font-size:11px;color:#777;margin-bottom:8px;">
+                                        <i class="fa fa-info-circle"></i> Kommerzieller Dienst, es können ggf. Kosten anfallen.
+                                    </div>
+                                </form>
+                                <a href="<?= rex_escape($preset['key_url'] ?? '#') ?>" target="_blank" rel="noopener" class="text-muted" style="font-size:11px">
+                                    <i class="fa fa-external-link"></i> <?= rex_i18n::msg('geolocation_dashboard_get_apikey') ?>
+                                </a>
+                            <?php else: ?>
+                                <form method="post" action="<?= rex_url::backendController(['page' => 'geolocation/dashboard', 'rex-api-call' => 'geolocation_add_preset']) ?>">
+                                    <?= rex_csrf_token::factory('geolocation_add_preset')->getHiddenField() ?>
+                                    <input type="hidden" name="preset" value="<?= rex_escape($presetKey) ?>">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fa fa-plus"></i> <?= rex_i18n::msg('geolocation_dashboard_preset_add') ?>
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+
+
+</div>
+</div>
+</div>
+    </div>
+    <div class="col-md-5">
     <!-- ============================================================ -->
     <!-- SCHNELLLINKS -->
     <!-- ============================================================ -->
-    <div class="row">
-        <div class="col-sm-6">
+    <div class="row" style="margin:0">
+        <div class="col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-heading"><h4 class="panel-title"><i class="fa fa-bolt"></i> <?= rex_i18n::msg('geolocation_dashboard_quicklinks') ?></h4></div>
                 <div class="list-group" style="border-radius:0 0 4px 4px">
@@ -287,7 +296,7 @@ $existingUrls = array_column($sql->getArray(), 'url');
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-heading"><h4 class="panel-title"><i class="fa fa-info-circle"></i> <?= rex_i18n::msg('geolocation_dashboard_info_title') ?></h4></div>
                 <div class="panel-body" style="font-size:13px">
@@ -303,6 +312,8 @@ $existingUrls = array_column($sql->getArray(), 'url');
             </div>
         </div>
     </div>
+    </div>
+</div>
 
 </div><!-- .geolocation-dashboard -->
 
