@@ -26,6 +26,7 @@ geolocation_demo_vector_note = Voraussetzung
 geolocation_demo_vector_style = Kartenstil waehlen
 geolocation_demo_proxy_title = Wie der Proxy funktioniert
 geolocation_demo_proxy_how = Ablauf eines Tile-Requests
+geolocation_demo_click_to_activate = Klicken zum Aktivieren
 
 geolocation_dashboard = Dashboard
 geolocation_dashboard_stat_layer = Layer (aktiv / gesamt)

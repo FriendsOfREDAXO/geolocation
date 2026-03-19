@@ -124,7 +124,7 @@
         }
 
         var layer = rasterLayers[0];
-        var map = L.map(el, { gestureHandling: true }).setView(center, defaultZoom);
+        var map = L.map(el).setView(center, defaultZoom);
         buildLeafletTileLayer(layer, L).addTo(map);
         markLoaded(el);
     }
@@ -140,7 +140,7 @@
             return;
         }
 
-        var map = L.map(el, { gestureHandling: true }).setView(center, defaultZoom);
+        var map = L.map(el).setView(center, defaultZoom);
 
         if (rasterLayers.length > 0) {
             buildLeafletTileLayer(rasterLayers[0], L).addTo(map);
@@ -178,7 +178,7 @@
         }
         if (rasterLayers.length < 2) return;
 
-        var map = L.map(el, { gestureHandling: true }).setView(center, defaultZoom);
+        var map = L.map(el).setView(center, defaultZoom);
         var baseLayers = {};
 
         rasterLayers.forEach(function (layer, i) {
@@ -230,7 +230,6 @@
             bearing: -10,   // leichte Rotation für Tiefenwirkung
             attributionControl: true,
         });
-        vectorMapInstance.scrollZoom.disable();
 
         vectorMapInstance.addControl(new maplibregl.NavigationControl({ visualizePitch: true }));
         vectorMapInstance.addControl(new maplibregl.ScaleControl());
@@ -357,7 +356,6 @@
             }),
             controls: ol.control.defaults.defaults(),
         });
-        olMaps.raster.getInteractions().forEach(function(i){ if(i instanceof ol.interaction.MouseWheelZoom) i.setActive(false); });
 
         markLoaded(el);
         refreshOlMap(olMaps.raster);
@@ -435,7 +433,6 @@
             }),
             controls: ol.control.defaults.defaults(),
         });
-        olMaps.vector.getInteractions().forEach(function(i){ if(i instanceof ol.interaction.MouseWheelZoom) i.setActive(false); });
 
         markLoaded(el);
         refreshOlMap(olMaps.vector);
@@ -473,10 +470,74 @@
             }),
             controls: ol.control.defaults.defaults(),
         });
-        olMaps.wms.getInteractions().forEach(function(i){ if(i instanceof ol.interaction.MouseWheelZoom) i.setActive(false); });
 
         markLoaded(el);
         refreshOlMap(olMaps.wms);
+
+    // OVERLAY: Click to enable map interactions
+    window.setTimeout(function() {
+        document.querySelectorAll('.geo-demo-map').forEach(function(el) {
+            // Leaflet map? It uses its own proper gesture handling!
+            if(el.id && el.id.indexOf('leaflet') > -1) {
+                // we'll just reinject the gestureHandling on L.map instances here:
+                if(el._leaflet_id && window.L && window.L.Map) {
+                    var m = window.L.Map._instances[el._leaflet_id];
+                }
+                return;
+            }
+
+            var origHeight = el.style.height || '400px';
+            var wrapper = document.createElement('div');
+            wrapper.className = 'geo-demo-map-wrap';
+            wrapper.style.position = 'relative';
+            wrapper.style.height = origHeight;
+            wrapper.style.marginBottom = '24px';
+            
+            el.parentNode.insertBefore(wrapper, el);
+            wrapper.appendChild(el);
+            
+            el.style.height = '100%';
+            el.style.marginBottom = '0';
+
+            var overlay = document.createElement('div');
+            overlay.className = 'geo-demo-map-overlay';
+            overlay.style.position = 'absolute';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.background = 'rgba(0,0,0,0.1)';
+            overlay.style.cursor = 'pointer';
+            overlay.style.zIndex = '1000';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            
+            var text = document.createElement('div');
+            text.innerHTML = 'Klicken zum Aktivieren';
+            text.style.background = 'rgba(0,0,0,0.6)';
+            text.style.color = '#fff';
+            text.style.padding = '8px 16px';
+            text.style.borderRadius = '4px';
+            text.style.fontFamily = 'sans-serif';
+            text.style.opacity = '0';
+            text.style.transition = 'opacity 0.3s';
+            overlay.appendChild(text);
+
+            wrapper.appendChild(overlay);
+
+            wrapper.addEventListener('mouseenter', function() { text.style.opacity = '1'; });
+            wrapper.addEventListener('mouseleave', function() { 
+                text.style.opacity = '0'; 
+                overlay.style.pointerEvents = 'auto'; // enable overlay back
+            });
+            overlay.addEventListener('click', function(e) {
+                overlay.style.pointerEvents = 'none'; // pass through
+                text.style.opacity = '0';
+            });
+        });
+    }, 500); // init slightly after
+
     }
 
     // OpenLayers-Tabs: erst beim Tab-Klick initialisieren (Lazy)
@@ -571,6 +632,67 @@
         safeRun(initStyleSwitcher, 'geo-demo-vector');
         safeRun(initOlLazy, 'geo-demo-ol-raster');
         safeRun(initCopyButtons, 'geo-demo-root');
+
+        // OVERLAY: Click to enable map interactions
+        window.setTimeout(function() {
+            document.querySelectorAll('.geo-demo-map').forEach(function(el) {
+                // Leaflet map? It uses its own proper gesture handling!
+                if(el.id && el.id.indexOf('leaflet') > -1) {
+                    return;
+                }
+
+                var origHeight = el.style.height || '400px';
+                var wrapper = document.createElement('div');
+                wrapper.className = 'geo-demo-map-wrap';
+                wrapper.style.position = 'relative';
+                wrapper.style.height = origHeight;
+                wrapper.style.marginBottom = '24px';
+                
+                el.parentNode.insertBefore(wrapper, el);
+                wrapper.appendChild(el);
+                
+                el.style.height = '100%';
+                el.style.marginBottom = '0';
+
+                var overlay = document.createElement('div');
+                overlay.className = 'geo-demo-map-overlay';
+                overlay.style.position = 'absolute';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.background = 'rgba(0,0,0,0.1)';
+                overlay.style.cursor = 'pointer';
+                overlay.style.zIndex = '1000';
+                overlay.style.display = 'flex';
+                overlay.style.alignItems = 'center';
+                overlay.style.justifyContent = 'center';
+                
+                var text = document.createElement('div');
+                var label = (cfg.i18n && cfg.i18n.clickToActivate) ? cfg.i18n.clickToActivate : 'Klicken zum Aktivieren';
+                text.innerHTML = label;
+                text.style.background = 'rgba(0,0,0,0.6)';
+                text.style.color = '#fff';
+                text.style.padding = '8px 16px';
+                text.style.borderRadius = '4px';
+                text.style.fontFamily = 'sans-serif';
+                text.style.opacity = '0';
+                text.style.transition = 'opacity 0.3s';
+                overlay.appendChild(text);
+
+                wrapper.appendChild(overlay);
+
+                wrapper.addEventListener('mouseenter', function() { text.style.opacity = '1'; });
+                wrapper.addEventListener('mouseleave', function() { 
+                    text.style.opacity = '0'; 
+                    overlay.style.pointerEvents = 'auto'; // enable overlay back
+                });
+                overlay.addEventListener('click', function(e) {
+                    overlay.style.pointerEvents = 'none'; // pass through
+                    text.style.opacity = '0';
+                });
+            });
+        }, 500);
     }
 
     if (document.readyState === 'loading') {

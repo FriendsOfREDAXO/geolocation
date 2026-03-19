@@ -77,6 +77,9 @@ $demoConfig = [
     'vectorLayers' => $vectorLayers,
     'center'       => [48.137, 11.576],  // München
     'zoom'         => 12,
+    'i18n'         => [
+        'clickToActivate' => rex_i18n::msg('geolocation_demo_click_to_activate'),
+    ],
 ];
 
 // Proxy-URL für Beispielcode (ersten Raster-Layer nehmen, Fallback OSM)

@@ -8,7 +8,6 @@ namespace FriendsOfRedaxo\Geolocation;
 
 use rex;
 use rex_addon;
-use rex_api_function;
 use rex_config;
 use rex_csrf_token;
 use rex_fragment;
@@ -226,7 +225,7 @@ $existingUrls = array_column($sql->getArray(), 'url');
                 <br>
                 <code>https://tile.example.org/{z}/{x}/{y}.png</code>
                 &rarr;
-                <code><?= rex_escape($proxyBase) ?>&amp;geolayer=<strong>ID</strong>&amp;z={z}&amp;x={x}&amp;y={y}</code>
+                <code><?= rex_escape($proxyBase) ?>?geolayer=<strong>ID</strong>&amp;z={z}&amp;x={x}&amp;y={y}</code>
             </div>
             <?php endif; ?>
         </div>
@@ -256,7 +255,7 @@ $existingUrls = array_column($sql->getArray(), 'url');
                 <li role="presentation"><a href="#geo-tab-html" role="tab" data-toggle="tab">HTML</a></li>
                 <li role="presentation"><a href="#geo-tab-marker" role="tab" data-toggle="tab">PHP + Marker</a></li>
             </ul>
-            <div class="tab-content" style="border:1px solid #ddd;border-top:0;padding:16px;background:#f9f9f9">
+            <div class="tab-content geo-tab-content">
                 <div role="tabpanel" class="tab-pane active" id="geo-tab-php">
 <pre class="geo-code-block"><code>&lt;?php
 use FriendsOfRedaxo\Geolocation\Mapset;
@@ -364,15 +363,61 @@ echo \FriendsOfRedaxo\Geolocation\Mapset::take('<?= rex_escape($exampleMapset['n
 .geo-stat-label { color: #888; font-size: 12px; margin-top: 4px; }
 .geo-code-block { margin: 0; border-radius: 0; background: #f4f4f4; border: 0; }
 .geo-proxy-url { display: inline-block; max-width: 100%; }
+.geo-tab-content { border: 1px solid #ddd; border-top: 0; padding: 16px; background: #f9f9f9; }
 
 body.rex-theme-dark .geo-code-block {
-    background: #1e1e1e;
+    background: #121212;
     color: #d4d4d4;
 }
+body.rex-theme-dark .geo-tab-content {
+    border-color: #333;
+    background: #202020;
+}
+body.rex-theme-dark #geo-embed-tabs {
+    border-bottom-color: #333;
+}
+body.rex-theme-dark #geo-embed-tabs > li.active > a,
+body.rex-theme-dark #geo-embed-tabs > li.active > a:focus,
+body.rex-theme-dark #geo-embed-tabs > li.active > a:hover {
+    background-color: #202020;
+    border-color: #333 #333 transparent;
+    color: #fff;
+}
+body.rex-theme-dark #geo-embed-tabs > li > a:not(.active):hover {
+    border-color: #333;
+    background-color: #2d2d2d;
+    color: #fff;
+}
+body.rex-theme-dark #geo-embed-tabs > li > a {
+    color: #999;
+}
+
 @media (prefers-color-scheme: dark) {
     body.rex-has-theme:not(.rex-theme-light) .geo-code-block {
-        background: #1e1e1e;
+        background: #121212;
         color: #d4d4d4;
+    }
+    body.rex-has-theme:not(.rex-theme-light) .geo-tab-content {
+        border-color: #333;
+        background: #202020;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-embed-tabs {
+        border-bottom-color: #333;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-embed-tabs > li.active > a,
+    body.rex-has-theme:not(.rex-theme-light) #geo-embed-tabs > li.active > a:focus,
+    body.rex-has-theme:not(.rex-theme-light) #geo-embed-tabs > li.active > a:hover {
+        background-color: #202020;
+        border-color: #333 #333 transparent;
+        color: #fff;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-embed-tabs > li > a:not(.active):hover {
+        border-color: #333;
+        background-color: #2d2d2d;
+        color: #fff;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-embed-tabs > li > a {
+        color: #999;
     }
 }
 </style>
