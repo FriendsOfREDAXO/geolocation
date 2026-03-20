@@ -121,7 +121,18 @@ class Layer extends rex_yform_manager_dataset
         'octet-stream'           => 'application/octet-stream',
     ];
 
-    
+    /**
+     * Erkannte URL-Muster für Vector Tiles (Regex-Fragmente).
+     *
+     * @var list<string>
+     */
+    private const VECTOR_URL_PATTERNS = [
+        '/\.pbf/i',
+        '/\.mvt/i',
+        '/protobuf/i',
+        '/vector-tile/i',
+    ];
+
     // dataset-spezifisch
 
     /**
