@@ -349,6 +349,70 @@ try {
 
     // Ergebnis übermitteln
     $this->setProperty('successmsg', '<ul><li>' . implode('</li><li>', $msg) . '</li></ul>');
+
+    // HERE Maps Update v2 -> v3
+    if (rex_addon::get('geolocation')->isInstalled() && rex_sql_table::get(rex::getTablePrefix() . 'geolocation_layer')->exists()) {
+        $sql = rex_sql::factory();
+        $sql->setQuery('SELECT id, name, url FROM ' . rex::getTablePrefix() . 'geolocation_layer WHERE url LIKE "%ls.hereapi.com%" OR name LIKE "Neptune HERE%" OR name LIKE "HERE:%"');
+        
+        if ($sql->getRows() > 0) {
+            $updated = [];
+            $ids = [];
+            foreach ($sql as $row) {
+                $id = (int) $row->getValue('id');
+                $name = $row->getValue('name');
+                $oldUrl = $row->getValue('url');
+                
+                // Extrahieren des API Keys
+                $apiKey = '..........';
+                if (preg_match('/[?&]apiKey=([^&]+)/', $oldUrl, $matches)) {
+                    $apiKey = $matches[1];
+                } elseif (preg_match('/[?&]app_id=([^&]+)&app_code=([^&]+)/', $oldUrl, $matches)) {
+                    $apiKey = '..........';
+                }
+
+                if (str_contains(strtolower($name), 'hybrid') || str_contains($oldUrl, 'hybrid.day')) {
+                    $newUrl = 'https://maps.hereapi.com/v3/base/mc/{z}/{x}/{y}/jpeg?style=explore.satellite.day&apiKey=' . $apiKey;
+                    $newRetinaUrl = 'https://maps.hereapi.com/v3/base/mc/{z}/{x}/{y}/jpeg?style=explore.satellite.day&size=512&ppi=400&apiKey=' . $apiKey;
+                    $newName = 'HERE: Hybrid (Karte+Satellit)';
+                } elseif (str_contains(strtolower($name), 'satel') || str_contains($oldUrl, 'satellite.day')) {
+                    $newUrl = 'https://maps.hereapi.com/v3/base/mc/{z}/{x}/{y}/jpeg?style=satellite.day&apiKey=' . $apiKey;
+                    $newRetinaUrl = 'https://maps.hereapi.com/v3/base/mc/{z}/{x}/{y}/jpeg?style=satellite.day&size=512&ppi=400&apiKey=' . $apiKey;
+                    $newName = 'HERE: Satellit';
+                } else {
+                    $newUrl = 'https://maps.hereapi.com/v3/base/mc/{z}/{x}/{y}/png8?style=explore.day&apiKey=' . $apiKey;
+                    $newRetinaUrl = 'https://maps.hereapi.com/v3/base/mc/{z}/{x}/{y}/png8?style=explore.day&size=512&ppi=400&apiKey=' . $apiKey;
+                    $newName = 'HERE: Standardkarte';
+                }
+
+                $updateSql = rex_sql::factory();
+                $updateSql->setTable(rex::getTablePrefix() . 'geolocation_layer');
+                $updateSql->setWhere(['id' => $id]);
+                $updateSql->setValue('name', $newName);
+                $updateSql->setValue('url', $newUrl);
+                $updateSql->setValue('subdomain', '');
+                $updateSql->setValue('retinaurl', $newRetinaUrl);
+                $updateSql->setValue('attribution', 'Map Tiles &copy; <a href="https://legal.here.com/terms/serviceterms" target="_blank">HERE</a>');
+                $updateSql->update();
+
+                $updated[] = $newName;
+                $ids[] = $id;
+            }
+            
+            foreach ($ids as $id) {
+                \FriendsOfRedaxo\Geolocation\Cache::clearLayerCache($id);
+            }
+            if (class_exists(\rex_yform_manager_table::class)) {
+                \rex_yform_manager_table::deleteCache();
+            }
+            
+            $msg = $this->getProperty('successmsg', '');
+            if ($msg !== '') $msg .= '<br><br>';
+            $msg .= '<strong>HERE Maps Update-Hinweis:</strong> Die installierten HERE Maps Layer ('.implode(', ', array_unique($updated)).') wurden auf die neue Raster Tile API v3 aktualisiert (Die API-Keys blieben erhalten).';
+            $this->setProperty('successmsg', $msg);
+        }
+    }
+
 } catch (InstallException $e) {
     $this->setProperty('installmsg', $e->getMessage());
 } catch (Exception $e) {
