@@ -144,6 +144,13 @@ class rex_api_geolocation_testurl extends rex_api_function
                 rex_i18n::msg($i18n, self::$tileTestData['{s}'], $subDomain),
                 '<img src="data:' . $result['type'] . ';base64,' . base64_encode($result['content']) . '" />',
             );
+        } elseif ('200' === $result['rc'] && (str_starts_with($result['type'], 'application/x-protobuf') || str_starts_with($result['type'], 'application/vnd.mapbox-vector-tile'))) {
+            $i18n = '' === self::$tileTestData['{s}'] ? 'geolocation_testurl_layer1ok' : 'geolocation_testurl_layer2ok';
+            $this->sendResponseAndExit(
+                $result['rc'],
+                rex_i18n::msg($i18n, self::$tileTestData['{s}'], $subDomain),
+                '<div style="font-family: monospace; padding: 1em; background: rgba(0,0,0,0.05);">' . rex_i18n::msg('geolocation_testurl_vector_ok') . '<br><small>MIME: ' . rex_escape($result['type']) . '</small></div>',
+            );
         } else {
             $this->sendResponseAndExit(
                 $result['rc'],

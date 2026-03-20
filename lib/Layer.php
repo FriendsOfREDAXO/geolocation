@@ -102,6 +102,60 @@ class Layer extends rex_yform_manager_dataset
      */
     public const FILE_PATTERN = '{x}-{y}-{z}-{r}.{suffix}';
 
+    /**
+     * Mapping von Dateiendungen auf MIME-Typen für gecachte Tiles.
+     * Deckt Raster- und Vektor-Tile-Formate ab.
+     *
+     * @var array<string, string>
+     */
+    private const MIME_TYPES = [
+        'png'                    => 'image/png',
+        'jpg'                    => 'image/jpeg',
+        'jpeg'                   => 'image/jpeg',
+        'webp'                   => 'image/webp',
+        'gif'                    => 'image/gif',
+        'pbf'                    => 'application/x-protobuf',
+        'mvt'                    => 'application/vnd.mapbox-vector-tile',
+        'x-protobuf'             => 'application/x-protobuf',
+        'vnd.mapbox-vector-tile' => 'application/vnd.mapbox-vector-tile',
+        'octet-stream'           => 'application/octet-stream',
+    ];
+
+    /**
+     * Erkannte URL-Muster für Vector Tiles (Regex-Fragmente).
+     *
+     * @var list<string>
+     */
+    private const VECTOR_URL_PATTERNS = [
+        '/\.pbf/i',
+        '/\.mvt/i',
+        '/protobuf/i',
+        '/vector-tile/i',
+    ];
+
+    /**
+     * Leitet aus dem MIME-Typ eine Dateiendung für den Cache ab.
+     */
+    private static function getCacheSuffixFromContentType(string $contentType): string
+    {
+        $contentType = strtolower(trim($contentType));
+        if ('' === $contentType) {
+            return 'bin';
+        }
+
+        $suffix = array_search($contentType, self::MIME_TYPES, true);
+        if (false !== $suffix) {
+            return $suffix;
+        }
+
+        $slashPos = strrpos($contentType, '/');
+        if (false === $slashPos) {
+            return 'bin';
+        }
+
+        return substr($contentType, $slashPos + 1);
+    }
+
     // dataset-spezifisch
 
     /**
@@ -533,7 +587,8 @@ class Layer extends rex_yform_manager_dataset
 
             // Tile-File exists; send to the requestor
             if (null !== $cacheFileName) {
-                $contentType = 'image/' . pathinfo($cacheFileName, PATHINFO_EXTENSION);
+                $ext = pathinfo($cacheFileName, PATHINFO_EXTENSION);
+                $contentType = self::MIME_TYPES[$ext] ?? 'image/' . $ext;
                 $cache->sendCacheFile($cacheFileName, $contentType, $ttl);
             }
         }
@@ -579,7 +634,7 @@ class Layer extends rex_yform_manager_dataset
         // prepare cache-filename according to the content_type
         // and write the content into the cache-file
         if (0 < $ttl) {
-            $fileNameElements['{suffix}'] = substr($contentType, ((int) strrpos($contentType, '/')) + 1);
+            $fileNameElements['{suffix}'] = self::getCacheSuffixFromContentType($contentType);
             $cacheFile = str_replace(array_keys($fileNameElements), $fileNameElements, self::FILE_PATTERN);
             $cacheFileName = $cacheDir . $cacheFile;
             rex_file::put($cacheFileName, $content);

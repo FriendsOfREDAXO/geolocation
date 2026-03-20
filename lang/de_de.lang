@@ -134,6 +134,7 @@ geolocation_testurl_title = Testabruf der URL
 geolocation_testurl_internalerror = Interner Fehler im Abruf der URL-Überprüfung ({0})
 geolocation_testurl_layer1ok = Url erfolgreich getestet!
 geolocation_testurl_layer2ok = Url mit SubDomain "{0}" aus "{1}" erfolgreich getestet!
+geolocation_testurl_vector_ok = ✔ Vektor-Tile empfangen (Datenpaket; keine Vorschau möglich)
 geolocation_testurl_providererror = Unerwartete Antwort vom Layer-Server
 
 # geolocation_layserselect (yform-value, widget)

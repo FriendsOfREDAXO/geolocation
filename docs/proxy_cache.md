@@ -26,6 +26,7 @@ zwischenzuspeichern (Cache).
 - [Der Proxy-Server](#proxy)
 - [Caching](#cache)
 - [Cache-Cronjob](#cron)
+- [Unterstützung für Vektor-Tiles](#vector)
 
 Zusätzlich kann Geocoding (Koordinaten über eine Adresse suchen) über die Proxy-Funktion der
 REDAXO-Instanz durchgeführt werden:
@@ -176,6 +177,23 @@ Der Cronjob wird automatisch mit folgenden Parametern installiert:
 Umkonfigurieren des Cronjobs ist möglich; die Daten werden beim Re-Installieren **nicht**
 überschrieben. Wurde der Cronjob umbenannt oder gelöscht, wird beim Re-Installieren der
 Cronjob `Geolocation: Cleanup Cache` neu angelegt.
+
+<a name="vector"></a>
+## Unterstützung für Vektor-Tiles
+
+Der Proxy im REDAXO-System unterstützt nicht nur herkömmliche Bildformate (Raster-Tiles wie PNG, JPEG) für Kartenkacheln, sondern auch **Vektor-Tiles** (formatiert als Protobuf/MVT). 
+Das bedeutet, der Proxy holt sich die Vektordaten, cacht diese regulär (unter Berücksichtigung des passenden MIME-Types `application/x-protobuf` bzw. `application/vnd.mapbox-vector-tile`) und liefert sie konsistent aus.
+
+Vektor-Kacheln enthalten Rohdaten statt fertiger Bildpunkte und erlauben das stufenlose Zoomen, Drehen und Client-seitige Styling per JavaScript (z.B. mittels MapLibre GL JS oder Leaflet-Plugins).
+
+Typische Anbieter von Vektor-Tiles sind z.B.:
+- [MapTiler](https://www.maptiler.com/)
+- [StadiaMaps](https://stadiamaps.com/)
+- [Mapbox](https://www.mapbox.com/)
+- [Protomaps](https://protomaps.com/)
+- [OpenMapTiles](https://openmaptiles.org/)
+
+Die Einbindung in Geolocation erfolgt identisch wie bei Raster-Tiles über die Verwaltung (siehe [Verwaltung der Karten](layer.md)). Erkennt das System eine typische Vektor-Dateiendung in der URL (`.pbf`, `.mvt`), werden die Ausgabekopfzeilen für den Client entsprechend angepasst.
 
 Die bei der Installation benutzen Job-Parameter können mit Instanz-individuellen
 [Systemparametern](install.md#parameter) überschrieben werden.
