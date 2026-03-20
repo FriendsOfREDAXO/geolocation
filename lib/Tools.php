@@ -57,7 +57,36 @@ class Tools
     {
         $HTTP_REFERER = rex_request::server('HTTP_REFERER', 'string', '');
         $HTTP_HOST = rex_request::server('HTTP_HOST', 'string', '');
-        if (parse_url($HTTP_REFERER, PHP_URL_HOST) !== $HTTP_HOST) {
+        $HTTP_ORIGIN = rex_request::server('HTTP_ORIGIN', 'string', '');
+        $SEC_FETCH_SITE = rex_request::server('HTTP_SEC_FETCH_SITE', 'string', '');
+
+        if ('' !== $SEC_FETCH_SITE) {
+            if ('cross-site' === $SEC_FETCH_SITE) {
+                rex_response::cleanOutputBuffers();
+                rex_response::setStatus(rex_response::HTTP_SERVICE_UNAVAILABLE);
+                rex_response::sendContent(rex_response::HTTP_SERVICE_UNAVAILABLE);
+                exit;
+            }
+            return;
+        }
+
+        if ('' === $HTTP_REFERER && '' !== $HTTP_ORIGIN) {
+            $HTTP_REFERER = $HTTP_ORIGIN;
+        }
+
+        // Bei fehlendem Referer nicht hart blockieren (z.B. strikte Referrer-Policies).
+        if ('' === $HTTP_REFERER) {
+            return;
+        }
+
+        $refererHost = strtolower((string) parse_url($HTTP_REFERER, PHP_URL_HOST));
+        $requestHost = strtolower((string) parse_url('http://' . $HTTP_HOST, PHP_URL_HOST));
+
+        if ('' === $requestHost) {
+            $requestHost = strtolower((string) preg_replace('/:\\d+$/', '', $HTTP_HOST));
+        }
+
+        if ($refererHost !== $requestHost) {
             rex_response::cleanOutputBuffers();
             rex_response::setStatus(rex_response::HTTP_SERVICE_UNAVAILABLE);
             rex_response::sendContent(rex_response::HTTP_SERVICE_UNAVAILABLE);
@@ -98,6 +127,22 @@ class Tools
     }
 
     /**
+     * schickt HTTP_BAD_REQUEST.
+     *
+     * ... und bricht dann mit HTTP_BAD_REQUEST hart ab.
+     *
+     * @api
+     * @return never
+     */
+    public static function sendBadRequest(): void
+    {
+        rex_response::cleanOutputBuffers();
+        rex_response::setStatus(rex_response::HTTP_BAD_REQUEST);
+        rex_response::sendContent(rex_response::HTTP_BAD_REQUEST);
+        exit;
+    }
+
+    /**
      * schickt eine Kartenkachel Tile an den Client.
      *
      * aus $timestamp und $ttl wird deren Header-Daten (Expires, Cache-Control)
@@ -107,12 +152,12 @@ class Tools
      * @api
      * @return never
      */
-    public static function sendTile(string $tileFileName, string $contentType, int $timestamp, int $ttl): void
+    public static function sendTile(string $tileFileName, string $contentType, int $timestamp, int $ttlSeconds): void
     {
-        $time2elapse = $timestamp + ($ttl * 60);
+        $time2elapse = $timestamp + $ttlSeconds;
         rex_response::cleanOutputBuffers();
         rex_response::setHeader('Expires', gmdate('D, d M Y H:i:s', $time2elapse) . ' GMT');
-        rex_response::sendCacheControl('public, max-age=' . $ttl * 60);
+        rex_response::sendCacheControl('public, max-age=' . $ttlSeconds);
         rex_response::sendContent($tileFileName, $contentType, $timestamp);
         exit;
     }

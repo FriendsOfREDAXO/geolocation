@@ -102,6 +102,26 @@ class Layer extends rex_yform_manager_dataset
      */
     public const FILE_PATTERN = '{x}-{y}-{z}-{r}.{suffix}';
 
+    /**
+     * Mapping von Dateiendungen auf MIME-Typen für gecachte Tiles.
+     * Deckt Raster- und Vektor-Tile-Formate ab.
+     *
+     * @var array<string, string>
+     */
+    private const MIME_TYPES = [
+        'png'                    => 'image/png',
+        'jpg'                    => 'image/jpeg',
+        'jpeg'                   => 'image/jpeg',
+        'webp'                   => 'image/webp',
+        'gif'                    => 'image/gif',
+        'pbf'                    => 'application/x-protobuf',
+        'mvt'                    => 'application/vnd.mapbox-vector-tile',
+        'x-protobuf'             => 'application/x-protobuf',
+        'vnd.mapbox-vector-tile' => 'application/vnd.mapbox-vector-tile',
+        'octet-stream'           => 'application/octet-stream',
+    ];
+
+    
     // dataset-spezifisch
 
     /**
@@ -503,38 +523,40 @@ class Layer extends rex_yform_manager_dataset
             $fileNameElements['{s}'] = $subdomain;
         }
         $column = rex_request('x', 'integer', null);
-        if (null !== $column) {
-            $fileNameElements['{x}'] = $column;
+        if (null === $column || 0 > $column) {
+            Tools::sendBadRequest();
         }
+        $fileNameElements['{x}'] = $column;
         $row = rex_request('y', 'integer', null);
-        if (null !== $row) {
-            $fileNameElements['{y}'] = $row;
+        if (null === $row || 0 > $row) {
+            Tools::sendBadRequest();
         }
+        $fileNameElements['{y}'] = $row;
         $zoom = rex_request('z', 'integer', null);
-        if (null !== $zoom) {
-            $fileNameElements['{z}'] = $zoom;
+        if (null === $zoom || 0 > $zoom) {
+            Tools::sendBadRequest();
         }
+        $fileNameElements['{z}'] = $zoom;
         $retina = rex_request('r', 'string', null);
-        if (null !== $retina) {
-            $fileNameElements['{r}'] = $retina;
-        }
+        $fileNameElements['{r}'] = null !== $retina ? $retina : '';
 
         // prepare targetCacheDir-Name
         $cacheDir = rex_path::addonCache(ADDON, $layer->getId() . '/');
         $cacheFileName = null;
         $contentType = null;
-        $ttl = $layer->ttl * 60;
+        $ttlSeconds = $layer->ttl * 60;
 
         // if cache then check for a matching tile-file in the cache-dir
-        if (0 < $ttl) {
+        if (0 < $ttlSeconds) {
             $fileNameElements['{suffix}'] = '*';
             $fileName = str_replace(array_keys($fileNameElements), $fileNameElements, self::FILE_PATTERN);
-            $cacheFileName = $cache->findCachedFile($cacheDir . $fileName, $ttl);
+            $cacheFileName = $cache->findCachedFile($cacheDir . $fileName, $ttlSeconds);
 
             // Tile-File exists; send to the requestor
             if (null !== $cacheFileName) {
-                $contentType = 'image/' . pathinfo($cacheFileName, PATHINFO_EXTENSION);
-                $cache->sendCacheFile($cacheFileName, $contentType, $ttl);
+                $ext = pathinfo($cacheFileName, PATHINFO_EXTENSION);
+                $contentType = self::MIME_TYPES[$ext] ?? 'image/' . $ext;
+                $cache->sendCacheFile($cacheFileName, $contentType, $ttlSeconds);
             }
         }
 
@@ -554,17 +576,24 @@ class Layer extends rex_yform_manager_dataset
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
         if (($proxy = rex_addon::get('geolocation')->getConfig('socket_proxy')) !== '') {
             curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }
         $content = (string) curl_exec($ch);
         $returnCode = (string) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-        $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        $contentType = trim((string) strtok((string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE), ';'));
+        $curlErrorNo = curl_errno($ch);
+        $curlError = curl_error($ch);
+
+        if ('0' === $returnCode) {
+            $msg = sprintf('Geolocation: Tile-Request failed (cUrl Error %d / %s)', $curlErrorNo, $curlError);
+            rex_logger::logError(E_WARNING, $msg, __FILE__, __LINE__ - 8, rex_context::fromGet()->getUrl([], false) . ' ➜ ' . $url);
+        }
 
         // no reply at all, abort completely
         if ('0' === $returnCode) {
-            $msg = sprintf('Geolocation: Tile-Request failed (cUrl Error %d / %s)', curl_errno($ch), curl_error($ch));
-            rex_logger::logError(E_WARNING, $msg, __FILE__, __LINE__ - 8, rex_context::fromGet()->getUrl([], false) . ' ➜ ' . $url);
             Tools::sendInternalError();
         }
 
@@ -578,16 +607,39 @@ class Layer extends rex_yform_manager_dataset
         // if cache:
         // prepare cache-filename according to the content_type
         // and write the content into the cache-file
-        if (0 < $ttl) {
-            $fileNameElements['{suffix}'] = substr($contentType, ((int) strrpos($contentType, '/')) + 1);
+        if (0 < $ttlSeconds) {
+            $fileNameElements['{suffix}'] = self::getCacheSuffixFromContentType($contentType);
             $cacheFile = str_replace(array_keys($fileNameElements), $fileNameElements, self::FILE_PATTERN);
             $cacheFileName = $cacheDir . $cacheFile;
             rex_file::put($cacheFileName, $content);
-            $cache->sendCacheFile($cacheFileName, $contentType, $ttl);
+            $cache->sendCacheFile($cacheFileName, $contentType, $ttlSeconds);
         }
 
         // send the received tile to the client and exit
-        Tools::sendTile($content, $contentType, time(), $ttl);
+        Tools::sendTile($content, $contentType, time(), $ttlSeconds);
+    }
+
+    /**
+     * Leitet aus dem MIME-Typ eine Dateiendung für den Cache ab.
+     */
+    private static function getCacheSuffixFromContentType(string $contentType): string
+    {
+        $contentType = strtolower(trim($contentType));
+        if ('' === $contentType) {
+            return 'bin';
+        }
+
+        $suffix = array_search($contentType, self::MIME_TYPES, true);
+        if (false !== $suffix) {
+            return $suffix;
+        }
+
+        $slashPos = strrpos($contentType, '/');
+        if (false === $slashPos) {
+            return 'bin';
+        }
+
+        return substr($contentType, $slashPos + 1);
     }
 
     // Support
@@ -626,16 +678,34 @@ class Layer extends rex_yform_manager_dataset
      * (de, ... oder null = deault)
      *
      * @api
-     * @return array{layer:int,label:string,type:string,attribution:string}
+     * @return array{layer:int,label:string,type:string,attribution:string,source_type:string}
      */
     public function getLayerConfig(?string $clang): array
     {
         return [
-            'layer' => $this->getId(),
-            'label' => $this->getLabel($clang),
-            'type' => $this->layertype,
+            'layer'       => $this->getId(),
+            'label'       => $this->getLabel($clang),
+            'type'        => $this->layertype,
             'attribution' => $this->attribution,
+            'source_type' => $this->detectSourceType(),
         ];
+    }
+
+    /**
+     * Erkennt automatisch ob der Layer Raster- oder Vektor-Tiles liefert.
+     * Basis ist das URL-Muster; ohne explizites DB-Feld (rückwärtskompatibel).
+     *
+     * @return 'raster'|'vector'
+     */
+    public function detectSourceType(): string
+    {
+        $url = $this->url;
+        foreach (self::VECTOR_URL_PATTERNS as $pattern) {
+            if (1 === preg_match($pattern, $url)) {
+                return 'vector';
+            }
+        }
+        return 'raster';
     }
 
     /**

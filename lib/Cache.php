@@ -39,18 +39,18 @@ class Cache
      * @api
      * @return never
      */
-    public function sendCacheFile(string $filePath, string $contentType, int $ttl): void
+    public function sendCacheFile(string $filePath, string $contentType, int $ttlSeconds): void
     {
         $timestamp = filemtime($filePath);
         if (is_bool($timestamp)) {
             Tools::sendNotFound();
         }
 
-        $time2elapse = $timestamp + ($ttl * 60);
+        $time2elapse = $timestamp + $ttlSeconds;
 
         rex_response::cleanOutputBuffers();
         rex_response::setHeader('Expires', gmdate('D, d M Y H:i:s', $time2elapse) . ' GMT');
-        rex_response::sendCacheControl('public, max-age=' . $ttl * 60);
+        rex_response::sendCacheControl('public, max-age=' . $ttlSeconds);
         rex_response::sendFile($filePath, $contentType);
         exit;
     }
@@ -64,14 +64,14 @@ class Cache
      *
      * @api
      */
-    public function findCachedFile(string $filePath, int $ttl): ?string
+    public function findCachedFile(string $filePath, int $ttlSeconds): ?string
     {
         $files = glob($filePath, GLOB_NOSORT);
         if (!is_array($files)) {
             $files = [];
         }
         foreach ($files as $cacheFile) {
-            if ((time() - $ttl) > fileatime($cacheFile)) {
+            if ((time() - $ttlSeconds) > filemtime($cacheFile)) {
                 // delete cache-file if time-to-live is expired; forces update from tile-server
                 rex_file::delete($cacheFile);
                 return null;
@@ -171,8 +171,8 @@ class Cache
          * @var Layer $layer
          */
         foreach ($layers as $layer) {
-            $ttl = 0 < $layer->ttl ? $defTTL : $layer->ttl;
-            $threshold = 0 < $layer->cfmax ? $defMaxFiles : $layer->cfmax;
+            $ttl = 0 < $layer->ttl ? $layer->ttl : $defTTL;
+            $threshold = 0 < $layer->cfmax ? $layer->cfmax : $defMaxFiles;
             $msg[] = self::cleanupLayerCache($layer->getId(), $threshold, $ttl);
         }
 
@@ -194,7 +194,7 @@ class Cache
      */
     public static function cleanupLayerCache(int $layer = 0, int $threshold = CFM_DEF, int $ttl = TTL_DEF): string
     {
-        if (0 < $layer) {
+        if (0 >= $layer) {
             return rex_i18n::msg('geolocation_cron_error', $layer);
         }
 
@@ -203,8 +203,6 @@ class Cache
 
         $targetDir = rex_path::addonCache(ADDON, $layer . '/');
         $targetTime = time() - ($ttl * 60);
-        $timeString = date('Y-m-d G-H-s', $targetTime);
-
         $size = 0;
         $deleted = 0;
         $counter = 0;
