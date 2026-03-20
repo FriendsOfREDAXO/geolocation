@@ -17,12 +17,6 @@
  * Hier kein Namespace, da sonst die API-Klasse nicht gefunden wird.
  */
 
-use rex;
-use rex_api_function;
-use rex_i18n;
-use rex_request;
-use rex_response;
-
 class rex_api_geolocation_testurl extends rex_api_function
 {
     /**
@@ -200,7 +194,6 @@ class rex_api_geolocation_testurl extends rex_api_function
         $content = (string) curl_exec($ch);
         $returnCode = (string) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
         $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        curl_close($ch);
 
         // no reply at all, keine verwertbare Antwort
         if ('0' === $returnCode) {

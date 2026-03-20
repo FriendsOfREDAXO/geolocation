@@ -21,6 +21,7 @@ Die Installation erfolgt wie gewohnt im Backend der READXO-Instanz. Neben der Ba
 gibt es eine individualisierte Installation.
 
 - [Installation](#install)
+- [Demo und Frontend-Einbindung](#demo_frontend)
 - [Individualisierte Installation](#custom)
     - [Systemparameter anpassen (*config.yml*)](#parameter)
     - [Karten und Kartensätze vorbefüllen](#dataset)
@@ -58,6 +59,57 @@ Die Installation (I) bzw. Re-Installation (R) umfasst folgende Schritte
   Assets-Verzeichnis des Addons kopiert. 
 - Die **Geolocation**-spezifischen JS- und CSS-Dateien werden neu in das öffentliche
   Assets-Verzeichnis kompiliert (I|R).
+
+<a name="demo_frontend"></a>
+## Demo und Frontend-Einbindung
+
+Ab Version 2.6.0 gibt es im Backend die Seite `geolocation/demo` mit lauffaehigen Beispielen fuer
+Leaflet, MapLibre (WebGL) und OpenLayers.
+
+### Pflicht-Assets fuer Geolocation
+
+```htm
+<link rel="stylesheet" href="/assets/addons/geolocation/geolocation.min.css">
+<script src="/assets/addons/geolocation/geolocation.min.js"></script>
+```
+
+Diese beiden Dateien sind die Basis fuer `<rex-map>` und Geolocation-JavaScript im Frontend.
+
+### Optionale Assets je nach Bibliothek
+
+```htm
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css">
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+
+<!-- MapLibre -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+
+<!-- OpenLayers -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10.3.1/ol.css">
+<script src="https://cdn.jsdelivr.net/npm/ol@10.3.1/dist/ol.js"></script>
+```
+
+Die Zusatz-Bibliotheken nur laden, wenn das jeweilige Beispiel tatsaechlich genutzt wird.
+
+Alternativ zu den CDN-Links koennen die Bibliotheken auch direkt ueber GitHub bezogen werden:
+
+- Leaflet: https://github.com/Leaflet/Leaflet
+- MapLibre GL JS: https://github.com/maplibre/maplibre-gl-js
+- OpenLayers: https://github.com/openlayers/openlayers
+
+### Minimalbeispiel ohne eigenes JS
+
+```php
+use FriendsOfRedaxo\Geolocation\Mapset;
+
+echo Mapset::take('osm')
+        ->attributes('style', 'height:400px')
+        ->parse();
+```
+
+Damit ist der einfachste Frontend-Einstieg ohne eigenes Leaflet/MapLibre/OpenLayers-Setup moeglich.
 
 <a name="custom"></a>
 ## Individualisierte Installation

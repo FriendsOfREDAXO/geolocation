@@ -12,6 +12,18 @@ Kontakt: [Thomas Skerbis](https://github.com/skerbis)
 
 ![Titelbild](https://github.com/FriendsOfREDAXO/geolocation/blob/main/docs/assets/titel.jpg?raw=true)
 
+## Neu seit 2.6.0
+
+- Neue Backend-Demo unter `geolocation/demo` mit Live-Beispielen fuer:
+    - Leaflet Raster (Basis, Marker/Popups, Multi-Layer)
+    - MapLibre Vector/WebGL (OpenFreeMap, 3D-Tilt, Style-Switch)
+    - OpenLayers 10 (XYZ Raster, MVT Vector, WMS)
+- MapLibre-Vector-Demo mit Marker/Popups und automatischem `fitBounds()`.
+- Freie Raster-Provider ohne API-Key in den Demos bevorzugt (OSM-Fallback).
+- Verbessertes WMS/OpenLayers-Handling und robustere Demo-Tabs.
+- Der interne Geolocation-Proxy unterstuetzt nun offiziell auch Vector-Tiles (.pbf, .mvt).
+- Frontend-Integrationshinweise direkt in der Demo-Seite (Assets + Minimalbeispiele).
+
 
 ## Features:
 
@@ -40,6 +52,7 @@ Kontakt: [Thomas Skerbis](https://github.com/skerbis)
 - Demo
     - [Stand-alone-Demo](https://github.com/FriendsOfREDAXO/geolocation/blob/main/docs/example/demo.html) zur Demonstration des Custom-HTML-Elements und des Cache
     - *redaxo/src/addons/geolocation/docs/example/demo.html* bitte ins REDAXO-Root kopieren wg. der Pfade
+    - Neue Backend-Demo-Seite: `index.php?page=geolocation/demo`
 
 - [Cache](https://github.com/FriendsOfREDAXO/geolocation/blob/main/docs/proxy_cache.md#cache)
     - Je Tile-URL ein eigenes Verzeichnis, separat löschbar
@@ -82,9 +95,7 @@ Ideen gibt es, Hilfe ist willkommen.
 In das Verzeichnis `redaxo/src/addons/geolocation` entpacken und in der Addon-Verwaltung die
 Installation durchführen.
 
-Dabei werden Demo-Daten (Links zu Tile-Servern und zwei Kartensätze installiert). Die Here-Kartenlinks
-sind ohne die nötige "appId", die nach Registrierung bei [HERE](https://developer.here.com/) erzeugt
-werden kann. Die vorgesehene Stelle in der URL ist mit `..........` markiert.
+Weitere empfohlene Kartenanbieter oder kostenpflichtige Dienste (wie z.B. HERE Maps) können bequem mit API-Keys direkt über das Dashboard als Layer hinzugefügt werden.
 
 Der Cronjob für die Cache-Bereinigung hat die Einstellungen
 - Einmal am Tag (04:30)
@@ -93,6 +104,32 @@ Der Cronjob für die Cache-Bereinigung hat die Einstellungen
 - aktiviert
 
 Details - auch zu individualisierten Installationen - stehen in der [Installationsanleitung](https://github.com/FriendsOfREDAXO/geolocation/blob/main/docs/install.md)
+
+## Frontend-Schnellstart (Assets)
+
+Damit die Beispiele im Frontend funktionieren, muessen mindestens die Geolocation-Assets eingebunden werden.
+
+```html
+<!-- Pflicht fuer Geolocation / <rex-map> -->
+<link rel="stylesheet" href="/assets/addons/geolocation/geolocation.min.css">
+<script src="/assets/addons/geolocation/geolocation.min.js"></script>
+```
+
+Zusaetzlich bei Bedarf:
+
+- Leaflet-Demos: Leaflet CSS/JS
+- MapLibre-Demos: MapLibre CSS/JS
+- OpenLayers-Demos: OpenLayers CSS/JS
+
+GitHub-Alternativen zu den CDN-Links:
+
+- Leaflet: https://github.com/Leaflet/Leaflet
+- MapLibre GL JS: https://github.com/maplibre/maplibre-gl-js
+- OpenLayers: https://github.com/openlayers/openlayers
+
+Die konkrete Einbindung ist in der Backend-Demo (`geolocation/demo`) und in der
+[Installationsanleitung](https://github.com/FriendsOfREDAXO/geolocation/blob/main/docs/install.md)
+als Snippet dokumentiert.
 
 ## OSMProxy ersetzten
 OSM-Proxy-Nutzer müssen im Abschnitt Karten die gewünschten Tileserver hinterlegen und im Anschluss die URL für die Tiles im z.B. Leaflet JS ändern.

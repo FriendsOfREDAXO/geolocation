@@ -61,6 +61,82 @@ var Geolocation = {
         return t;
     },
 
+    /**
+     * Fügt ein Overlay über einer scrollbaren Karte ein, das erst nach einem Klick Event-Interaktionen (Scrollen/Zoomen) zulässt.
+     * Anwendung (Frontend): 
+     * Geolocation.initScrollOverlay(document.getElementById('map'), 'Bitte klicken, um Karte zu aktivieren');
+     * oder per Selektor auf alle Elemente mit dem Attribut:
+     * Geolocation.initScrollOverlay('[data-scroll-overlay]');
+     *
+     * @param {HTMLElement|string} el - HTML-Element oder CSS-Selektor
+     * @param {string} text - Anzuzeigender Text. Fallback auf el.getAttribute('data-scroll-overlay').
+     */
+    initScrollOverlay: function(el, text) {
+        if (typeof el === 'string') {
+            document.querySelectorAll(el).forEach(function(node) {
+                Geolocation.initScrollOverlay(node, text);
+            });
+            return;
+        }
+        if (!el || el.__hasScrollOverlay) return;
+        el.__hasScrollOverlay = true;
+
+        var origHeight = el.style.height || window.getComputedStyle(el).height;
+        if (!origHeight || origHeight === '0px') origHeight = '400px';
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'geolocation-scroll-overlay-wrap';
+        wrapper.style.position = 'relative';
+        wrapper.style.height = origHeight;
+        
+        var mb = el.style.marginBottom || window.getComputedStyle(el).marginBottom;
+        wrapper.style.marginBottom = mb;
+        
+        el.parentNode.insertBefore(wrapper, el);
+        wrapper.appendChild(el);
+        
+        el.style.height = '100%';
+        el.style.marginBottom = '0';
+
+        var overlay = document.createElement('div');
+        overlay.className = 'geolocation-scroll-overlay';
+        overlay.style.position = 'absolute';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.background = 'rgba(0,0,0,0.1)';
+        overlay.style.cursor = 'pointer';
+        overlay.style.zIndex = '1000';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        
+        var textNode = document.createElement('div');
+        textNode.innerHTML = text || el.getAttribute('data-scroll-overlay') || 'Klicken zum Aktivieren';
+        textNode.style.background = 'rgba(0,0,0,0.6)';
+        textNode.style.color = '#fff';
+        textNode.style.padding = '8px 16px';
+        textNode.style.borderRadius = '4px';
+        textNode.style.fontFamily = 'sans-serif';
+        textNode.style.opacity = '0';
+        textNode.style.transition = 'opacity 0.3s';
+        textNode.style.pointerEvents = 'none';
+        overlay.appendChild(textNode);
+
+        wrapper.appendChild(overlay);
+
+        wrapper.addEventListener('mouseenter', function() { textNode.style.opacity = '1'; });
+        wrapper.addEventListener('mouseleave', function() { 
+            textNode.style.opacity = '0'; 
+            overlay.style.pointerEvents = 'auto'; // enable blocking again
+        });
+        overlay.addEventListener('click', function(e) {
+            overlay.style.pointerEvents = 'none'; // let events pass through to map
+            textNode.style.opacity = '0';
+        });
+    },
+
     sPath: document.currentScript.src.substr(0,document.currentScript.src.lastIndexOf('/')+1),
 
 };

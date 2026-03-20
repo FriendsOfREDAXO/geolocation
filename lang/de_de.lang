@@ -3,6 +3,61 @@ geolocation_clear_cache = Cache löschen
 geolocation_cache_files_removed = {0} Cache-Dateien gelöscht
 geolocation_clear_cache_confirm = Cache für «{0}» löschen?
 
+# Dashboard + Demo
+geolocation_demo_ol_title = OpenLayers - Raster, Vector & WMS
+geolocation_demo_ol_desc = OpenLayers ist eine leistungsstarke Open-Source-Kartenbibliothek: native Unterstuetzung fuer XYZ-Raster, MVT-Vektorkacheln, WMS/WFS-Dienste und GeoJSON. Ideal fuer GIS-nahe Anwendungen.
+
+geolocation_demo = Demo
+geolocation_demo_info_title = Live-Demo: Raster & Vector Tiles
+geolocation_demo_info_text = Interaktive Karten mit dem Geolocation-Proxy. Raster-Tiles via Leaflet, Vector Tiles via MapLibre GL JS.
+geolocation_demo_no_layers = Noch keine Layer konfiguriert.
+geolocation_demo_add_layers = Zum Dashboard
+geolocation_demo_raster_title = Rasterkarten (PNG/JPG Tiles)
+geolocation_demo_raster_desc = Klassische Tile-Karten (a la OpenStreetMap). Jede Zoomstufe besteht aus vorgerenderten Bildkacheln. Der Geolocation-Proxy cached die Tiles serverseitig.
+geolocation_demo_marker_title = Marker & Popups
+geolocation_demo_marker_desc = Interaktive Marker mit Popup-Texten. Per Klick auf einen Marker oeffnet sich das Popup.
+geolocation_demo_multi_title = Mehrere Layer / Ebenen-Switcher
+geolocation_demo_multi_desc = Wenn mehrere Basislayer konfiguriert sind, koennen Nutzer zwischen ihnen umschalten (oben rechts in der Karte).
+geolocation_demo_vector_title = Vektorkarten (WebGL)
+geolocation_demo_vector_desc = Vector Tiles (a la Mapbox/MapLibre) werden als mathematische Vektoren uebertragen und clientseitig gerendert. Das ermoeglicht stufenloses Zoomen, Rotation und anpassbare Kartenstile.
+geolocation_demo_vector_advantages = Vorteile Vector Tiles
+geolocation_demo_vector_providers = Kostenlose Anbieter
+geolocation_demo_vector_note = Voraussetzung
+geolocation_demo_vector_style = Kartenstil waehlen
+geolocation_demo_proxy_title = Wie der Proxy funktioniert
+geolocation_demo_proxy_how = Ablauf eines Tile-Requests
+geolocation_demo_click_to_activate = Klicken zum Aktivieren
+
+geolocation_dashboard = Dashboard
+geolocation_dashboard_stat_layer = Layer (aktiv / gesamt)
+geolocation_dashboard_stat_mapset = Kartensaetze
+geolocation_dashboard_stat_cache = Cache
+geolocation_dashboard_stat_files = Dateien
+geolocation_dashboard_manage = Verwalten
+geolocation_dashboard_presets_title = Schnellstart: Layer hinzufuegen
+geolocation_dashboard_presets_info = Haeufig genutzte Karten-Provider mit einem Klick einrichten. Kostenlose Anbieter funktionieren ohne API-Key.
+geolocation_dashboard_preset_add = Hinzufuegen
+geolocation_dashboard_preset_exists = Bereits vorhanden
+geolocation_dashboard_enter_apikey = API-Key eingeben ...
+geolocation_dashboard_get_apikey = Kostenlosen API-Key holen
+geolocation_dashboard_proxy_title = Tile-Proxy verwenden
+geolocation_dashboard_proxy_info = Jeder konfigurierte Layer kann als Tile-Proxy genutzt werden - auch ohne vollstaendige Karten-Einbindung. Der Proxy cached Tiles automatisch und verhindert direkte Verbindungen vom Browser zum Tile-Server.
+geolocation_dashboard_proxy_url = Proxy-URL
+geolocation_dashboard_proxy_hint_title = So funktioniert es
+geolocation_dashboard_proxy_hint = Externes Tile-Server-URL-Muster auf den REDAXO-Proxy umleiten:
+geolocation_dashboard_no_layers = Noch keine Layer konfiguriert. Nutze oben den Schnellstart oder lege einen Layer manuell an.
+geolocation_dashboard_offline = Offline
+geolocation_dashboard_embed_title = Karte einbinden
+geolocation_dashboard_embed_info = So wird eine Karte mit PHP oder reinem HTML in ein REDAXO-Modul integriert:
+geolocation_dashboard_available_mapsets = Verfuegbare Kartensaetze:
+geolocation_dashboard_quicklinks = Schnelllinks
+geolocation_dashboard_add_layer = Neuen Layer anlegen
+geolocation_dashboard_add_mapset = Neuen Kartensatz anlegen
+geolocation_dashboard_info_title = Was bietet dieses Addon?
+geolocation_dashboard_info_proxy = Tile-Proxy mit automatischem Caching (verhindert CORS-Probleme)
+geolocation_dashboard_info_cache = Konfigurierbarer Cache pro Layer (TTL, maximale Dateizahl)
+geolocation_dashboard_info_picker = GeoPicker-Metafeld und YForm-Integration
+
 # für mehrere Formulare
 geolocation_form_proxycache_ttl = Aufbewahrungsdauer im Cache (TTL)
 geolocation_form_proxycache_ttl_notice = Nach der angegebenen Zeit in Minuten wird die Datei im Cache verworfen <br>1 Tag = 1440, 1 Woche = 10080, 1 Monat = 43200<br><span class="text-danger">0 = Cache deaktiviert</span><br>Bereich: 0 ... {0}

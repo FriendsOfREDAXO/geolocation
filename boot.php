@@ -97,7 +97,18 @@ if (rex::isBackend()) {
     Tools::echoAssetTags();
     rex_view::addCssFile($this->getAssetsUrl('geolocation_be.min.css'));
     rex_view::addJsFile($this->getAssetsUrl('geolocation_be.min.js'));
-    if ('yform/manager/table_field' === rex_be_controller::getCurrentPage()) {
+
+    $currentPage = rex_be_controller::getCurrentPage();
+    $currentSubPage = rex_be_controller::getCurrentPagePart(1);
+
+    if (str_starts_with($currentPage, 'geolocation/dashboard')) {
+        rex_view::addJsFile($this->getAssetsUrl('dashboard.js'));
+    }
+    if (str_starts_with($currentPage, 'geolocation/demo') || str_starts_with($currentPage, 'geolocation/manual/demo')) {
+        rex_view::addJsFile($this->getAssetsUrl('demo.js'));
+        rex_view::addCssFile($this->getAssetsUrl('demo.css'));
+    }
+    if ('yform/manager/table_field' === $currentPage) {
         rex_view::addJsFile($this->getAssetsUrl('tablemanager.min.js'));
     }
 

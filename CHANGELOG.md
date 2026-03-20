@@ -1,5 +1,34 @@
 # Changelog
 
+## 18.03.2026 2.6.0
+
+- Neue Funktionen
+  - Neue Demo-Seite im Backend (`geolocation/demo`) mit Live-Beispielen fuer:
+    - Leaflet Raster (Basis, Marker/Popups, Multi-Layer)
+    - MapLibre Vector/WebGL mit OpenFreeMap
+    - OpenLayers 10 (Raster/Vector/WMS)
+  - MapLibre-Demo erweitert:
+    - 3D-Perspektive via Pitch/Bearing
+    - 3D-Toggle in der UI
+    - Marker + Popups inkl. automatischer `fitBounds()`-Ansicht
+    - Style-Switcher fuer OpenFreeMap Liberty/Bright
+  - Frontend-Integrationshinweise direkt in der Demo-Seite:
+    - Pflicht-Assets (`geolocation.min.css`, `geolocation.min.js`)
+    - optionale Library-Assets fuer Leaflet/MapLibre/OpenLayers
+    - PHP-Minimalbeispiele fuer `Mapset::take(...)->parse()`
+
+- Verbesserungen
+  - HERE Maps Aktualisierung: Veraltete v2-Provider-URLs werden beim Update auf v3 migriert (API-Keys bleiben erhalten).
+  - Der interne Geolocation-Proxy unterstuetzt nun offiziell auch Vector-Tiles (.pbf, .mvt).
+  - Demo-Raster-Layer verwenden bevorzugt freie Provider ohne API-Key (mit OSM-Fallback).
+  - OpenLayers-Demos fuer Version 10 angepasst (`ol.control.defaults.defaults()`).
+  - OpenLayers-WMS-Demo stabilisiert (CORS/Request-Parameter und robustere Resize-Updates).
+  - Tab-Markup in den Demo-Codebeispielen korrigiert, damit Bootstrap-Tabs zuverlaessig schalten.
+
+- Bugfixes
+  - Dashboard-Preset-Formulare leiten nach dem Anlegen wieder korrekt auf `geolocation/dashboard` zurueck.
+  - Proxy-Same-Origin-Pruefung robuster bei leerem Referer und Host-Varianten.
+
 ## 24.08.2025 2.5.2
 
 - Bugfix

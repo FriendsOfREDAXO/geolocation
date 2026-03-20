@@ -1,0 +1,137 @@
+
+/* Demo-spezifisches Styling */
+.geo-demo-map {
+    height: 400px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f4f4f4;
+    position: relative;
+}
+.geo-demo-map::before {
+    content: '\f041';
+    font-family: FontAwesome;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 32px;
+    color: #ccc;
+    z-index: 1;
+}
+.geo-demo-map.geo-map-loaded::before {
+    display: none;
+}
+.geo-demo-map-hint {
+    font-size: 11px;
+    margin: 4px 0 0 0;
+    color: #888;
+}
+.geo-demo-code {
+    margin: 0;
+    border-radius: 0 0 4px 4px;
+    background: #2b2b2b;
+    color: #f8f8f2;
+    font-size: 12px;
+    max-height: 340px;
+    overflow: auto;
+}
+.geo-demo-code-tabs {
+    border: 1px solid #ddd;
+    border-top: 0;
+}
+.geo-demo-code code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    white-space: pre;
+}
+.geo-demo-section {
+    margin-bottom: 24px;
+}
+
+/* Proxy-Flow */
+.geo-flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+}
+.geo-flow-step {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 14px;
+    text-align: center;
+    flex: 1;
+    min-width: 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.geo-flow-step small { font-size: 10px; color: #888; }
+.geo-flow-browser { border-color: #5bc0de; background: #f0faff; }
+.geo-flow-redaxo { border-color: #d9534f; background: #fff5f5; }
+.geo-flow-tileserver { border-color: #5cb85c; background: #f5fff5; }
+.geo-flow-arrow { color: #888; font-size: 11px; text-align: center; white-space: nowrap; }
+.geo-proxy-benefits { list-style: none; padding: 0; margin-top: 12px; }
+.geo-proxy-benefits li { padding: 4px 0; }
+
+/* Dark Mode */
+body.rex-theme-dark .geo-demo-map { background: #1a1a1a; border-color: #444; }
+body.rex-theme-dark .geo-demo-map::before { color: #444; }
+body.rex-theme-dark .geo-flow-browser { background: #1a2833; }
+body.rex-theme-dark .geo-flow-redaxo { background: #2b1a1a; }
+body.rex-theme-dark .geo-flow-tileserver { background: #1a2b1a; }
+
+body.rex-theme-dark .geo-demo-code-tabs {
+    border-color: #333;
+}
+body.rex-theme-dark #geo-demo-root .nav-tabs {
+    border-bottom-color: #333;
+}
+body.rex-theme-dark #geo-demo-root .nav-tabs > li.active > a,
+body.rex-theme-dark #geo-demo-root .nav-tabs > li.active > a:focus,
+body.rex-theme-dark #geo-demo-root .nav-tabs > li.active > a:hover {
+    background-color: #2b2b2b;
+    border-color: #333 #333 transparent;
+    color: #fff;
+}
+body.rex-theme-dark #geo-demo-root .nav-tabs > li > a:not(.active):hover {
+    border-color: #333;
+    background-color: #202020;
+    color: #fff;
+}
+body.rex-theme-dark #geo-demo-root .nav-tabs > li > a {
+    color: #999;
+}
+
+@media (prefers-color-scheme: dark) {
+    body.rex-has-theme:not(.rex-theme-light) .geo-demo-map { background: #1a1a1a; border-color: #444; }
+    body.rex-has-theme:not(.rex-theme-light) .geo-demo-map::before { color: #444; }
+    body.rex-has-theme:not(.rex-theme-light) .geo-flow-browser { background: #1a2833; }
+    body.rex-has-theme:not(.rex-theme-light) .geo-flow-redaxo { background: #2b1a1a; }
+    body.rex-has-theme:not(.rex-theme-light) .geo-flow-tileserver { background: #1a2b1a; }
+
+    body.rex-has-theme:not(.rex-theme-light) .geo-demo-code-tabs {
+        border-color: #333;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs {
+        border-bottom-color: #333;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs > li.active > a,
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs > li.active > a:focus,
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs > li.active > a:hover {
+        background-color: #2b2b2b;
+        border-color: #333 #333 transparent;
+        color: #fff;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs > li > a:not(.active):hover {
+        border-color: #333;
+        background-color: #202020;
+        color: #fff;
+    }
+    body.rex-has-theme:not(.rex-theme-light) #geo-demo-root .nav-tabs > li > a {
+        color: #999;
+    }
+}
+

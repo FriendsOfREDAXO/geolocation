@@ -15,6 +15,27 @@
 
 # Für Entwickler &dash; Javascript
 
+## Neuer Demo-Bereich ab 2.6.0
+
+Im Backend steht unter `geolocation/demo` ein erweiterter JavaScript-Demo-Bereich bereit.
+
+- Leaflet Raster-Demos:
+    - Basis-Layer
+    - Marker + Popups
+    - Multi-Layer mit Layer-Control
+- MapLibre Vector/WebGL:
+    - OpenFreeMap Styles (Liberty/Bright)
+    - 3D-Perspektive (Pitch/Bearing)
+    - 3D-Toggle
+    - Marker + Popups mit automatischem `fitBounds()`
+- OpenLayers 10:
+    - XYZ Raster
+    - MVT Vector
+    - WMS
+
+Hinweis: Die Demo ist bewusst auf moeglichst einfache, frei nutzbare Quellen ausgelegt
+(insb. Raster ohne API-Key, wo moeglich).
+
 <a name="namespace"></a>
 ## Namespace **Geolocation**
 
