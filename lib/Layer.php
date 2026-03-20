@@ -566,7 +566,7 @@ class Layer extends rex_yform_manager_dataset
             // Tile-File exists; send to the requestor
             if (null !== $cacheFileName) {
                 $ext = pathinfo($cacheFileName, PATHINFO_EXTENSION);
-                $contentType = self::MIME_TYPES[$ext] ?? 'image/' . $ext;
+                $contentType = self::MIME_TYPES[$ext] ?? 'application/octet-stream';
                 $cache->sendCacheFile($cacheFileName, $contentType, $ttlSeconds);
             }
         }
@@ -730,7 +730,7 @@ class Layer extends rex_yform_manager_dataset
      * @api
      * @param list<int>   $layerIds
      * STAN: das muss doch einfacher gehen als immer diesen Text (siehe getLayerConfig) abzuschreiben
-     * @return array<int,array{layer:int,label:string,type:string,attribution:string}>
+     * @return array<int,array{layer:int,label:string,type:string,attribution:string,source_type:string}>
      */
     public static function getLayerConfigSet($layerIds, ?string $clang)
     {

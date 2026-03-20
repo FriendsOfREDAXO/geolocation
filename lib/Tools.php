@@ -61,13 +61,20 @@ class Tools
         $SEC_FETCH_SITE = rex_request::server('HTTP_SEC_FETCH_SITE', 'string', '');
 
         if ('' !== $SEC_FETCH_SITE) {
+            // Nur explizit vertrauenswürdige Werte frühzeitig erlauben.
+            if ('same-origin' === $SEC_FETCH_SITE || 'same-site' === $SEC_FETCH_SITE) {
+                return;
+            }
+
+            // Explizit als "cross-site" markierte Anfragen weiter hart blockieren.
             if ('cross-site' === $SEC_FETCH_SITE) {
                 rex_response::cleanOutputBuffers();
                 rex_response::setStatus(rex_response::HTTP_SERVICE_UNAVAILABLE);
                 rex_response::sendContent(rex_response::HTTP_SERVICE_UNAVAILABLE);
                 exit;
             }
-            return;
+            // Für alle anderen/unerwarteten Werte (z.B. "none") auf Origin/Referer-Fallback
+            // zurückfallen und keine frühzeitige Freigabe erteilen.
         }
 
         if ('' === $HTTP_REFERER && '' !== $HTTP_ORIGIN) {
@@ -145,7 +152,7 @@ class Tools
     /**
      * schickt eine Kartenkachel Tile an den Client.
      *
-     * aus $timestamp und $ttl wird deren Header-Daten (Expires, Cache-Control)
+     * aus $timestamp und $ttlSeconds wird deren Header-Daten (Expires, Cache-Control)
      * errechnet
      * ... und bricht dann nach Versand hart ab.
      *

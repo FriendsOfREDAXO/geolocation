@@ -267,7 +267,7 @@ class GeoCoder
          */
         $value = trim(rex_request::request(self::VALUE_PARAM, 'string', ''));
         if ('' === $value) {
-            $ttl = (int) round((strtotime('today midnight') - time()) / 60, 0);
+            $ttl = (int) round((strtotime('tomorrow midnight') - time()) / 60, 0);
             Tools::sendJson([], time(), $ttl);
         }
 
@@ -277,7 +277,7 @@ class GeoCoder
          */
         $geoCoder = self::get($geoCoderId);
         if (null === $geoCoder) {
-            $ttl = (int) round((strtotime('today midnight') - time()) / 60, 0);
+            $ttl = (int) round((strtotime('tomorrow midnight') - time()) / 60, 0);
             Tools::sendJson([], time(), $ttl);
         }
 
@@ -324,7 +324,7 @@ class GeoCoder
          * Beim Versand wird als TimeToLive die Zeit von Jetzt bis Mitternacht
          * eingestellt (Angabe in Minuten).
          */
-        $ttl = (int) round((strtotime('today midnight') - time()) / 60, 0);
+        $ttl = (int) round((strtotime('tomorrow midnight') - time()) / 60, 0);
         $data = json_decode($content, true);
         if (!is_array($data)) {
             $msg = sprintf('Geolocation: GeoCoder returned invalid JSON (Content-Type %s)', $contentType);
