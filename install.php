@@ -353,7 +353,7 @@ try {
     // HERE Maps Update v2 -> v3
     if (rex_addon::get('geolocation')->isInstalled() && rex_sql_table::get(rex::getTablePrefix() . 'geolocation_layer')->exists()) {
         $sql = rex_sql::factory();
-        $sql->setQuery('SELECT id, name, url FROM ' . rex::getTablePrefix() . 'geolocation_layer WHERE url LIKE "%ls.hereapi.com%" OR name LIKE "Neptune HERE%" OR name LIKE "HERE:%"');
+        $sql->setQuery('SELECT id, name, url FROM ' . rex::getTablePrefix() . 'geolocation_layer WHERE (url LIKE "%ls.hereapi.com%" OR url LIKE "%/maptile/2.1/%" OR name LIKE "Neptune HERE%") AND url NOT LIKE "%/v3/%"');
         
         if ($sql->getRows() > 0) {
             $updated = [];
@@ -364,11 +364,18 @@ try {
                 $oldUrl = $row->getValue('url');
                 
                 // Extrahieren des API Keys
-                $apiKey = '..........';
+                $apiKey = null;
                 if (preg_match('/[?&]apiKey=([^&]+)/', $oldUrl, $matches)) {
                     $apiKey = $matches[1];
                 } elseif (preg_match('/[?&]app_id=([^&]+)&app_code=([^&]+)/', $oldUrl, $matches)) {
-                    $apiKey = '..........';
+                    // Alte app_id/app_code-Authentifizierung wird nicht automatisch migriert.
+                    // Layer unverändert lassen, damit er weiterhin funktioniert; manuelle Umstellung nötig.
+                    continue;
+                }
+
+                // Nur migrieren, wenn tatsächlich ein API-Key gefunden wurde
+                if (empty($apiKey)) {
+                    continue;
                 }
 
                 if (str_contains(strtolower($name), 'hybrid') || str_contains($oldUrl, 'hybrid.day')) {
@@ -392,7 +399,7 @@ try {
                 $updateSql->setValue('url', $newUrl);
                 $updateSql->setValue('subdomain', '');
                 $updateSql->setValue('retinaurl', $newRetinaUrl);
-                $updateSql->setValue('attribution', 'Map Tiles &copy; <a href="https://legal.here.com/terms/serviceterms" target="_blank">HERE</a>');
+                $updateSql->setValue('attribution', 'Map Tiles &copy; <a href="https://legal.here.com/terms/serviceterms" target="_blank" rel="noopener noreferrer">HERE</a>');
                 $updateSql->update();
 
                 $updated[] = $newName;
@@ -407,8 +414,12 @@ try {
             }
             
             $msg = $this->getProperty('successmsg', '');
-            if ($msg !== '') $msg .= '<br><br>';
-            $msg .= '<strong>HERE Maps Update-Hinweis:</strong> Die installierten HERE Maps Layer ('.implode(', ', array_unique($updated)).') wurden auf die neue Raster Tile API v3 aktualisiert (Die API-Keys blieben erhalten).';
+            if ($msg !== '') {
+                $msg .= '<br><br>';
+            }
+            if ($updated !== []) {
+                $msg .= '<strong>HERE Maps Update-Hinweis:</strong> Die installierten HERE Maps Layer ('.implode(', ', array_unique($updated)).') wurden auf die neue Raster Tile API v3 aktualisiert (Die API-Keys blieben erhalten).';
+            }
             $this->setProperty('successmsg', $msg);
         }
     }
