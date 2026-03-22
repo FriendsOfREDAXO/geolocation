@@ -121,40 +121,7 @@ class Layer extends rex_yform_manager_dataset
         'octet-stream'           => 'application/octet-stream',
     ];
 
-    /**
-     * Erkannte URL-Muster für Vector Tiles (Regex-Fragmente).
-     *
-     * @var list<string>
-     */
-    private const VECTOR_URL_PATTERNS = [
-        '/\.pbf/i',
-        '/\.mvt/i',
-        '/protobuf/i',
-        '/vector-tile/i',
-    ];
 
-    /**
-     * Leitet aus dem MIME-Typ eine Dateiendung für den Cache ab.
-     */
-    private static function getCacheSuffixFromContentType(string $contentType): string
-    {
-        $contentType = strtolower(trim($contentType));
-        if ('' === $contentType) {
-            return 'bin';
-        }
-
-        $suffix = array_search($contentType, self::MIME_TYPES, true);
-        if (false !== $suffix) {
-            return $suffix;
-        }
-
-        $slashPos = strrpos($contentType, '/');
-        if (false === $slashPos) {
-            return 'bin';
-        }
-
-        return substr($contentType, $slashPos + 1);
-    }
 
     // dataset-spezifisch
 
@@ -749,5 +716,28 @@ class Layer extends rex_yform_manager_dataset
             $value = (int) $value;
         }
         return $value;
+    }
+
+    /**
+     * Leitet aus dem MIME-Typ eine Dateiendung für den Cache ab.
+     */
+    private static function getCacheSuffixFromContentType(string $contentType): string
+    {
+        $contentType = strtolower(trim($contentType));
+        if ('' === $contentType) {
+            return 'bin';
+        }
+
+        $suffix = array_search($contentType, self::MIME_TYPES, true);
+        if (false !== $suffix) {
+            return $suffix;
+        }
+
+        $slashPos = strrpos($contentType, '/');
+        if (false === $slashPos) {
+            return 'bin';
+        }
+
+        return substr($contentType, $slashPos + 1);
     }
 }
