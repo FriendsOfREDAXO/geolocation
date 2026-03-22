@@ -121,18 +121,6 @@ class Layer extends rex_yform_manager_dataset
         'octet-stream'           => 'application/octet-stream',
     ];
 
-    /**
-     * Erkannte URL-Muster für Vector Tiles (Regex-Fragmente).
-     *
-     * @var list<string>
-     */
-    private const VECTOR_URL_PATTERNS = [
-        '/\.pbf/i',
-        '/\.mvt/i',
-        '/protobuf/i',
-        '/vector-tile/i',
-    ];
-
     // dataset-spezifisch
 
     /**
@@ -534,20 +522,17 @@ class Layer extends rex_yform_manager_dataset
             $fileNameElements['{s}'] = $subdomain;
         }
         $column = rex_request('x', 'integer', null);
-        if (null === $column || 0 > $column) {
-            Tools::sendBadRequest();
+        if (null !== $column) {
+            $fileNameElements['{x}'] = $column;
         }
-        $fileNameElements['{x}'] = $column;
         $row = rex_request('y', 'integer', null);
-        if (null === $row || 0 > $row) {
-            Tools::sendBadRequest();
+        if (null !== $row) {
+            $fileNameElements['{y}'] = $row;
         }
-        $fileNameElements['{y}'] = $row;
         $zoom = rex_request('z', 'integer', null);
-        if (null === $zoom || 0 > $zoom) {
-            Tools::sendBadRequest();
+        if (null !== $zoom) {
+            $fileNameElements['{z}'] = $zoom;
         }
-        $fileNameElements['{z}'] = $zoom;
         $retina = rex_request('r', 'string', null);
         $fileNameElements['{r}'] = null !== $retina ? $retina : '';
 
@@ -689,7 +674,7 @@ class Layer extends rex_yform_manager_dataset
      * (de, ... oder null = deault)
      *
      * @api
-     * @return array{layer:int,label:string,type:string,attribution:string,source_type:string}
+     * @return array{layer:int,label:string,type:string,attribution:string}
      */
     public function getLayerConfig(?string $clang): array
     {
@@ -698,25 +683,7 @@ class Layer extends rex_yform_manager_dataset
             'label'       => $this->getLabel($clang),
             'type'        => $this->layertype,
             'attribution' => $this->attribution,
-            'source_type' => $this->detectSourceType(),
         ];
-    }
-
-    /**
-     * Erkennt automatisch ob der Layer Raster- oder Vektor-Tiles liefert.
-     * Basis ist das URL-Muster; ohne explizites DB-Feld (rückwärtskompatibel).
-     *
-     * @return 'raster'|'vector'
-     */
-    public function detectSourceType(): string
-    {
-        $url = $this->url;
-        foreach (self::VECTOR_URL_PATTERNS as $pattern) {
-            if (1 === preg_match($pattern, $url)) {
-                return 'vector';
-            }
-        }
-        return 'raster';
     }
 
     /**
@@ -730,7 +697,7 @@ class Layer extends rex_yform_manager_dataset
      * @api
      * @param list<int>   $layerIds
      * STAN: das muss doch einfacher gehen als immer diesen Text (siehe getLayerConfig) abzuschreiben
-     * @return array<int,array{layer:int,label:string,type:string,attribution:string,source_type:string}>
+     * @return array<int,array{layer:int,label:string,type:string,attribution:string}>
      */
     public static function getLayerConfigSet($layerIds, ?string $clang)
     {
