@@ -347,17 +347,13 @@ try {
     $sql->update();
     // }
 
-    // Ergebnis übermitteln
-    $this->setProperty('successmsg', '<ul><li>' . implode('</li><li>', $msg) . '</li></ul>');
-
     // HERE Maps Update v2 -> v3
     if (rex_addon::get('geolocation')->isInstalled() && rex_sql_table::get(rex::getTablePrefix() . 'geolocation_layer')->exists()) {
         $sql = rex_sql::factory();
-        $sql->setQuery('SELECT id, name, url FROM ' . rex::getTablePrefix() . 'geolocation_layer WHERE (url LIKE "%ls.hereapi.com%" OR url LIKE "%/maptile/2.1/%" OR name LIKE "Neptune HERE%") AND url NOT LIKE "%/v3/%"');
+        $sql->setQuery('SELECT id, name, url FROM ' . rex::getTablePrefix() . 'geolocation_layer WHERE (url LIKE \'%ls.hereapi.com%\' OR url LIKE \'%/maptile/2.1/%\' OR name LIKE \'Neptune HERE%\') AND url NOT LIKE \'%/v3/%\'');
         
         if ($sql->getRows() > 0) {
             $updated = [];
-            $ids = [];
             foreach ($sql as $row) {
                 $id = (int) $row->getValue('id');
                 $name = $row->getValue('name');
@@ -403,25 +399,20 @@ try {
                 $updateSql->update();
 
                 $updated[] = $newName;
-                $ids[] = $id;
-            }
-            
-            foreach ($ids as $id) {
                 \FriendsOfRedaxo\Geolocation\Cache::clearLayerCache($id);
             }
-            if (class_exists(\rex_yform_manager_table::class)) {
-                \rex_yform_manager_table::deleteCache();
-            }
             
-            $msg = $this->getProperty('successmsg', '');
-            if ($msg !== '') {
-                $msg .= '<br><br>';
-            }
+            \rex_yform_manager_table::deleteCache();
+            
             if ($updated !== []) {
-                $msg .= '<strong>HERE Maps Update-Hinweis:</strong> Die installierten HERE Maps Layer ('.implode(', ', array_unique($updated)).') wurden auf die neue Raster Tile API v3 aktualisiert (Die API-Keys blieben erhalten).';
+                $msg[] = '<strong>HERE Maps Update-Hinweis:</strong> Die installierten HERE Maps Layer ('.implode(', ', array_unique($updated)).') wurden auf die neue Raster Tile API v3 aktualisiert (Die API-Keys blieben erhalten).';
             }
-            $this->setProperty('successmsg', $msg);
         }
+    }
+
+    // Ergebnis übermitteln
+    if ($msg !== []) {
+        $this->setProperty('successmsg', '<ul><li>' . implode('</li><li>', $msg) . '</li></ul>');
     }
 
 } catch (InstallException $e) {
