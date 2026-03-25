@@ -411,8 +411,11 @@ try {
         }
         
         // TileType bei bestehenden und leeren Layern sicherheitshalber auf 1 (Raster) setzen
-        $tileTypeSql = rex_sql::factory();
-        $tileTypeSql->setQuery('UPDATE ' . rex::getTablePrefix() . 'geolocation_layer SET tiletype = 1 WHERE tiletype = \'\' OR tiletype IS NULL');
+        // Nur für Update von Vorversionen < 2.6.0 ausführen
+        if (rex_version::compare($this->getVersion(), '2.6.0', '<')) {
+            $tileTypeSql = rex_sql::factory();
+            $tileTypeSql->setQuery('UPDATE ' . rex::getTablePrefix() . 'geolocation_layer SET tiletype = 1 WHERE tiletype = \'\' OR tiletype IS NULL');
+        }
 
     }
 
