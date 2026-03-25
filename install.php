@@ -88,6 +88,7 @@ try {
         ->ensureColumn(new rex_sql_column('attribution', 'text'))
         ->ensureColumn(new rex_sql_column('lang', 'text'))
         ->ensureColumn(new rex_sql_column('layertype', 'text'))
+        ->ensureColumn(new rex_sql_column('tiletype', 'text'))
         ->ensureColumn(new rex_sql_column('ttl', 'int(11)', true))
         ->ensureColumn(new rex_sql_column('cfmax', 'int(11)', true))
         ->ensureColumn(new rex_sql_column('online', 'int'))
@@ -411,7 +412,7 @@ try {
         
         // TileType bei bestehenden und leeren Layern sicherheitshalber auf 1 (Raster) setzen
         $tileTypeSql = rex_sql::factory();
-        $tileTypeSql->setQuery('UPDATE ' . rex::getTablePrefix() . 'geolocation_layer SET tiletype = "1" WHERE tiletype = "" OR tiletype IS NULL');
+        $tileTypeSql->setQuery('UPDATE ' . rex::getTablePrefix() . 'geolocation_layer SET tiletype = 1 WHERE tiletype = \'\' OR tiletype IS NULL');
 
     }
 
