@@ -743,4 +743,27 @@ class Layer extends rex_yform_manager_dataset
         }
         return $value;
     }
+
+    /**
+     * Leitet aus dem MIME-Typ eine Dateiendung für den Cache ab.
+     */
+    private static function getCacheSuffixFromContentType(string $contentType): string
+    {
+        $contentType = strtolower(trim($contentType));
+        if ('' === $contentType) {
+            return 'bin';
+        }
+
+        $suffix = array_search($contentType, self::MIME_TYPES, true);
+        if (false !== $suffix) {
+            return $suffix;
+        }
+
+        $slashPos = strrpos($contentType, '/');
+        if (false === $slashPos) {
+            return 'bin';
+        }
+
+        return substr($contentType, $slashPos + 1);
+    }
 }
