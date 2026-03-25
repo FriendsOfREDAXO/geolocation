@@ -113,6 +113,9 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
     Der Typ der Karte wird hier ausgewählt, was zugleich die Auswahlzuordnung beim Kartensatz
     steuert.
 
+- **Dateiformat**  
+    Legt fest, ob der Server klassische Rasterbilder (PNG, JPEG) oder moderne Vektor-Tiles (MVT, PBF) ausliefert. Nur Raster-Layer stehen in den Mapsets zur Verfügung, da Leaflet standardmäßig nur Rasterbilder unterstützt. Vektor-Tiles können jedoch für andere Zwecke angelegt und über den Proxy bezogen werden.
+
 Die Daten für den Kartenaufbau werden für eine einzelne Karte oder für einen Kartensatz (z.B. von
 `$mapset->getLayerset()` so abgerufen:
 

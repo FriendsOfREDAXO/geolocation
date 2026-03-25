@@ -143,6 +143,8 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
                 'table_name' => Layer::table()->getTableName(),
                 'rex_yform_filter[layertype]' => $this->getElement('filter'),
                 'rex_yform_set[layertype]' => $this->getElement('filter'),
+                'rex_yform_filter[tiletype]' => 1,
+                'rex_yform_set[tiletype]' => 1,
                 'rex_yform_manager_opener[field]' => sprintf('%s.%s', $this->params['main_table'], $this->getName()),
                 'rex_yform_manager_opener[multiple]' => 1,
                 'rex_yform_manager_opener[id]' => random_int(10000000, 99999999),

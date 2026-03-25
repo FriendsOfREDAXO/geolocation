@@ -408,6 +408,11 @@ try {
                 $msg[] = '<strong>HERE Maps Update-Hinweis:</strong> Die installierten HERE Maps Layer ('.implode(', ', array_unique($updated)).') wurden auf die neue Raster Tile API v3 aktualisiert (Die API-Keys blieben erhalten).';
             }
         }
+        
+        // TileType bei bestehenden und leeren Layern sicherheitshalber auf 1 (Raster) setzen
+        $tileTypeSql = rex_sql::factory();
+        $tileTypeSql->setQuery('UPDATE ' . rex::getTablePrefix() . 'geolocation_layer SET tiletype = "1" WHERE tiletype = "" OR tiletype IS NULL');
+
     }
 
     // Ergebnis übermitteln

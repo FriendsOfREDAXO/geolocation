@@ -79,6 +79,9 @@ geolocation_layer_in_use = Karte/Tile-Server «{0}» kann nicht gelöscht werden
 geolocation_layer_type = Layer-Kategorie
 geolocation_layer_type_choice_b = Karte (Base-Layer)
 geolocation_layer_type_choice_o = Overlay
+geolocation_layer_tiletype = Dateiformat
+geolocation_layer_tiletype_raster = Rasterbild
+geolocation_layer_tiletype_vector = Vektor-Tiles
 geolocation_layer_fs_cache = Cache-Parameter
 geolocation_layer_fs_rest = Weitere Parameter
 
