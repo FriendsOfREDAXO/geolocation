@@ -70,10 +70,12 @@ use function strlen;
 
 use const CURLINFO_CONTENT_TYPE;
 use const CURLINFO_RESPONSE_CODE;
+use const CURLOPT_CONNECTTIMEOUT;
 use const CURLOPT_FOLLOWLOCATION;
 use const CURLOPT_HEADER;
 use const CURLOPT_PROXY;
 use const CURLOPT_RETURNTRANSFER;
+use const CURLOPT_TIMEOUT;
 use const E_WARNING;
 use const PATHINFO_EXTENSION;
 
@@ -109,16 +111,16 @@ class Layer extends rex_yform_manager_dataset
      * @var array<string, string>
      */
     private const MIME_TYPES = [
-        'png'                    => 'image/png',
-        'jpg'                    => 'image/jpeg',
-        'jpeg'                   => 'image/jpeg',
-        'webp'                   => 'image/webp',
-        'gif'                    => 'image/gif',
-        'pbf'                    => 'application/x-protobuf',
-        'mvt'                    => 'application/vnd.mapbox-vector-tile',
-        'x-protobuf'             => 'application/x-protobuf',
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'webp' => 'image/webp',
+        'gif' => 'image/gif',
+        'pbf' => 'application/x-protobuf',
+        'mvt' => 'application/vnd.mapbox-vector-tile',
+        'x-protobuf' => 'application/x-protobuf',
         'vnd.mapbox-vector-tile' => 'application/vnd.mapbox-vector-tile',
-        'octet-stream'           => 'application/octet-stream',
+        'octet-stream' => 'application/octet-stream',
     ];
 
     // dataset-spezifisch
@@ -366,9 +368,7 @@ class Layer extends rex_yform_manager_dataset
             $value = json_decode($value, true);
         }
 
-        /**
-         * ab YForm 4.2.1 sollte das hier funktionieren.
-         */
+        /** ab YForm 4.2.1 sollte das hier funktionieren. */
         return 0 === count($value) || count(array_unique(array_column($value, '0'))) !== count($value);
     }
 
@@ -396,31 +396,37 @@ class Layer extends rex_yform_manager_dataset
         }
 
         $user = rex::getUser();
-        if (null === $user || !$user->hasPerm('geolocation[clearcache]')) {
+        if (null === $user) {
             return;
         }
-
-        $link_vars = $ep->getParam('link_vars') + [
-            'layer_id' => '___id___',
-            'rex-api-call' => 'geolocation_clearcache',
-        ];
-        $href = rex_url::backendController($link_vars, false);
-        $confirm = rex_i18n::msg('geolocation_clear_cache_confirm', '___name___');
-        $label = '<i class="rex-icon rex-icon-delete"></i> ' . rex_i18n::msg('geolocation_clear_cache');
-
         $buttons = $ep->getSubject();
 
         /**
-         * bis YForm 4.0.4 waren die Action-Buttons einfach HTML-Strings.
-         * Post-4.0.4. sind es Arrays, die in einem List-Fragment verwertet werden.
-         * Hier die beiden Fälle unterscheiden.
-         * Note:
-         * Stand 07.03.2023 gibt es nur das GH-Repo und keine neue Versionsnummer.
-         * Daher auf das neue Fragment als Unterscheidungsmerkmal setzen.
+         * Aktion-Button zum Abruf der Proxy-Url für die Karte.
+         * Die Url wird in die Zwischenablage kopiert.
          */
-        if(is_file(rex_path::addon('yform', 'pages/manager.data_edit.php'))) {
-            $buttons['geolocationClearCache'] = '<a onclick="return confirm(\'' . $confirm . '\')" href="' . $href . '">' . $label . '</a>';
-        } else {
+        if ($user->hasPerm('geolocation[developer]')) {
+            $buttons['geolocationCopyUrl'] = [
+                'url' => '#',
+                'content' => '<i class="rex-icon rex-icon-external-link"></i> ' . rex_i18n::msg('geolocation_layer_copy_url'),
+                'attributes' => [
+                    'onclick' => 'Geolocation.copyProxyUrl2Clipboard(\'___id___\'); return false;',
+                ],
+            ];
+        }
+
+        /**
+         * Aktion-Button tum gezielten Cache löschen für diese eine Karte.
+         * Nur für Admins und User mit Permission "geolocation[clearcache]".
+         */
+        if ($user->hasPerm('geolocation[clearcache]')) {
+            $link_vars = $ep->getParam('link_vars') + [
+                'layer_id' => '___id___',
+                'rex-api-call' => 'geolocation_clearcache',
+            ];
+            $href = rex_url::backendController($link_vars, false);
+            $confirm = rex_i18n::msg('geolocation_clear_cache_confirm', '___name___');
+            $label = '<i class="rex-icon rex-icon-delete"></i> ' . rex_i18n::msg('geolocation_clear_cache');
             $buttons['geolocationClearCache'] = [
                 'url' => $href,
                 'content' => $label,
@@ -429,6 +435,7 @@ class Layer extends rex_yform_manager_dataset
                 ],
             ];
         }
+
         $ep->setSubject($buttons);
     }
 
@@ -615,7 +622,6 @@ class Layer extends rex_yform_manager_dataset
         Tools::sendTile($content, $contentType, time(), $ttlSeconds);
     }
 
-
     /**
      * Extrahiert aus dem lang-Feld der Datenbank (be_table, JSON),
      * die passende Sprachvariante der Kartentitels.
@@ -655,9 +661,9 @@ class Layer extends rex_yform_manager_dataset
     public function getLayerConfig(?string $clang): array
     {
         return [
-            'layer'       => $this->getId(),
-            'label'       => $this->getLabel($clang),
-            'type'        => $this->layertype,
+            'layer' => $this->getId(),
+            'label' => $this->getLabel($clang),
+            'type' => $this->layertype,
             'attribution' => $this->attribution,
         ];
     }
@@ -720,9 +726,7 @@ class Layer extends rex_yform_manager_dataset
         return $value;
     }
 
-    /**
-     * Leitet aus dem MIME-Typ eine Dateiendung für den Cache ab.
-     */
+    /** Leitet aus dem MIME-Typ eine Dateiendung für den Cache ab. */
     private static function getCacheSuffixFromContentType(string $contentType): string
     {
         $contentType = strtolower(trim($contentType));

@@ -142,6 +142,7 @@ class rex_yform_value_geolocation_layerselect extends rex_yform_value_abstract
                 'page' => 'yform/manager/data_edit',
                 'table_name' => Layer::table()->getTableName(),
                 'rex_yform_filter[layertype]' => $this->getElement('filter'),
+                'rex_yform_filter[tiletype]' => 1, // nur Raster-Layer, da Vektor-Layer in Mapsets nicht funktionieren
                 'rex_yform_set[layertype]' => $this->getElement('filter'),
                 'rex_yform_manager_opener[field]' => sprintf('%s.%s', $this->params['main_table'], $this->getName()),
                 'rex_yform_manager_opener[multiple]' => 1,
