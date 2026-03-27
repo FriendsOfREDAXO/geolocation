@@ -543,6 +543,13 @@ class Layer extends rex_yform_manager_dataset
         $retina = rex_request('r', 'string', null);
         $fileNameElements['{r}'] = null !== $retina ? $retina : '';
 
+        $req = rex_request('req', 'string', null);
+        $cachePattern = self::FILE_PATTERN;
+        if (null !== $req) {
+            $fileNameElements['{req}'] = ltrim($req, '/');
+            $cachePattern = md5($req) . '.{suffix}';
+        }
+
         // prepare targetCacheDir-Name
         $cacheDir = rex_path::addonCache(ADDON, $layer->getId() . '/');
         $cacheFileName = null;
@@ -552,7 +559,7 @@ class Layer extends rex_yform_manager_dataset
         // if cache then check for a matching tile-file in the cache-dir
         if (0 < $ttlSeconds) {
             $fileNameElements['{suffix}'] = '*';
-            $fileName = str_replace(array_keys($fileNameElements), $fileNameElements, self::FILE_PATTERN);
+            $fileName = str_replace(array_keys($fileNameElements), $fileNameElements, $cachePattern);
             $cacheFileName = $cache->findCachedFile($cacheDir . $fileName, $ttlSeconds);
 
             // Tile-File exists; send to the requestor
@@ -612,7 +619,7 @@ class Layer extends rex_yform_manager_dataset
         // and write the content into the cache-file
         if (0 < $ttlSeconds) {
             $fileNameElements['{suffix}'] = self::getCacheSuffixFromContentType($contentType);
-            $cacheFile = str_replace(array_keys($fileNameElements), $fileNameElements, self::FILE_PATTERN);
+            $cacheFile = str_replace(array_keys($fileNameElements), $fileNameElements, $cachePattern);
             $cacheFileName = $cacheDir . $cacheFile;
             rex_file::put($cacheFileName, $content);
             $cache->sendCacheFile($cacheFileName, $contentType, $ttlSeconds);
