@@ -1,5 +1,26 @@
 # Changelog
 
+## 27.03.206 2.6.0
+
+NEU: Support für Vektor-Karten z.B. https://openfreemap.org
+
+- Die Proxy-Logik in `Layer.php` wurde maßgeblich erweitert. Nun können auch **Vector Tiles** (`.mvt`, `.pbf`, `application/x-protobuf` u. v. m.) verarbeitet, gesendet und korrekt im Dateisystem gecachet werden.
+- Skript `api_testurl.php`: Der Backend URL-Test bewertet Non-Image-Response jetzt besser und erzeugt keinen Bilddarstellungsfehler mehr, sondern liefert eine validierte Bestätigungsnachricht für Vector-Tiles.
+- Dokumentation: In `docs/proxy_cache.md` wurde die Handhabung von Vector-Tile-Caches ergänzt, inkl. Info zu den Mime-Type Anpassungen.
+
+Performance / Code-Qualität und Sicherheit 
+
+- Härtung/Anpassung der Same-Origin-Logik sowie neue `sendBadRequest()` - Response-Hilfe.
+- Cache-TTL-Handling vereinheitlicht (Sekunden für Tiles/Cache), Cache-Cleanup-Logik korrigiert und Content-Type/Suffix-Handling für Dateien auf dem Disk-Cache erweitert.
+- cURL-Timeouts und Proxy-Exception/Error-Logs beim Abruf von externen Tiles/Geocodes eingebaut.
+- GeoCoder-JSON-Validierung verbessert.
+
+fixed: Here Maps 
+
+- Die Standard-Karten von HERE Maps in den Seed-Daten (`install/dataset.sql`) wurden auf die neue, aktuelle **v3 Tile API** aktualisiert. Die alte v2 API wird von Here nach und nach abgeschaltet.
+- Bei einem Update/Install des Addons greift nun eine automatische Migration (`install.php`), welche die bereits in der Datenbank hinterlegten Here-Karten identifiziert und deren URLs, Titel und Attributions auf den neusten Stand anpasst.
+- Nach der Migration werden automatisch die dazugehörigen alten Caches der betroffenen Layer gelöscht, um Darstellungskonflikte zu vermeiden.
+
 ## 24.08.2025 2.5.2
 
 - Bugfix
