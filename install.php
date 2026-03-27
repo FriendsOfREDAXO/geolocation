@@ -82,6 +82,7 @@ try {
     rex_sql_table::get($layer)
         ->ensurePrimaryIdColumn()
         ->ensureColumn(new rex_sql_column('name', 'varchar(191)'))
+        ->ensureColumn(new rex_sql_column('tiletype', 'int(11)'))
         ->ensureColumn(new rex_sql_column('url', 'text'))
         ->ensureColumn(new rex_sql_column('retinaurl', 'text'))
         ->ensureColumn(new rex_sql_column('subdomain', 'varchar(191)'))
@@ -148,15 +149,30 @@ try {
         }
     }
 
+    /**
+     * Mit dem Update von Versionen bis einschließlich 2.5.2 auf diese Version
+     * gibt es das neue Feld "tiletype" in der Tabelle "geolocation_layer". Dieses
+     * Feld muss mit einem gültigen Wert befüllt werden, damit die Layer-Unterscheidung
+     * zwischen Raster- und Vektor-Tiles funktioniert. Die zu diesem zeitpunkt
+     * bestehenden Layer nutzen alle Raster-Tiles. Daher werden leere Felder
+     * auf 1 gesetzt. Dieses updater erfolgt also automatisch nur einmal beim
+     * ersten Übergang.
+     */
+    $sql->setTable($layer);
+    $sql->setWhere('tiletype IS NULL OR tiletype = 0');
+    $sql->setValue('tiletype', 1);
+    $sql->update();
+    if (0 < $sql->getRows()) {
+        $msg[] = $this->i18n('install_update5_ok', $layer);
+    }
+
     // YForm-Formulare im Tablemanager anlegen
     // GGf. noch vorhandene Reste aus fehlerhaften Installationen vorher löschen
     $tableset = rex_file::get(__DIR__ . '/install/tableset.json');
     if (null === $tableset) {
         throw new InstallException($this->i18n('install_missing', 'install/tableset.json'), 1);
     }
-    /**
-     * Falls in der REX-Instanz ein anderes TablePrefix als "rex_" eingestellt ist: anpassen.
-     */
+    /** Falls in der REX-Instanz ein anderes TablePrefix als "rex_" eingestellt ist: anpassen. */
     if ('rex_' !== rex::getTablePrefix()) {
         $tableset = str_replace(
             ['"rex_geolocation_layer"', '"rex_geolocation_mapset"'],
@@ -351,14 +367,14 @@ try {
     if (rex_addon::get('geolocation')->isInstalled() && rex_sql_table::get(rex::getTablePrefix() . 'geolocation_layer')->exists()) {
         $sql = rex_sql::factory();
         $sql->setQuery('SELECT id, name, url FROM ' . rex::getTablePrefix() . 'geolocation_layer WHERE (url LIKE \'%ls.hereapi.com%\' OR url LIKE \'%/maptile/2.1/%\' OR name LIKE \'Neptune HERE%\') AND url NOT LIKE \'%/v3/%\'');
-        
+
         if ($sql->getRows() > 0) {
             $updated = [];
             foreach ($sql as $row) {
                 $id = (int) $row->getValue('id');
                 $name = $row->getValue('name');
                 $oldUrl = $row->getValue('url');
-                
+
                 // Extrahieren des API Keys
                 $apiKey = null;
                 if (preg_match('/[?&]apiKey=([^&]+)/', $oldUrl, $matches)) {
@@ -399,22 +415,21 @@ try {
                 $updateSql->update();
 
                 $updated[] = $newName;
-                \FriendsOfRedaxo\Geolocation\Cache::clearLayerCache($id);
+                Cache::clearLayerCache($id);
             }
-            
-            \rex_yform_manager_table::deleteCache();
-            
-            if ($updated !== []) {
-                $msg[] = '<strong>HERE Maps Update-Hinweis:</strong> Die installierten HERE Maps Layer ('.implode(', ', array_unique($updated)).') wurden auf die neue Raster Tile API v3 aktualisiert (Die API-Keys blieben erhalten).';
+
+            rex_yform_manager_table::deleteCache();
+
+            if ([] !== $updated) {
+                $msg[] = '<strong>HERE Maps Update-Hinweis:</strong> Die installierten HERE Maps Layer (' . implode(', ', array_unique($updated)) . ') wurden auf die neue Raster Tile API v3 aktualisiert (Die API-Keys blieben erhalten).';
             }
         }
     }
 
     // Ergebnis übermitteln
-    if ($msg !== []) {
+    if ([] !== $msg) {
         $this->setProperty('successmsg', '<ul><li>' . implode('</li><li>', $msg) . '</li></ul>');
     }
-
 } catch (InstallException $e) {
     $this->setProperty('installmsg', $e->getMessage());
 } catch (Exception $e) {

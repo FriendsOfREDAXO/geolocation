@@ -18,6 +18,9 @@
 **Hinweis:** Wenn das Addon als reines [Proxy-Addon](install.md#proxy) konfiguriert ist, ist die
 Verwaltung der Kartensätze ausgeblendet.
 
+**Hinweis:** Kartensätze sind dazu gedacht, in Kombination mit LeafletJS im Rahmen dieses Addons eingesetzt zu werden.
+Da LeafletJS derzeit keine Vektor-Karten unterstützt, sind in den Kartensätzen nur Rasterkarten auswählbar.
+
 Kartensätze basieren auf einer oder mehreren Karten, die per Kartenanbieter-URLs bereitgestellt
 werden. Jede URL bietet Zugriff auf einen Kartentyp, der auf der Karte als Layer erscheint.
 Beispiel: Standardkarte, Satellitenbild, Kombination aus beidem.

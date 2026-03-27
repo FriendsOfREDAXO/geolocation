@@ -6,4 +6,6 @@ de: {
     'zoom out': 'Verkleinern',
     'locate': 'Standort',
     'there has been a problem with your fetch operation: {error}': 'Es gab ein Problem bei der Durchführung des Tests-Abrufs: {error}',
+    'proxy-url copied to clipboard': 'Proxy-URL in die Zwischenablage kopiert',
+    'copy to clipboard failed': 'Kopieren in die Zwischenablage fehlgeschlagen'
 }

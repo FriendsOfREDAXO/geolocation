@@ -34,20 +34,30 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
 
 ![Konfiguration](assets/tiles_list.jpg)
 
-- **Karte/Layer anlegen**
+- **Karte/Layer anlegen**:
   Plus(+)-Symbol in der Kopfzeile der ersten Spalte legt einen neuen Karten-Datensatz an und öffnet
   ein leeres [Formular](#formular) zur Erfassung der Daten.
 
-- **Karte/Layer bearbeiten**
+- **Karte/Layer bearbeiten**:
   Klick auf das Tabellen-Symbol in der linken Spalte oder auf den Button "editieren" erlaubt die
   Bearbeitung des Eintrags im [Formular](#formular).
 
-- **Karte/Layer löschen**
+- **Karte/Layer klonen**:
+  Klick auf den Button "klonen" öffnet ein mit den Daten dieses Datensatzes vorbelegtes Formular
+  für einen neuen Eintrag. Siehe [Formular](#formular).
+
+- **Karte/Layer löschen**:
   Klick auf den Button "löschen" entfernt die Karte/Layer. Die Daten dürfen nicht gelöscht werden,
   wenn der Eintrag einem [Kartensatz](mapset.md) zugeordnet, also in Benutzung ist.
 
-- **Karten/Layer-Cache löschen**
-    Klick auf den Button "Cache löschen" leert den Karten-Cache für genau diesen Kartentyp.
+- **Abruf-URL in die Zwischenablage kopiere**:
+  Kopiert die Url, mit der diese Karte über den Proxy abgerufen werden kann, in die Zwischenablage.
+
+- **Karten/Layer-Cache löschen**:
+  Klick auf den Button "Cache löschen" leert den Karten-Cache für genau diesen Kartentyp.
+
+> Einzelne Menüpunkte sind nur sichtbar, wenn entsprechende Rollenberechtigungen vorliegen.
+
 
 <a name="formular"></a>
 ## Kartenparameter erfassen/ändern
@@ -59,6 +69,13 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
 - **Bezeichnung**  
     Die Bezeichnung dient als prägnante Unterscheidung z.B. in der Karten-Übersicht oder in
     Auswahlboxen für Karten. Sie muss angegeben und eindeutig sein.
+
+- **Kartentyp**  
+    Zeigt an, ob mit der Abruf-URL dieser Karte Bilder im klassischen Rasterformat
+    (z.B. `.jpg` oder `.png`) abgerufen werden oder ob es sich um die moderneren Vektor-Karten
+    handelt (z.B. `.mvt` oder `.pbf`). Leaflet unterstützt derzeit keine Vektor-Karten.
+    Vektor-Karten können nur mit der Proxy-Funktion des Addons genutzt werden, aber nicht
+    zum Aufbau von LeafetJS-kompatiblen Kartensätzen.
 
 - **URL**  
     Der konkrete Aufbau der URL wird vom Kartenanbieter auf dessen Webseiten kommuniziert. Innerhalb

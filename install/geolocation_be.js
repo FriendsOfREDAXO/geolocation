@@ -1402,3 +1402,19 @@ customElements.define('geolocation-geopicker',
             this.geoLngFld.value = pos.lng || pos[1];
         }
     });
+
+/**
+ * Kopiert die zu LayerID gehörnde Proxy-Url in die Zwischenablage.
+ * LayerID ist die Datensatznummer in der Tabelle rex_geolocation_layer.
+ */
+Geolocation.copyProxyUrl2Clipboard = async function (layerId) {
+    if (navigator?.clipboard?.writeText) {
+        let url = `index.php?${Geolocation.default.keyLayer}=${layerId}&z={z}&x={x}&y={y}&r={r}`;
+        await navigator.clipboard.writeText(url).then(
+            () => alert( Geolocation.i18n('Proxy-URL copied to clipboard') + `:\n\n${url}`),
+            (err) => alert( Geolocation.i18n('Copy to clipboard failed') + `: ${err}` )
+        );
+    } else {
+        alert( Geolocation.i18n('Clipboard API not supported in this browser.') );
+    }
+}
