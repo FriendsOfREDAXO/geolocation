@@ -66,6 +66,9 @@ page:
                         devmath:
                             title: translate:geolocation_manpage_devmath
                             subpath:  pages/manual.php
+                        devvector:
+                            title: translate:geolocation_manpage_devvector
+                            subpath:  pages/manual.php
                 install:
                     title: translate:geolocation_manpage_install
                     icon: fa fa-wrench

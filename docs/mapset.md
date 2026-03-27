@@ -12,6 +12,7 @@
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
 >   - [Rechnen](devmath.md)
+>   - [Vektorkarten](devvector.md)
 
 # Verwaltung der Kartensätze
 
