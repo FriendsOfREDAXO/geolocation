@@ -1404,7 +1404,7 @@ customElements.define('geolocation-geopicker',
     });
 
 /**
- * Kopiert die zu LayerID gehörnde Proxy-Url in die Zwischenablage.
+ * Kopiert die zu LayerID gehörende Proxy-Url in die Zwischenablage.
  * LayerID ist die Datensatznummer in der Tabelle rex_geolocation_layer.
  */
 Geolocation.copyProxyUrl2Clipboard = async function (layerId) {

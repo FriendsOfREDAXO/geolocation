@@ -7,5 +7,6 @@ de: {
     'locate': 'Standort',
     'there has been a problem with your fetch operation: {error}': 'Es gab ein Problem bei der Durchführung des Tests-Abrufs: {error}',
     'proxy-url copied to clipboard': 'Proxy-URL in die Zwischenablage kopiert',
-    'copy to clipboard failed': 'Kopieren in die Zwischenablage fehlgeschlagen'
+    'copy to clipboard failed': 'Kopieren in die Zwischenablage fehlgeschlagen',
+    'clipboard api not supported in this browser.': 'Zwischenablage-API wird von diesem Browser nicht unterstützt.'
 }
