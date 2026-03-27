@@ -75,7 +75,7 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
     (z.B. `.jpg` oder `.png`) abgerufen werden oder ob es sich um die moderneren Vektor-Karten
     handelt (z.B. `.mvt` oder `.pbf`). Leaflet unterstützt derzeit keine Vektor-Karten.
     Vektor-Karten können nur mit der Proxy-Funktion des Addons genutzt werden, aber nicht
-    zum Aufbau von LeafetJS-kompatiblen Kartensätzen.
+    zum Aufbau von LeafletJS-kompatiblen Kartensätzen.
 
 - **URL**  
     Der konkrete Aufbau der URL wird vom Kartenanbieter auf dessen Webseiten kommuniziert. Innerhalb
