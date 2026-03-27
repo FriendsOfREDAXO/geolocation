@@ -127,7 +127,7 @@ geolocation_install_update1_ok = Doppelte Cronjobs («{0}») aus Version 1.x ent
 geolocation_install_update2_ok = Namespace der Coronjob-Klasse angepasst (ab Version 2.0.0).
 geolocation_install_update3_ok = Zusätzliche Datenfelder initialisiert (ab Version 2.0.0).
 geolocation_install_update4_ok = Namespace angepasst in «data/geolocation/config.yml» (ab Version 2.0.0).
-geolocation_install_update5_ok = Neues Feld "Kartentyp für Raster-Tiles in der Tabelle «{0}» initialisiert.
+geolocation_install_update5_ok = Neues Feld "Kartentyp" für Raster-Tiles in der Tabelle «{0}» initialisiert.
 geolocation_install_data_config_error = Das Namespace-Update auf "FriendsOfRedaxo\Geolocation" in der Datei «redaxo/data/geolocation/config.yml» schlug fehl.
 geolocation_install_metafield = 'Metafeld-Typ angelegt'
 
