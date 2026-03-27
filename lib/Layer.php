@@ -416,7 +416,7 @@ class Layer extends rex_yform_manager_dataset
         }
 
         /**
-         * Aktion-Button tum gezielten Cache löschen für diese eine Karte.
+         * Aktion-Button zum gezielten Cache löschen für diese eine Karte.
          * Nur für Admins und User mit Permission "geolocation[clearcache]".
          */
         if ($user->hasPerm('geolocation[clearcache]')) {
