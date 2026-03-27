@@ -1409,8 +1409,7 @@ customElements.define('geolocation-geopicker',
  */
 Geolocation.copyProxyUrl2Clipboard = async function (layerId) {
     if (navigator?.clipboard?.writeText) {
-        // Enthält sowohl z/x/y/r als auch einen req-Platzhalter, damit auch {req}-basierte Layer unterstützt werden.
-        let url = `index.php?${Geolocation.default.keyLayer}=${layerId}&z={z}&x={x}&y={y}&r={r}&req={req}`;
+        let url = `index.php?${Geolocation.default.keyLayer}=${layerId}&z={z}&x={x}&y={y}&r={r}`;
         await navigator.clipboard.writeText(url).then(
             () => alert( Geolocation.i18n('Proxy-URL copied to clipboard') + `:\n\n${url}`),
             (err) => alert( Geolocation.i18n('Copy to clipboard failed') + `: ${err}` )
