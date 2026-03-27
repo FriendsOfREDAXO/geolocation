@@ -12,6 +12,7 @@
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
 >   - [Rechnen (PHP)](devmath.md)
+>   - [Vektorkarten](devvector.md)
 
 # Für Entwickler &dash; Javascript
 

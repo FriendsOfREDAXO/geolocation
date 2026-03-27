@@ -11,7 +11,8 @@
 >   - [Javascript](devjs.md)
 >   - [JS-Tools](devtools.md)
 >   - [geoJSON](devgeojson.md)
->   - [Rechnen (PHP) (PHP)](devmath.md)
+>   - [Rechnen (PHP)](devmath.md)
+>   - [Vektorkarten](devvector.md)
 
 # Proxy und -Cache
 

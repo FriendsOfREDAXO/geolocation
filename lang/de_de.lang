@@ -111,6 +111,7 @@ geolocation_manpage_devjs = Javascript
 geolocation_manpage_devtools = Tools
 geolocation_manpage_devgeojson = geoJSON
 geolocation_manpage_devmath = Rechnen (PHP)
+geolocation_manpage_devvector = Vektorkarten
 
 # Installation
 geolocation_install_missing = Die Installationsdatei «{0}» fehlt!
