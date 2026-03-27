@@ -546,7 +546,9 @@ class Layer extends rex_yform_manager_dataset
         $req = rex_request('req', 'string', null);
         $cachePattern = self::FILE_PATTERN;
         if (null !== $req) {
-            $fileNameElements['{req}'] = ltrim($req, '/');
+            // URL-encode parts array to keep slashes but encode spaces/chars (for e.g. "Noto Sans")
+            $encodedReq = implode('/', array_map('rawurlencode', explode('/', ltrim($req, '/'))));
+            $fileNameElements['{req}'] = $encodedReq;
             $cachePattern = md5($req) . '.{suffix}';
         }
 
