@@ -50,7 +50,7 @@ Hintergrund benutzt. Details und weitere Beispiele finden sich in den [Entwickle
   Klick auf den Button "löschen" entfernt die Karte/Layer. Die Daten dürfen nicht gelöscht werden,
   wenn der Eintrag einem [Kartensatz](mapset.md) zugeordnet, also in Benutzung ist.
 
-- **Abruf-URL in die Zwischenablage kopiere**:
+- **Abruf-URL in die Zwischenablage kopieren**:
   Kopiert die Url, mit der diese Karte über den Proxy abgerufen werden kann, in die Zwischenablage.
 
 - **Karten/Layer-Cache löschen**:
