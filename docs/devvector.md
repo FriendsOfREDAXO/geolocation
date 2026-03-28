@@ -51,6 +51,7 @@ Wir weisen damit MapLibre an, jeden Aufruf an `tiles.openfreemap.org` durch unse
     <meta charset="utf-8">
     <title>Geolocation Vector Tile Proxy</title>
     <!-- MapLibre JS & CSS -->
+    <!-- ACHTUNG: Um DSGVO-konform zu bleiben, sollten diese Dateien lokal eingebunden und nicht über ein externes CDN geladen werden! -->
     <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
     
