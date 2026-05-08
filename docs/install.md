@@ -29,6 +29,7 @@ gibt es eine individualisierte Installation.
     - [Eigene Scripte und CSS-Formatierungen](#ownjscss)
     - [LeafletJS ohne **Geolocation**](#compile1)
     - [**Geolocation** ohne LeafletJS](#compile0)
+    - [**Geolocation** ohne Dino](#nodino)
 - [Berechtigungen](#perm)
 
 <a name="install"></a>
@@ -464,6 +465,21 @@ scope:
     mapset: true # oder false
     compile: 0
     load: true
+```
+
+<a name="nodino"></a>
+### **Geolocation** ohne Dino
+
+Möglicherweise passt das Addon-Maskottchen, der Geo-Dino nicht unbedingt in das
+Style-Konzept des Backends. 
+
+![Menu mit Maskottchen](assets/maskottchen.png)
+
+"Weg damit" ist kein Problem; es reicht ein Eintrag in der Konfigurationsdatei:
+
+```yml
+# Den Dino ausblenden
+dino_hide: true
 ```
 
 <a name="perm"></a>

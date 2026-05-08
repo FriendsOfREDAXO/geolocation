@@ -1,6 +1,11 @@
 # Changelog
 
-## 27.03.206 2.6.0
+## 08.05.2026 2.7.0
+
+- Der Geo-Dino, das Addon-Maskottchen, im Backend-Menü, kann ausgeblendet werden.
+  (data/addons/geolocation/config.yml: `dino_hide: true`)
+
+## 27.03.2026 2.6.0
 
 NEU: Support für Vektor-Karten z.B. https://openfreemap.org
 
