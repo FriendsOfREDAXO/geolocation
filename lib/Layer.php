@@ -76,6 +76,7 @@ use const CURLOPT_HEADER;
 use const CURLOPT_PROXY;
 use const CURLOPT_RETURNTRANSFER;
 use const CURLOPT_TIMEOUT;
+use const CURLOPT_USERAGENT;
 use const E_WARNING;
 use const PATHINFO_EXTENSION;
 
@@ -592,6 +593,7 @@ class Layer extends rex_yform_manager_dataset
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'REDAXO Geolocation/' . rex_addon::get(ADDON)->getVersion() . ' (' . rex::getServer() . ')');
         if (($proxy = rex_addon::get('geolocation')->getConfig('socket_proxy')) !== '') {
             curl_setopt($ch, CURLOPT_PROXY, $proxy);
         }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 18.08.2026 2.7.1
+
+- Bugfix: Anpassung der CURL-Parameter wegen geänderter OSM-Anforderungen beim Tile-Abruf (Danke @tyrant88)
+
 ## 08.05.2026 2.7.0
 
 - Der Geo-Dino, das Addon-Maskottchen, im Backend-Menü, kann ausgeblendet werden.
