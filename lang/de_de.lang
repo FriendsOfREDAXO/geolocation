@@ -115,6 +115,7 @@ geolocation_manpage_devvector = Vektorkarten
 
 # Installation
 geolocation_install_missing = Die Installationsdatei «{0}» fehlt!
+geolocation_install_boot_marker = In der boot.php fehlen die Markierungen «// ##start» und «// ##end» für die Konstanten.
 geolocation_install_table_prepared = Die Tabelle «{0}» ist angelegt bzw. aktualisiert.
 geolocation_install_table_demo = Die Tabellen sind mit Beispieldaten vorbefüllt.
 geolocation_install_table_filled = Die Tabellen sind vorbefüllt (Quelle: data-Verzeichnis).

@@ -248,7 +248,12 @@ try {
     }
     $boot_php = rex_file::get(__DIR__ . '/boot.php');
     if (null !== $boot_php) {
-        $boot_php = preg_replace('%(//##start)(.*?)(//##end)%s', '$1' . $defines . '$3', $boot_php, 1);
+        // Die Markierungen stehen in der boot.php als "// ##start" bzw. "// ##end";
+        // Leerzeichen zwischen "//" und "##" sind daher zulässig.
+        $boot_php = preg_replace('%(//\s*##start)(.*?)(//\s*##end)%s', '$1' . $defines . '$3', $boot_php, 1, $count);
+        if (1 !== $count) {
+            throw new InstallException($this->i18n('install_boot_marker'), 1);
+        }
         rex_file::put(__DIR__ . '/boot.php', (string) $boot_php);
     }
 
