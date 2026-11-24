@@ -5,6 +5,9 @@ on:
     types:
       - published
 
+permissions:
+  contents: read
+
 jobs:
   redaxo_publish:
     runs-on: ubuntu-latest
